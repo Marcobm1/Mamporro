@@ -5,7 +5,7 @@ export const es = {
   'app.title': 'MAMPORRO',
   'app.tagline': 'Supervivencia a chanclazo limpio',
   'app.loading': 'Calentando la chancla...',
-  'app.prototype': 'Prototipo · Hito 1: moverse por el mapa',
+  'app.prototype': 'Prototipo · Hito 2: combate',
 
   'error.webgl':
     'Tu navegador no puede ejecutar WebGL2. Prueba con Chrome, Edge o Firefox actualizados.',
@@ -54,6 +54,12 @@ export const es = {
   'lang.en': 'English',
 
   'hud.fps': '{fps} FPS',
+  'hud.level': 'Nv {n}',
+  'hud.kills': 'Bajas: {n}',
+  'hud.weaponLevel': '{name} · Nv {n}',
+  'notice.levelUp': '¡Nivel {n}!',
+  'notice.newWeapon': 'Nueva arma: {name}',
+  'notice.levelUpPlaceholder': 'Las mejoras al subir de nivel llegan en el hito 3',
 
   'character.remedios': 'Doña Remedios',
   'enemy.pelusa': 'Pelusa Rebelde',
@@ -62,6 +68,18 @@ export const es = {
   'weapon.chancla.desc': 'Busca al enemigo más cercano. Nunca falla. Casi nunca.',
   'weapon.naftalina': 'Eau de Naftalina',
   'weapon.naftalina.desc': 'Nube de olor a armario de abuela que daña a todo el que se acerque.',
+
+  'gameover.title': '¡A la cama sin cenar!',
+  'gameover.subtitle': 'Doña Remedios ha caído (pero volverá)',
+  'gameover.time': 'Tiempo',
+  'gameover.kills': 'Bajas',
+  'gameover.level': 'Nivel',
+  'gameover.damage': 'Daño por arma',
+  'gameover.seed': 'Semilla: {seed}',
+  'gameover.cheated': 'Partida con trucos de debug',
+  'gameover.retry': 'Reintentar',
+  'gameover.newMap': 'Nuevo mapa',
+  'gameover.backToTitle': 'Volver al inicio',
 
   'debug.title': 'DEBUG · F3',
   'debug.fps': 'FPS',
@@ -80,6 +98,15 @@ export const es = {
   'debug.state.airborne': 'aire',
   'debug.state.sliding': 'deslizando',
   'debug.state.steep': 'resbalando',
+  'debug.entities': 'Enemigos: {enemies} · Proyectiles: {projectiles} · Gemas: {gems} · Partículas: {particles}',
+  'debug.run': 'Tiempo: {time} · Vida: {hp} · XP: {xp}/{next}',
+  'debug.keys': '[1] Invencible [2] +Nivel [3] +1 min [4] +100 enemigos [5] Matar todo',
+  'debug.invincibleOn': 'Invencible: SÍ',
+  'debug.invincibleOff': 'Invencible: NO',
+  'debug.levelUp': '+1 nivel',
+  'debug.skipTime': '+1 minuto',
+  'debug.spawn': '+100 enemigos',
+  'debug.killAll': 'Todos eliminados',
 } as const;
 
 export type TranslationKey = keyof typeof es;

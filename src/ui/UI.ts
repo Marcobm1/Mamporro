@@ -1,18 +1,41 @@
-// Capa de interfaz HTML superpuesta al canvas: pantallas (inicio, pausa), FPS,
-// panel de debug y avisos. No contiene lógica de juego: avisa con callbacks.
+// Capa de interfaz HTML superpuesta al canvas: pantallas (inicio, pausa, game
+// over), HUD, FPS, panel de debug y avisos. No contiene lógica de juego: avisa con callbacks.
 import { onLanguageChange, t, type TranslationKey } from '../i18n';
 import type { Settings } from '../save/schema';
 import { controlsLegend, languageSelector, optionsPanel } from './components';
 import { applyUiScale, button, h } from './dom';
+import { formatTime, Hud } from './Hud';
 
-export type Screen = 'none' | 'title' | 'pause';
+export type Screen = 'none' | 'title' | 'pause' | 'gameover';
 
 export interface UICallbacks {
   onPlay(seedText: string): void;
   onNewMap(): void;
   onResume(): void;
   onBackToTitle(): void;
+  onRetry(): void;
+  onRetryNewMap(): void;
   onSettingsChange(patch: Partial<Settings>): void;
+}
+
+export interface GameOverSummary {
+  time: number;
+  kills: number;
+  level: number;
+  weapons: ReadonlyArray<{ name: string; damage: number }>;
+  seed: string;
+  cheated: boolean;
+}
+
+export interface DebugRunInfo {
+  enemies: number;
+  projectiles: number;
+  gems: number;
+  particles: number;
+  time: number;
+  hp: number;
+  xp: number;
+  xpNext: number;
 }
 
 export interface UIContext {
@@ -37,6 +60,7 @@ export interface DebugInfo {
   state: TranslationKey;
   slopeDeg: number;
   seed: string;
+  run: DebugRunInfo | null;
 }
 
 const TOAST_MS = 3200;
@@ -50,6 +74,8 @@ export class UI {
   private toastTimer = 0;
   /** Lo que el jugador lleva escrito en el campo de semilla (sobrevive a cambios de idioma). */
   private seedDraft = '';
+  private gameOver: GameOverSummary | null = null;
+  readonly hud = new Hud();
 
   constructor(
     private readonly root: HTMLElement,
@@ -61,11 +87,14 @@ export class UI {
     this.debugEl = h('div', { className: 'debug' });
     this.debugEl.hidden = true;
     this.toastEl = h('div', { className: 'toast toast--hidden' });
-    root.append(this.fpsEl, this.debugEl, this.toastEl);
+    root.append(this.hud.root, this.fpsEl, this.debugEl, this.toastEl);
 
     applyUiScale(root);
     window.addEventListener('resize', () => applyUiScale(root));
-    onLanguageChange(() => this.refresh());
+    onLanguageChange(() => {
+      this.hud.invalidate();
+      this.refresh();
+    });
   }
 
   get currentScreen(): Screen {
@@ -83,7 +112,13 @@ export class UI {
     this.screenEl = null;
     if (this.screen === 'title') this.screenEl = this.buildTitle();
     else if (this.screen === 'pause') this.screenEl = this.buildPause();
+    else if (this.screen === 'gameover' && this.gameOver) this.screenEl = this.buildGameOver(this.gameOver);
     if (this.screenEl) this.root.prepend(this.screenEl);
+  }
+
+  showGameOver(summary: GameOverSummary): void {
+    this.gameOver = summary;
+    this.show('gameover');
   }
 
   setFpsVisible(visible: boolean): void {
@@ -114,6 +149,14 @@ export class UI {
       `${t('debug.speed')}: ${n(info.speed)} m/s · ${t('debug.state')}: ${t(info.state)}`,
       `${t('debug.slope')}: ${Math.round(info.slopeDeg)}° · ${t('debug.seed')}: ${info.seed}`,
     ];
+    if (info.run) {
+      const r = info.run;
+      lines.push(
+        t('debug.entities', { enemies: r.enemies, projectiles: r.projectiles, gems: r.gems, particles: r.particles }),
+        t('debug.run', { time: formatTime(r.time), hp: Math.ceil(r.hp), xp: Math.floor(r.xp), next: r.xpNext }),
+        t('debug.keys'),
+      );
+    }
     this.debugEl.replaceChildren(h('div', { className: 'debug__title', text: t('debug.title') }), lines.join('\n'));
   }
 
@@ -178,6 +221,44 @@ export class UI {
         controlsLegend(settings.slideWithCtrl),
       ),
       h('div', { className: 'prototype-tag', text: t('title.clickHint') }),
+    );
+  }
+
+  private buildGameOver(summary: GameOverSummary): HTMLElement {
+    const stat = (label: string, value: string): Node[] => [h('dt', { text: label }), h('dd', { text: value })];
+    const stats = h(
+      'dl',
+      { className: 'stats' },
+      ...stat(t('gameover.time'), formatTime(summary.time)),
+      ...stat(t('gameover.kills'), String(summary.kills)),
+      ...stat(t('gameover.level'), String(summary.level)),
+    );
+    const damage = h(
+      'dl',
+      { className: 'stats' },
+      ...summary.weapons.flatMap((w) => stat(w.name, String(Math.round(w.damage)))),
+    );
+    return h(
+      'div',
+      { className: 'screen screen--gameover' },
+      h(
+        'div',
+        { className: 'panel stack' },
+        h('h2', { className: 'gameover__title', text: t('gameover.title') }),
+        h('div', { className: 'muted', text: t('gameover.subtitle') }),
+        stats,
+        h('div', { className: 'muted', text: t('gameover.damage') }),
+        damage,
+        h('div', { className: 'muted', text: t('gameover.seed', { seed: summary.seed }) }),
+        summary.cheated && h('div', { className: 'warning', text: t('gameover.cheated') }),
+        h(
+          'div',
+          { className: 'row' },
+          button(t('gameover.retry'), () => this.callbacks.onRetry(), 'btn btn--big'),
+          button(t('gameover.newMap'), () => this.callbacks.onRetryNewMap(), 'btn btn--secondary'),
+          button(t('gameover.backToTitle'), () => this.callbacks.onBackToTitle(), 'btn btn--secondary'),
+        ),
+      ),
     );
   }
 

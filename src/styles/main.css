@@ -69,6 +69,7 @@ body {
 .screen {
   position: absolute;
   inset: 0;
+  z-index: 5;
   display: flex;
   /* "safe": si el contenido no cabe, no se corta por arriba y se puede desplazar. */
   align-items: safe center;
@@ -379,6 +380,7 @@ body {
 
 .toast {
   position: absolute;
+  z-index: 6;
   left: 50%;
   bottom: calc(var(--fp) * 18);
   transform: translateX(-50%);
@@ -415,4 +417,195 @@ body {
 .pause-columns {
   align-items: flex-start;
   gap: calc(var(--fp) * 14);
+}
+
+/* ---------- HUD de la partida ---------- */
+
+.hud {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  text-shadow: var(--fp) var(--fp) 0 var(--ink);
+}
+
+.xpbar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: calc(var(--fp) * 5);
+  background: rgba(20, 15, 36, 0.8);
+  box-shadow: 0 var(--fp) 0 var(--ink);
+}
+
+.xpbar__fill {
+  height: 100%;
+  width: 0;
+  background: #4aa8ff;
+  box-shadow: inset 0 calc(var(--fp) * -1) 0 #2a78d0;
+}
+
+.hud__topleft {
+  position: absolute;
+  top: calc(var(--fp) * 9);
+  left: calc(var(--fp) * 7);
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--fp) * 3);
+}
+
+.hud__level {
+  font-size: calc(var(--fp) * 22);
+  line-height: calc(var(--fp) * 22);
+  color: var(--accent);
+}
+
+.hpbar {
+  position: relative;
+  width: calc(var(--fp) * 110);
+  height: calc(var(--fp) * 11);
+  background: var(--ink);
+  box-shadow: 0 0 0 var(--fp) var(--border-light);
+}
+
+.hpbar__fill {
+  height: 100%;
+  width: 100%;
+  background: var(--bad);
+  box-shadow: inset 0 calc(var(--fp) * -2) 0 #a03030;
+}
+
+.hpbar__text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.hud__timer {
+  position: absolute;
+  top: calc(var(--fp) * 9);
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: calc(var(--fp) * 22);
+  line-height: calc(var(--fp) * 22);
+}
+
+.hud__kills {
+  position: absolute;
+  top: calc(var(--fp) * 9);
+  right: calc(var(--fp) * 7);
+}
+
+.fps {
+  top: calc(var(--fp) * 22);
+}
+
+.hud__weapons {
+  position: absolute;
+  left: calc(var(--fp) * 7);
+  bottom: calc(var(--fp) * 7);
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--fp) * 3);
+}
+
+.chip {
+  padding: 0 calc(var(--fp) * 4) var(--fp);
+  background: rgba(20, 15, 36, 0.78);
+  box-shadow: 0 0 0 var(--fp) var(--border);
+}
+
+.hud__notices {
+  position: absolute;
+  top: 24%;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(var(--fp) * 4);
+}
+
+.notice {
+  padding: calc(var(--fp) * 2) calc(var(--fp) * 6) calc(var(--fp) * 3);
+  background: rgba(20, 15, 36, 0.8);
+  box-shadow: 0 0 0 var(--fp) var(--accent);
+  white-space: nowrap;
+  animation: notice-in 2.6s steps(8) forwards;
+}
+
+.notice--big {
+  font-size: calc(var(--fp) * 22);
+  line-height: calc(var(--fp) * 24);
+  color: var(--accent);
+}
+
+@keyframes notice-in {
+  0% {
+    opacity: 0;
+    transform: translateY(calc(var(--fp) * 6));
+  }
+  10%,
+  80% {
+    opacity: 1;
+    transform: none;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.hud__hurt {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  background: radial-gradient(ellipse at center, transparent 45%, rgba(224, 40, 40, 0.65) 100%);
+}
+
+.hud__hurt--on {
+  animation: hurt 0.45s steps(5) forwards;
+}
+
+@keyframes hurt {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* ---------- Game over ---------- */
+
+.screen--gameover {
+  background: rgba(40, 8, 16, 0.55);
+}
+
+.gameover__title {
+  margin: 0;
+  font-size: calc(var(--fp) * 33);
+  line-height: calc(var(--fp) * 36);
+  font-weight: normal;
+  color: var(--bad);
+  text-shadow: calc(var(--fp) * 3) calc(var(--fp) * 3) 0 var(--ink);
+  text-align: center;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: auto auto;
+  gap: calc(var(--fp) * 2) calc(var(--fp) * 12);
+}
+
+.stats dt {
+  color: var(--text-dim);
+}
+
+.stats dd {
+  margin: 0;
+  text-align: right;
 }
