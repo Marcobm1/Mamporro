@@ -2,6 +2,7 @@
 // siempre detrás de todo (profundidad en el plano lejano).
 import { BackSide, Color, Mesh, ShaderMaterial, SphereGeometry, Vector3 } from 'three';
 import { PALETTE } from './palette';
+import { RENDER_ORDER } from './renderOrder';
 
 const SKY_VERTEX = /* glsl */ `
 varying vec3 vDir;
@@ -48,7 +49,7 @@ export function createSky(): Mesh {
   });
   const sky = new Mesh(new SphereGeometry(1, 24, 12), material);
   sky.frustumCulled = false;
-  sky.renderOrder = -1;
+  sky.renderOrder = RENDER_ORDER.sky;
   sky.scale.setScalar(100);
   return sky;
 }

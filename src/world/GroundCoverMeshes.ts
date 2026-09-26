@@ -12,6 +12,7 @@ import {
 } from 'three';
 import { Rng } from '../core/rng';
 import { PALETTE } from '../render/palette';
+import { RENDER_ORDER } from '../render/renderOrder';
 import { applyRetro } from '../render/retroMaterial';
 import type { CoverInstance, GroundCover } from './groundCover';
 
@@ -56,6 +57,8 @@ function stemGeometry(): BufferGeometry {
 
 function instanced(geometry: BufferGeometry, material: MeshLambertMaterial, items: readonly CoverInstance[], colorOf?: (c: CoverInstance) => number): InstancedMesh {
   const mesh = new InstancedMesh(geometry, material, Math.max(1, items.length));
+  // La hierba no debe hacer asomar la silueta de la abuela a sus pies.
+  mesh.renderOrder = RENDER_ORDER.afterPlayer;
   mesh.count = items.length;
   const dummy = new Object3D();
   const color = new Color();

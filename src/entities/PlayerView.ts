@@ -19,7 +19,8 @@ import { clamp, damp, lerp, type Vec3Like } from '../core/math';
 import { PLAYER_BASE_STATS } from '../data/config';
 import { colored, mergeColored } from '../render/geometry';
 import { PALETTE } from '../render/palette';
-import { applyRetro } from '../render/retroMaterial';
+import { RENDER_ORDER } from '../render/renderOrder';
+import { applyRetro, createSilhouetteMaterial } from '../render/retroMaterial';
 import type { PlayerBody } from './playerPhysics';
 
 const HIP_HEIGHT = 0.46;
@@ -168,6 +169,16 @@ export class PlayerView {
     this.hips.add(this.upper, this.legL, this.legR);
     this.root.add(this.hips);
 
+    // Silueta que se ve a través de lo que la tape (una horda, un muro...). Cada
+    // pieza lleva una copia con el material de silueta, que se dibuja justo antes.
+    const silhouette = createSilhouetteMaterial(PALETTE.silhouette);
+    for (const part of [body, this.legL, this.legR, this.armL, this.armR]) {
+      part.renderOrder = RENDER_ORDER.player;
+      const ghost = new Mesh(part.geometry, silhouette);
+      ghost.renderOrder = RENDER_ORDER.playerSilhouette;
+      part.add(ghost);
+    }
+
     this.shadowMaterial = new MeshBasicMaterial({
       color: 0x000000,
       map: shadowTexture,
@@ -178,7 +189,7 @@ export class PlayerView {
       polygonOffsetFactor: -4,
     });
     this.shadow = new Mesh(new PlaneGeometry(1.1, 1.1).rotateX(-Math.PI / 2), this.shadowMaterial);
-    this.shadow.renderOrder = 1;
+    this.shadow.renderOrder = RENDER_ORDER.blobShadow;
   }
 
   /** Objetos a añadir a la escena. */

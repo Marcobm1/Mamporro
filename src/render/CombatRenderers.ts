@@ -19,6 +19,7 @@ import { colored, mergeColored } from './geometry';
 import { PALETTE } from './palette';
 import { applyRetro } from './retroMaterial';
 import { writeYawMatrix } from './EnemyRenderer';
+import { RENDER_ORDER } from './renderOrder';
 
 /** Chanclas voladoras girando como un frisbi. */
 export class ProjectileRenderer {
@@ -34,6 +35,7 @@ export class ProjectileRenderer {
     this.mesh.instanceMatrix.setUsage(DynamicDrawUsage);
     this.mesh.count = 0;
     this.mesh.frustumCulled = false;
+    this.mesh.renderOrder = RENDER_ORDER.afterPlayer;
   }
 
   update(p: ProjectileSystem, alpha: number): void {
@@ -64,6 +66,7 @@ export class GemRenderer {
     this.mesh.instanceMatrix.setUsage(DynamicDrawUsage);
     this.mesh.count = 0;
     this.mesh.frustumCulled = false;
+    this.mesh.renderOrder = RENDER_ORDER.afterPlayer;
     // Crea el atributo de color por instancia.
     this.mesh.setColorAt(0, this.color.setHex(PALETTE.gemBlue));
   }
@@ -97,8 +100,8 @@ export class AuraRenderer {
     this.ringMaterial = new MeshBasicMaterial({ color: PALETTE.auraEdge, transparent: true, opacity: 0.5, depthWrite: false });
     this.disc = new Mesh(new CircleGeometry(1, 28).rotateX(-Math.PI / 2), applyRetro(this.discMaterial));
     this.ring = new Mesh(new RingGeometry(0.94, 1, 28).rotateX(-Math.PI / 2), applyRetro(this.ringMaterial));
-    this.disc.renderOrder = 2;
-    this.ring.renderOrder = 2;
+    this.disc.renderOrder = RENDER_ORDER.aura;
+    this.ring.renderOrder = RENDER_ORDER.aura;
     this.group.add(this.disc, this.ring);
     this.group.visible = false;
   }

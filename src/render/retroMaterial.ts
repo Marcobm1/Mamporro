@@ -2,8 +2,16 @@
 // - "vertex snapping" estilo PS1 (siempre): los vértices se ajustan a la rejilla
 //   de píxeles de la imagen interna, con el característico temblor;
 // - viento (opcional): balanceo de hierba, flores y copas de árboles;
-// - destello (opcional): atributo por instancia que blanquea el color (golpes).
-import { Vector2, Vector3, type Material, type WebGLProgramParametersWithUniforms } from 'three';
+// - destello (opcional): atributo por instancia que blanquea el color (golpes);
+// - silueta (opcional): solo se dibuja donde algo tapa al objeto, con tramado.
+import {
+  GreaterDepth,
+  MeshBasicMaterial,
+  Vector2,
+  Vector3,
+  type Material,
+  type WebGLProgramParametersWithUniforms,
+} from 'three';
 
 /** Uniforms compartidos por todos los materiales parcheados (se cambian en caliente). */
 export const retroUniforms = {
@@ -34,6 +42,8 @@ export interface RetroFeatures {
   flap?: FlapOptions;
   /** Añade el atributo por instancia `aFlash` (0..1) que mezcla el color con blanco. */
   flash?: boolean;
+  /** Pasada de silueta: ver `createSilhouetteMaterial`. */
+  silhouette?: boolean;
 }
 
 /** Nombre del atributo de destello en las geometrías instanciadas. */
@@ -50,6 +60,22 @@ if (uSnapEnabled > 0.5 && gl_Position.w > 0.0) {
   ndc = floor(ndc * uSnapResolution + 0.5) / uSnapResolution;
   gl_Position.xy = ndc * gl_Position.w;
 }
+`;
+
+/**
+ * Silueta: acerca cada vértice a la cámara a lo largo de su propio rayo de vista
+ * (en pantalla queda en el mismo sitio). Así solo aparece tras obstáculos que
+ * están al menos a SILHOUETTE_BIAS metros por delante: el suelo bajo los pies o
+ * un bulto pequeño pegado al cuerpo no la hacen asomar.
+ */
+const SILHOUETTE_VERTEX = /* glsl */ `
+mvPosition.xyz *= max(0.0, 1.0 - SILHOUETTE_BIAS / max(length(mvPosition.xyz), 0.001));
+gl_Position = projectionMatrix * mvPosition;
+`;
+
+/** Tramado de tablero de ajedrez (un píxel de la imagen interna sí, otro no). */
+const SILHOUETTE_FRAGMENT = /* glsl */ `
+if (mod(floor(gl_FragCoord.x) + floor(gl_FragCoord.y), 2.0) < 0.5) discard;
 `;
 
 const WIND_UNIFORMS = /* glsl */ `
@@ -75,6 +101,7 @@ function patch(shader: WebGLProgramParametersWithUniforms, features: RetroFeatur
   shader.uniforms.uSnapResolution = retroUniforms.uSnapResolution;
   let header = SNAP_UNIFORMS;
   let beginVertex = '';
+  let projectVertex = '';
   if (features.wind || features.flap) {
     shader.uniforms.uTime = retroUniforms.uTime;
     header += 'uniform float uTime;\n';
@@ -106,17 +133,38 @@ function patch(shader: WebGLProgramParametersWithUniforms, features: RetroFeatur
       .replace('#include <dithering_fragment>', '#include <dithering_fragment>\ngl_FragColor.rgb = mix(gl_FragColor.rgb, vec3(1.0), vFlash);');
   }
 
+  if (features.silhouette) {
+    header += '#define SILHOUETTE_BIAS 0.35\n';
+    projectVertex += SILHOUETTE_VERTEX;
+    shader.fragmentShader = shader.fragmentShader.replace(
+      '#include <clipping_planes_fragment>',
+      `#include <clipping_planes_fragment>\n${SILHOUETTE_FRAGMENT}`,
+    );
+  }
+
   shader.vertexShader = shader.vertexShader
     .replace('#include <common>', `#include <common>\n${header}`)
     .replace('#include <begin_vertex>', `#include <begin_vertex>\n${beginVertex}`)
-    .replace('#include <project_vertex>', `#include <project_vertex>\n${SNAP_CODE}`);
+    // El ajuste a la rejilla de píxeles va el último, sobre la posición final.
+    .replace('#include <project_vertex>', `#include <project_vertex>\n${projectVertex}${SNAP_CODE}`);
 }
 
 /** Aplica el efecto PS1 (y los extra pedidos) a un material estándar de Three. */
 export function applyRetro<T extends Material>(material: T, features: RetroFeatures = {}): T {
-  const key = `retro${features.wind ? '+wind' : ''}${features.flap ? '+flap' : ''}${features.flash ? '+flash' : ''}`;
+  const key = `retro${features.wind ? '+wind' : ''}${features.flap ? '+flap' : ''}${features.flash ? '+flash' : ''}${features.silhouette ? '+silhouette' : ''}`;
   material.onBeforeCompile = (shader) => patch(shader, features);
   // Todas las variantes comparten la función de arriba: la clave distingue sus shaders.
   material.customProgramCacheKey = () => key;
   return material;
+}
+
+/**
+ * Material de silueta: color plano con tramado que solo se dibuja donde el objeto
+ * queda detrás de algo ya dibujado (prueba de profundidad invertida). Hay que
+ * dibujarlo antes que el objeto normal (ver RENDER_ORDER): lo que se ve del
+ * objeto tapa su propia silueta y lo tapado se queda con ella.
+ */
+export function createSilhouetteMaterial(color: number): MeshBasicMaterial {
+  const material = new MeshBasicMaterial({ color, fog: false, depthWrite: false, depthFunc: GreaterDepth });
+  return applyRetro(material, { silhouette: true });
 }

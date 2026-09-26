@@ -13,6 +13,7 @@ import {
 import { ENEMY_LIST } from '../data/enemies';
 import { ENEMY_MODELS } from '../entities/enemyModels';
 import type { EnemySystem } from '../systems/EnemySystem';
+import { RENDER_ORDER } from './renderOrder';
 import { FLASH_ATTRIBUTE, applyRetro } from './retroMaterial';
 
 /** Escribe una matriz (giro en Y + escala + posición) directamente en el array de instancias. */
@@ -85,7 +86,7 @@ export class EnemyRenderer {
     this.shadows.instanceMatrix.setUsage(DynamicDrawUsage);
     this.shadows.count = 0;
     this.shadows.frustumCulled = false;
-    this.shadows.renderOrder = 1;
+    this.shadows.renderOrder = RENDER_ORDER.blobShadow;
     this.group.add(this.shadows);
   }
 

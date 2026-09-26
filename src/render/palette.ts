@@ -59,6 +59,9 @@ export const PALETTE = {
   hat: 0x3a2e2a,
   water: 0x2a4a6a,
 
+  /** Silueta de Doña Remedios cuando algo la tapa (el dorado de la interfaz). */
+  silhouette: 0xe8b020,
+
   // Enemigos
   pelusa: 0xb3aec2,
   pelusaDark: 0x8a8598,

@@ -15,6 +15,7 @@ import {
 import type { Rng } from '../core/rng';
 import { GLYPHS } from '../ui/font/glyphs';
 import { PALETTE } from './palette';
+import { RENDER_ORDER } from './renderOrder';
 
 const CHARS = '0123456789!';
 const CELL_W = 7;
@@ -148,7 +149,7 @@ export class DamageNumbers {
     });
     this.mesh = new Mesh(this.geometry, material);
     this.mesh.frustumCulled = false;
-    this.mesh.renderOrder = 10;
+    this.mesh.renderOrder = RENDER_ORDER.damageNumbers;
   }
 
   get active(): number {

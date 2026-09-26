@@ -3,6 +3,7 @@
 import { BoxGeometry, Color, DynamicDrawUsage, InstancedMesh, MeshBasicMaterial } from 'three';
 import type { Rng } from '../core/rng';
 import { writeYawMatrix } from './EnemyRenderer';
+import { RENDER_ORDER } from './renderOrder';
 import { applyRetro } from './retroMaterial';
 
 export interface BurstOptions {
@@ -55,6 +56,7 @@ export class Particles {
     this.spin = f();
     this.colors = new Float32Array(capacity * 3);
     this.mesh = new InstancedMesh(new BoxGeometry(1, 1, 1), applyRetro(new MeshBasicMaterial({ color: 0xffffff })), capacity);
+    this.mesh.renderOrder = RENDER_ORDER.afterPlayer;
     this.mesh.instanceMatrix.setUsage(DynamicDrawUsage);
     this.mesh.setColorAt(0, this.color.setHex(0xffffff));
     this.mesh.instanceColor?.setUsage(DynamicDrawUsage);

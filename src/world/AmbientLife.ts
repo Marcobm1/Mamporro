@@ -12,6 +12,7 @@ import {
 } from 'three';
 import { Rng } from '../core/rng';
 import { PALETTE } from '../render/palette';
+import { RENDER_ORDER } from '../render/renderOrder';
 import { applyRetro } from '../render/retroMaterial';
 import type { CoverInstance } from './groundCover';
 import type { Heightfield } from './Heightfield';
@@ -113,6 +114,8 @@ export class AmbientLife {
     const color = new Color();
     this.butterflies.forEach((_, i) => this.butterflyMesh.setColorAt(i, color.setHex(colors[i % colors.length] ?? 0xffffff)));
 
+    this.birdMesh.renderOrder = RENDER_ORDER.afterPlayer;
+    this.butterflyMesh.renderOrder = RENDER_ORDER.afterPlayer;
     this.group.add(this.birdMesh, this.butterflyMesh);
     this.group.name = 'fauna';
     this.update(0);
