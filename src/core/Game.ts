@@ -2,9 +2,10 @@
 // resultados), bucle, entrada, mundo, jugador, partida, cámara, render e interfaz.
 import { Color, DirectionalLight, Fog, HemisphereLight, Scene, type Mesh } from 'three';
 import { CHARACTERS } from '../data/characters';
-import { PLAYER_BASE_STATS, PLAYER_TUNING, RENDER_CONFIG } from '../data/config';
-import { ENEMIES, ENEMY_LIST, type EnemyId } from '../data/enemies';
+import { PLAYER_BASE_STATS, PLAYER_TUNING, RENDER_CONFIG, WORLD_CONFIG } from '../data/config';
+import { BOSS_CONFIG, ENEMIES, ENEMY_LIST, type EnemyId } from '../data/enemies';
 import { ITEMS, type ItemId } from '../data/items';
+import { TOTEM_CONFIG } from '../data/run';
 import { TOMES, type TomeId } from '../data/tomes';
 import type { WeaponId } from '../data/weapons';
 import { PlayerBody, type PlayerIntent } from '../entities/playerPhysics';
@@ -21,9 +22,12 @@ import { browserStorage, SaveManager } from '../save/SaveManager';
 import type { Settings } from '../save/schema';
 import { stepPlayerInCrowd } from '../systems/crowd';
 import { xpToNextLevel } from '../systems/progression';
-import { describeCard, statLines } from '../ui/cards';
+import type { ItemStack } from '../systems/items';
+import { describeCard, describeItem, statLines } from '../ui/cards';
 import { loadPixelFont } from '../ui/font/pixelFont';
-import { UI, type PauseRunInfo } from '../ui/UI';
+import { formatTime } from '../ui/Hud';
+import type { MinimapMarker } from '../ui/Minimap';
+import { UI, type ItemLine, type PauseRunInfo } from '../ui/UI';
 import { World, type WorldTextures } from '../world/World';
 import { GameLoop } from './GameLoop';
 import { Input } from './Input';
@@ -176,7 +180,7 @@ export class Game {
         this.ui.hud.flashHurt();
       },
       onNotice: (notice) => this.showNotice(notice),
-      onItem: (item) => this.ui.hud.notice(t(item.nameKey), true),
+      onItem: (item) => this.ui.hud.showItem(describeItem(item)),
       onShake: (amount) => this.rig.shake(amount),
     });
     this.sky = createSky();
@@ -201,6 +205,7 @@ export class Game {
         onBanish: (index) => this.levelUpAction((run) => run.banish(index), false),
       },
     );
+    this.updateMinimapTerrain();
     this.loop = new GameLoop({
       update: (dt) => this.update(dt),
       render: (alpha, frameDt) => this.draw(alpha, frameDt),
@@ -238,7 +243,12 @@ export class Game {
     this.world = new World(seed, this.textures);
     this.scene.add(this.world.group);
     this.resetPlayer();
+    this.updateMinimapTerrain();
     this.ui.refresh();
+  }
+
+  private updateMinimapTerrain(): void {
+    this.ui.hud.minimap.setTerrain(this.world.heightfield, this.world.sites, WORLD_CONFIG.playableRadius);
   }
 
   private resetPlayer(): void {
@@ -257,6 +267,7 @@ export class Game {
   private beginRun(): void {
     this.resetPlayer();
     this.run = new Run(this.world.collision, this.seed, CHARACTERS.remedios, this.runView, {
+      minutes: this.save.settings.runMinutes,
       interactables: this.world.interactables,
     });
     this.runView.attach(this.run);
@@ -328,14 +339,15 @@ export class Game {
       weapon: (id: string) => run.weapons.find((w) => w.def.id === id)?.level ?? 0,
       tome: (id: string) => run.tomes.find((tm) => tm.def.id === id)?.level ?? 0,
     };
+    const shrine = run.offerSource === 'shrine';
+    const pending = run.pendingLevelUps + run.pendingShrines - 1;
     this.ui.showLevelUp(
       {
-        level: run.level - run.pendingLevelUps + 1,
-        pending: run.pendingLevelUps + run.pendingShrines - 1,
+        title: shrine ? t('shrine.title') : t('levelup.title', { n: run.level - run.pendingLevelUps + 1 }),
+        subtitle: shrine ? t('shrine.subtitle') : t('levelup.subtitle'),
+        pending,
         cards: run.offer.map((card) => describeCard(card, owned)),
-        rerolls: run.rerolls,
-        skips: run.skips,
-        banishes: run.banishes,
+        actions: shrine ? null : { rerolls: run.rerolls, skips: run.skips, banishes: run.banishes },
       },
       fresh,
     );
@@ -357,22 +369,34 @@ export class Game {
     this.capturePointer();
   }
 
-  /** Estadísticas del personaje para la pausa. */
+  /** Estadísticas y objetos del personaje para la pausa. */
   private pauseRunInfo(): PauseRunInfo | null {
     const run = this.run;
-    return run ? { stats: statLines(run.stats, run.hp) } : null;
+    return run ? { stats: statLines(run.stats, run.hp), items: this.itemLines(run.items) } : null;
   }
 
-  /** Fin de la partida (la pantalla de resultados con victoria llega con la interfaz del hito 4). */
-  private finishRun(): void {
+  private itemLines(items: readonly ItemStack[]): ItemLine[] {
+    return items.map((stack) => {
+      const view = describeItem(stack.def);
+      return { name: view.title, count: stack.count, tone: view.tone, description: [...view.lines, view.description].join(' · ') };
+    });
+  }
+
+  /** Fin de la partida: resultados de la victoria (jefe derrotado) o de la derrota. */
+  private finishRun(victory: boolean): void {
     const run = this.run;
     if (!run) return;
     this.state = 'gameover';
     this.input.exitPointerLock();
-    this.ui.showGameOver({
+    this.ui.hud.setVisible(false);
+    this.ui.showResults({
+      victory,
       time: run.time,
       kills: run.kills,
       level: run.level,
+      gold: run.goldCollected,
+      chests: run.chestsOpened,
+      items: this.itemLines(run.items),
       weapons: run.weapons.map((w) => ({ name: t(w.def.nameKey), damage: w.totalDamage })),
       seed: this.seed,
       cheated: run.cheated,
@@ -597,10 +621,10 @@ export class Game {
         if (this.input.wasPressed('interact')) run.interact();
         run.update(dt, this.body, this.rig.yaw);
         if (run.dead) {
-          this.finishRun();
+          this.finishRun(false);
         } else if (run.victory) {
           this.victoryDelay -= dt;
-          if (this.victoryDelay <= 0) this.finishRun();
+          if (this.victoryDelay <= 0) this.finishRun(true);
         } else if (run.openChoice()) {
           this.enterLevelUp();
         }
@@ -657,21 +681,64 @@ export class Game {
     this.drawPos.z = z;
     const effectsDt = this.state === 'playing' && !this.effectsFrozen ? frameDt : 0;
     this.runView.update(this.state === 'playing' ? alpha : 1, effectsDt, now, this.drawPos);
-    if (run) {
-      this.ui.hud.update({
-        hp: run.hp,
-        maxHp: run.stats.maxHp,
-        level: run.level,
-        xp: run.progress.xp,
-        xpNext: xpToNextLevel(run.level),
-        time: run.time,
-        kills: run.kills,
-        weapons: run.weapons.map((w) => ({ name: t(w.def.nameKey), level: w.level })),
-        tomes: run.tomes.map((tm) => ({ name: t(tm.def.shortKey), level: tm.level })),
-      });
-    }
+    if (run) this.updateHud(run, x, z, now);
     this.renderer.render(this.scene, this.rig.camera);
     this.updateStats(frameDt);
+  }
+
+  private updateHud(run: Run, x: number, z: number, now: number): void {
+    const boss = run.bossHealth;
+    this.ui.hud.update({
+      hp: run.hp,
+      maxHp: run.stats.maxHp,
+      level: run.level,
+      xp: run.progress.xp,
+      xpNext: xpToNextLevel(run.level),
+      gold: run.gold,
+      timeLeft: run.timeLeft,
+      swarm: run.swarm,
+      kills: run.kills,
+      weapons: run.weapons.map((w) => ({ name: t(w.def.nameKey), level: w.level })),
+      tomes: run.tomes.map((tm) => ({ name: t(tm.def.shortKey), level: tm.level })),
+      items: run.items.map((stack) => ({ name: t(stack.def.nameKey), count: stack.count, tone: stack.def.rarity })),
+      boss: boss ? { name: t(ENEMIES[BOSS_CONFIG.enemy].nameKey), hp: boss.hp, maxHp: boss.maxHp, enraged: boss.enraged } : null,
+      prompt: this.promptText(run),
+      progress: this.progressInfo(run),
+    });
+    const markers: MinimapMarker[] = [];
+    for (const item of run.interactables.list) {
+      if (item.discovered) markers.push({ kind: item.spot.kind, x: item.spot.x, z: item.spot.z, used: item.used });
+    }
+    let bossPos: { x: number; z: number } | null = null;
+    if (run.boss) {
+      const i = run.enemies.indexOfId(run.boss.enemyId);
+      if (i >= 0) bossPos = { x: run.enemies.x[i] as number, z: run.enemies.z[i] as number };
+    }
+    this.ui.hud.minimap.update({ playerX: x, playerZ: z, yaw: this.rig.yaw, markers, boss: bossPos }, now * 1000);
+  }
+
+  /** Texto de lo que se puede usar delante (baúl, tótem, portal). */
+  private promptText(run: Run): string | null {
+    const prompt = run.prompt;
+    switch (prompt?.kind) {
+      case 'chest':
+        return t('prompt.chest', { cost: prompt.cost });
+      case 'totem':
+        return t('prompt.totem', { s: TOTEM_CONFIG.duration });
+      case 'portal':
+        return t('prompt.portal');
+      default:
+        return null;
+    }
+  }
+
+  /** Barra de progreso: la mesa camilla cargándose o el desafío del tótem en marcha. */
+  private progressInfo(run: Run): { label: string; value: number } | null {
+    const shrine = run.interactables.list[run.interactables.charging];
+    if (shrine) return { label: t('hud.shrine', { n: Math.floor(shrine.charge * 100) }), value: shrine.charge };
+    const left = run.interactables.challenge;
+    if (left > 0) return { label: t('hud.challenge', { time: formatTime(Math.ceil(left)) }), value: left / TOTEM_CONFIG.duration };
+    return null;
   }
 
   private updateStats(frameDt: number): void {
@@ -719,10 +786,16 @@ export class Game {
               xp: run.progress.xp,
               xpNext: xpToNextLevel(run.level),
               slow: run.crowdSlow,
+              ...this.directorInfo(run),
             }
           : null,
       });
     }
+  }
+
+  private directorInfo(run: Run): { difficulty: number; spawnRate: number; maxAlive: number; gold: number } {
+    const params = run.director.spawnParams(run.time, { rate: 1, hp: 1, gold: 1 }, { minutes: 0, rate: 0, maxAlive: 0, hp: 1, xp: 1, gold: 1 });
+    return { difficulty: run.difficulty, spawnRate: params.rate, maxAlive: params.maxAlive, gold: run.gold };
   }
 
   // ---------------------------------------------------------------- pruebas

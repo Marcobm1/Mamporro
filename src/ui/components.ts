@@ -27,6 +27,7 @@ export function controlsLegend(slideWithCtrl: boolean): HTMLDivElement {
     ['controls.keys.look', 'controls.look'],
     ['controls.keys.jump', 'controls.jump'],
     [slideWithCtrl ? 'controls.keys.slideCtrl' : 'controls.keys.slide', 'controls.slide'],
+    ['controls.keys.interact', 'controls.interact'],
     ['controls.keys.pause', 'controls.pause'],
     ['controls.keys.debug', 'controls.debug'],
   ];

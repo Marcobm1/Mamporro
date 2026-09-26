@@ -1,19 +1,26 @@
-// Pantalla de subida de nivel: cartas por rareza, Reroll/Saltar/Descartar y
-// atajos de teclado. No sabe nada de la partida: pinta lo que le dan y avisa.
+// Pantalla de elegir carta: subida de nivel (con Reroll/Saltar/Descartar) y
+// bendiciones de los santuarios (sin acciones). Cartas por rareza y atajos de
+// teclado. No sabe nada de la partida: pinta lo que le dan y avisa.
 import { LEVEL_UP_CONFIG } from '../data/upgrades';
 import { t } from '../i18n';
 import type { CardView } from './cards';
 import { h } from './dom';
 
-export interface LevelUpView {
-  /** Nivel alcanzado (título). */
-  level: number;
-  /** Subidas que quedan después de esta. */
-  pending: number;
-  cards: readonly CardView[];
+/** Usos que quedan de las acciones sobre las cartas. */
+export interface LevelUpActions {
   rerolls: number;
   skips: number;
   banishes: number;
+}
+
+export interface LevelUpView {
+  title: string;
+  subtitle: string;
+  /** Elecciones que quedan después de esta. */
+  pending: number;
+  cards: readonly CardView[];
+  /** Reroll, Saltar y Descartar (solo al subir de nivel; null en los santuarios). */
+  actions: LevelUpActions | null;
 }
 
 export interface LevelUpCallbacks {
@@ -62,9 +69,11 @@ export class LevelUpScreen {
       this.setBanishMode(false);
       return true;
     }
+    const actions = view.actions;
+    if (!actions) return false;
     if (!this.ready()) return code === 'KeyR' || code === 'KeyX' || code === 'KeyB';
-    if (code === 'KeyR' && view.rerolls > 0) this.callbacks.onReroll();
-    else if (code === 'KeyX' && view.skips > 0) this.callbacks.onSkip();
+    if (code === 'KeyR' && actions.rerolls > 0) this.callbacks.onReroll();
+    else if (code === 'KeyX' && actions.skips > 0) this.callbacks.onSkip();
     else if (code === 'KeyB') this.setBanishMode(!this.banishMode);
     else return false;
     return true;
@@ -86,7 +95,7 @@ export class LevelUpScreen {
 
   private setBanishMode(on: boolean): void {
     const view = this.view;
-    if (!view || (on && view.banishes <= 0)) return;
+    if (!view?.actions || (on && view.actions.banishes <= 0)) return;
     this.banishMode = on;
     this.paint(view, false);
   }
@@ -125,20 +134,22 @@ export class LevelUpScreen {
       return b;
     };
     this.root.className = `screen screen--levelup${this.banishMode ? ' screen--banish' : ''}${animate ? ' levelup--animate' : ''}`;
+    const actions = view.actions;
     const children: Array<Node | false> = [
-      h('h2', { className: 'levelup__title', text: t('levelup.title', { n: view.level }) }),
-      h('div', { className: 'levelup__subtitle', text: this.banishMode ? t('levelup.banishHint') : t('levelup.subtitle') }),
+      h('h2', { className: 'levelup__title', text: view.title }),
+      h('div', { className: 'levelup__subtitle', text: this.banishMode ? t('levelup.banishHint') : view.subtitle }),
       view.pending > 0 && h('div', { className: 'levelup__pending', text: t('levelup.pending', { n: view.pending }) }),
       h('div', { className: 'levelup__cards' }, ...cards),
-      h(
-        'div',
-        { className: 'levelup__actions' },
-        action(t('levelup.reroll', { n: view.rerolls }), 'R', view.rerolls, () => this.callbacks.onReroll()),
-        action(t('levelup.skip', { n: view.skips }), 'X', view.skips, () => this.callbacks.onSkip()),
-        this.banishMode
-          ? action(t('levelup.cancel'), 'B', 1, () => this.setBanishMode(false), true)
-          : action(t('levelup.banish', { n: view.banishes }), 'B', view.banishes, () => this.setBanishMode(true)),
-      ),
+      actions !== null &&
+        h(
+          'div',
+          { className: 'levelup__actions' },
+          action(t('levelup.reroll', { n: actions.rerolls }), 'R', actions.rerolls, () => this.callbacks.onReroll()),
+          action(t('levelup.skip', { n: actions.skips }), 'X', actions.skips, () => this.callbacks.onSkip()),
+          this.banishMode
+            ? action(t('levelup.cancel'), 'B', 1, () => this.setBanishMode(false), true)
+            : action(t('levelup.banish', { n: actions.banishes }), 'B', actions.banishes, () => this.setBanishMode(true)),
+        ),
     ];
     this.root.replaceChildren(...children.filter((c): c is Node => c !== false));
   }

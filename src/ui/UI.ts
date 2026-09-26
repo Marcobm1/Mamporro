@@ -1,11 +1,12 @@
 // Capa de interfaz HTML superpuesta al canvas: pantallas (inicio, pausa, subida de
 // nivel, game over), HUD, FPS, panel de debug y avisos. No contiene lógica de juego:
 // avisa con callbacks.
-import { onLanguageChange, t, type TranslationKey } from '../i18n';
+import { RUN_DURATIONS } from '../data/waves';
+import { formatNumber, onLanguageChange, t, type TranslationKey } from '../i18n';
 import type { Settings } from '../save/schema';
-import type { StatLine } from './cards';
+import type { CardTone, StatLine } from './cards';
 import { controlsLegend, languageSelector, optionsPanel } from './components';
-import { applyUiScale, button, h } from './dom';
+import { applyUiScale, button, h, segmented } from './dom';
 import { formatTime, Hud } from './Hud';
 import { LevelUpScreen, type LevelUpCallbacks, type LevelUpView } from './LevelUpScreen';
 
@@ -21,10 +22,23 @@ export interface UICallbacks extends LevelUpCallbacks {
   onSettingsChange(patch: Partial<Settings>): void;
 }
 
-export interface GameOverSummary {
+/** Un objeto tal y como se enseña en la pausa y en los resultados. */
+export interface ItemLine {
+  name: string;
+  count: number;
+  tone: CardTone;
+  description: string;
+}
+
+/** Pantalla de resultados, al ganar (jefe derrotado) o al caer. */
+export interface ResultsSummary {
+  victory: boolean;
   time: number;
   kills: number;
   level: number;
+  gold: number;
+  chests: number;
+  items: readonly ItemLine[];
   weapons: ReadonlyArray<{ name: string; damage: number }>;
   seed: string;
   cheated: boolean;
@@ -41,11 +55,17 @@ export interface DebugRunInfo {
   xpNext: number;
   /** Frenado por la horda (0..1). */
   slow: number;
+  /** Minuto de dificultad, ritmo de aparición y máximo de enemigos. */
+  difficulty: number;
+  spawnRate: number;
+  maxAlive: number;
+  gold: number;
 }
 
 /** Lo que la pausa enseña de la partida en curso (las armas y tomos ya están en el HUD). */
 export interface PauseRunInfo {
   stats: StatLine[];
+  items: ItemLine[];
 }
 
 export interface UIContext {
@@ -85,7 +105,7 @@ export class UI {
   private toastTimer = 0;
   /** Lo que el jugador lleva escrito en el campo de semilla (sobrevive a cambios de idioma). */
   private seedDraft = '';
-  private gameOver: GameOverSummary | null = null;
+  private results: ResultsSummary | null = null;
   private levelUpView: LevelUpView | null = null;
   private readonly levelUp: LevelUpScreen;
   readonly hud = new Hud();
@@ -127,7 +147,7 @@ export class UI {
     if (this.screen === 'title') this.screenEl = this.buildTitle();
     else if (this.screen === 'pause') this.screenEl = this.buildPause();
     else if (this.screen === 'levelup' && this.levelUpView) this.screenEl = this.levelUp.render(this.levelUpView, false);
-    else if (this.screen === 'gameover' && this.gameOver) this.screenEl = this.buildGameOver(this.gameOver);
+    else if (this.screen === 'gameover' && this.results) this.screenEl = this.buildResults(this.results);
     if (this.screenEl) this.root.prepend(this.screenEl);
   }
 
@@ -145,8 +165,8 @@ export class UI {
     return this.screen === 'levelup' && this.levelUp.handleKey(code);
   }
 
-  showGameOver(summary: GameOverSummary): void {
-    this.gameOver = summary;
+  showResults(summary: ResultsSummary): void {
+    this.results = summary;
     this.show('gameover');
   }
 
@@ -183,7 +203,9 @@ export class UI {
       lines.push(
         t('debug.entities', { enemies: r.enemies, projectiles: r.projectiles, gems: r.gems, particles: r.particles }),
         t('debug.run', { time: formatTime(r.time), hp: Math.ceil(r.hp), xp: Math.floor(r.xp), next: r.xpNext, slow: Math.round(r.slow * 100) }),
+        t('debug.director', { minutes: formatNumber(r.difficulty, 1), rate: formatNumber(r.spawnRate, 1), max: r.maxAlive, gold: Math.floor(r.gold) }),
         t('debug.keys'),
+        t('debug.keys2'),
       );
     }
     this.debugEl.replaceChildren(h('div', { className: 'debug__title', text: t('debug.title') }), lines.join('\n'));
@@ -247,13 +269,23 @@ export class UI {
           ),
         ),
         h('div', { className: 'muted', text: t('title.currentSeed', { seed: this.ctx.seed() }) }),
+        h(
+          'div',
+          { className: 'row' },
+          h('span', { text: t('title.duration') }),
+          segmented(
+            RUN_DURATIONS.map((n) => ({ value: n, label: t('title.minutes', { n }) })),
+            settings.runMinutes,
+            (runMinutes) => this.callbacks.onSettingsChange({ runMinutes }),
+          ),
+        ),
         controlsLegend(settings.slideWithCtrl),
       ),
       h('div', { className: 'prototype-tag', text: t('title.clickHint') }),
     );
   }
 
-  private buildGameOver(summary: GameOverSummary): HTMLElement {
+  private buildResults(summary: ResultsSummary): HTMLElement {
     const stat = (label: string, value: string): Node[] => [h('dt', { text: label }), h('dd', { text: value })];
     const stats = h(
       'dl',
@@ -261,23 +293,29 @@ export class UI {
       ...stat(t('gameover.time'), formatTime(summary.time)),
       ...stat(t('gameover.kills'), String(summary.kills)),
       ...stat(t('gameover.level'), String(summary.level)),
+      ...stat(t('results.gold'), String(Math.floor(summary.gold))),
+      ...stat(t('results.chests'), String(summary.chests)),
     );
     const damage = h(
       'dl',
       { className: 'stats' },
       ...summary.weapons.flatMap((w) => stat(w.name, String(Math.round(w.damage)))),
     );
+    const victory = summary.victory;
     return h(
       'div',
-      { className: 'screen screen--gameover' },
+      { className: `screen screen--gameover${victory ? ' screen--victory' : ''}` },
       h(
         'div',
-        { className: 'panel stack' },
-        h('h2', { className: 'gameover__title', text: t('gameover.title') }),
-        h('div', { className: 'muted', text: t('gameover.subtitle') }),
-        stats,
-        h('div', { className: 'muted', text: t('gameover.damage') }),
-        damage,
+        { className: 'panel panel--wide stack' },
+        h('h2', { className: `gameover__title${victory ? ' gameover__title--victory' : ''}`, text: t(victory ? 'results.victory' : 'gameover.title') }),
+        h('div', { className: 'muted', text: t(victory ? 'results.victorySubtitle' : 'gameover.subtitle') }),
+        h(
+          'div',
+          { className: 'row results-columns' },
+          h('div', { className: 'stack' }, stats, h('div', { className: 'muted', text: t('gameover.damage') }), damage),
+          h('div', { className: 'stack' }, h('div', { className: 'muted', text: t('results.items') }), this.itemList(summary.items, t('results.noItems'))),
+        ),
         h('div', { className: 'muted', text: t('gameover.seed', { seed: summary.seed }) }),
         summary.cheated && h('div', { className: 'warning', text: t('gameover.cheated') }),
         h(
@@ -287,6 +325,22 @@ export class UI {
           button(t('gameover.newMap'), () => this.callbacks.onRetryNewMap(), 'btn btn--secondary'),
           button(t('gameover.backToTitle'), () => this.callbacks.onBackToTitle(), 'btn btn--secondary'),
         ),
+      ),
+    );
+  }
+
+  /** Objetos en chips con el color de su rareza (la descripción, al pasar el ratón). */
+  private itemList(items: readonly ItemLine[], empty: string): HTMLElement {
+    if (items.length === 0) return h('div', { className: 'muted', text: empty });
+    return h(
+      'div',
+      { className: 'item-list' },
+      ...items.map((item) =>
+        h('div', {
+          className: `chip chip--item chip--${item.tone}`,
+          text: item.count > 1 ? t('hud.itemCount', { name: item.name, n: item.count }) : item.name,
+          attrs: { title: item.description },
+        }),
       ),
     );
   }
@@ -312,21 +366,24 @@ export class UI {
           button(t('pause.backToTitle'), () => this.callbacks.onBackToTitle(), 'btn btn--secondary'),
           h('div', { className: 'muted', text: t('pause.seed', { seed: this.ctx.seed() }) }),
         ),
-        h('div', { className: 'row pause-columns' }, this.buildRunInfo(), h('div', { className: 'stack' }, options, legend)),
+        h('div', { className: 'row pause-columns' }, ...this.buildRunInfo(), h('div', { className: 'stack' }, options, legend)),
       ),
     );
   }
 
-  /** Estadísticas del personaje (solo con una partida en marcha). */
-  private buildRunInfo(): HTMLElement | null {
+  /** Estadísticas y objetos del personaje (solo con una partida en marcha), en dos columnas. */
+  private buildRunInfo(): HTMLElement[] {
     const info = this.ctx.runInfo();
-    if (!info) return null;
+    if (!info) return [];
     const stat = (label: string, value: string): Node[] => [h('dt', { text: label }), h('dd', { text: value })];
-    return h(
-      'div',
-      { className: 'pause-run stack' },
-      h('div', { className: 'muted', text: t('pause.stats') }),
-      h('dl', { className: 'stats stats--compact' }, ...info.stats.flatMap((l) => stat(l.label, l.value))),
-    );
+    return [
+      h(
+        'div',
+        { className: 'pause-run stack' },
+        h('div', { className: 'muted', text: t('pause.stats') }),
+        h('dl', { className: 'stats stats--compact' }, ...info.stats.flatMap((l) => stat(l.label, l.value))),
+      ),
+      h('div', { className: 'pause-items stack' }, h('div', { className: 'muted', text: t('pause.items') }), this.itemList(info.items, t('pause.noItems'))),
+    ];
   }
 }

@@ -1,6 +1,7 @@
 // Esquema del guardado en localStorage, con versión y migraciones.
 // Regla: los datos leídos nunca se usan "a pelo"; siempre se validan y se
 // completan con valores por defecto, así un guardado corrupto no rompe el juego.
+import { RUN_DURATIONS, type RunMinutes } from '../data/waves';
 import { isLanguage, type Language } from '../i18n';
 
 export const SAVE_VERSION = 1;
@@ -22,6 +23,8 @@ export interface Settings {
   /** Ctrl como tecla de deslizarse (desactivado por defecto por Ctrl+W). */
   slideWithCtrl: boolean;
   showFps: boolean;
+  /** Duración de la partida (minutos). */
+  runMinutes: RunMinutes;
 }
 
 export interface SaveData {
@@ -38,6 +41,7 @@ export function defaultSettings(language: Language): Settings {
     dithering: true,
     slideWithCtrl: false,
     showFps: false,
+    runMinutes: 10,
   };
 }
 
@@ -67,6 +71,11 @@ function readRenderHeight(obj: Json, key: string, fallback: RenderHeight): Rende
   return (RENDER_HEIGHTS as readonly unknown[]).includes(v) ? (v as RenderHeight) : fallback;
 }
 
+function readRunMinutes(obj: Json, key: string, fallback: RunMinutes): RunMinutes {
+  const v = obj[key];
+  return (RUN_DURATIONS as readonly unknown[]).includes(v) ? (v as RunMinutes) : fallback;
+}
+
 export function sanitizeSettings(raw: unknown, language: Language): Settings {
   const d = defaultSettings(language);
   if (!isObject(raw)) return d;
@@ -78,6 +87,7 @@ export function sanitizeSettings(raw: unknown, language: Language): Settings {
     dithering: readBool(raw, 'dithering', d.dithering),
     slideWithCtrl: readBool(raw, 'slideWithCtrl', d.slideWithCtrl),
     showFps: readBool(raw, 'showFps', d.showFps),
+    runMinutes: readRunMinutes(raw, 'runMinutes', d.runMinutes),
   };
 }
 

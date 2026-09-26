@@ -57,6 +57,7 @@ describe('parseSave', () => {
         dithering: 'sí',
         slideWithCtrl: true,
         showFps: true,
+        runMinutes: 7,
       },
     });
     const { data, status } = parseSave(raw, 'en');
@@ -69,7 +70,11 @@ describe('parseSave', () => {
       dithering: true,
       slideWithCtrl: true,
       showFps: true,
+      runMinutes: 10,
     });
+    // Una duración válida se conserva.
+    const five = parseSave(JSON.stringify({ version: 1, settings: { runMinutes: 5 } }), 'es');
+    expect(five.data.settings.runMinutes).toBe(5);
   });
 
   it('aplica las migraciones en orden hasta la versión actual', () => {
