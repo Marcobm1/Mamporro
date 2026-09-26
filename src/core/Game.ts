@@ -98,9 +98,10 @@ export class Game {
   private seed: string;
   private state: GameState = 'loading';
   private run: Run | null = null;
-  private levelUpHintShown = false;
 
   private readonly prev = { x: 0, y: 0, z: 0 };
+  /** Posición interpolada del jugador en el frame actual (la que se dibuja). */
+  private readonly drawPos = { x: 0, y: 0, z: 0 };
   private readonly mouse = { dx: 0, dy: 0 };
   private readonly forward: Vec3Like = { x: 0, y: 0, z: 0 };
   private readonly right: Vec3Like = { x: 0, y: 0, z: 0 };
@@ -129,14 +130,6 @@ export class Game {
         this.rig.shake(0.45);
         this.ui.hud.flashHurt();
       },
-      onLevelUp: (level) => {
-        this.ui.hud.notice(t('notice.levelUp', { n: level }), true);
-        if (!this.levelUpHintShown) {
-          this.levelUpHintShown = true;
-          this.ui.hud.notice(t('notice.levelUpPlaceholder'));
-        }
-      },
-      onWeaponGained: (weapon) => this.ui.hud.notice(t('notice.newWeapon', { name: t(weapon.def.nameKey) })),
     });
     this.sky = createSky();
     this.seed = randomSeed();
@@ -481,7 +474,10 @@ export class Game {
     this.sky.position.copy(this.rig.camera.position);
     retroUniforms.uTime.value = now;
     this.world.update(now);
-    this.runView.update(this.state === 'playing' ? alpha : 1, this.state === 'playing' ? frameDt : 0, now);
+    this.drawPos.x = x;
+    this.drawPos.y = y;
+    this.drawPos.z = z;
+    this.runView.update(this.state === 'playing' ? alpha : 1, this.state === 'playing' ? frameDt : 0, now, this.drawPos);
     if (run) {
       this.ui.hud.update({
         hp: run.hp,

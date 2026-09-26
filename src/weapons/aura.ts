@@ -1,15 +1,15 @@
 // Comportamiento "aura" (Eau de Naftalina): cada cierto tiempo daña a todos los
 // enemigos dentro de un radio alrededor del jugador y los aparta un poco.
 import { AURA_BASE_RADIUS } from '../data/weapons';
-import type { CombatContext, WeaponBehavior } from './types';
+import type { CombatContext, WeaponBehavior, WeaponUpdate } from './types';
 
-const inRange = new Int32Array(512);
+const inRange = new Int32Array(1024);
 
 export function auraRadius(area: number): number {
   return AURA_BASE_RADIUS * area;
 }
 
-export const updateAura: WeaponBehavior = (weapon, ctx: CombatContext, dt) => {
+const updateAura: WeaponUpdate = (weapon, ctx: CombatContext, dt) => {
   weapon.timer -= dt;
   weapon.sincePulse += dt;
   if (weapon.timer > 0) return;
@@ -29,3 +29,5 @@ export const updateAura: WeaponBehavior = (weapon, ctx: CombatContext, dt) => {
     ctx.damageEnemy(e, weapon, d > 1e-4 ? dx / d : 0, d > 1e-4 ? dz / d : 0);
   }
 };
+
+export const aura: WeaponBehavior = { update: updateAura, createState: () => ({ kind: 'none' }) };

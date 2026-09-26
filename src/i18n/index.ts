@@ -57,6 +57,14 @@ export function t(key: TranslationKey, params?: TranslationParams): string {
   return format(dictionaries[current][key], params);
 }
 
+/** Número con el separador decimal del idioma actual ("0,4" en español, "0.4" en inglés). */
+export function formatNumber(value: number, maxDecimals = 1): string {
+  return value.toLocaleString(current === 'es' ? 'es-ES' : 'en-US', {
+    maximumFractionDigits: maxDecimals,
+    useGrouping: false,
+  });
+}
+
 /** Traducción en un idioma concreto (útil en tests). */
 export function tIn(lang: Language, key: TranslationKey, params?: TranslationParams): string {
   return format(dictionaries[lang][key], params);

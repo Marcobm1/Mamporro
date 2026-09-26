@@ -62,6 +62,9 @@ export class EnemySystem {
   readonly xp: Float32Array;
   readonly speed: Float32Array;
   readonly flash: Float32Array;
+  /** Ralentización (0..1: fracción de velocidad perdida) y cuánto le queda (s). */
+  readonly slow: Float32Array;
+  readonly slowTime: Float32Array;
   readonly attackCd: Float32Array;
   readonly stuckTime: Float32Array;
   readonly detourTime: Float32Array;
@@ -99,6 +102,8 @@ export class EnemySystem {
     this.xp = f();
     this.speed = f();
     this.flash = f();
+    this.slow = f();
+    this.slowTime = f();
     this.attackCd = f();
     this.stuckTime = f();
     this.detourTime = f();
@@ -111,7 +116,7 @@ export class EnemySystem {
     this.neighbors = new Int32Array(64);
     this.floatArrays = [
       this.x, this.y, this.z, this.px, this.py, this.pz, this.vx, this.vz, this.kx, this.kz,
-      this.hp, this.maxHp, this.xp, this.speed, this.flash, this.attackCd, this.stuckTime,
+      this.hp, this.maxHp, this.xp, this.speed, this.flash, this.slow, this.slowTime, this.attackCd, this.stuckTime,
       this.detourTime, this.heading, this.phase,
     ];
   }
@@ -132,6 +137,7 @@ export class EnemySystem {
     this.xp[i] = def.xp * xpMultiplier;
     this.speed[i] = def.speed * variation;
     this.flash[i] = 0;
+    this.slow[i] = this.slowTime[i] = 0;
     this.attackCd[i] = 0;
     this.stuckTime[i] = this.detourTime[i] = 0;
     this.detour[i] = 0;
@@ -140,6 +146,12 @@ export class EnemySystem {
     this.type[i] = typeIndex;
     this.id[i] = id;
     return i;
+  }
+
+  /** Ralentiza al enemigo `i` (se queda con la mayor de las ralentizaciones activas). */
+  applySlow(i: number, amount: number, seconds: number): void {
+    this.slow[i] = Math.max(this.slow[i] as number, amount);
+    this.slowTime[i] = Math.max(this.slowTime[i] as number, seconds);
   }
 
   /** Mueve un enemigo a otra posición al instante (reaparecer cerca del jugador). */
@@ -232,7 +244,12 @@ export class EnemySystem {
         sepZ += (oz / d) * push;
       }
 
-      const speed = this.speed[i] as number;
+      let speed = this.speed[i] as number;
+      if ((this.slowTime[i] as number) > 0) {
+        speed *= 1 - (this.slow[i] as number);
+        this.slowTime[i] = (this.slowTime[i] as number) - dt;
+        if ((this.slowTime[i] as number) <= 0) this.slow[i] = 0;
+      }
       const desiredX = dirX * speed + sepX * SEPARATION_SPEED;
       const desiredZ = dirZ * speed + sepZ * SEPARATION_SPEED;
       const a = Math.min(1, def.agility * dt);

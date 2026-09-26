@@ -1,40 +1,47 @@
-// Una partida: tiempo, enemigos, armas, proyectiles, gemas, experiencia y vida.
-// Es lógica pura (sin Three.js): el render recibe los sucesos a través de `RunEffects`.
+// Una partida: tiempo, enemigos, armas, tomos, proyectiles, gemas, experiencia,
+// vida y subidas de nivel con sus cartas. Es lógica pura (sin Three.js): el
+// render recibe los sucesos a través de `RunEffects`.
 import type { CharacterDef } from '../data/characters';
 import { ENEMY_LIST } from '../data/enemies';
+import { TOMES, type TomeId } from '../data/tomes';
+import { LEVEL_UP_CONFIG } from '../data/upgrades';
 import type { WeaponId } from '../data/weapons';
 import type { PlayerBody } from '../entities/playerPhysics';
 import { mitigate, rollDamage } from '../systems/damage';
 import { EnemySystem } from '../systems/EnemySystem';
 import { GemSystem } from '../systems/GemSystem';
 import { crowdSlowFor, smoothCrowdSlow } from '../systems/crowd';
+import {
+  generateOffer,
+  healCard,
+  replacementCard,
+  type BuildView,
+  type OfferCard,
+} from '../systems/levelup';
 import { addExperience, xpToNextLevel, type LevelState } from '../systems/progression';
 import { ProjectileSystem } from '../systems/ProjectileSystem';
 import { SpawnSystem } from '../systems/SpawnSystem';
-import { basePlayerStats, type PlayerStats } from '../systems/stats';
-import { BEHAVIORS, createWeapon, type CombatContext, type WeaponInstance } from '../weapons';
+import { computePlayerStats, type PlayerStats, type TomeInstance } from '../systems/stats';
+import { BEHAVIORS, createWeapon, refreshWeapon, type CombatContext, type WeaponInstance } from '../weapons';
+import type { CombatPlayer, WeaponEffects } from '../weapons/types';
 import type { WorldCollision } from '../world/WorldCollision';
 import { Rng } from './rng';
 
 export const ENEMY_CAPACITY = 800;
 export const PROJECTILE_CAPACITY = 256;
 export const GEM_CAPACITY = 600;
-export const MAX_WEAPONS = 4;
 /** Radio del jugador para el contacto con enemigos (m). */
 export const PLAYER_HIT_RADIUS = 0.45;
 /** Invulnerabilidad tras recibir un golpe (s). */
 export const INVULNERABILITY_TIME = 0.7;
-/** Nivel al que se consigue la segunda arma (regla temporal hasta las ofertas del hito 3). */
-export const SECOND_WEAPON_LEVEL = 2;
 
 /** Sucesos que el render y la interfaz convierten en efectos (partículas, números, avisos...). */
-export interface RunEffects {
+export interface RunEffects extends WeaponEffects {
   damageNumber(x: number, y: number, z: number, amount: number, critLevel: number): void;
   enemyKilled(x: number, y: number, z: number, type: number): void;
   enemySpawned(x: number, y: number, z: number): void;
   playerHit(damage: number): void;
   levelUp(level: number): void;
-  weaponGained(weapon: WeaponInstance): void;
 }
 
 export const NO_EFFECTS: RunEffects = {
@@ -43,7 +50,8 @@ export const NO_EFFECTS: RunEffects = {
   enemySpawned: () => {},
   playerHit: () => {},
   levelUp: () => {},
-  weaponGained: () => {},
+  arcSwing: () => {},
+  chainZap: () => {},
 };
 
 export class Run {
@@ -59,13 +67,26 @@ export class Run {
   /** Frenado actual por atravesar enemigos (0 = nada; ver CROWD_CONFIG). */
   crowdSlow = 0;
   readonly progress: LevelState = { level: 1, xp: 0 };
+  /** Estadísticas del jugador (el objeto se conserva; se recalcula al cambiar los tomos). */
   readonly stats: PlayerStats;
-  readonly player = { x: 0, y: 0, z: 0 };
+  readonly player: CombatPlayer = { x: 0, y: 0, z: 0, facing: 0, vx: 0, vz: 0, grounded: true };
   readonly enemies: EnemySystem;
   readonly projectiles = new ProjectileSystem(PROJECTILE_CAPACITY);
   readonly gems = new GemSystem(GEM_CAPACITY);
   readonly weapons: WeaponInstance[] = [];
+  readonly tomes: TomeInstance[] = [];
+  /** Subidas de nivel pendientes de elegir carta. */
+  pendingLevelUps = 0;
+  /** Cartas de la subida de nivel abierta (null si no hay ninguna). */
+  offer: OfferCard[] | null = null;
+  rerolls: number = LEVEL_UP_CONFIG.rerolls;
+  skips: number = LEVEL_UP_CONFIG.skips;
+  banishes: number = LEVEL_UP_CONFIG.banishes;
+  /** Armas y tomos descartados para el resto de la partida. */
+  readonly banished = new Set<string>();
   private readonly spawner: SpawnSystem;
+  /** Sorteo de las cartas, separado del combate: con la misma semilla salen las mismas. */
+  private readonly offerRng: Rng;
   private readonly rng: Rng;
   private readonly ctx: CombatContext;
   /** Objetos reutilizados cada tick (sin crear basura). */
@@ -75,12 +96,13 @@ export class Run {
   constructor(
     private readonly world: WorldCollision,
     seed: string,
-    character: CharacterDef,
+    private readonly character: CharacterDef,
     private readonly fx: RunEffects = NO_EFFECTS,
   ) {
     const rng = new Rng(`${seed}/run`);
     this.rng = rng.derive('combat');
-    this.stats = basePlayerStats(character);
+    this.offerRng = rng.derive('offers');
+    this.stats = computePlayerStats(character, this.tomes, LEVEL_UP_CONFIG.baseChoices);
     this.hp = this.stats.maxHp;
     this.enemies = new EnemySystem(ENEMY_CAPACITY, world.heightfield.size);
     this.spawner = new SpawnSystem(rng.derive('spawn'), (x, y, z) => this.fx.enemySpawned(x, y, z));
@@ -90,7 +112,9 @@ export class Run {
       projectiles: this.projectiles,
       rng: this.rng,
       player: this.player,
+      fx: this.fx,
       damageEnemy: (e, weapon, pushX, pushZ) => this.damageEnemy(e, weapon, pushX, pushZ, random),
+      groundHeight: (x, z, maxY) => world.groundHeight(x, z, maxY),
     };
     this.addWeapon(character.startingWeapon);
   }
@@ -111,9 +135,14 @@ export class Run {
   update(dt: number, body: PlayerBody, viewYaw: number): void {
     if (this.dead) return;
     this.time += dt;
-    this.player.x = body.x;
-    this.player.y = body.y;
-    this.player.z = body.z;
+    const p = this.player;
+    p.x = body.x;
+    p.y = body.y;
+    p.z = body.z;
+    p.facing = body.facing;
+    p.vx = body.vx;
+    p.vz = body.vz;
+    p.grounded = body.grounded;
     this.view.x = body.x;
     this.view.z = body.z;
     this.view.yaw = viewYaw;
@@ -128,7 +157,7 @@ export class Run {
     if (contact > 0) this.hurtPlayer(contact);
     this.crowdSlow = smoothCrowdSlow(this.crowdSlow, crowdSlowFor(this.enemies.playerPressure), dt);
 
-    for (const weapon of this.weapons) BEHAVIORS[weapon.def.behavior](weapon, this.ctx, dt);
+    for (const weapon of this.weapons) BEHAVIORS[weapon.def.behavior].update(weapon, this.ctx, dt);
     this.projectiles.update(dt, this.enemies, this.world.heightfield, (p, e) => {
       const weapon = this.weapons[this.projectiles.weapon[p] as number];
       if (!weapon) return;
@@ -187,17 +216,123 @@ export class Run {
     const before = this.progress.level;
     const gained = addExperience(this.progress, amount * this.stats.xpGain);
     for (let k = 1; k <= gained; k++) this.fx.levelUp(before + k);
-    // Regla temporal del hito 2: la segunda arma llega sola al subir de nivel.
-    if (this.progress.level >= SECOND_WEAPON_LEVEL) this.addWeapon('naftalina');
+    this.pendingLevelUps += gained;
   }
 
   /** Añade un arma si no se tiene ya y queda hueco. */
   addWeapon(id: WeaponId): WeaponInstance | null {
-    if (this.weapons.some((w) => w.def.id === id) || this.weapons.length >= MAX_WEAPONS) return null;
-    const weapon = createWeapon(id, this.weapons.length, this.stats);
+    if (this.weapons.some((w) => w.def.id === id) || this.weapons.length >= LEVEL_UP_CONFIG.maxWeapons) return null;
+    const weapon = createWeapon(id, this.weapons.length, this.stats, this.enemies.capacity);
     this.weapons.push(weapon);
-    this.fx.weaponGained(weapon);
     return weapon;
+  }
+
+  // ------------------------------------------------------------ subida de nivel
+
+  private get build(): BuildView {
+    return { weapons: this.weapons, tomes: this.tomes, stats: this.stats, banished: this.banished };
+  }
+
+  /** Abre la siguiente subida de nivel pendiente (si no hay ya una abierta). */
+  openLevelUp(): boolean {
+    if (this.offer || this.pendingLevelUps <= 0) return false;
+    this.offer = generateOffer(this.build, this.stats.choices, this.offerRng);
+    return true;
+  }
+
+  /** Elige una carta; si quedan subidas pendientes, abre la siguiente. */
+  choose(index: number): boolean {
+    const card = this.offer?.[index];
+    if (!card) return false;
+    this.applyCard(card);
+    this.closeLevelUp();
+    return true;
+  }
+
+  /** Cambia todas las cartas por otras nuevas. */
+  reroll(): boolean {
+    if (!this.offer || this.rerolls <= 0) return false;
+    this.rerolls--;
+    this.offer = generateOffer(this.build, this.stats.choices, this.offerRng);
+    return true;
+  }
+
+  /** Pasa esta subida de nivel sin elegir nada. */
+  skip(): boolean {
+    if (!this.offer || this.skips <= 0) return false;
+    this.skips--;
+    this.closeLevelUp();
+    return true;
+  }
+
+  /** Quita esa arma o tomo del sorteo para el resto de la partida y pone otra carta en su hueco. */
+  banish(index: number): boolean {
+    const offer = this.offer;
+    const card = offer?.[index];
+    if (!offer || !card || card.key === null || this.banishes <= 0) return false;
+    this.banishes--;
+    this.banished.add(card.key);
+    const rest = offer.filter((_, i) => i !== index);
+    const replacement = replacementCard(this.build, rest, this.offerRng);
+    if (replacement) offer[index] = replacement;
+    else offer.splice(index, 1);
+    if (offer.length === 0) offer.push(healCard());
+    return true;
+  }
+
+  private closeLevelUp(): void {
+    this.offer = null;
+    this.pendingLevelUps = Math.max(0, this.pendingLevelUps - 1);
+    this.openLevelUp();
+  }
+
+  private applyCard(card: OfferCard): void {
+    switch (card.kind) {
+      case 'newWeapon':
+        this.addWeapon(card.weapon);
+        break;
+      case 'weaponUpgrade': {
+        const weapon = this.weapons.find((w) => w.def.id === card.weapon);
+        if (!weapon) break;
+        for (const change of card.changes) weapon.bonus[change.stat] += change.amount;
+        weapon.level++;
+        refreshWeapon(weapon, this.stats);
+        break;
+      }
+      case 'tome':
+        this.addTomeLevel(card.tome, card.amounts);
+        break;
+      case 'heal':
+        this.hp = Math.min(this.stats.maxHp, this.hp + this.stats.maxHp * card.amount);
+        break;
+    }
+  }
+
+  /** Sube un nivel el tomo (o lo añade, si hay hueco) sumando `amounts` a sus efectos. */
+  addTomeLevel(id: TomeId, amounts: readonly number[]): TomeInstance | null {
+    let tome = this.tomes.find((t) => t.def.id === id);
+    if (!tome) {
+      if (this.tomes.length >= LEVEL_UP_CONFIG.maxTomes) return null;
+      const def = TOMES[id];
+      tome = { def, level: 0, bonus: def.effects.map(() => 0) };
+      this.tomes.push(tome);
+    }
+    tome.level++;
+    amounts.forEach((amount, i) => {
+      if (tome) tome.bonus[i] = (tome.bonus[i] ?? 0) + amount;
+    });
+    this.refreshStats();
+    return tome;
+  }
+
+  /** Recalcula las estadísticas del jugador y de las armas (tras cambiar los tomos). */
+  private refreshStats(): void {
+    const oldMax = this.stats.maxHp;
+    Object.assign(this.stats, computePlayerStats(this.character, this.tomes, this.stats.choices));
+    // La vida máxima que se gana llega también a la actual.
+    if (this.stats.maxHp > oldMax) this.hp += this.stats.maxHp - oldMax;
+    this.hp = Math.min(this.hp, this.stats.maxHp);
+    for (const weapon of this.weapons) refreshWeapon(weapon, this.stats);
   }
 
   // ------------------------------------------------------------ debug
@@ -228,5 +363,17 @@ export class Run {
     this.cheated = true;
     this.enemies.hp.fill(0, 0, this.enemies.count);
     this.enemies.flushDead((i) => this.onEnemyDeath(i));
+  }
+
+  /** Pruebas: añade un arma directamente (sin carta). */
+  debugAddWeapon(id: WeaponId): boolean {
+    this.cheated = true;
+    return this.addWeapon(id) !== null;
+  }
+
+  /** Pruebas: sube un nivel Común un tomo directamente (sin carta). */
+  debugAddTome(id: TomeId): boolean {
+    this.cheated = true;
+    return this.addTomeLevel(id, TOMES[id].effects.map((e) => e.amount)) !== null;
   }
 }

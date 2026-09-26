@@ -28,7 +28,8 @@ function newRun(fx?: Partial<RunEffects>): Run {
     enemySpawned: () => {},
     playerHit: () => {},
     levelUp: () => {},
-    weaponGained: () => {},
+    arcSwing: () => {},
+    chainZap: () => {},
     ...fx,
   };
   return new Run(collision, 'COMBAT-TEST', CHARACTERS.remedios, effects);
@@ -225,16 +226,27 @@ describe('partida', () => {
     }
   });
 
-  it('una partida simulada avanza: mata, sube de nivel y consigue la segunda arma', () => {
+  it('una partida simulada avanza: mata, sube de nivel y elige cartas', () => {
     const levels: number[] = [];
     const run = newRun({ levelUp: (l) => levels.push(l) });
     run.invincible = true;
     const body = standingPlayer();
-    for (let t = 0; t < 60 * 60; t++) run.update(DT, body, t * 0.01);
+    let chosen = 0;
+    for (let t = 0; t < 60 * 60; t++) {
+      run.update(DT, body, t * 0.01);
+      // Como en el juego: con una subida pendiente se elige carta (aquí, un arma nueva si la hay).
+      while (run.openLevelUp() || run.offer) {
+        const offer = run.offer ?? [];
+        run.choose(Math.max(0, offer.findIndex((c) => c.kind === 'newWeapon')));
+        chosen++;
+      }
+    }
     expect(run.kills).toBeGreaterThan(20);
     expect(run.level).toBeGreaterThanOrEqual(2);
     expect(levels[0]).toBe(2);
-    expect(run.weapons.map((w) => w.def.id)).toEqual(['chancla', 'naftalina']);
+    expect(chosen).toBe(run.level - 1);
+    expect(run.pendingLevelUps).toBe(0);
+    expect(run.weapons.length).toBeGreaterThanOrEqual(2);
     for (let i = 0; i < run.enemies.count; i++) expect(Number.isFinite(run.enemies.x[i] as number)).toBe(true);
   });
 
@@ -261,6 +273,45 @@ describe('partida', () => {
     const perTick = (performance.now() - start) / ticks;
     console.log(`[bench] lógica con ~${run.enemies.count} enemigos: ${perTick.toFixed(3)} ms por tick`);
     expect(run.enemies.count).toBeGreaterThan(300);
+    expect(perTick).toBeLessThan(8);
+  });
+
+  it('rendimiento: las 4 armas nuevas mejoradas, con 500 enemigos y la abuela corriendo', () => {
+    const run = newRun();
+    run.invincible = true;
+    run.weapons.length = 0;
+    for (const id of ['barra', 'dentaduras', 'jersey', 'fregona'] as const) run.debugAddWeapon(id);
+    for (let k = 0; k < 3; k++) run.debugAddTome('projectiles');
+    run.debugAddTome('area');
+    // 500 pelusas repartidas en espiral alrededor del recorrido (a 2–16 m del centro).
+    for (let k = 0; k < 500; k++) {
+      const a = k * 2.39996;
+      const r = 2 + (14 * k) / 500;
+      const x = Math.cos(a) * r;
+      const z = Math.sin(a) * r;
+      run.enemies.spawn(PELUSA, x, world.heightfield.heightAt(x, z), z, 20, 1);
+    }
+    run.enemies.rebuildGrid();
+    const body = standingPlayer();
+    const step = (t: number): void => {
+      // En círculo, para que la fregona vaya dejando charcos.
+      const a = t * 0.02;
+      body.x = Math.cos(a) * 6;
+      body.z = Math.sin(a) * 6;
+      body.y = world.heightfield.heightAt(body.x, body.z);
+      body.vx = -Math.sin(a) * 7;
+      body.vz = Math.cos(a) * 7;
+      body.grounded = true;
+      run.update(DT, body, 0);
+    };
+    for (let t = 0; t < 30; t++) step(t);
+    const ticks = 240;
+    const start = performance.now();
+    for (let t = 30; t < 30 + ticks; t++) step(t);
+    const perTick = (performance.now() - start) / ticks;
+    console.log(`[bench] 4 armas nuevas con ~${run.enemies.count} enemigos: ${perTick.toFixed(3)} ms por tick`);
+    console.log(`[bench] daño: ${run.weapons.map((w) => `${w.def.id}=${Math.round(w.totalDamage)}`).join(" ")}`);
+    expect(run.weapons.every((w) => w.totalDamage > 0)).toBe(true);
     expect(perTick).toBeLessThan(8);
   });
 });

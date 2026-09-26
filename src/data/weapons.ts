@@ -1,24 +1,24 @@
 // Armas. Cada una tiene un comportamiento (weapons/) y unas estadísticas base.
-// Las mejoras por nivel (qué estadísticas suben) se usarán en el hito 3.
+// Al mejorarlas suben 1–2 estadísticas de su lista `upgradable` (ver upgrades.ts).
 import type { TranslationKey } from '../i18n';
 
-export type WeaponId = 'chancla' | 'naftalina';
-export type WeaponBehaviorId = 'homing' | 'aura';
+export type WeaponId = 'chancla' | 'naftalina' | 'barra' | 'dentaduras' | 'jersey' | 'fregona';
+export type WeaponBehaviorId = 'homing' | 'aura' | 'arc' | 'orbit' | 'chain' | 'trail';
 
 export interface WeaponStats {
   /** Daño por golpe. */
   damage: number;
   /** Segundos entre disparos (o entre pulsos, en las auras). */
   cooldown: number;
-  /** Proyectiles por disparo. */
+  /** Proyectiles por disparo (golpes, dentaduras, cadenas... según el arma). */
   count: number;
   /** Multiplicador de tamaño (radio del aura, tamaño del proyectil...). */
   area: number;
-  /** Velocidad del proyectil (m/s). */
+  /** Velocidad del proyectil (o de giro, en las órbitas). */
   speed: number;
-  /** Duración del proyectil (s). */
+  /** Duración (s): vuelo del proyectil, tiempo activa, vida del charco... */
   duration: number;
-  /** Enemigos extra que atraviesa cada proyectil. */
+  /** Enemigos extra que atraviesa (saltos, en la cadena). */
   pierce: number;
   /** Probabilidad de crítico (1 = 100 %; más de 1 da supercríticos). */
   critChance: number;
@@ -40,8 +40,10 @@ export interface WeaponDef {
    * entera destellando a la vez se ve como una mancha blanca que tapa al jugador.
    */
   hitFlash: number;
-  /** Estadísticas que pueden subir al mejorar el arma (hito 3). */
+  /** Estadísticas que pueden subir al mejorar el arma. */
   upgradable: ReadonlyArray<keyof WeaponStats>;
+  /** Nombres propios de algunas estadísticas en las cartas (p. ej. "Saltos" en vez de "Perforación"). */
+  statLabels?: Readonly<Partial<Record<keyof WeaponStats, TranslationKey>>>;
 }
 
 export const WEAPONS: Readonly<Record<WeaponId, WeaponDef>> = {
@@ -85,7 +87,93 @@ export const WEAPONS: Readonly<Record<WeaponId, WeaponDef>> = {
     hitFlash: 0.35,
     upgradable: ['damage', 'cooldown', 'area', 'critChance', 'knockback'],
   },
+  barra: {
+    id: 'barra',
+    nameKey: 'weapon.barra',
+    descriptionKey: 'weapon.barra.desc',
+    behavior: 'arc',
+    base: {
+      damage: 16,
+      cooldown: 1.2,
+      count: 1,
+      area: 1,
+      speed: 0,
+      duration: 0,
+      pierce: 0,
+      critChance: 0.08,
+      critMultiplier: 2,
+      knockback: 7,
+    },
+    hitFlash: 1,
+    upgradable: ['damage', 'cooldown', 'count', 'area', 'critChance', 'knockback'],
+    statLabels: { count: 'stat.count.swings' },
+  },
+  dentaduras: {
+    id: 'dentaduras',
+    nameKey: 'weapon.dentaduras',
+    descriptionKey: 'weapon.dentaduras.desc',
+    behavior: 'orbit',
+    base: {
+      damage: 8,
+      cooldown: 2.5,
+      count: 2,
+      area: 1,
+      speed: 1,
+      duration: 4,
+      pierce: 0,
+      critChance: 0.05,
+      critMultiplier: 2,
+      knockback: 2.5,
+    },
+    hitFlash: 0.6,
+    upgradable: ['damage', 'cooldown', 'count', 'area', 'speed', 'duration', 'critChance'],
+    statLabels: { count: 'stat.count.dentures', speed: 'stat.speed.spin' },
+  },
+  jersey: {
+    id: 'jersey',
+    nameKey: 'weapon.jersey',
+    descriptionKey: 'weapon.jersey.desc',
+    behavior: 'chain',
+    base: {
+      damage: 13,
+      cooldown: 1.5,
+      count: 1,
+      area: 1,
+      speed: 0,
+      duration: 0,
+      pierce: 3,
+      critChance: 0.06,
+      critMultiplier: 2.2,
+      knockback: 0.6,
+    },
+    hitFlash: 1,
+    upgradable: ['damage', 'cooldown', 'count', 'area', 'pierce', 'critChance'],
+    statLabels: { count: 'stat.count.chains', pierce: 'stat.pierce.jumps' },
+  },
+  fregona: {
+    id: 'fregona',
+    nameKey: 'weapon.fregona',
+    descriptionKey: 'weapon.fregona.desc',
+    behavior: 'trail',
+    base: {
+      damage: 5,
+      cooldown: 0.4,
+      count: 1,
+      area: 1,
+      speed: 0,
+      duration: 3,
+      pierce: 0,
+      critChance: 0.04,
+      critMultiplier: 2,
+      knockback: 0,
+    },
+    hitFlash: 0.35,
+    upgradable: ['damage', 'cooldown', 'count', 'area', 'duration', 'critChance'],
+    statLabels: { count: 'stat.count.puddles' },
+  },
 };
+
+export const WEAPON_LIST: readonly WeaponDef[] = Object.values(WEAPONS);
 
 /** Radio del aura con área 1 (m). */
 export const AURA_BASE_RADIUS = 3.2;

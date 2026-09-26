@@ -1,7 +1,7 @@
 // Comportamiento "homing" (Chancla Teledirigida): dispara proyectiles hacia los
 // enemigos más cercanos; en vuelo se corrigen hacia el objetivo más próximo.
 import { PROJECTILE_BASE_RADIUS } from '../data/weapons';
-import type { CombatContext, WeaponBehavior } from './types';
+import type { CombatContext, WeaponBehavior, WeaponUpdate } from './types';
 
 /** Alcance máximo para elegir objetivo al disparar (m). */
 const TARGET_RANGE = 28;
@@ -12,7 +12,7 @@ const RETRY_DELAY = 0.2;
 
 const chosen: number[] = [];
 
-export const updateHoming: WeaponBehavior = (weapon, ctx: CombatContext, dt) => {
+const updateHoming: WeaponUpdate = (weapon, ctx: CombatContext, dt) => {
   weapon.timer -= dt;
   weapon.sincePulse += dt;
   if (weapon.timer > 0) return;
@@ -69,3 +69,5 @@ export const updateHoming: WeaponBehavior = (weapon, ctx: CombatContext, dt) => 
   weapon.timer = fired ? s.cooldown : RETRY_DELAY;
   if (fired) weapon.sincePulse = 0;
 };
+
+export const homing: WeaponBehavior = { update: updateHoming, createState: () => ({ kind: 'none' }) };

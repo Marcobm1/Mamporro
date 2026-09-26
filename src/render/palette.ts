@@ -84,6 +84,15 @@ export const PALETTE = {
   numberSuper: 0xff7a2f,
   numberPlayer: 0xff4a4a,
   dust: 0xd8cfb8,
+  // Armas del hito 3
+  bread: 0xf3d9a4,
+  breadCrust: 0xc98a3c,
+  teeth: 0xfbf6e8,
+  gums: 0xe07f92,
+  zap: 0xcfefff,
+  zapCore: 0xfff6a8,
+  puddle: 0x8fd3f0,
+  puddleShine: 0xeefaff,
 
   // Fauna
   bird: 0x2e2a3a,
