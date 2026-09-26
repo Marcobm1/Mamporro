@@ -366,7 +366,8 @@ body {
 
 .debug {
   position: absolute;
-  top: calc(var(--fp) * 4);
+  /* Debajo del nivel y la barra de vida del HUD. */
+  top: calc(var(--fp) * 50);
   left: calc(var(--fp) * 4);
   padding: calc(var(--fp) * 3) calc(var(--fp) * 4);
   background: rgba(0, 0, 0, 0.62);
