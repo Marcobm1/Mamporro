@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { DEG2RAD, type Vec3Like } from '../core/math';
 import { PLAYER_BASE_STATS, PLAYER_TUNING } from '../data/config';
-import { PlayerBody, stepPlayer, type PhysicsWorld, type PlayerIntent } from './playerPhysics';
+import { brakeHorizontal, PlayerBody, stepPlayer, type PhysicsWorld, type PlayerIntent } from './playerPhysics';
 
 const DT = 1 / 60;
 const SPEED = PLAYER_BASE_STATS.moveSpeed;
@@ -274,5 +274,21 @@ describe('física del jugador', () => {
       if (body.events.jumped) jumped = true;
     });
     expect(jumped).toBe(true);
+  });
+});
+
+describe('frenado externo', () => {
+  it('brakeHorizontal frena hacia el límite sin pasarse, sin girar y sin acelerar nunca', () => {
+    const b = new PlayerBody();
+    b.vx = 6;
+    b.vz = 8; // 10 m/s
+    brakeHorizontal(b, 5, 2);
+    expect(Math.hypot(b.vx, b.vz)).toBeCloseTo(8);
+    expect(b.vz / b.vx).toBeCloseTo(8 / 6);
+    brakeHorizontal(b, 5, 100);
+    expect(Math.hypot(b.vx, b.vz)).toBeCloseTo(5);
+    // Si ya va más despacio que el límite, no hace nada.
+    brakeHorizontal(b, 7, 100);
+    expect(Math.hypot(b.vx, b.vz)).toBeCloseTo(5);
   });
 });

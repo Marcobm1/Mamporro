@@ -7,6 +7,7 @@ import type { PlayerBody } from '../entities/playerPhysics';
 import { mitigate, rollDamage } from '../systems/damage';
 import { EnemySystem } from '../systems/EnemySystem';
 import { GemSystem } from '../systems/GemSystem';
+import { crowdSlowFor, smoothCrowdSlow } from '../systems/crowd';
 import { addExperience, xpToNextLevel, type LevelState } from '../systems/progression';
 import { ProjectileSystem } from '../systems/ProjectileSystem';
 import { SpawnSystem } from '../systems/SpawnSystem';
@@ -55,6 +56,8 @@ export class Run {
   invincible = false;
   /** Se han usado trucos de debug (la partida no contará para la meta del hito 5). */
   cheated = false;
+  /** Frenado actual por atravesar enemigos (0 = nada; ver CROWD_CONFIG). */
+  crowdSlow = 0;
   readonly progress: LevelState = { level: 1, xp: 0 };
   readonly stats: PlayerStats;
   readonly player = { x: 0, y: 0, z: 0 };
@@ -67,7 +70,7 @@ export class Run {
   private readonly ctx: CombatContext;
   /** Objetos reutilizados cada tick (sin crear basura). */
   private readonly view = { x: 0, z: 0, yaw: 0 };
-  private readonly target = { x: 0, y: 0, z: 0, radius: PLAYER_HIT_RADIUS };
+  private readonly target = { x: 0, y: 0, z: 0, radius: PLAYER_HIT_RADIUS, vx: 0, vz: 0 };
 
   constructor(
     private readonly world: WorldCollision,
@@ -117,10 +120,13 @@ export class Run {
     this.target.x = body.x;
     this.target.y = body.y;
     this.target.z = body.z;
+    this.target.vx = body.vx;
+    this.target.vz = body.vz;
 
     this.spawner.update(dt, this.minutes, this.enemies, this.view, this.world);
     const contact = this.enemies.update(dt, this.target, this.world);
     if (contact > 0) this.hurtPlayer(contact);
+    this.crowdSlow = smoothCrowdSlow(this.crowdSlow, crowdSlowFor(this.enemies.playerPressure), dt);
 
     for (const weapon of this.weapons) BEHAVIORS[weapon.def.behavior](weapon, this.ctx, dt);
     this.projectiles.update(dt, this.enemies, this.world.heightfield, (p, e) => {

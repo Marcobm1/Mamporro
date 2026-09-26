@@ -36,6 +36,8 @@ export interface DebugRunInfo {
   hp: number;
   xp: number;
   xpNext: number;
+  /** Frenado por la horda (0..1). */
+  slow: number;
 }
 
 export interface UIContext {
@@ -153,7 +155,7 @@ export class UI {
       const r = info.run;
       lines.push(
         t('debug.entities', { enemies: r.enemies, projectiles: r.projectiles, gems: r.gems, particles: r.particles }),
-        t('debug.run', { time: formatTime(r.time), hp: Math.ceil(r.hp), xp: Math.floor(r.xp), next: r.xpNext }),
+        t('debug.run', { time: formatTime(r.time), hp: Math.ceil(r.hp), xp: Math.floor(r.xp), next: r.xpNext, slow: Math.round(r.slow * 100) }),
         t('debug.keys'),
       );
     }

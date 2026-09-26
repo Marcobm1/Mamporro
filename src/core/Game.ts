@@ -3,7 +3,7 @@
 import { Color, DirectionalLight, Fog, HemisphereLight, Scene, type Mesh } from 'three';
 import { CHARACTERS } from '../data/characters';
 import { PLAYER_BASE_STATS, PLAYER_TUNING, RENDER_CONFIG } from '../data/config';
-import { PlayerBody, stepPlayer, type PlayerIntent } from '../entities/playerPhysics';
+import { PlayerBody, type PlayerIntent } from '../entities/playerPhysics';
 import { PlayerView, type PlayerFrameEvents } from '../entities/PlayerView';
 import { detectLanguage, setLanguage, t, type TranslationKey } from '../i18n';
 import { CameraRig } from '../render/CameraRig';
@@ -15,6 +15,7 @@ import { createSky, SUN_DIRECTION } from '../render/Sky';
 import { createBlobShadowTexture, createDetailTexture, createStoneTexture } from '../render/textures';
 import { browserStorage, SaveManager } from '../save/SaveManager';
 import type { Settings } from '../save/schema';
+import { stepPlayerInCrowd } from '../systems/crowd';
 import { xpToNextLevel } from '../systems/progression';
 import { loadPixelFont } from '../ui/font/pixelFont';
 import { UI } from '../ui/UI';
@@ -44,6 +45,10 @@ export interface RunInfo {
   gems: number;
   weapons: string[];
   dead: boolean;
+  /** Frenado actual por la horda (0..1). */
+  crowdSlow: number;
+  /** Velocidad horizontal del jugador (m/s). */
+  speed: number;
 }
 
 /** Ganchos para las pruebas automáticas en navegador (solo con `?test`). */
@@ -416,7 +421,9 @@ export class Game {
       this.prev.x = this.body.x;
       this.prev.y = this.body.y;
       this.prev.z = this.body.z;
-      stepPlayer(this.body, this.readIntent(), this.world.collision, PLAYER_TUNING, this.moveSpeed, dt);
+      // La horda que está atravesando la frena un poco (ver CROWD_CONFIG).
+      const crowdSlow = this.run?.crowdSlow ?? 0;
+      stepPlayerInCrowd(this.body, this.readIntent(), this.world.collision, PLAYER_TUNING, this.moveSpeed, crowdSlow, dt);
       const ev = this.body.events;
       if (ev.landed) {
         this.frameEvents.landed = true;
@@ -535,6 +542,7 @@ export class Game {
               hp: run.hp,
               xp: run.progress.xp,
               xpNext: xpToNextLevel(run.level),
+              slow: run.crowdSlow,
             }
           : null,
       });
@@ -580,6 +588,8 @@ export class Game {
           gems: run.gems.count,
           weapons: run.weapons.map((w) => w.def.id),
           dead: run.dead,
+          crowdSlow: run.crowdSlow,
+          speed: this.body.horizontalSpeed,
         };
       },
       loopStats: () => ({

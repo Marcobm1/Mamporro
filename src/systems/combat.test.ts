@@ -1,10 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import { Run, type RunEffects } from '../core/Run';
 import { CHARACTERS } from '../data/characters';
+import { CROWD_CONFIG, PLAYER_BASE_STATS, PLAYER_TUNING } from '../data/config';
 import { enemyTypeIndex } from '../data/enemies';
 import { AURA_BASE_RADIUS, WEAPONS } from '../data/weapons';
-import { PlayerBody } from '../entities/playerPhysics';
+import { PlayerBody, type PlayerIntent } from '../entities/playerPhysics';
 import { generateWorldData } from '../world/World';
+import { stepPlayerInCrowd } from './crowd';
 import { EnemySystem } from './EnemySystem';
 import { GemSystem } from './GemSystem';
 
@@ -37,7 +39,7 @@ describe('enemigos', () => {
     const enemies = new EnemySystem(64, world.heightfield.size);
     enemies.spawn(PELUSA, 20, 0, 3, 1, 1);
     enemies.rebuildGrid();
-    const target = { x: 0, y: world.heightfield.heightAt(0, 0), z: 0, radius: 0.45 };
+    const target = { x: 0, y: world.heightfield.heightAt(0, 0), z: 0, radius: 0.45, vx: 0, vz: 0 };
     for (let t = 0; t < 180; t++) enemies.update(DT, target, collision);
     expect(Math.hypot(enemies.x[0] as number, enemies.z[0] as number)).toBeLessThan(10);
   });
@@ -46,7 +48,7 @@ describe('enemigos', () => {
     const enemies = new EnemySystem(64, world.heightfield.size);
     for (let i = 0; i < 20; i++) enemies.spawn(PELUSA, 4 + (i % 5) * 0.05, 0, (i / 5) * 0.05, 1, 1);
     enemies.rebuildGrid();
-    const far = { x: 200, y: 0, z: 200, radius: 0.45 };
+    const far = { x: 200, y: 0, z: 200, radius: 0.45, vx: 0, vz: 0 };
     for (let t = 0; t < 90; t++) enemies.update(DT, far, collision);
     let minDist = Infinity;
     for (let i = 0; i < enemies.count; i++) {
@@ -62,9 +64,24 @@ describe('enemigos', () => {
     const ground = world.heightfield.heightAt(0, 0);
     enemies.spawn(PELUSA, 0.6, ground, 0, 1, 1);
     enemies.rebuildGrid();
-    const target = { x: 0, y: ground, z: 0, radius: 0.45 };
+    const target = { x: 0, y: ground, z: 0, radius: 0.45, vx: 0, vz: 0 };
     expect(enemies.update(DT, target, collision)).toBeGreaterThan(0);
     expect(enemies.update(DT, target, collision)).toBe(0);
+  });
+
+  it('frenan al jugador que los empuja de frente; no si se aleja, pasa de lado o está quieto', () => {
+    const ground = world.heightfield.heightAt(0, 0);
+    const pressureWith = (vx: number, vz: number): number => {
+      const enemies = new EnemySystem(8, world.heightfield.size);
+      enemies.spawn(PELUSA, 0.6, ground, 0, 1, 1); // Pegada al jugador, hacia +x.
+      enemies.rebuildGrid();
+      enemies.update(DT, { x: 0, y: ground, z: 0, radius: 0.45, vx, vz }, collision);
+      return enemies.playerPressure;
+    };
+    expect(pressureWith(9, 0)).toBeCloseTo(1); // De frente: una pelusa (masa 1).
+    expect(pressureWith(-9, 0)).toBe(0); // Alejándose.
+    expect(pressureWith(0, 9)).toBeLessThan(0.05); // De lado.
+    expect(pressureWith(0, 0)).toBe(0); // Quieto.
   });
 
   it('subirse a una roca o a unas cajas no protege; a lo alto de un muro, sí', () => {
@@ -73,7 +90,7 @@ describe('enemigos', () => {
       const enemies = new EnemySystem(8, world.heightfield.size);
       enemies.spawn(PELUSA, 0.6, ground, 0, 1, 1);
       enemies.rebuildGrid();
-      return enemies.update(DT, { x: 0, y: ground + height, z: 0, radius: 0.45 }, collision);
+      return enemies.update(DT, { x: 0, y: ground + height, z: 0, radius: 0.45, vx: 0, vz: 0 }, collision);
     };
     expect(contactAt(1.2)).toBeGreaterThan(0);
     expect(contactAt(3)).toBe(0);
@@ -158,6 +175,54 @@ describe('partida', () => {
     expect(maxFlash).toBeGreaterThan(0);
     expect(maxFlash).toBeLessThanOrEqual(WEAPONS.naftalina.hitFlash);
     expect(WEAPONS.naftalina.hitFlash).toBeLessThan(WEAPONS.chancla.hitFlash);
+  });
+
+  it('atravesar una horda frena un poco, pero no encierra (ni rodeada)', () => {
+    const forward: PlayerIntent = { moveX: 1, moveZ: 0, jumpPressed: false, jumpHeld: false, slidePressed: false, slideHeld: false };
+    const spawnAt = (run: Run, x: number, z: number): void => {
+      run.enemies.spawn(PELUSA, x, world.heightfield.heightAt(x, z), z, 1, 1);
+    };
+    /** Corre hacia +x desde `startX` hasta x = 8 y mide cuánto tarda y cuánto la frenan. */
+    const cross = (horde: 'none' | 'wall' | 'ring', startX: number) => {
+      const run = newRun();
+      run.weapons.length = 0; // Sin armas: la horda no se deshace sola.
+      run.invincible = true;
+      const body = new PlayerBody();
+      body.placeAt(startX, world.heightfield.heightAt(startX, 0), 0);
+      if (horde === 'wall') {
+        // Un muro de pelusas de 3 filas cruzado en el camino.
+        for (let row = 0; row < 3; row++) for (let k = -6; k <= 6; k++) spawnAt(run, row * 1.05, k * 1.05);
+      } else if (horde === 'ring') {
+        // Rodeada por tres anillos de pelusas.
+        for (const r of [1.1, 2.15, 3.2]) {
+          const n = Math.floor((2 * Math.PI * r) / 1.05);
+          for (let k = 0; k < n; k++) spawnAt(run, startX + Math.cos((k / n) * 2 * Math.PI) * r, Math.sin((k / n) * 2 * Math.PI) * r);
+        }
+      }
+      run.enemies.rebuildGrid();
+      let time = 0;
+      let minSpeed = Infinity;
+      let maxSlow = 0;
+      while (body.x < 8 && time < 10) {
+        stepPlayerInCrowd(body, forward, collision, PLAYER_TUNING, PLAYER_BASE_STATS.moveSpeed, run.crowdSlow, DT);
+        run.update(DT, body, 0);
+        time += DT;
+        if (time > 0.3) minSpeed = Math.min(minSpeed, body.horizontalSpeed);
+        maxSlow = Math.max(maxSlow, run.crowdSlow);
+      }
+      return { time, minSpeed, maxSlow };
+    };
+    const floor = PLAYER_BASE_STATS.moveSpeed * (1 - CROWD_CONFIG.maxSlow) - 0.2;
+    for (const startX of [-8, 0]) {
+      const free = cross('none', startX);
+      const horde = cross(startX < 0 ? 'wall' : 'ring', startX);
+      console.log(`[horda] ${startX < 0 ? 'muro' : 'rodeada'}: libre ${free.time.toFixed(2)} s · con horda ${horde.time.toFixed(2)} s · velocidad mínima ${horde.minSpeed.toFixed(2)} m/s · frenado máximo ${(horde.maxSlow * 100).toFixed(0)} %`);
+      expect(free.maxSlow).toBe(0);
+      expect(horde.maxSlow).toBeGreaterThan(0.3); // Se nota...
+      expect(horde.time).toBeGreaterThan(free.time * 1.05); // ...tarda más...
+      expect(horde.time).toBeLessThan(free.time * 1.6); // ...pero se sale.
+      expect(horde.minSpeed).toBeGreaterThan(floor); // Nunca frena más que el tope.
+    }
   });
 
   it('una partida simulada avanza: mata, sube de nivel y consigue la segunda arma', () => {

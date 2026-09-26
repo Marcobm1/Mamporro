@@ -99,7 +99,7 @@ export const es = {
   'debug.state.sliding': 'deslizando',
   'debug.state.steep': 'resbalando',
   'debug.entities': 'Enemigos: {enemies} · Proyectiles: {projectiles} · Gemas: {gems} · Partículas: {particles}',
-  'debug.run': 'Tiempo: {time} · Vida: {hp} · XP: {xp}/{next}',
+  'debug.run': 'Tiempo: {time} · Vida: {hp} · XP: {xp}/{next} · Frenado: {slow} %',
   'debug.keys': '[1] Invencible [2] +Nivel [3] +1 min [4] +100 enemigos [5] Matar todo',
   'debug.invincibleOn': 'Invencible: SÍ',
   'debug.invincibleOff': 'Invencible: NO',

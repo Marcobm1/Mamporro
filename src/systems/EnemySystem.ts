@@ -32,10 +32,18 @@ export interface PlayerTarget {
   y: number;
   z: number;
   radius: number;
+  /** Velocidad horizontal del jugador (para saber a quién empuja de frente). */
+  vx: number;
+  vz: number;
 }
 
 export class EnemySystem {
   count = 0;
+  /**
+   * Empuje del último `update`: masa de los enemigos que el jugador aparta de
+   * frente (1 = una pelusa justo delante). Con él se calcula cuánto le frenan.
+   */
+  playerPressure = 0;
   // Estado
   readonly x: Float32Array;
   readonly y: Float32Array;
@@ -177,6 +185,8 @@ export class EnemySystem {
   update(dt: number, player: PlayerTarget, world: WorldCollision): number {
     const knockDecay = Math.exp(-KNOCKBACK_DECAY * dt);
     let contactDamage = 0;
+    let pressure = 0;
+    const playerSpeed = Math.hypot(player.vx, player.vz);
     const pos = this.pos;
 
     for (let i = 0; i < this.count; i++) {
@@ -249,7 +259,8 @@ export class EnemySystem {
       }
       world.clampInside(pos);
 
-      // No atraviesan al jugador: se quedan pegados y le hacen daño (si está a su alcance en altura).
+      // No atraviesan al jugador: los aparta (y le frenan si van de frente), se
+      // quedan pegados y le hacen daño si está a su alcance en altura.
       const ex = pos.x - player.x;
       const ez = pos.z - player.z;
       const ed = Math.hypot(ex, ez);
@@ -258,6 +269,11 @@ export class EnemySystem {
         const k = ed > 1e-4 ? minD / ed : 0;
         pos.x = player.x + ex * k;
         pos.z = player.z + (ed > 1e-4 ? ez * k : minD);
+        if (playerSpeed > 0.1 && ed > 1e-4) {
+          // 1 si está justo delante de hacia donde va el jugador, 0 de lado o detrás.
+          const ahead = (ex * player.vx + ez * player.vz) / (ed * playerSpeed);
+          if (ahead > 0) pressure += ahead * def.mass;
+        }
         if ((this.attackCd[i] as number) <= 0) {
           contactDamage = Math.max(contactDamage, def.damage);
           this.attackCd[i] = ATTACK_COOLDOWN;
@@ -276,6 +292,7 @@ export class EnemySystem {
       this.phase[i] = (this.phase[i] as number) + dt * (4 + speed * 1.2);
     }
     this.rebuildGrid();
+    this.playerPressure = pressure;
     return contactDamage;
   }
 }

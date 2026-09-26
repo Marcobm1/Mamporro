@@ -65,6 +65,21 @@ export const PLAYER_BASE_STATS = {
   moveSpeed: 9.5,
 } as const;
 
+/**
+ * Frenado al atravesar una horda: Doña Remedios aparta a los enemigos, pero los
+ * que empuja de frente la frenan según su masa. Los de los lados o de detrás no.
+ */
+export const CROWD_CONFIG = {
+  /** Frenado por cada unidad de masa empujada de frente (0,2 = 20 % menos por pelusa). */
+  slowPerMass: 0.2,
+  /** Frenado máximo: como mucho se va al 60 % de la velocidad normal. */
+  maxSlow: 0.4,
+  /** Rapidez con la que el frenado sigue al empuje (1/s): suaviza la entrada y la salida. */
+  response: 15,
+  /** Deceleración extra con el frenado máximo (m/s²): frena también deslizamientos y saltos. */
+  brake: 45,
+} as const;
+
 export const CAMERA_CONFIG = {
   distance: 6.2,
   minDistance: 1.1,

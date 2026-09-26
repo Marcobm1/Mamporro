@@ -99,7 +99,7 @@ export const en: Record<TranslationKey, string> = {
   'debug.state.sliding': 'sliding',
   'debug.state.steep': 'slipping',
   'debug.entities': 'Enemies: {enemies} · Projectiles: {projectiles} · Gems: {gems} · Particles: {particles}',
-  'debug.run': 'Time: {time} · HP: {hp} · XP: {xp}/{next}',
+  'debug.run': 'Time: {time} · HP: {hp} · XP: {xp}/{next} · Slowdown: {slow}%',
   'debug.keys': '[1] Invincible [2] +Level [3] +1 min [4] +100 enemies [5] Kill all',
   'debug.invincibleOn': 'Invincible: ON',
   'debug.invincibleOff': 'Invincible: OFF',

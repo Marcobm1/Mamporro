@@ -176,6 +176,16 @@ function scaleHorizontal(b: PlayerBody, newSpeed: number): void {
   b.vz *= k;
 }
 
+/**
+ * Frena la velocidad horizontal hacia `limit`, como mucho `maxDelta` (m/s), sin
+ * cambiar la dirección. Nunca acelera: si ya va más despacio, no hace nada.
+ */
+export function brakeHorizontal(b: PlayerBody, limit: number, maxDelta: number): void {
+  const speed = Math.hypot(b.vx, b.vz);
+  if (speed <= limit) return;
+  scaleHorizontal(b, Math.max(limit, speed - Math.max(0, maxDelta)));
+}
+
 function startSlide(
   b: PlayerBody,
   dirX: number,
