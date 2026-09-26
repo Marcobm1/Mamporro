@@ -73,16 +73,16 @@ export class WorldCollision implements PhysicsWorld {
   }
 
   /**
-   * Versión ligera para enemigos: saca un círculo de los obstáculos sólidos.
-   * Devuelve true si ha habido contacto.
+   * Versión ligera para enemigos: saca un círculo de los obstáculos sólidos
+   * (los más bajos que `step` se pueden subir). Devuelve true si ha habido contacto.
    */
-  pushOutCircle(pos: CirclePosition, radius: number, feetY: number): boolean {
+  pushOutCircle(pos: CirclePosition, radius: number, feetY: number, step: number): boolean {
     const colliders = this.grid.colliders;
     const push = this.push;
     let hit = false;
     for (const index of this.grid.query(pos.x, pos.z, radius + 1, this.nearby)) {
       const c = colliders[index];
-      if (!c || feetY + 0.4 >= c.top || feetY + BODY_HEIGHT < c.bottom) continue;
+      if (!c || feetY + step >= c.top || feetY + BODY_HEIGHT < c.bottom) continue;
       if (!pushOut(c, pos.x, pos.z, radius, push)) continue;
       pos.x += push.dx;
       pos.z += push.dz;

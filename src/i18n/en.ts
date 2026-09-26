@@ -55,6 +55,14 @@ export const en: Record<TranslationKey, string> = {
 
   'hud.fps': '{fps} FPS',
 
+  'character.remedios': 'Doña Remedios',
+  'enemy.pelusa': 'Rebel Dust Bunny',
+  'enemy.cucaracha': 'Turbo Cockroach',
+  'weapon.chancla': 'Homing Slipper',
+  'weapon.chancla.desc': 'Seeks the nearest enemy. Never misses. Almost never.',
+  'weapon.naftalina': 'Eau de Mothball',
+  'weapon.naftalina.desc': "A cloud of grandma's-wardrobe smell that hurts anyone who gets close.",
+
   'debug.title': 'DEBUG · F3',
   'debug.fps': 'FPS',
   'debug.frame': 'Frame',

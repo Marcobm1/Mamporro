@@ -55,6 +55,14 @@ export const es = {
 
   'hud.fps': '{fps} FPS',
 
+  'character.remedios': 'Doña Remedios',
+  'enemy.pelusa': 'Pelusa Rebelde',
+  'enemy.cucaracha': 'Cucaracha Turbo',
+  'weapon.chancla': 'Chancla Teledirigida',
+  'weapon.chancla.desc': 'Busca al enemigo más cercano. Nunca falla. Casi nunca.',
+  'weapon.naftalina': 'Eau de Naftalina',
+  'weapon.naftalina.desc': 'Nube de olor a armario de abuela que daña a todo el que se acerque.',
+
   'debug.title': 'DEBUG · F3',
   'debug.fps': 'FPS',
   'debug.frame': 'Frame',
