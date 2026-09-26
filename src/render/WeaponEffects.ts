@@ -99,16 +99,18 @@ export class ArcRenderer {
 
 const MAX_ORBS = 16;
 
-/** Dentadura postiza: encía rosa con dos filas de dientes. */
+/**
+ * Dentadura postiza: dos encías finas detrás y dos filas de dientes grandes
+ * que sobresalen por delante (su +z), en arco.
+ */
 function dentureGeometry(): BufferGeometry {
   const parts: BufferGeometry[] = [];
   for (const jaw of [1, -1]) {
-    const y = jaw * 0.13;
-    parts.push(colored(new BoxGeometry(0.62, 0.12, 0.36).translate(0, y + jaw * 0.08, -0.04), PALETTE.gums));
-    for (let k = 0; k < 5; k++) {
-      const x = (k - 2) * 0.12;
-      const back = Math.abs(k - 2) * 0.05;
-      parts.push(colored(new BoxGeometry(0.1, 0.13, 0.1).translate(x, y, 0.1 - back), PALETTE.teeth));
+    parts.push(colored(new BoxGeometry(0.66, 0.1, 0.22).translate(0, jaw * 0.2, -0.08), PALETTE.gums));
+    for (let k = 0; k < 6; k++) {
+      const x = (k - 2.5) * 0.11;
+      const back = Math.abs(k - 2.5) * 0.035;
+      parts.push(colored(new BoxGeometry(0.1, 0.16, 0.11).translate(x, jaw * 0.09, 0.1 - back), PALETTE.teeth));
     }
   }
   return mergeColored(parts);
