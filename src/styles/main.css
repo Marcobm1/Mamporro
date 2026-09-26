@@ -412,7 +412,7 @@ body {
 }
 
 .panel--wide {
-  max-width: min(96vw, calc(var(--fp) * 440));
+  max-width: min(96vw, calc(var(--fp) * 460));
 }
 
 .pause-columns {
@@ -609,4 +609,262 @@ body {
 .stats dd {
   margin: 0;
   text-align: right;
+}
+
+/* ---------- Subida de nivel ---------- */
+
+.screen--levelup {
+  flex-direction: column;
+  gap: calc(var(--fp) * 5);
+  background: radial-gradient(ellipse at center, rgba(10, 8, 20, 0.55), rgba(10, 8, 20, 0.85));
+}
+
+.screen--banish {
+  background: radial-gradient(ellipse at center, rgba(40, 8, 12, 0.6), rgba(24, 6, 10, 0.88));
+}
+
+.levelup__title {
+  margin: 0;
+  font-size: calc(var(--fp) * 26);
+  line-height: calc(var(--fp) * 28);
+  font-weight: normal;
+  color: var(--accent);
+  text-shadow: calc(var(--fp) * 2) calc(var(--fp) * 2) 0 var(--ink);
+}
+
+.levelup__subtitle,
+.levelup__pending {
+  color: var(--text-dim);
+  text-shadow: var(--fp) var(--fp) 0 var(--ink);
+}
+
+.levelup__pending {
+  color: var(--good);
+}
+
+.levelup__cards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: stretch;
+  gap: calc(var(--fp) * 8);
+}
+
+.card {
+  --tone: var(--text-dim);
+  --tone-dark: var(--border-dark);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: calc(var(--fp) * 3);
+  width: calc(var(--fp) * 124);
+  min-height: calc(var(--fp) * 150);
+  padding: calc(var(--fp) * 7) calc(var(--fp) * 7) calc(var(--fp) * 8);
+  border: 0;
+  cursor: pointer;
+  text-align: left;
+  color: var(--text);
+  background: linear-gradient(to bottom, var(--tone-dark), var(--panel) 45%);
+  box-shadow:
+    0 0 0 var(--fp) var(--ink),
+    0 0 0 calc(var(--fp) * 3) var(--tone),
+    0 0 0 calc(var(--fp) * 4) var(--ink),
+    calc(var(--fp) * 4) calc(var(--fp) * 4) 0 calc(var(--fp) * 3) rgba(0, 0, 0, 0.45);
+}
+
+/* Solo al abrir una subida nueva (no al cambiar ni descartar cartas). */
+.levelup--animate .card {
+  animation: card-in 0.4s steps(4) backwards;
+}
+
+.levelup--animate .card:nth-child(2) {
+  animation-delay: 0.05s;
+}
+
+.levelup--animate .card:nth-child(3) {
+  animation-delay: 0.1s;
+}
+
+.levelup--animate .card:nth-child(4) {
+  animation-delay: 0.15s;
+}
+
+.card:hover,
+.card:focus-visible {
+  outline: none;
+  transform: translateY(calc(var(--fp) * -3));
+}
+
+.card__key {
+  position: absolute;
+  top: calc(var(--fp) * -7);
+  left: calc(var(--fp) * -5);
+  min-width: calc(var(--fp) * 13);
+  padding: 0 calc(var(--fp) * 2) var(--fp);
+  text-align: center;
+  color: var(--ink);
+  background: var(--tone);
+  box-shadow: 0 0 0 var(--fp) var(--ink);
+}
+
+.card__tag {
+  color: var(--tone);
+}
+
+.card__title {
+  font-size: calc(var(--fp) * 15);
+  line-height: calc(var(--fp) * 16);
+  color: var(--text);
+}
+
+.card__level {
+  color: var(--text-dim);
+}
+
+.card__lines {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fp);
+  color: var(--good);
+}
+
+.card__desc {
+  color: var(--text-dim);
+}
+
+.card--common {
+  --tone: #c8c0dc;
+  --tone-dark: #3b3450;
+}
+
+.card--uncommon {
+  --tone: #8cc84b;
+  --tone-dark: #24401a;
+}
+
+.card--rare {
+  --tone: #4aa8ff;
+  --tone-dark: #16304e;
+}
+
+.card--epic {
+  --tone: #c070ff;
+  --tone-dark: #3c1c5a;
+}
+
+.card--legendary {
+  --tone: #ffb020;
+  --tone-dark: #5a3a08;
+  animation: legendary 1.2s steps(6) infinite;
+}
+
+.levelup--animate .card--legendary {
+  animation:
+    card-in 0.4s steps(4) backwards,
+    legendary 1.2s steps(6) infinite;
+}
+
+.card--new {
+  --tone: #f4efe0;
+  --tone-dark: #4a4458;
+}
+
+.card--heal {
+  --tone: #7fd8c8;
+  --tone-dark: #1c4440;
+}
+
+.card--banish {
+  --tone: var(--bad);
+  --tone-dark: #501818;
+}
+
+.card--banish .card__title {
+  text-decoration: line-through;
+}
+
+.card--disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.levelup__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: calc(var(--fp) * 5);
+}
+
+.levelup__action:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.levelup__action--on {
+  background: var(--bad);
+}
+
+.levelup__keycap {
+  display: inline-block;
+  min-width: calc(var(--fp) * 11);
+  margin-right: calc(var(--fp) * 4);
+  padding: 0 var(--fp) var(--fp);
+  text-align: center;
+  color: var(--ink);
+  background: var(--text);
+}
+
+@keyframes card-in {
+  from {
+    transform: translateY(calc(var(--fp) * 14));
+    opacity: 0;
+  }
+}
+
+@keyframes legendary {
+  50% {
+    box-shadow:
+      0 0 0 var(--fp) var(--ink),
+      0 0 0 calc(var(--fp) * 3) #fff1b8,
+      0 0 0 calc(var(--fp) * 4) var(--ink),
+      calc(var(--fp) * 4) calc(var(--fp) * 4) 0 calc(var(--fp) * 3) rgba(0, 0, 0, 0.45);
+  }
+}
+
+/* ---------- Pausa: estadísticas y armas/tomos ---------- */
+
+.pause-run {
+  min-width: calc(var(--fp) * 120);
+}
+
+.stats--compact {
+  gap: 0 calc(var(--fp) * 8);
+  line-height: calc(var(--fp) * 11);
+}
+
+
+/* ---------- HUD: tomos ---------- */
+
+.hud__build {
+  position: absolute;
+  left: calc(var(--fp) * 7);
+  bottom: calc(var(--fp) * 7);
+  display: flex;
+  align-items: flex-end;
+  gap: calc(var(--fp) * 6);
+}
+
+.hud__build .hud__weapons {
+  position: static;
+}
+
+.hud__tomes {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--fp) * 3);
+}
+
+.chip--tome {
+  box-shadow: 0 0 0 var(--fp) #7fd8c8;
 }

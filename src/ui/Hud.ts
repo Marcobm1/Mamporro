@@ -1,4 +1,4 @@
-// HUD de la partida: vida, experiencia y nivel, tiempo, bajas, armas, avisos y
+// HUD de la partida: vida, experiencia y nivel, tiempo, bajas, armas, tomos, avisos y
 // destello rojo al recibir un golpe. Se actualiza tocando solo lo que cambia.
 import { t } from '../i18n';
 import { h } from './dom';
@@ -18,6 +18,8 @@ export interface HudData {
   time: number;
   kills: number;
   weapons: readonly HudWeapon[];
+  /** Tomos, con su nombre corto. */
+  tomes: readonly HudWeapon[];
 }
 
 const NOTICE_MS = 2600;
@@ -37,9 +39,10 @@ export class Hud {
   private readonly timer: HTMLDivElement;
   private readonly kills: HTMLDivElement;
   private readonly weapons: HTMLDivElement;
+  private readonly tomes: HTMLDivElement;
   private readonly notices: HTMLDivElement;
   private readonly hurt: HTMLDivElement;
-  private last = { hp: -1, maxHp: -1, level: -1, xpPct: -1, time: -1, kills: -1, weapons: '' };
+  private last = { hp: -1, maxHp: -1, level: -1, xpPct: -1, time: -1, kills: -1, weapons: '', tomes: '' };
 
   constructor() {
     this.xpFill = h('div', { className: 'xpbar__fill' });
@@ -49,6 +52,7 @@ export class Hud {
     this.timer = h('div', { className: 'hud__timer' });
     this.kills = h('div', { className: 'hud__kills' });
     this.weapons = h('div', { className: 'hud__weapons' });
+    this.tomes = h('div', { className: 'hud__tomes' });
     this.notices = h('div', { className: 'hud__notices' });
     this.hurt = h('div', { className: 'hud__hurt' });
     this.root = h(
@@ -59,7 +63,7 @@ export class Hud {
       h('div', { className: 'hud__topleft' }, this.level, h('div', { className: 'hpbar' }, this.hpFill, this.hpText)),
       this.timer,
       this.kills,
-      this.weapons,
+      h('div', { className: 'hud__build' }, this.weapons, this.tomes),
       this.notices,
     );
     this.root.hidden = true;
@@ -71,7 +75,7 @@ export class Hud {
 
   /** Fuerza a redibujar todo en la próxima actualización (p. ej. al cambiar de idioma). */
   invalidate(): void {
-    this.last = { hp: -1, maxHp: -1, level: -1, xpPct: -1, time: -1, kills: -1, weapons: '' };
+    this.last = { hp: -1, maxHp: -1, level: -1, xpPct: -1, time: -1, kills: -1, weapons: '', tomes: '' };
   }
 
   update(d: HudData): void {
@@ -106,6 +110,13 @@ export class Hud {
       last.weapons = weaponsKey;
       this.weapons.replaceChildren(
         ...d.weapons.map((w) => h('div', { className: 'chip', text: t('hud.weaponLevel', { name: w.name, n: w.level }) })),
+      );
+    }
+    const tomesKey = d.tomes.map((w) => `${w.name}:${w.level}`).join('|');
+    if (tomesKey !== last.tomes) {
+      last.tomes = tomesKey;
+      this.tomes.replaceChildren(
+        ...d.tomes.map((w) => h('div', { className: 'chip chip--tome', text: t('hud.weaponLevel', { name: w.name, n: w.level }) })),
       );
     }
   }

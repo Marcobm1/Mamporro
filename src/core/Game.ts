@@ -1,8 +1,10 @@
-// Orquestador del juego: estados (inicio, jugando, pausa, game over), bucle,
-// entrada, mundo, jugador, partida, cámara, render e interfaz.
+// Orquestador del juego: estados (inicio, jugando, subida de nivel, pausa, game
+// over), bucle, entrada, mundo, jugador, partida, cámara, render e interfaz.
 import { Color, DirectionalLight, Fog, HemisphereLight, Scene, type Mesh } from 'three';
 import { CHARACTERS } from '../data/characters';
 import { PLAYER_BASE_STATS, PLAYER_TUNING, RENDER_CONFIG } from '../data/config';
+import { TOMES, type TomeId } from '../data/tomes';
+import type { WeaponId } from '../data/weapons';
 import { PlayerBody, type PlayerIntent } from '../entities/playerPhysics';
 import { PlayerView, type PlayerFrameEvents } from '../entities/PlayerView';
 import { detectLanguage, setLanguage, t, type TranslationKey } from '../i18n';
@@ -17,8 +19,9 @@ import { browserStorage, SaveManager } from '../save/SaveManager';
 import type { Settings } from '../save/schema';
 import { stepPlayerInCrowd } from '../systems/crowd';
 import { xpToNextLevel } from '../systems/progression';
+import { describeCard, statLines } from '../ui/cards';
 import { loadPixelFont } from '../ui/font/pixelFont';
-import { UI } from '../ui/UI';
+import { UI, type PauseRunInfo } from '../ui/UI';
 import { World, type WorldTextures } from '../world/World';
 import { GameLoop } from './GameLoop';
 import { Input } from './Input';
@@ -26,7 +29,7 @@ import { damp, lerp, RAD2DEG, type Vec3Like } from './math';
 import { normalizeSeed, randomSeed } from './rng';
 import { Run } from './Run';
 
-export type GameState = 'loading' | 'title' | 'playing' | 'paused' | 'gameover';
+export type GameState = 'loading' | 'title' | 'playing' | 'levelup' | 'paused' | 'gameover';
 
 export interface GameOptions {
   /** Modo de pruebas automáticas: sin Pointer Lock y con ganchos en `window`. */
@@ -70,6 +73,16 @@ export interface TestHooks {
   teleport(x: number, z: number): void;
   /** Quita vida al jugador (para probar el game over sin esperar). */
   hurtPlayer(amount: number): void;
+  /** Subida de nivel abierta (o null). */
+  levelUp(): { level: number; pending: number; cards: Array<{ kind: string; key: string | null; rarity?: string }> } | null;
+  choose(index: number): void;
+  reroll(): void;
+  skip(): void;
+  banish(index: number): void;
+  addWeapon(id: WeaponId): boolean;
+  addTome(id: TomeId): boolean;
+  /** Congela los efectos visuales (no envejecen) para poder fotografiar los de un instante. */
+  freezeEffects(frozen: boolean): void;
 }
 
 declare global {
@@ -98,6 +111,8 @@ export class Game {
   private seed: string;
   private state: GameState = 'loading';
   private run: Run | null = null;
+  /** Solo pruebas: los efectos visuales no envejecen. */
+  private effectsFrozen = false;
 
   private readonly prev = { x: 0, y: 0, z: 0 };
   /** Posición interpolada del jugador en el frame actual (la que se dibuja). */
@@ -138,7 +153,7 @@ export class Game {
 
     this.ui = new UI(
       uiRoot,
-      { settings: () => this.save.settings, seed: () => this.seed },
+      { settings: () => this.save.settings, seed: () => this.seed, runInfo: () => this.pauseRunInfo() },
       {
         onPlay: (seedText) => this.startRun(seedText),
         onNewMap: () => this.regenerateWorld(randomSeed()),
@@ -147,6 +162,10 @@ export class Game {
         onRetry: () => this.retry(false),
         onRetryNewMap: () => this.retry(true),
         onSettingsChange: (patch) => this.changeSettings(patch),
+        onChoose: (index) => this.levelUpAction((run) => run.choose(index), true),
+        onReroll: () => this.levelUpAction((run) => run.reroll(), false),
+        onSkip: () => this.levelUpAction((run) => run.skip(), true),
+        onBanish: (index) => this.levelUpAction((run) => run.banish(index), false),
       },
     );
     this.loop = new GameLoop({
@@ -258,6 +277,56 @@ export class Game {
     this.capturePointer();
   }
 
+  /** Pausa la partida para elegir carta; el ratón se suelta para poder hacer clic. */
+  private enterLevelUp(): void {
+    this.state = 'levelup';
+    // Soltarlo desde el juego (y no con Esc) permite recapturarlo al elegir sin esperas.
+    this.input.exitPointerLock();
+    this.showLevelUp(true);
+  }
+
+  private showLevelUp(fresh: boolean): void {
+    const run = this.run;
+    if (!run?.offer) return;
+    const owned = {
+      weapon: (id: string) => run.weapons.find((w) => w.def.id === id)?.level ?? 0,
+      tome: (id: string) => run.tomes.find((tm) => tm.def.id === id)?.level ?? 0,
+    };
+    this.ui.showLevelUp(
+      {
+        level: run.level - run.pendingLevelUps + 1,
+        pending: run.pendingLevelUps - 1,
+        cards: run.offer.map((card) => describeCard(card, owned)),
+        rerolls: run.rerolls,
+        skips: run.skips,
+        banishes: run.banishes,
+      },
+      fresh,
+    );
+  }
+
+  /**
+   * Elegir, saltar, cambiar o descartar (solo con la subida de nivel abierta).
+   * Después: la siguiente subida pendiente o la vuelta al juego. `closes` indica
+   * si la acción cierra esta subida (elegir, saltar) o solo cambia sus cartas.
+   */
+  private levelUpAction(action: (run: Run) => boolean, closes: boolean): void {
+    const run = this.run;
+    if (!run || this.state !== 'levelup' || !action(run)) return;
+    if (run.offer) {
+      this.showLevelUp(closes);
+      return;
+    }
+    this.ui.show('none');
+    this.capturePointer();
+  }
+
+  /** Estadísticas del personaje para la pausa. */
+  private pauseRunInfo(): PauseRunInfo | null {
+    const run = this.run;
+    return run ? { stats: statLines(run.stats, run.hp) } : null;
+  }
+
   private gameOver(): void {
     const run = this.run;
     if (!run) return;
@@ -284,13 +353,23 @@ export class Game {
   private bindEvents(): void {
     this.input.onPointerLockChange((locked) => {
       if (locked && (this.state === 'title' || this.state === 'paused' || this.state === 'gameover')) this.enterPlaying();
+      else if (locked && this.state === 'levelup' && !this.run?.offer) this.enterPlaying();
       else if (!locked && this.state === 'playing') this.pause();
     });
     this.input.onPointerLockError(() => {
       if (this.state !== 'playing') this.ui.toast(t('error.pointerLock'));
+      // Si no se pudo recapturar tras elegir carta, se pasa a la pausa para volver con un clic.
+      if (this.state === 'levelup' && !this.run?.offer) {
+        this.state = 'paused';
+        this.ui.show('pause');
+      }
     });
     this.input.onKey((code) => {
       if (code === 'F3') this.ui.setDebugVisible(!this.ui.debugVisible);
+      if (this.state === 'levelup') {
+        this.ui.levelUpKey(code);
+        return;
+      }
       // Con el ratón capturado, Esc lo gestiona el navegador (y pausamos al perder
       // la captura); esto cubre el caso de jugar sin captura.
       if (code === 'Escape') this.pause();
@@ -305,7 +384,7 @@ export class Game {
     // Red de seguridad: con una partida en marcha, el navegador pide confirmación
     // antes de cerrar la pestaña (p. ej. por un Ctrl+W accidental).
     window.addEventListener('beforeunload', (event) => {
-      if (this.state === 'playing' || this.state === 'paused') {
+      if (this.state === 'playing' || this.state === 'levelup' || this.state === 'paused') {
         event.preventDefault();
         event.returnValue = '';
       }
@@ -426,6 +505,7 @@ export class Game {
       if (run) {
         run.update(dt, this.body, this.rig.yaw);
         if (run.dead) this.gameOver();
+        else if (run.openLevelUp()) this.enterLevelUp();
       }
     }
     this.input.endTick();
@@ -477,7 +557,8 @@ export class Game {
     this.drawPos.x = x;
     this.drawPos.y = y;
     this.drawPos.z = z;
-    this.runView.update(this.state === 'playing' ? alpha : 1, this.state === 'playing' ? frameDt : 0, now, this.drawPos);
+    const effectsDt = this.state === 'playing' && !this.effectsFrozen ? frameDt : 0;
+    this.runView.update(this.state === 'playing' ? alpha : 1, effectsDt, now, this.drawPos);
     if (run) {
       this.ui.hud.update({
         hp: run.hp,
@@ -488,6 +569,7 @@ export class Game {
         time: run.time,
         kills: run.kills,
         weapons: run.weapons.map((w) => ({ name: t(w.def.nameKey), level: w.level })),
+        tomes: run.tomes.map((tm) => ({ name: t(tm.def.shortKey), level: tm.level })),
       });
     }
     this.renderer.render(this.scene, this.rig.camera);
@@ -605,6 +687,24 @@ export class Game {
         this.prev.x = x;
         this.prev.y = y;
         this.prev.z = z;
+      },
+      levelUp: () => {
+        const run = this.run;
+        if (!run?.offer || this.state !== 'levelup') return null;
+        return {
+          level: run.level - run.pendingLevelUps + 1,
+          pending: run.pendingLevelUps - 1,
+          cards: run.offer.map((c) => ({ kind: c.kind, key: c.key, rarity: 'rarity' in c ? c.rarity : undefined })),
+        };
+      },
+      choose: (index) => this.levelUpAction((run) => run.choose(index), true),
+      reroll: () => this.levelUpAction((run) => run.reroll(), false),
+      skip: () => this.levelUpAction((run) => run.skip(), true),
+      banish: (index) => this.levelUpAction((run) => run.banish(index), false),
+      addWeapon: (id) => this.run?.debugAddWeapon(id) ?? false,
+      addTome: (id) => (TOMES[id] ? (this.run?.debugAddTome(id) ?? false) : false),
+      freezeEffects: (frozen) => {
+        this.effectsFrozen = frozen;
       },
     };
   }

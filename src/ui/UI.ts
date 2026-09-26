@@ -1,14 +1,17 @@
-// Capa de interfaz HTML superpuesta al canvas: pantallas (inicio, pausa, game
-// over), HUD, FPS, panel de debug y avisos. No contiene lógica de juego: avisa con callbacks.
+// Capa de interfaz HTML superpuesta al canvas: pantallas (inicio, pausa, subida de
+// nivel, game over), HUD, FPS, panel de debug y avisos. No contiene lógica de juego:
+// avisa con callbacks.
 import { onLanguageChange, t, type TranslationKey } from '../i18n';
 import type { Settings } from '../save/schema';
+import type { StatLine } from './cards';
 import { controlsLegend, languageSelector, optionsPanel } from './components';
 import { applyUiScale, button, h } from './dom';
 import { formatTime, Hud } from './Hud';
+import { LevelUpScreen, type LevelUpCallbacks, type LevelUpView } from './LevelUpScreen';
 
-export type Screen = 'none' | 'title' | 'pause' | 'gameover';
+export type Screen = 'none' | 'title' | 'pause' | 'levelup' | 'gameover';
 
-export interface UICallbacks {
+export interface UICallbacks extends LevelUpCallbacks {
   onPlay(seedText: string): void;
   onNewMap(): void;
   onResume(): void;
@@ -40,9 +43,15 @@ export interface DebugRunInfo {
   slow: number;
 }
 
+/** Lo que la pausa enseña de la partida en curso (las armas y tomos ya están en el HUD). */
+export interface PauseRunInfo {
+  stats: StatLine[];
+}
+
 export interface UIContext {
   settings(): Settings;
   seed(): string;
+  runInfo(): PauseRunInfo | null;
 }
 
 export interface DebugInfo {
@@ -77,6 +86,8 @@ export class UI {
   /** Lo que el jugador lleva escrito en el campo de semilla (sobrevive a cambios de idioma). */
   private seedDraft = '';
   private gameOver: GameOverSummary | null = null;
+  private levelUpView: LevelUpView | null = null;
+  private readonly levelUp: LevelUpScreen;
   readonly hud = new Hud();
 
   constructor(
@@ -89,6 +100,7 @@ export class UI {
     this.debugEl = h('div', { className: 'debug' });
     this.debugEl.hidden = true;
     this.toastEl = h('div', { className: 'toast toast--hidden' });
+    this.levelUp = new LevelUpScreen(callbacks);
     root.append(this.hud.root, this.fpsEl, this.debugEl, this.toastEl);
 
     applyUiScale(root);
@@ -114,8 +126,23 @@ export class UI {
     this.screenEl = null;
     if (this.screen === 'title') this.screenEl = this.buildTitle();
     else if (this.screen === 'pause') this.screenEl = this.buildPause();
+    else if (this.screen === 'levelup' && this.levelUpView) this.screenEl = this.levelUp.render(this.levelUpView, false);
     else if (this.screen === 'gameover' && this.gameOver) this.screenEl = this.buildGameOver(this.gameOver);
     if (this.screenEl) this.root.prepend(this.screenEl);
+  }
+
+  /** Muestra (o actualiza) la subida de nivel; `fresh` = subida nueva, no un Reroll o un Descartar. */
+  showLevelUp(view: LevelUpView, fresh: boolean): void {
+    this.levelUpView = view;
+    this.screen = 'levelup';
+    this.screenEl?.remove();
+    this.screenEl = this.levelUp.render(view, fresh);
+    this.root.prepend(this.screenEl);
+  }
+
+  /** Atajos de la subida de nivel; devuelve true si la tecla era suya. */
+  levelUpKey(code: string): boolean {
+    return this.screen === 'levelup' && this.levelUp.handleKey(code);
   }
 
   showGameOver(summary: GameOverSummary): void {
@@ -283,10 +310,23 @@ export class UI {
           { className: 'row' },
           button(t('pause.resume'), () => this.callbacks.onResume(), 'btn btn--big'),
           button(t('pause.backToTitle'), () => this.callbacks.onBackToTitle(), 'btn btn--secondary'),
+          h('div', { className: 'muted', text: t('pause.seed', { seed: this.ctx.seed() }) }),
         ),
-        h('div', { className: 'muted', text: t('pause.seed', { seed: this.ctx.seed() }) }),
-        h('div', { className: 'row pause-columns' }, options, legend),
+        h('div', { className: 'row pause-columns' }, this.buildRunInfo(), h('div', { className: 'stack' }, options, legend)),
       ),
+    );
+  }
+
+  /** Estadísticas del personaje (solo con una partida en marcha). */
+  private buildRunInfo(): HTMLElement | null {
+    const info = this.ctx.runInfo();
+    if (!info) return null;
+    const stat = (label: string, value: string): Node[] => [h('dt', { text: label }), h('dd', { text: value })];
+    return h(
+      'div',
+      { className: 'pause-run stack' },
+      h('div', { className: 'muted', text: t('pause.stats') }),
+      h('dl', { className: 'stats stats--compact' }, ...info.stats.flatMap((l) => stat(l.label, l.value))),
     );
   }
 }
