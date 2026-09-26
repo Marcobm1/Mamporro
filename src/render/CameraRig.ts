@@ -25,6 +25,8 @@ export class CameraRig {
   distanceScale = 1;
 
   private distance: number = CAMERA_CONFIG.distance;
+  /** "Trauma" de la sacudida (0..1): el temblor es proporcional a su cuadrado. */
+  private trauma = 0;
   private pivotHeight: number = CAMERA_CONFIG.pivotHeight;
   private fovExtra = 0;
   private readonly pivot = new Vector3();
@@ -60,6 +62,11 @@ export class CameraRig {
   setAspect(aspect: number): void {
     this.camera.aspect = aspect;
     this.camera.updateProjectionMatrix();
+  }
+
+  /** Sacude la cámara (golpes recibidos, explosiones...). */
+  shake(amount: number): void {
+    this.trauma = Math.min(1, this.trauma + amount);
   }
 
   /** Coloca la cámara directamente (sin suavizado), p. ej. al empezar una partida. */
@@ -101,6 +108,13 @@ export class CameraRig {
     );
     const floor = hf.heightAt(cam.x, cam.z) + cfg.collisionMargin;
     if (cam.y < floor) cam.y = floor;
+    if (this.trauma > 0) {
+      const s = this.trauma * this.trauma * 0.3;
+      cam.x += (Math.random() * 2 - 1) * s;
+      cam.y += (Math.random() * 2 - 1) * s;
+      cam.z += (Math.random() * 2 - 1) * s;
+      this.trauma = Math.max(0, this.trauma - dt * 2.5);
+    }
     this.camera.lookAt(this.pivot.x + this.dir.x, this.pivot.y + this.dir.y, this.pivot.z + this.dir.z);
 
     // Sensación de velocidad: el FOV se abre al superar la velocidad normal.

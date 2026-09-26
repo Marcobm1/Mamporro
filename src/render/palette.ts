@@ -59,6 +59,29 @@ export const PALETTE = {
   hat: 0x3a2e2a,
   water: 0x2a4a6a,
 
+  // Enemigos
+  pelusa: 0xb3aec2,
+  pelusaDark: 0x8a8598,
+  roach: 0x7a4322,
+  roachDark: 0x3a2012,
+  roachStripe: 0xf0c040,
+  eyeWhite: 0xf8f8f0,
+  pupil: 0x141018,
+  brow: 0x3a3548,
+
+  // Combate
+  gemBlue: 0x4aa8ff,
+  gemGreen: 0x5ce05c,
+  gemRed: 0xff5a5a,
+  gemPurple: 0xc070ff,
+  aura: 0xb27cff,
+  auraEdge: 0xe2c8ff,
+  numberNormal: 0xffffff,
+  numberCrit: 0xffd23f,
+  numberSuper: 0xff7a2f,
+  numberPlayer: 0xff4a4a,
+  dust: 0xd8cfb8,
+
   // Fauna
   bird: 0x2e2a3a,
   butterflyA: 0xf6e27a,
