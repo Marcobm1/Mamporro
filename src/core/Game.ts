@@ -1,6 +1,6 @@
 // Orquestador del juego: estados (inicio, jugando, pausa), bucle, entrada,
 // mundo, jugador, cámara, render e interfaz.
-import { Color, DirectionalLight, Fog, HemisphereLight, Scene, type Mesh, type Texture } from 'three';
+import { Color, DirectionalLight, Fog, HemisphereLight, Scene, type Mesh } from 'three';
 import { PLAYER_BASE_STATS, PLAYER_TUNING, RENDER_CONFIG } from '../data/config';
 import { PlayerBody, stepPlayer, type PlayerIntent } from '../entities/playerPhysics';
 import { PlayerView, type PlayerFrameEvents } from '../entities/PlayerView';
@@ -9,12 +9,13 @@ import { CameraRig } from '../render/CameraRig';
 import { PALETTE } from '../render/palette';
 import { RetroRenderer } from '../render/RetroRenderer';
 import { createSky, SUN_DIRECTION } from '../render/Sky';
-import { createBlobShadowTexture, createDetailTexture } from '../render/textures';
+import { retroUniforms } from '../render/retroMaterial';
+import { createBlobShadowTexture, createDetailTexture, createStoneTexture } from '../render/textures';
 import { browserStorage, SaveManager } from '../save/SaveManager';
 import type { Settings } from '../save/schema';
 import { loadPixelFont } from '../ui/font/pixelFont';
 import { UI } from '../ui/UI';
-import { World } from '../world/World';
+import { World, type WorldTextures } from '../world/World';
 import { GameLoop } from './GameLoop';
 import { Input } from './Input';
 import { damp, lerp, RAD2DEG, type Vec3Like } from './math';
@@ -35,9 +36,11 @@ export interface TestHooks {
   pause(): void;
   resume(): void;
   press(code: string, down: boolean): void;
-  setView(yaw: number, pitch: number): void;
+  setView(yaw: number, pitch: number, distanceScale?: number): void;
   setDebug(visible: boolean): void;
   player(): { x: number; y: number; z: number; speed: number; grounded: boolean; sliding: boolean };
+  sites(): Array<{ kind: string; x: number; z: number; rotation: number }>;
+  teleport(x: number, z: number): void;
 }
 
 declare global {
@@ -57,7 +60,7 @@ export class Game {
   private readonly scene = new Scene();
   private readonly loop: GameLoop;
   private readonly ui: UI;
-  private readonly detailTexture: Texture;
+  private readonly textures: WorldTextures;
   private readonly playerView: PlayerView;
   private readonly sky: Mesh;
   private world: World;
@@ -85,11 +88,11 @@ export class Game {
     this.renderer = new RetroRenderer(canvas);
     this.input = new Input(canvas);
     this.rig = new CameraRig(this.renderer.aspect);
-    this.detailTexture = createDetailTexture();
+    this.textures = { detail: createDetailTexture(), stone: createStoneTexture() };
     this.playerView = new PlayerView(createBlobShadowTexture());
     this.sky = createSky();
     this.seed = randomSeed();
-    this.world = new World(this.seed, this.detailTexture);
+    this.world = new World(this.seed, this.textures);
     this.setupScene();
 
     this.ui = new UI(
@@ -137,7 +140,7 @@ export class Game {
   private regenerateWorld(seed: string): void {
     this.world.dispose();
     this.seed = seed;
-    this.world = new World(seed, this.detailTexture);
+    this.world = new World(seed, this.textures);
     this.scene.add(this.world.group);
     this.resetPlayer();
     this.ui.refresh();
@@ -333,6 +336,9 @@ export class Game {
       frameDt,
     );
     this.sky.position.copy(this.rig.camera.position);
+    const now = performance.now() / 1000;
+    retroUniforms.uTime.value = now;
+    this.world.update(now);
     this.renderer.render(this.scene, this.rig.camera);
     this.updateStats(frameDt);
   }
@@ -384,9 +390,10 @@ export class Game {
       pause: () => this.pause(),
       resume: () => this.resume(),
       press: (code, down) => this.input.simulateKey(code, down),
-      setView: (yaw, pitch) => {
+      setView: (yaw, pitch, distanceScale = 1) => {
         this.rig.yaw = yaw;
         this.rig.pitch = pitch;
+        this.rig.distanceScale = distanceScale;
       },
       setDebug: (visible) => this.ui.setDebugVisible(visible),
       player: () => ({
@@ -397,6 +404,14 @@ export class Game {
         grounded: this.body.grounded,
         sliding: this.body.sliding,
       }),
+      sites: () => this.world.sites.map((site) => ({ kind: site.kind, x: site.x, z: site.z, rotation: site.rotation })),
+      teleport: (x, z) => {
+        const y = this.world.collision.groundHeight(x, z, Number.POSITIVE_INFINITY);
+        this.body.placeAt(x, y, z);
+        this.prev.x = x;
+        this.prev.y = y;
+        this.prev.z = z;
+      },
     };
   }
 }

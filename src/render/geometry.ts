@@ -24,27 +24,29 @@ export function colored(geometry: BufferGeometry, hex: number): BufferGeometry {
   return g;
 }
 
-/** Une geometrías generadas con `colored` en una sola (una única llamada de dibujo). */
-export function mergeColored(geometries: readonly BufferGeometry[]): BufferGeometry {
+/** Une geometrías no indexadas copiando los atributos indicados (todas deben tenerlos). */
+export function mergeAttributes(geometries: readonly BufferGeometry[], names: readonly string[]): BufferGeometry {
   let total = 0;
   for (const g of geometries) total += g.getAttribute('position').count;
-  const position = new Float32Array(total * 3);
-  const normal = new Float32Array(total * 3);
-  const color = new Float32Array(total * 3);
-  let offset = 0;
-  for (const g of geometries) {
-    const count = g.getAttribute('position').count;
-    position.set(g.getAttribute('position').array, offset * 3);
-    normal.set(g.getAttribute('normal').array, offset * 3);
-    color.set(g.getAttribute('color').array, offset * 3);
-    offset += count;
-  }
   const merged = new BufferGeometry();
-  merged.setAttribute('position', new BufferAttribute(position, 3));
-  merged.setAttribute('normal', new BufferAttribute(normal, 3));
-  merged.setAttribute('color', new BufferAttribute(color, 3));
+  for (const name of names) {
+    const itemSize = geometries[0]?.getAttribute(name).itemSize ?? 3;
+    const array = new Float32Array(total * itemSize);
+    let offset = 0;
+    for (const g of geometries) {
+      const attribute = g.getAttribute(name);
+      array.set(attribute.array, offset * itemSize);
+      offset += attribute.count;
+    }
+    merged.setAttribute(name, new BufferAttribute(array, itemSize));
+  }
   merged.computeBoundingSphere();
   return merged;
+}
+
+/** Une geometrías generadas con `colored` en una sola (una única llamada de dibujo). */
+export function mergeColored(geometries: readonly BufferGeometry[]): BufferGeometry {
+  return mergeAttributes(geometries, ['position', 'normal', 'color']);
 }
 
 /**

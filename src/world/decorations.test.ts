@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { WORLD_CONFIG } from '../data/config';
-import { ColliderGrid, decorationColliders } from './decorations';
+import { ColliderGrid } from './colliders';
+import { decorationColliders } from './decorations';
 import { squircle } from './Heightfield';
 import { generateWorldData } from './World';
 

@@ -2,6 +2,7 @@
 // debería requerir tocar solo este fichero.
 import type { PlayerTuning } from '../entities/playerPhysics';
 import type { TerrainConfig } from '../world/Heightfield';
+import type { SiteRequest } from '../world/sites';
 
 export const TERRAIN_CONFIG: TerrainConfig = {
   size: 320,
@@ -17,6 +18,15 @@ export const WORLD_CONFIG = {
   playableRadius: 136,
   /** Zona sin decoración alrededor del punto de inicio. */
   clearSpawnRadius: 12,
+  /** Distancia mínima entre el inicio y cualquier construcción. */
+  siteSpawnClear: 32,
+  /** Construcciones del mapa: casas derruidas, templetes en ruinas, granjas y pozos. */
+  sites: [
+    { kind: 'house', count: 5, radius: 6.5 },
+    { kind: 'temple', count: 2, radius: 7.5 },
+    { kind: 'farm', count: 2, radius: 6.5 },
+    { kind: 'well', count: 3, radius: 3.5 },
+  ] as readonly SiteRequest[],
 } as const;
 
 export const PLAYER_TUNING: PlayerTuning = {
@@ -52,7 +62,7 @@ export const PLAYER_TUNING: PlayerTuning = {
 
 /** Estadísticas base del jugador (luego las modificarán personajes, tomos y objetos). */
 export const PLAYER_BASE_STATS = {
-  moveSpeed: 8,
+  moveSpeed: 9.5,
 } as const;
 
 export const CAMERA_CONFIG = {

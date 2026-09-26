@@ -16,14 +16,17 @@ import {
 import type { Rng } from '../core/rng';
 import { colored, jitterVertices, mergeColored } from '../render/geometry';
 import { PALETTE } from '../render/palette';
-import { applyRetro } from '../render/retroMaterial';
+import { applyRetro, type WindOptions } from '../render/retroMaterial';
 import { ROCK_SHAPE, type Decoration } from './decorations';
 
 const ROCK_VARIANTS = 3;
 const CANOPY_COLORS = [PALETTE.leaf, PALETTE.leafLight, PALETTE.leaf, PALETTE.leafYellow, PALETTE.leafOrange];
 
-function lambert(options: { color?: number; map?: Texture; vertexColors?: boolean }): MeshLambertMaterial {
-  return applyRetro(new MeshLambertMaterial({ ...options, flatShading: true }));
+function lambert(
+  options: { color?: number; map?: Texture; vertexColors?: boolean },
+  wind?: WindOptions,
+): MeshLambertMaterial {
+  return applyRetro(new MeshLambertMaterial({ ...options, flatShading: true }), wind ? { wind } : {});
 }
 
 function buildInstanced(
@@ -69,7 +72,7 @@ export function createDecorationMeshes(decorations: readonly Decoration[], detai
   const trunkMaterial = lambert({ color: PALETTE.bark, map: detail });
   group.add(buildInstanced(trunkGeometry, trunkMaterial, trees, noPlacement));
   group.add(
-    buildInstanced(canopyGeometry, lambert({ map: detail }), trees, noPlacement, (d) =>
+    buildInstanced(canopyGeometry, lambert({ map: detail }, { amplitude: 0.05, start: 2, speed: 1.3 }), trees, noPlacement, (d) =>
       CANOPY_COLORS[Math.floor(d.variant * CANOPY_COLORS.length)] ?? PALETTE.leaf,
     ),
   );
@@ -80,7 +83,9 @@ export function createDecorationMeshes(decorations: readonly Decoration[], detai
     colored(new ConeGeometry(1.45, 2.4, 6).translate(0, 2.3, 0), PALETTE.pine),
     colored(new ConeGeometry(1.05, 2, 6).translate(0, 3.6, 0), PALETTE.pine),
   ]);
-  group.add(buildInstanced(pineGeometry, lambert({ vertexColors: true, map: detail }), pines, noPlacement));
+  group.add(
+    buildInstanced(pineGeometry, lambert({ vertexColors: true, map: detail }, { amplitude: 0.035, start: 1, speed: 1.1 }), pines, noPlacement),
+  );
 
   // Rocas: tres variantes deformadas; la forma coincide con su collider.
   const rockMaterial = lambert({ color: PALETTE.rock, map: detail });
@@ -94,7 +99,9 @@ export function createDecorationMeshes(decorations: readonly Decoration[], detai
   // Arbustos: bolas achatadas.
   const bushGeometry = jitterVertices(new IcosahedronGeometry(0.75, 0), rng, 0.12);
   bushGeometry.scale(1.2, 0.75, 1.2).translate(0, 0.4, 0);
-  group.add(buildInstanced(bushGeometry, lambert({ color: PALETTE.bush, map: detail }), bushes, noPlacement));
+  group.add(
+    buildInstanced(bushGeometry, lambert({ color: PALETTE.bush, map: detail }, { amplitude: 0.06, start: 0.1, speed: 1.8 }), bushes, noPlacement),
+  );
 
   return group;
 }

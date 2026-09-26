@@ -1,17 +1,21 @@
-// Implementación de las consultas de colisión del mundo: terreno, rocas a las que
-// se puede subir, troncos y el límite del área jugable.
+// Implementación de las consultas de colisión del mundo: terreno, superficies a
+// las que se puede subir (rocas, muros bajos, cajas...), obstáculos y límite del mapa.
 import type { Vec3Like } from '../core/math';
 import type { PhysicsWorld, PlayerBody } from '../entities/playerPhysics';
-import type { ColliderGrid } from './decorations';
+import { isOnTop, pushOut, type ColliderGrid, type PushResult } from './colliders';
 import { SQUIRCLE_POWER, squircle, type Heightfield } from './Heightfield';
 
-/** Fracción del radio de una roca sobre la que se puede estar de pie. */
-const STANDABLE_FRACTION = 0.8;
 /** Altura aproximada del cuerpo, para ignorar obstáculos que quedan por encima. */
 const BODY_HEIGHT = 1.6;
 
+export interface CirclePosition {
+  x: number;
+  z: number;
+}
+
 export class WorldCollision implements PhysicsWorld {
   private readonly nearby: number[] = [];
+  private readonly push: PushResult = { dx: 0, dz: 0, nx: 0, nz: 0 };
 
   constructor(
     readonly heightfield: Heightfield,
@@ -20,17 +24,14 @@ export class WorldCollision implements PhysicsWorld {
     readonly limit: number,
   ) {}
 
-  /** Cima más alta de una roca bajo (x, z) que no supere `maxY`; -Infinity si no hay. */
+  /** Cima más alta de un obstáculo escalable bajo (x, z) que no supere `maxY`; -Infinity si no hay. */
   private standableTop(x: number, z: number, maxY: number): number {
     let best = Number.NEGATIVE_INFINITY;
     const colliders = this.grid.colliders;
     for (const index of this.grid.query(x, z, 0, this.nearby)) {
       const c = colliders[index];
       if (!c || !c.standable || c.top > maxY || c.top <= best) continue;
-      const r = c.radius * STANDABLE_FRACTION;
-      const dx = x - c.x;
-      const dz = z - c.z;
-      if (dx * dx + dz * dz <= r * r) best = c.top;
+      if (isOnTop(c, x, z)) best = c.top;
     }
     return best;
   }
@@ -54,27 +55,45 @@ export class WorldCollision implements PhysicsWorld {
 
   resolveObstacles(body: PlayerBody, radius: number, stepHeight: number): void {
     const colliders = this.grid.colliders;
-    for (const index of this.grid.query(body.x, body.z, radius, this.nearby)) {
+    const push = this.push;
+    for (const index of this.grid.query(body.x, body.z, radius + 1, this.nearby)) {
       const c = colliders[index];
       if (!c) continue;
       if (body.y + stepHeight >= c.top) continue; // Por encima: se puede subir o ya está encima.
       if (body.y + BODY_HEIGHT < c.bottom) continue;
-      const dx = body.x - c.x;
-      const dz = body.z - c.z;
-      const minDist = c.radius + radius;
-      const d2 = dx * dx + dz * dz;
-      if (d2 >= minDist * minDist) continue;
-      const d = Math.sqrt(d2);
-      const nx = d > 1e-5 ? dx / d : 1;
-      const nz = d > 1e-5 ? dz / d : 0;
-      body.x = c.x + nx * minDist;
-      body.z = c.z + nz * minDist;
-      const vn = body.vx * nx + body.vz * nz;
+      if (!pushOut(c, body.x, body.z, radius, push)) continue;
+      body.x += push.dx;
+      body.z += push.dz;
+      const vn = body.vx * push.nx + body.vz * push.nz;
       if (vn < 0) {
-        body.vx -= vn * nx;
-        body.vz -= vn * nz;
+        body.vx -= vn * push.nx;
+        body.vz -= vn * push.nz;
       }
     }
+  }
+
+  /**
+   * Versión ligera para enemigos: saca un círculo de los obstáculos sólidos.
+   * Devuelve true si ha habido contacto.
+   */
+  pushOutCircle(pos: CirclePosition, radius: number, feetY: number): boolean {
+    const colliders = this.grid.colliders;
+    const push = this.push;
+    let hit = false;
+    for (const index of this.grid.query(pos.x, pos.z, radius + 1, this.nearby)) {
+      const c = colliders[index];
+      if (!c || feetY + 0.4 >= c.top || feetY + BODY_HEIGHT < c.bottom) continue;
+      if (!pushOut(c, pos.x, pos.z, radius, push)) continue;
+      pos.x += push.dx;
+      pos.z += push.dz;
+      hit = true;
+    }
+    return hit;
+  }
+
+  /** ¿Está (x, z) dentro del área jugable (con margen)? */
+  isInside(x: number, z: number, margin = 0): boolean {
+    return squircle(x, z) <= this.limit - margin;
   }
 
   constrain(body: PlayerBody): void {
@@ -96,5 +115,14 @@ export class WorldCollision implements PhysicsWorld {
       body.vx -= vn * nx;
       body.vz -= vn * nz;
     }
+  }
+
+  /** Igual que `constrain`, para posiciones sueltas (enemigos, proyectiles...). */
+  clampInside(pos: CirclePosition): void {
+    const r = squircle(pos.x, pos.z);
+    if (r <= this.limit) return;
+    const k = this.limit / r;
+    pos.x *= k;
+    pos.z *= k;
   }
 }

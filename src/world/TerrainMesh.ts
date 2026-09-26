@@ -13,11 +13,26 @@ import type { Rng } from '../core/rng';
 import { PALETTE } from '../render/palette';
 import { applyRetro } from '../render/retroMaterial';
 import type { Heightfield } from './Heightfield';
+import type { Site } from './sites';
 
 /** Metros que ocupa una repetición de la textura de detalle. */
 const TEXTURE_METERS = 4;
 
-export function createTerrainMesh(hf: Heightfield, detail: Texture, rng: Rng): Mesh {
+/** Color del suelo dentro de un sitio (empedrado, tierra...) o null si (x, z) está fuera. */
+function siteFloor(sites: readonly Site[], x: number, z: number, palette: Record<'cobble' | 'cobbleDark' | 'dirt', Color>): Color | null {
+  for (const site of sites) {
+    const d = Math.hypot(x - site.x, z - site.z);
+    if (d > site.radius * 0.95) continue;
+    if (site.kind === 'farm') return palette.dirt;
+    if (site.kind === 'well' && d > 2.2) return palette.dirt;
+    // Empedrado en damero irregular.
+    const checker = (Math.floor(x / 1.3) + Math.floor(z / 1.3)) % 2 === 0;
+    return checker ? palette.cobble : palette.cobbleDark;
+  }
+  return null;
+}
+
+export function createTerrainMesh(hf: Heightfield, detail: Texture, rng: Rng, sites: readonly Site[] = []): Mesh {
   const patches = createNoise2D(() => rng.next());
   const n = hf.stride;
   const positions = new Float32Array(n * n * 3);
@@ -35,6 +50,8 @@ export function createTerrainMesh(hf: Heightfield, detail: Texture, rng: Rng): M
     rock: new Color(PALETTE.rock),
     rockDark: new Color(PALETTE.rockDark),
     snow: new Color(PALETTE.snow),
+    cobble: new Color(PALETTE.cobble),
+    cobbleDark: new Color(PALETTE.cobbleDark),
   };
   const rockBands = [palette.rockLight, palette.rock, palette.rockDark];
 
@@ -56,7 +73,10 @@ export function createTerrainMesh(hf: Heightfield, detail: Texture, rng: Rng): M
       const ny = 1 / Math.sqrt(gx * gx + 1 + gz * gz);
       const patch = patches(x * 0.04, z * 0.04) + 0.35 * patches(x * 0.15 + 30, z * 0.15 + 30);
 
-      if (ny < 0.7) {
+      const floor = siteFloor(sites, x, z, palette);
+      if (floor) {
+        color.copy(floor);
+      } else if (ny < 0.7) {
         // Roca a franjas (estratos) en los acantilados.
         color.copy(rockBands[Math.abs(Math.floor(y / 1.6)) % 3] as Color);
       } else if (y > 48) {

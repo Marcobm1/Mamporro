@@ -69,6 +69,34 @@ export function createDetailTexture(size = 32, seed = 'detail'): Texture {
   return toTexture(canvas, true);
 }
 
+/** Sillería en tonos de gris: bloques de piedra desfasados con juntas oscuras. */
+export function createStoneTexture(size = 32, seed = 'stone'): Texture {
+  const rng = new Rng(seed);
+  const [canvas, ctx] = createCanvas(size);
+  const image = ctx.createImageData(size, size);
+  const brickW = size / 2;
+  const brickH = size / 4;
+  const shades = Array.from({ length: 16 }, () => 0.8 + rng.next() * 0.2);
+  for (let y = 0; y < size; y++) {
+    const row = Math.floor(y / brickH);
+    const offset = row % 2 === 0 ? 0 : brickW / 2;
+    for (let x = 0; x < size; x++) {
+      const bx = Math.floor((x + offset) / brickW) % 2;
+      const joint = y % brickH === 0 || (x + offset) % brickW === 0;
+      let v = joint ? 0.58 : (shades[row * 2 + bx] as number) - rng.next() * 0.06;
+      if (!joint && rng.chance(0.05)) v -= 0.12;
+      const c = Math.round(v * 255);
+      const i = (y * size + x) * 4;
+      image.data[i] = c;
+      image.data[i + 1] = c;
+      image.data[i + 2] = c;
+      image.data[i + 3] = 255;
+    }
+  }
+  ctx.putImageData(image, 0, 0);
+  return toTexture(canvas, true);
+}
+
 /** Sombra circular "de mancha" con bordes escalonados (look pixel art). */
 export function createBlobShadowTexture(size = 32): Texture {
   const [canvas, ctx] = createCanvas(size);

@@ -21,6 +21,8 @@ export class CameraRig {
   pitch = -0.3;
   /** Multiplicador de sensibilidad elegido en Opciones. */
   sensitivity = 1;
+  /** Multiplicador de la distancia al jugador (solo lo usan las pruebas automáticas). */
+  distanceScale = 1;
 
   private distance: number = CAMERA_CONFIG.distance;
   private pivotHeight: number = CAMERA_CONFIG.pivotHeight;
@@ -76,8 +78,9 @@ export class CameraRig {
 
     // Recorremos el brazo de la cámara desde el jugador hacia atrás: si el terreno
     // lo corta, la cámara se acerca de golpe y se aleja de nuevo con suavidad.
-    let allowed: number = cfg.distance;
-    const step = cfg.distance / COLLISION_STEPS;
+    const maxDistance = cfg.distance * this.distanceScale;
+    let allowed: number = maxDistance;
+    const step = maxDistance / COLLISION_STEPS;
     for (let i = 1; i <= COLLISION_STEPS; i++) {
       const t = step * i;
       const px = this.pivot.x - this.dir.x * t;
