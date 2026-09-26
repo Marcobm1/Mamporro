@@ -4,9 +4,11 @@ Roguelike 3D de supervivencia contra hordas ("bullet heaven") con estética retr
 tipo PS1, hecho con Three.js + TypeScript + Vite. Todo el contenido (geometría,
 texturas, fuente, textos) se genera por código: no hay archivos externos.
 
-> **Estado: hito 1 de 6.** Por ahora te puedes mover por un mapa procedural con
-> colinas, mesetas y acantilados: correr, saltar y deslizarte. El combate llega
-> en el hito 2.
+> **Estado: hito 2 de 6.** Doña Remedios recorre un mapa procedural con colinas,
+> acantilados, casas derruidas, templetes en ruinas, granjas y pozos. Se enfrenta
+> a hordas de Pelusas Rebeldes y Cucarachas Turbo con dos armas automáticas: la
+> Chancla Teledirigida y Eau de Naftalina. Hay gemas de experiencia, niveles,
+> vida y game over. Las mejoras al subir de nivel llegan en el hito 3.
 
 ## Requisitos
 
@@ -82,6 +84,8 @@ npm run typecheck  # solo la comprobación de tipos de TypeScript
 | Pausa        | Esc                                     |
 | Panel debug  | F3                                      |
 
+Las armas disparan solas: tú solo te mueves, saltas y te deslizas.
+
 - Al pulsar **Jugar** el juego captura el ratón. **Esc** lo suelta y pausa; para
   volver, pulsa **Continuar**. El navegador exige un clic para volver a
   capturarlo. Chrome, además, no deja recapturarlo justo después de soltarlo:
@@ -94,6 +98,26 @@ npm run typecheck  # solo la comprobación de tipos de TypeScript
   navegador pide confirmación antes de cerrar la página.
 - La semilla del mapa aparece en la pantalla de inicio y en la pausa. Puedes
   escribir una semilla antes de jugar para repetir un mapa.
+
+### Panel de debug (F3)
+
+Muestra FPS, tiempos de lógica y render, llamadas de dibujo, triángulos,
+entidades (enemigos, proyectiles, gemas, partículas) y datos de la partida. Con
+el panel abierto y jugando, las teclas numéricas lanzan acciones de prueba:
+
+| Tecla | Acción                                        |
+| ----- | --------------------------------------------- |
+| 1     | Invencible sí/no                              |
+| 2     | Subir un nivel                                |
+| 3     | Avanzar un minuto (más dificultad)            |
+| 4     | Aparecen 100 enemigos                         |
+| 5     | Eliminar a todos los enemigos                 |
+
+**Prueba de rendimiento:** con F3 abierto, pulsa 1 (invencible) y 4 tres veces
+para tener 300 enemigos. Después mira el FPS y el tiempo de "Lógica".
+
+Las partidas en las que se usan estas acciones quedan marcadas como "con trucos".
+En el hito 5 no darán moneda meta ni contarán para las misiones.
 
 ### Opciones (en la pausa)
 
@@ -109,12 +133,20 @@ index.html              Página con el canvas y la capa de interfaz
 scripts/check-node.cjs  Aviso si la versión de Node es demasiado antigua
 src/
   main.ts               Punto de entrada
-  core/                 Bucle a paso fijo, entrada (teclado/ratón), RNG con semilla, orquestador (Game)
-  data/config.ts        Parámetros ajustables: tamaño del mapa, movimiento, cámara, niebla
-  entities/             Física del jugador (lógica pura) y su modelo/animación
-  world/                Terreno (heightfield), decoración, colisiones y sus mallas
-  render/               Render retro a baja resolución, parche PS1, cámara, cielo, texturas y paleta
-  ui/                   Interfaz HTML/CSS, fuente pixelada generada en tiempo de ejecución
+  core/                 Bucle a paso fijo, entrada, RNG con semilla, orquestador (Game) y partida (Run)
+  data/                 Contenido y ajustes en ficheros tipados:
+    config.ts             mapa, construcciones, movimiento, cámara, niebla
+    characters.ts         personajes (arma inicial, vida...)
+    enemies.ts            enemigos (vida, velocidad, daño, experiencia...)
+    weapons.ts            armas (comportamiento y estadísticas)
+    waves.ts              aparición de enemigos y escalado con el tiempo
+  systems/              Lógica del combate: enemigos (IA), aparición, proyectiles, gemas,
+                        rejilla espacial, daño y críticos, experiencia, dificultad
+  weapons/              Comportamientos de las armas (teledirigida, aura...)
+  entities/             Física del jugador y modelos de jugador y enemigos
+  world/                Terreno, construcciones, vegetación, fauna, colisiones y sus mallas
+  render/               Render retro, cámara, cielo, texturas, paleta y efectos de combate
+  ui/                   Interfaz HTML/CSS (HUD, pantallas), fuente pixelada
   i18n/                 Textos en español (es.ts) e inglés (en.ts)
   save/                 Guardado versionado en localStorage con migraciones
   styles/               CSS de la interfaz
@@ -133,9 +165,34 @@ Los tests (`*.test.ts`) están junto al código que prueban.
   tramado Bayer 4×4 y ajusta los vértices a la rejilla de píxeles (temblor PS1).
 - **Mapa procedural determinista:** el terreno sale de ruido simplex con
   distorsión de dominio. Tiene mesetas en terrazas cuyos bordes alternan rampas
-  y acantilados, y montañas en el borde que marcan el límite. Árboles, pinos,
-  rocas y arbustos se colocan desde una semilla, así la misma semilla da siempre
-  el mismo mapa. A las rocas pequeñas se puede subir de un salto.
+  y acantilados, y montañas en el borde que marcan el límite. Las construcciones
+  eligen zonas llanas y aplanan el terreno debajo:
+  - casas derruidas: muros rotos con ventanas, chimenea, tejado hundido, hiedra;
+  - templetes: columnas, dinteles y una estatua rota;
+  - granjas: valla, almiar, carro y espantapájaros;
+  - pozos.
+
+  Todo sale de la semilla, así la misma semilla da siempre el mismo mapa.
+  También se reparten árboles, rocas, troncos, setas, carteles, miles de matas
+  de hierba y flores, pájaros y mariposas. La vegetación se mece con el viento.
+  Se puede subir a rocas, muros bajos, cajas y vallas.
+- **Combate con cientos de enemigos:**
+  - Los enemigos viven en arrays planos (sin crear objetos por frame).
+  - Una rejilla espacial se reconstruye cada tick con una ordenación por conteo.
+    La usan la separación entre enemigos, las colisiones y la búsqueda del más
+    cercano.
+  - Se dibujan con `InstancedMesh`: una llamada de dibujo por tipo de enemigo,
+    más una para todas sus sombras.
+  - Persiguen al jugador, se separan y rodean los obstáculos cuando se atascan.
+  - Suben a superficies bajas y alcanzan al jugador hasta 1,6 m por encima. Una
+    roca no es un refugio; lo alto de un muro, sí (hasta que lleguen los
+    enemigos a distancia).
+- **Rendimiento medido:**
+  - En Node, la lógica completa (IA, armas, proyectiles, gemas) cuesta unos
+    0,5 ms por tick con 500 enemigos.
+  - En Chromium, 0,3 ms con 300 enemigos y 0,5 ms con unos 480.
+  - Unas 30 llamadas de dibujo.
+  - Los FPS reales dependen de la GPU de tu equipo.
 - **Física del jugador:** es lógica pura, sin Three.js, y está cubierta por
   tests. Incluye:
   - aceleración rápida y control en el aire;
@@ -151,6 +208,25 @@ Los tests (`*.test.ts`) están junto al código que prueban.
 - **i18n:** ningún texto visible está escrito en el código. `en.ts` debe tener
   exactamente las claves de `es.ts`: lo comprueba el compilador y un test, que
   además verifica que la fuente tiene todos los caracteres usados.
+- **Números de daño:** se dibujan con los glifos de la propia fuente pixelada
+  (con contorno) en quads instanciados que miran a la cámara. Los críticos salen
+  en amarillo con "!" y los supercríticos en naranja con "!!".
+
+## Cómo añadir contenido
+
+La guía completa llegará en el hito 6. Mientras tanto:
+
+- **Un enemigo nuevo:**
+  1. Añade su entrada en `src/data/enemies.ts` (y en `ENEMY_LIST`).
+  2. Crea su modelo en `src/entities/enemyModels.ts`.
+  3. Escribe su nombre en `src/i18n/es.ts` y `src/i18n/en.ts`.
+  4. Dale un peso y un minuto de aparición en `src/data/waves.ts`.
+- **Un arma nueva:**
+  1. Añade su entrada en `src/data/weapons.ts`.
+  2. Si su comportamiento no existe, añade su nombre a `WeaponBehaviorId` (en
+     `src/data/weapons.ts`), escríbelo en `src/weapons/` y regístralo en
+     `src/weapons/index.ts`.
+  3. Escribe su nombre y descripción en los dos idiomas.
 
 ## Pruebas
 
@@ -166,20 +242,33 @@ Los tests (`*.test.ts`) están junto al código que prueban.
   - que los acantilados no se puedan trepar;
 - el guardado (valores corruptos, versiones futuras, migraciones);
 - la traducción;
-- la fuente pixelada (contornos correctos y cobertura de caracteres).
+- la fuente pixelada (contornos correctos y cobertura de caracteres);
+- los colisionadores de caja y círculo;
+- las construcciones: sitios separados y lejos del inicio, terreno aplanado,
+  muros escalables y determinismo;
+- el combate:
+  - daño, críticos y supercríticos, y armadura;
+  - curva de experiencia y escalado de la dificultad;
+  - rejilla espacial comparada con fuerza bruta;
+  - IA de enemigos: persecución, separación y contacto, y que subirse a una roca
+    no proteja;
+  - perforación de la chancla, radio del aura y gemas (recogida y fusión);
+  - una partida simulada completa y una prueba de rendimiento con 500 enemigos.
 
 ### Modo de pruebas automáticas
 
 Abriendo la página con `?test` (por ejemplo `http://localhost:5173/?test`) el
 juego no captura el ratón y expone `window.__MAMPORRO__` para scripts de prueba
-en navegador (mover al jugador, pausar, leer su posición...).
+en navegador: mover al jugador, pausar, leer su posición y la partida, lanzar
+acciones de debug o medir los tiempos del bucle.
 
 ## Hoja de ruta
 
 1. ✅ **Base:** render retro, terreno procedural, jugador, cámara, salto y
    deslizamiento.
-2. Combate: enemigos, 2 armas automáticas, XP, vida y game over (300 enemigos a
-   60 FPS).
+2. ✅ **Combate:** enemigos, 2 armas automáticas, XP, vida y game over
+   (objetivo: 300 enemigos a 60 FPS). Además, mundo con ruinas, casas, granjas y
+   fauna.
 3. Progresión en partida: subidas de nivel con rarezas, 6 armas, 8 tomos,
    Reroll/Saltar/Descartar.
 4. Mapa vivo: oro, cofres, objetos, santuarios, tótem, portal, jefe,
