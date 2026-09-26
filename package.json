@@ -1,0 +1,35 @@
+{
+  "name": "mamporro",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Roguelike 3D de supervivencia contra hordas con estética retro PS1.",
+  "type": "module",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "check-node": "node scripts/check-node.cjs",
+    "preinstall": "node scripts/check-node.cjs",
+    "predev": "node scripts/check-node.cjs",
+    "dev": "vite",
+    "prebuild": "node scripts/check-node.cjs",
+    "build": "tsc --noEmit && vite build",
+    "prepreview": "node scripts/check-node.cjs",
+    "preview": "vite preview",
+    "pretest": "node scripts/check-node.cjs",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "opentype.js": "^2.0.0",
+    "simplex-noise": "^4.0.3",
+    "three": "^0.186.1"
+  },
+  "devDependencies": {
+    "@types/three": "^0.186.0",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.1",
+    "vitest": "^5.0.2"
+  }
+}
