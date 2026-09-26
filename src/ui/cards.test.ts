@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { CHARACTERS } from '../data/characters';
 import { TOMES } from '../data/tomes';
 import { setLanguage } from '../i18n';
-import { computePlayerStats } from '../systems/stats';
+import { computePlayerStats, tomeBonuses } from '../systems/stats';
 import { describeCard, statLines, type OwnedLevels } from './cards';
 
 const owned = (weapon = 1, tome = 0): OwnedLevels => ({ weapon: () => weapon, tome: () => tome });
@@ -68,10 +68,13 @@ describe('estadísticas de la pausa', () => {
 
   it('muestran la vida, los porcentajes de mejora y el radio en metros', () => {
     setLanguage('es');
-    const stats = computePlayerStats(CHARACTERS.remedios, [
-      { def: TOMES.damage, level: 2, bonus: [0.24] },
-      { def: TOMES.magnet, level: 1, bonus: [0.25, 0.08] },
-    ]);
+    const stats = computePlayerStats(
+      CHARACTERS.remedios,
+      tomeBonuses([
+        { def: TOMES.damage, level: 2, bonus: [0.24] },
+        { def: TOMES.magnet, level: 1, bonus: [0.25, 0.08] },
+      ]),
+    );
     const lines = new Map(statLines(stats, 87.2).map((l) => [l.label, l.value]));
     expect(lines.get('Vida')).toBe('88 / 100');
     expect(lines.get('Daño')).toBe('+24 %');

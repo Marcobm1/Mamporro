@@ -19,7 +19,7 @@ import {
   type BuildView,
   type OfferCard,
 } from './levelup';
-import { computePlayerStats, zeroWeaponStats, type TomeInstance } from './stats';
+import { computePlayerStats, tomeBonuses, zeroWeaponStats, type TomeInstance } from './stats';
 
 const character = CHARACTERS.remedios;
 
@@ -112,13 +112,13 @@ describe('mejoras de armas', () => {
 
 describe('tomos', () => {
   it('se suman nivel a nivel y respetan los topes del jugador', () => {
-    const stats = computePlayerStats(character, [tome('damage', [0.24]), tome('moveSpeed', [5]), tome('vitality', [40, 0.8])]);
+    const stats = computePlayerStats(character, tomeBonuses([tome('damage', [0.24]), tome('moveSpeed', [5]), tome('vitality', [40, 0.8])]));
     expect(stats.damage).toBeCloseTo(1.24);
     expect(stats.moveSpeed).toBe(1.8);
     expect(stats.maxHp).toBe(character.maxHp + 40);
     expect(stats.regen).toBeCloseTo(0.8);
     // El imán suma una fracción del radio base del personaje.
-    expect(computePlayerStats(character, [tome('magnet', [0.5, 0.1])]).pickupRadius).toBeCloseTo(character.pickupRadius * 1.5);
+    expect(computePlayerStats(character, tomeBonuses([tome('magnet', [0.5, 0.1])])).pickupRadius).toBeCloseTo(character.pickupRadius * 1.5);
   });
 
   it('las rarezas multiplican lo que suma un nivel, y los enteros siguen siendo enteros', () => {
@@ -130,7 +130,7 @@ describe('tomos', () => {
   });
 
   it('un tomo con todas sus estadísticas al tope deja de ofrecerse', () => {
-    const capped = computePlayerStats(character, [tome('moveSpeed', [5])]);
+    const capped = computePlayerStats(character, tomeBonuses([tome('moveSpeed', [5])]));
     expect(isTomeUseful(TOMES.moveSpeed, capped)).toBe(false);
     expect(isTomeUseful(TOMES.damage, capped)).toBe(true);
     const appears = (stats: BuildView['stats'], bonus: number): boolean => {
@@ -142,7 +142,7 @@ describe('tomos', () => {
     };
     expect(appears(capped, 5)).toBe(false);
     // Control: sin tope sí sale.
-    expect(appears(computePlayerStats(character, [tome('moveSpeed', [0.1])]), 0.1)).toBe(true);
+    expect(appears(computePlayerStats(character, tomeBonuses([tome('moveSpeed', [0.1])])), 0.1)).toBe(true);
   });
 });
 

@@ -1,5 +1,6 @@
-// Gemas de experiencia: caen al morir los enemigos y vuelan hacia el jugador
-// cuando entra en su radio de recogida. Si hay demasiadas, se fusionan.
+// Cosas que se recogen (gemas de experiencia y monedas de oro): caen al morir los
+// enemigos y vuelan hacia el jugador cuando entra en su radio de recogida. Si hay
+// demasiadas, se fusionan.
 
 /** Valor a partir del cual una gema cambia de color y tamaño. */
 export const GEM_TIERS = [1, 5, 20, 100] as const;
@@ -15,7 +16,7 @@ const COLLECT_DISTANCE = 0.9;
 const ATTRACT_ACCEL = 70;
 const MAX_ATTRACT_SPEED = 32;
 
-export class GemSystem {
+export class PickupSystem {
   count = 0;
   readonly x: Float32Array;
   readonly y: Float32Array;
@@ -35,7 +36,7 @@ export class GemSystem {
     this.attracted = new Uint8Array(capacity);
   }
 
-  /** Suelta una gema. Si no caben más, su valor se suma a la gema más cercana. */
+  /** Suelta una gema o moneda. Si no caben más, su valor se suma a la más cercana. */
   spawn(x: number, y: number, z: number, value: number): void {
     if (this.count >= this.capacity) {
       let best = 0;
@@ -83,7 +84,7 @@ export class GemSystem {
     this.count = 0;
   }
 
-  /** Mueve las gemas y devuelve la experiencia recogida en este paso. */
+  /** Mueve las gemas o monedas y devuelve el valor recogido en este paso. */
   update(dt: number, px: number, py: number, pz: number, pickupRadius: number): number {
     let collected = 0;
     const r2 = pickupRadius * pickupRadius;

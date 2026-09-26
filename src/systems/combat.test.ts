@@ -8,7 +8,7 @@ import { PlayerBody, type PlayerIntent } from '../entities/playerPhysics';
 import { generateWorldData } from '../world/World';
 import { stepPlayerInCrowd } from './crowd';
 import { EnemySystem } from './EnemySystem';
-import { GemSystem } from './GemSystem';
+import { PickupSystem } from './PickupSystem';
 
 const DT = 1 / 60;
 const world = generateWorldData('COMBAT-TEST');
@@ -113,7 +113,7 @@ describe('enemigos', () => {
 
 describe('gemas', () => {
   it('se recogen al acercarse y suman su valor', () => {
-    const gems = new GemSystem(10);
+    const gems = new PickupSystem(10);
     gems.spawn(2, 0, 0, 3);
     gems.spawn(40, 0, 0, 5);
     let total = 0;
@@ -123,7 +123,7 @@ describe('gemas', () => {
   });
 
   it('si no caben más, se fusionan sin perder experiencia', () => {
-    const gems = new GemSystem(5);
+    const gems = new PickupSystem(5);
     for (let i = 0; i < 25; i++) gems.spawn(i, 0, 0, 2);
     expect(gems.count).toBe(5);
     let sum = 0;

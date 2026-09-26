@@ -2,7 +2,8 @@
 // (lógica pura de presentación: datos + traducciones, sin DOM).
 import { formatNumber, t, type TranslationKey } from '../i18n';
 import { rarityById, type RarityId } from '../data/rarities';
-import { TOMES, type TomeEffect, type TomeStat } from '../data/tomes';
+import type { BonusStat, StatEffect } from '../data/bonuses';
+import { TOMES } from '../data/tomes';
 import { LEVEL_UP_CONFIG, WEAPON_UPGRADE_STEPS, type WeaponStatKey } from '../data/upgrades';
 import { WEAPONS, type WeaponDef } from '../data/weapons';
 import type { OfferCard } from '../systems/levelup';
@@ -30,7 +31,8 @@ export interface OwnedLevels {
   tome(id: string): number;
 }
 
-const TOME_STAT_LABELS: Readonly<Record<TomeStat, TranslationKey>> = {
+/** Nombre de cada estadística del jugador que se puede mejorar. */
+export const STAT_LABELS: Readonly<Record<BonusStat, TranslationKey>> = {
   damage: 'stat.damage',
   attackSpeed: 'stat.cooldown',
   extraProjectiles: 'stat.extraProjectiles',
@@ -41,6 +43,11 @@ const TOME_STAT_LABELS: Readonly<Record<TomeStat, TranslationKey>> = {
   luck: 'stat.luck',
   pickupRadius: 'stat.pickupRadius',
   xpGain: 'stat.xpGain',
+  critChance: 'stat.critChance',
+  critDamage: 'stat.critMultiplier',
+  armor: 'stat.armor',
+  goldGain: 'stat.goldGain',
+  choices: 'stat.choices',
 };
 
 /** "25" para 0,25 como porcentaje; sin decimales si no hacen falta. */
@@ -64,8 +71,9 @@ export function weaponStatLabel(def: WeaponDef, stat: WeaponStatKey): string {
   return t(def.statLabels?.[stat] ?? (`stat.${stat}` as TranslationKey));
 }
 
-function tomeLine(effect: TomeEffect, amount: number): string {
-  return changeLine(amount, effect.display, t(TOME_STAT_LABELS[effect.stat]));
+/** "Prob. de crítico +7 %" para una bonificación del jugador. */
+export function effectLine(effect: StatEffect, amount: number): string {
+  return changeLine(amount, effect.display, t(STAT_LABELS[effect.stat]));
 }
 
 export function describeCard(card: OfferCard, owned: OwnedLevels): CardView {
@@ -103,7 +111,7 @@ export function describeCard(card: OfferCard, owned: OwnedLevels): CardView {
         tag: t(rarityById(card.rarity).nameKey),
         title: t(def.nameKey),
         level: level === 0 ? t('levelup.newTome') : t('levelup.level', { from: level, to: level + 1 }),
-        lines: def.effects.map((effect, i) => tomeLine(effect, card.amounts[i] ?? 0)),
+        lines: def.effects.map((effect, i) => effectLine(effect, card.amounts[i] ?? 0)),
         description: level === 0 ? t(def.descriptionKey) : '',
         banishable: true,
       };

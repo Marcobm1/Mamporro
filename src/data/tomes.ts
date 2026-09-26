@@ -1,33 +1,12 @@
 // Tomos: cada uno mejora una estadística global del personaje (afecta a todas las
 // armas). Las mejoras se suman nivel a nivel; la rareza de la carta las multiplica.
 import type { TranslationKey } from '../i18n';
+import type { StatEffect } from './bonuses';
 
 export type TomeId = 'damage' | 'attackSpeed' | 'projectiles' | 'area' | 'moveSpeed' | 'vitality' | 'luck' | 'magnet';
 
-/** Estadísticas del jugador que pueden mejorar los tomos. */
-export type TomeStat =
-  | 'damage'
-  | 'attackSpeed'
-  | 'extraProjectiles'
-  | 'area'
-  | 'moveSpeed'
-  | 'maxHp'
-  | 'regen'
-  | 'luck'
-  | 'pickupRadius'
-  | 'xpGain';
-
-export interface TomeEffect {
-  stat: TomeStat;
-  /** Lo que suma un nivel Común (las rarezas lo multiplican). */
-  amount: number;
-  /** 'add': se suma tal cual; 'base': fracción del valor base del personaje. */
-  mode: 'add' | 'base';
-  /** Solo enteros: como mínimo +1 por nivel. */
-  integer?: boolean;
-  /** Cómo se muestra en las cartas y en la pausa. */
-  display: 'percent' | 'number';
-}
+/** Un efecto de tomo es una bonificación de estadística como las de objetos y santuarios. */
+export type TomeEffect = StatEffect;
 
 export interface TomeDef {
   id: TomeId;
@@ -104,16 +83,3 @@ export const TOMES: Readonly<Record<TomeId, TomeDef>> = {
 };
 
 export const TOME_LIST: readonly TomeDef[] = Object.values(TOMES);
-
-/**
- * Topes de las estadísticas del jugador, por rendimiento y jugabilidad (no hay
- * tope de nivel). Un tomo cuyas estadísticas están todas al tope deja de salir.
- */
-export const PLAYER_STAT_LIMITS: Readonly<Partial<Record<TomeStat, number>>> = {
-  attackSpeed: 4,
-  extraProjectiles: 6,
-  area: 3,
-  moveSpeed: 1.8,
-  pickupRadius: 25,
-  regen: 15,
-};

@@ -1,7 +1,9 @@
-// Estadísticas del jugador y de las armas (lógica pura). Los tomos suman a las
-// del jugador; las armas combinan las suyas (con sus mejoras) con las del jugador.
+// Estadísticas del jugador y de las armas (lógica pura). Tomos, objetos y
+// bendiciones suman bonificaciones a las del jugador; las armas combinan las suyas
+// (con sus mejoras) con las del jugador.
+import { PLAYER_STAT_LIMITS, type BonusStat, type StatEffect } from '../data/bonuses';
 import type { CharacterDef } from '../data/characters';
-import { PLAYER_STAT_LIMITS, type TomeDef, type TomeStat } from '../data/tomes';
+import type { TomeDef } from '../data/tomes';
 import { WEAPON_STAT_LIMITS, WEAPON_UPGRADE_STEPS, type WeaponStatKey } from '../data/upgrades';
 import type { WeaponStats } from '../data/weapons';
 
@@ -32,6 +34,15 @@ export interface PlayerStats {
   luck: number;
   /** Cartas por subida de nivel. */
   choices: number;
+  /** Multiplicador del oro que se recoge. */
+  goldGain: number;
+}
+
+/** Una bonificación ya calculada: suma `amount` a `stat` ('base': fracción del valor base). */
+export interface AppliedBonus {
+  stat: BonusStat;
+  mode: StatEffect['mode'];
+  amount: number;
 }
 
 /** Un tomo que se tiene: su nivel y lo que suma cada uno de sus efectos. */
@@ -61,27 +72,37 @@ export function basePlayerStats(character: CharacterDef, choices = 3): PlayerSta
     xpGain: 1,
     luck: 0,
     choices,
+    goldGain: 1,
   };
 }
 
-/** Estadísticas del jugador con los tomos sumados y los topes aplicados. */
-export function computePlayerStats(character: CharacterDef, tomes: readonly TomeInstance[], choices = 3): PlayerStats {
+/** Lo que suman los tomos que se tienen (una bonificación por efecto). */
+export function tomeBonuses(tomes: readonly TomeInstance[]): AppliedBonus[] {
+  return tomes.flatMap((tome) =>
+    tome.def.effects.map((effect, i) => ({ stat: effect.stat, mode: effect.mode, amount: tome.bonus[i] ?? 0 })),
+  );
+}
+
+/** Lo que suman `copies` unidades de unos efectos (p. ej. varias copias de un objeto). */
+export function effectBonuses(effects: readonly StatEffect[], copies: number): AppliedBonus[] {
+  return effects.map((effect) => ({ stat: effect.stat, mode: effect.mode, amount: effect.amount * copies }));
+}
+
+/** Estadísticas del jugador con las bonificaciones sumadas y los topes aplicados. */
+export function computePlayerStats(character: CharacterDef, bonuses: readonly AppliedBonus[], choices = 3): PlayerStats {
   const base = basePlayerStats(character, choices);
   const stats = { ...base };
-  for (const tome of tomes) {
-    tome.def.effects.forEach((effect, i) => {
-      const bonus = tome.bonus[i] ?? 0;
-      stats[effect.stat] += effect.mode === 'base' ? base[effect.stat] * bonus : bonus;
-    });
+  for (const bonus of bonuses) {
+    stats[bonus.stat] += bonus.mode === 'base' ? base[bonus.stat] * bonus.amount : bonus.amount;
   }
-  for (const [stat, max] of Object.entries(PLAYER_STAT_LIMITS) as Array<[TomeStat, number]>) {
+  for (const [stat, max] of Object.entries(PLAYER_STAT_LIMITS) as Array<[BonusStat, number]>) {
     stats[stat] = Math.min(stats[stat], max);
   }
   return stats;
 }
 
 /** ¿Está esta estadística del jugador ya en su tope? */
-export function isPlayerStatCapped(stats: PlayerStats, stat: TomeStat): boolean {
+export function isPlayerStatCapped(stats: PlayerStats, stat: BonusStat): boolean {
   const max = PLAYER_STAT_LIMITS[stat];
   return max !== undefined && stats[stat] >= max - 1e-9;
 }

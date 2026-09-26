@@ -131,6 +131,8 @@ export const en: Record<TranslationKey, string> = {
   'stat.xpGain': 'experience',
   'stat.armor': 'armor',
   'stat.health': 'health',
+  'stat.goldGain': 'gold',
+  'stat.choices': 'level-up choices',
   'upgrade.percent': '{stat} +{value}%',
   'upgrade.number': '{stat} +{value}',
   'format.percent': '{value}%',

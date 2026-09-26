@@ -131,6 +131,8 @@ export const es = {
   'stat.xpGain': 'experiencia',
   'stat.armor': 'armadura',
   'stat.health': 'vida',
+  'stat.goldGain': 'oro',
+  'stat.choices': 'opciones al subir de nivel',
   'upgrade.percent': '{stat} +{value} %',
   'upgrade.number': '{stat} +{value}',
   'format.percent': '{value} %',

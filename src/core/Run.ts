@@ -9,7 +9,7 @@ import type { WeaponId } from '../data/weapons';
 import type { PlayerBody } from '../entities/playerPhysics';
 import { mitigate, rollDamage } from '../systems/damage';
 import { EnemySystem } from '../systems/EnemySystem';
-import { GemSystem } from '../systems/GemSystem';
+import { PickupSystem } from '../systems/PickupSystem';
 import { crowdSlowFor, smoothCrowdSlow } from '../systems/crowd';
 import {
   generateOffer,
@@ -21,7 +21,7 @@ import {
 import { addExperience, xpToNextLevel, type LevelState } from '../systems/progression';
 import { ProjectileSystem } from '../systems/ProjectileSystem';
 import { SpawnSystem } from '../systems/SpawnSystem';
-import { computePlayerStats, type PlayerStats, type TomeInstance } from '../systems/stats';
+import { computePlayerStats, tomeBonuses, type PlayerStats, type TomeInstance } from '../systems/stats';
 import { BEHAVIORS, createWeapon, refreshWeapon, type CombatContext, type WeaponInstance } from '../weapons';
 import type { CombatPlayer, WeaponEffects } from '../weapons/types';
 import type { WorldCollision } from '../world/WorldCollision';
@@ -72,7 +72,7 @@ export class Run {
   readonly player: CombatPlayer = { x: 0, y: 0, z: 0, facing: 0, vx: 0, vz: 0, grounded: true };
   readonly enemies: EnemySystem;
   readonly projectiles = new ProjectileSystem(PROJECTILE_CAPACITY);
-  readonly gems = new GemSystem(GEM_CAPACITY);
+  readonly gems = new PickupSystem(GEM_CAPACITY);
   readonly weapons: WeaponInstance[] = [];
   readonly tomes: TomeInstance[] = [];
   /** Subidas de nivel pendientes de elegir carta. */
@@ -102,7 +102,7 @@ export class Run {
     const rng = new Rng(`${seed}/run`);
     this.rng = rng.derive('combat');
     this.offerRng = rng.derive('offers');
-    this.stats = computePlayerStats(character, this.tomes, LEVEL_UP_CONFIG.baseChoices);
+    this.stats = computePlayerStats(character, tomeBonuses(this.tomes), LEVEL_UP_CONFIG.baseChoices);
     this.hp = this.stats.maxHp;
     this.enemies = new EnemySystem(ENEMY_CAPACITY, world.heightfield.size);
     this.spawner = new SpawnSystem(rng.derive('spawn'), (x, y, z) => this.fx.enemySpawned(x, y, z));
@@ -328,7 +328,7 @@ export class Run {
   /** Recalcula las estadísticas del jugador y de las armas (tras cambiar los tomos). */
   private refreshStats(): void {
     const oldMax = this.stats.maxHp;
-    Object.assign(this.stats, computePlayerStats(this.character, this.tomes, this.stats.choices));
+    Object.assign(this.stats, computePlayerStats(this.character, tomeBonuses(this.tomes), LEVEL_UP_CONFIG.baseChoices));
     // La vida máxima que se gana llega también a la actual.
     if (this.stats.maxHp > oldMax) this.hp += this.stats.maxHp - oldMax;
     this.hp = Math.min(this.hp, this.stats.maxHp);

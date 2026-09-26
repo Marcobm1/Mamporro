@@ -13,7 +13,7 @@ import {
   RingGeometry,
 } from 'three';
 import { clamp } from '../core/math';
-import { gemTier, type GemSystem } from '../systems/GemSystem';
+import { gemTier, type PickupSystem } from '../systems/PickupSystem';
 import type { ProjectileSystem } from '../systems/ProjectileSystem';
 import { colored, mergeColored } from './geometry';
 import { PALETTE } from './palette';
@@ -71,7 +71,7 @@ export class GemRenderer {
     this.mesh.setColorAt(0, this.color.setHex(PALETTE.gemBlue));
   }
 
-  update(gems: GemSystem): void {
+  update(gems: PickupSystem): void {
     const array = this.mesh.instanceMatrix.array as Float32Array;
     const colors = this.mesh.instanceColor;
     for (let i = 0; i < gems.count; i++) {
