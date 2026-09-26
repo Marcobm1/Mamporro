@@ -148,7 +148,7 @@ export class Run {
     const roll = rollDamage(s.damage, s.critChance, s.critMultiplier, random);
     const before = enemies.hp[e] as number;
     enemies.hp[e] = before - roll.amount;
-    enemies.flash[e] = 1;
+    enemies.flash[e] = Math.max(enemies.flash[e] as number, weapon.def.hitFlash);
     enemies.kx[e] = (enemies.kx[e] as number) + (pushX * s.knockback) / def.mass;
     enemies.kz[e] = (enemies.kz[e] as number) + (pushZ * s.knockback) / def.mass;
     weapon.totalDamage += Math.min(before, roll.amount);

@@ -34,6 +34,12 @@ export interface WeaponDef {
   descriptionKey: TranslationKey;
   behavior: WeaponBehaviorId;
   base: WeaponStats;
+  /**
+   * Intensidad del destello blanco del enemigo al recibir el golpe (0..1). Las
+   * armas que golpean a muchos a la vez (auras) usan uno suave: si no, una horda
+   * entera destellando a la vez se ve como una mancha blanca que tapa al jugador.
+   */
+  hitFlash: number;
   /** Estadísticas que pueden subir al mejorar el arma (hito 3). */
   upgradable: ReadonlyArray<keyof WeaponStats>;
 }
@@ -56,6 +62,7 @@ export const WEAPONS: Readonly<Record<WeaponId, WeaponDef>> = {
       critMultiplier: 2,
       knockback: 4,
     },
+    hitFlash: 1,
     upgradable: ['damage', 'cooldown', 'count', 'area', 'speed', 'pierce', 'critChance'],
   },
   naftalina: {
@@ -75,6 +82,7 @@ export const WEAPONS: Readonly<Record<WeaponId, WeaponDef>> = {
       critMultiplier: 2,
       knockback: 1.2,
     },
+    hitFlash: 0.35,
     upgradable: ['damage', 'cooldown', 'area', 'critChance', 'knockback'],
   },
 };

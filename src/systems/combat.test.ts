@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { Run, type RunEffects } from '../core/Run';
 import { CHARACTERS } from '../data/characters';
 import { enemyTypeIndex } from '../data/enemies';
-import { AURA_BASE_RADIUS } from '../data/weapons';
+import { AURA_BASE_RADIUS, WEAPONS } from '../data/weapons';
 import { PlayerBody } from '../entities/playerPhysics';
 import { generateWorldData } from '../world/World';
 import { EnemySystem } from './EnemySystem';
@@ -143,13 +143,21 @@ describe('partida', () => {
     const nearId = run.enemies.id[near];
     const farId = run.enemies.id[far];
     run.enemies.rebuildGrid();
-    for (let t = 0; t < 40; t++) run.update(DT, body, 0);
     const indexOf = (id: number | undefined): number => Array.from(run.enemies.id.subarray(0, run.enemies.count)).indexOf(id ?? -1);
+    let maxFlash = 0;
+    for (let t = 0; t < 40; t++) {
+      run.update(DT, body, 0);
+      maxFlash = Math.max(maxFlash, run.enemies.flash[indexOf(nearId)] as number);
+    }
     const n = indexOf(nearId);
     const f = indexOf(farId);
     expect(run.enemies.hp[n]).toBeLessThan(run.enemies.maxHp[n] as number);
     expect(run.enemies.hp[f]).toBe(run.enemies.maxHp[f]);
     expect(aura?.totalDamage).toBeGreaterThan(0);
+    // El destello del aura es suave (golpea a muchos a la vez) y más flojo que el de la chancla.
+    expect(maxFlash).toBeGreaterThan(0);
+    expect(maxFlash).toBeLessThanOrEqual(WEAPONS.naftalina.hitFlash);
+    expect(WEAPONS.naftalina.hitFlash).toBeLessThan(WEAPONS.chancla.hitFlash);
   });
 
   it('una partida simulada avanza: mata, sube de nivel y consigue la segunda arma', () => {
