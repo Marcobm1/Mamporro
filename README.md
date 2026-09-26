@@ -84,7 +84,10 @@ npm run typecheck  # solo la comprobación de tipos de TypeScript
 | Pausa        | Esc                                     |
 | Panel debug  | F3                                      |
 
-Las armas disparan solas: tú solo te mueves, saltas y te deslizas.
+Las armas disparan solas: tú solo te mueves, saltas y te deslizas. Doña
+Remedios aparta a los enemigos al pasar, pero los que empuja de frente la
+frenan (como mucho hasta el 60 % de su velocidad); nunca la encierran. Si algo
+la tapa (una horda, un muro), se ve su silueta dorada a través.
 
 - Al pulsar **Jugar** el juego captura el ratón. **Esc** lo suelta y pausa; para
   volver, pulsa **Continuar**. El navegador exige un clic para volver a
@@ -102,7 +105,8 @@ Las armas disparan solas: tú solo te mueves, saltas y te deslizas.
 ### Panel de debug (F3)
 
 Muestra FPS, tiempos de lógica y render, llamadas de dibujo, triángulos,
-entidades (enemigos, proyectiles, gemas, partículas) y datos de la partida. Con
+entidades (enemigos, proyectiles, gemas, partículas) y datos de la partida
+(entre ellos, cuánto te frena la horda). Con
 el panel abierto y jugando, las teclas numéricas lanzan acciones de prueba:
 
 | Tecla | Acción                                        |
@@ -187,6 +191,8 @@ Los tests (`*.test.ts`) están junto al código que prueban.
   - Suben a superficies bajas y alcanzan al jugador hasta 1,6 m por encima. Una
     roca no es un refugio; lo alto de un muro, sí (hasta que lleguen los
     enemigos a distancia).
+  - Al atravesarlos, cada enemigo que Doña Remedios empuja de frente la frena
+    según su masa (`CROWD_CONFIG` en `src/data/config.ts`).
 - **Rendimiento medido:**
   - En Node, la lógica completa (IA, armas, proyectiles, gemas) cuesta unos
     0,5 ms por tick con 500 enemigos.
@@ -211,6 +217,13 @@ Los tests (`*.test.ts`) están junto al código que prueban.
 - **Números de daño:** se dibujan con los glifos de la propia fuente pixelada
   (con contorno) en quads instanciados que miran a la cámara. Los críticos salen
   en amarillo con "!" y los supercríticos en naranja con "!!".
+- **Silueta a través de obstáculos:** cada pieza de Doña Remedios lleva una
+  copia con un material de profundidad invertida (`GreaterDepth`) que solo se
+  dibuja donde algo ya dibujado la tapa. Lleva un tramado de tablero y un
+  pequeño margen a lo largo del rayo de vista para que el suelo bajo los pies
+  no la haga asomar. El orden de dibujo está en `src/render/renderOrder.ts`:
+  mundo y enemigos, silueta, Doña Remedios y, al final, lo que no debe
+  revelarla (hierba, fauna, partículas, gemas y proyectiles).
 
 ## Cómo añadir contenido
 
@@ -252,8 +265,12 @@ La guía completa llegará en el hito 6. Mientras tanto:
   - rejilla espacial comparada con fuerza bruta;
   - IA de enemigos: persecución, separación y contacto, y que subirse a una roca
     no proteja;
+  - el frenado al atravesar una horda: solo frenan los de delante, nunca más
+    del tope, y se sale incluso rodeada;
   - perforación de la chancla, radio del aura y gemas (recogida y fusión);
-  - una partida simulada completa y una prueba de rendimiento con 500 enemigos.
+  - una partida simulada completa y una prueba de rendimiento con 500 enemigos;
+- la silueta: una por pieza del modelo, con la prueba de profundidad invertida
+  y el orden de dibujo correcto.
 
 ### Modo de pruebas automáticas
 
@@ -272,7 +289,7 @@ acciones de debug o medir los tiempos del bucle.
 3. Progresión en partida: subidas de nivel con rarezas, 6 armas, 8 tomos,
    Reroll/Saltar/Descartar.
 4. Mapa vivo: oro, cofres, objetos, santuarios, tótem, portal, jefe,
-   temporizador y enjambre final.
+   temporizador, enjambre final y más tipos de enemigos.
 5. Meta y UI: menús, personajes, moneda meta, desbloqueos, misiones, guardado
    completo e idiomas.
 6. Pulido: audio, partículas, balance, tests y guía para añadir contenido.
