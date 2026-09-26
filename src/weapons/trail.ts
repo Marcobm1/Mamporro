@@ -66,7 +66,7 @@ function soak(state: TrailState, ctx: CombatContext, weapon: WeaponInstance): vo
     const px = state.x[p] as number;
     const pz = state.z[p] as number;
     const r = state.radius[p] as number;
-    const n = enemies.grid.queryRadius(px, pz, r + 0.6, inRange);
+    const n = enemies.queryRadius(px, pz, r, inRange);
     for (let k = 0; k < n; k++) {
       const e = inRange[k] as number;
       if (e >= enemies.count || (enemies.hp[e] as number) <= 0 || state.stamp[e] === state.pulse) continue;

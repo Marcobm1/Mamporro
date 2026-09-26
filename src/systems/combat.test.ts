@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { Run, type RunEffects } from '../core/Run';
+import { NO_EFFECTS, Run, type RunEffects } from '../core/Run';
 import { CHARACTERS } from '../data/characters';
 import { CROWD_CONFIG, PLAYER_BASE_STATS, PLAYER_TUNING } from '../data/config';
 import { enemyTypeIndex } from '../data/enemies';
@@ -22,17 +22,7 @@ function standingPlayer(): PlayerBody {
 }
 
 function newRun(fx?: Partial<RunEffects>): Run {
-  const effects: RunEffects = {
-    damageNumber: () => {},
-    enemyKilled: () => {},
-    enemySpawned: () => {},
-    playerHit: () => {},
-    levelUp: () => {},
-    arcSwing: () => {},
-    chainZap: () => {},
-    ...fx,
-  };
-  return new Run(collision, 'COMBAT-TEST', CHARACTERS.remedios, effects);
+  return new Run(collision, 'COMBAT-TEST', CHARACTERS.remedios, { ...NO_EFFECTS, ...fx });
 }
 
 describe('enemigos', () => {
@@ -235,7 +225,7 @@ describe('partida', () => {
     for (let t = 0; t < 60 * 60; t++) {
       run.update(DT, body, t * 0.01);
       // Como en el juego: con una subida pendiente se elige carta (aquí, un arma nueva si la hay).
-      while (run.openLevelUp() || run.offer) {
+      while (run.openChoice() || run.offer) {
         const offer = run.offer ?? [];
         run.choose(Math.max(0, offer.findIndex((c) => c.kind === 'newWeapon')));
         chosen++;
@@ -312,6 +302,35 @@ describe('partida', () => {
     console.log(`[bench] 4 armas nuevas con ~${run.enemies.count} enemigos: ${perTick.toFixed(3)} ms por tick`);
     console.log(`[bench] daño: ${run.weapons.map((w) => `${w.def.id}=${Math.round(w.totalDamage)}`).join(" ")}`);
     expect(run.weapons.every((w) => w.totalDamage > 0)).toBe(true);
+    expect(perTick).toBeLessThan(8);
+  });
+  it('rendimiento: enjambre final con 750 enemigos de todos los tipos, palomas disparando y el jefe', () => {
+    const run = newRun();
+    run.invincible = true;
+    for (const id of ['naftalina', 'jersey', 'fregona'] as const) run.debugAddWeapon(id);
+    run.debugAddItem('olla');
+    run.debugAddItem('perlas');
+    run.time = 10 * 60 + 30;
+    const body = standingPlayer();
+    run.update(DT, body, 0);
+    run.debugSummonBoss();
+    // Relleno hasta ~750 enemigos variados alrededor.
+    const ids = ['pelusa', 'cucaracha', 'taper', 'paloma'] as const;
+    for (let k = 0; run.enemies.count < 740 && k < 2000; k++) {
+      const a = k * 2.39996;
+      const r = 6 + (30 * (k % 400)) / 400;
+      run.debugSpawnEnemy(ids[k % ids.length] as (typeof ids)[number], Math.cos(a) * r, Math.sin(a) * r);
+    }
+    // Se mide el coste de la lógica con todos presentes: que no se mueran durante la medida.
+    run.enemies.hp.fill(1e9, 0, run.enemies.count);
+    for (let t = 0; t < 30; t++) run.update(DT, body, 0);
+    const ticks = 240;
+    const start = performance.now();
+    for (let t = 0; t < ticks; t++) run.update(DT, body, t * 0.01);
+    const perTick = (performance.now() - start) / ticks;
+    console.log(`[bench] enjambre con ~${run.enemies.count} enemigos y ${run.enemyShots.count} pipas: ${perTick.toFixed(3)} ms por tick`);
+    expect(run.swarm).toBe(true);
+    expect(run.enemies.count).toBeGreaterThan(600);
     expect(perTick).toBeLessThan(8);
   });
 });

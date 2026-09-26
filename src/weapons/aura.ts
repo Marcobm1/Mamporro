@@ -18,14 +18,14 @@ const updateAura: WeaponUpdate = (weapon, ctx: CombatContext, dt) => {
 
   const { enemies, player } = ctx;
   const radius = auraRadius(weapon.effective.area);
-  const n = enemies.grid.queryRadius(player.x, player.z, radius + 0.6, inRange);
+  const n = enemies.queryRadius(player.x, player.z, radius, inRange);
   for (let k = 0; k < n; k++) {
     const e = inRange[k] as number;
     if (e >= enemies.count || (enemies.hp[e] as number) <= 0) continue;
     const dx = (enemies.x[e] as number) - player.x;
     const dz = (enemies.z[e] as number) - player.z;
     const d = Math.hypot(dx, dz);
-    if (d > radius + 0.5) continue;
+    if (d > radius + enemies.radiusOf(e)) continue;
     ctx.damageEnemy(e, weapon, d > 1e-4 ? dx / d : 0, d > 1e-4 ? dz / d : 0);
   }
 };

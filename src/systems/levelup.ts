@@ -1,7 +1,9 @@
 // Subida de nivel (lógica pura): sorteo de rarezas con la Suerte, generación de
 // las cartas y qué mejora cada una. La partida (Run) guarda el estado y las aplica.
+// Las bendiciones de los santuarios usan las mismas cartas y rarezas.
 import type { Rng } from '../core/rng';
 import { RARITIES, type RarityDef, type RarityId } from '../data/rarities';
+import { SHRINE_BOOSTS, type ShrineBoost } from '../data/run';
 import { TOME_LIST, type TomeDef, type TomeId } from '../data/tomes';
 import { LEVEL_UP_CONFIG, WEAPON_UPGRADE_STEPS, type WeaponStatKey } from '../data/upgrades';
 import { WEAPON_LIST, type WeaponDef, type WeaponId, type WeaponStats } from '../data/weapons';
@@ -36,7 +38,7 @@ export interface TomeCard {
   amounts: number[];
 }
 
-/** Relleno cuando no queda nada que ofrecer. */
+/** Relleno cuando no queda nada que ofrecer: cura... */
 export interface HealCard {
   kind: 'heal';
   key: null;
@@ -44,7 +46,23 @@ export interface HealCard {
   amount: number;
 }
 
-export type OfferCard = NewWeaponCard | WeaponUpgradeCard | TomeCard | HealCard;
+/** ...o un puñado de oro. */
+export interface GoldCard {
+  kind: 'gold';
+  key: null;
+  amount: number;
+}
+
+/** Bendición de un santuario: sube una estadística del jugador para el resto de la partida. */
+export interface BoostCard {
+  kind: 'boost';
+  key: string;
+  boost: ShrineBoost;
+  rarity: RarityId;
+  amount: number;
+}
+
+export type OfferCard = NewWeaponCard | WeaponUpgradeCard | TomeCard | HealCard | GoldCard | BoostCard;
 
 /** Lo que el generador de cartas necesita saber de la partida. */
 export interface BuildView {
@@ -53,6 +71,8 @@ export interface BuildView {
   stats: PlayerStats;
   /** Claves descartadas para el resto de la partida. */
   banished: ReadonlySet<string>;
+  /** Oro que da la carta de relleno de oro. */
+  fillerGold: number;
 }
 
 export const weaponKey = (id: WeaponId): string => `weapon:${id}`;
@@ -172,10 +192,19 @@ export function healCard(): HealCard {
   return { kind: 'heal', key: null, amount: LEVEL_UP_CONFIG.fillerHeal };
 }
 
+export function goldCard(amount: number): GoldCard {
+  return { kind: 'gold', key: null, amount };
+}
+
+/** Cartas de relleno, en orden de preferencia. */
+function fillerCards(build: BuildView): OfferCard[] {
+  return [healCard(), goldCard(build.fillerGold)];
+}
+
 /**
  * Genera `count` cartas distintas (nunca dos del mismo arma o tomo). Si no hay
- * bastantes, añade una de relleno; `exclude` deja fuera claves (p. ej. las que ya
- * están en la mesa al sustituir una carta descartada).
+ * bastantes, completa con las de relleno (curar y oro); `exclude` deja fuera
+ * claves (p. ej. las que ya están en la mesa al sustituir una carta descartada).
  */
 export function generateOffer(build: BuildView, count: number, rng: Rng, exclude: ReadonlySet<string> = new Set()): OfferCard[] {
   const pool = candidates(build, exclude);
@@ -194,7 +223,10 @@ export function generateOffer(build: BuildView, count: number, rng: Rng, exclude
     const [picked] = pool.splice(index, 1);
     if (picked) cards.push(picked.make(rng));
   }
-  if (cards.length < count) cards.push(healCard());
+  for (const filler of fillerCards(build)) {
+    if (cards.length >= count) break;
+    cards.push(filler);
+  }
   return cards;
 }
 
@@ -202,7 +234,32 @@ export function generateOffer(build: BuildView, count: number, rng: Rng, exclude
 export function replacementCard(build: BuildView, table: readonly OfferCard[], rng: Rng): OfferCard | null {
   const exclude = new Set(table.map((c) => c.key).filter((k): k is string => k !== null));
   const [card] = generateOffer(build, 1, rng, exclude);
-  // Si solo queda relleno y ya hay uno en la mesa, no se repite.
-  if (!card || (card.kind === 'heal' && table.some((c) => c.kind === 'heal'))) return null;
-  return card;
+  if (card && card.key !== null) return card;
+  // Solo queda relleno: uno que no esté ya en la mesa.
+  return fillerCards(build).find((f) => !table.some((c) => c.kind === f.kind)) ?? null;
+}
+
+// ------------------------------------------------------------------ santuarios
+
+/** Una bendición es útil mientras su estadística no esté al tope. */
+export function isBoostUseful(boost: ShrineBoost, stats: PlayerStats): boolean {
+  return !isPlayerStatCapped(stats, boost.effect.stat);
+}
+
+/** `count` bendiciones distintas, cada una con su rareza (la Suerte ayuda). */
+export function generateShrineOffer(stats: PlayerStats, count: number, rng: Rng, boosts: readonly ShrineBoost[] = SHRINE_BOOSTS): OfferCard[] {
+  const pool = rng.shuffle(boosts.filter((b) => isBoostUseful(b, stats)));
+  const cards: OfferCard[] = pool.slice(0, count).map((boost) => {
+    const rarity = rollRarity(stats.luck, rng);
+    return {
+      kind: 'boost',
+      key: `boost:${boost.id}`,
+      boost,
+      rarity: rarity.id,
+      amount: scaledAmount(boost.effect.amount, rarity.power, boost.effect.integer),
+    };
+  });
+  // Con todo al tope (casi imposible), al menos se cura.
+  if (cards.length === 0) cards.push(healCard());
+  return cards;
 }

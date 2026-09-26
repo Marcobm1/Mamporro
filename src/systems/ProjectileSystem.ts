@@ -164,7 +164,7 @@ export class ProjectileSystem {
 
       // Colisiones con enemigos.
       const r = this.radius[i] as number;
-      const n = enemies.grid.queryRadius(nx, nz, r + 0.8, this.scratch);
+      const n = enemies.queryRadius(nx, nz, r, this.scratch);
       for (let k = 0; k < n; k++) {
         const e = this.scratch[k] as number;
         if (e >= enemies.count || (enemies.hp[e] as number) <= 0) continue;
@@ -172,7 +172,7 @@ export class ProjectileSystem {
         if (this.alreadyHit(i, enemyId)) continue;
         const ex = (enemies.x[e] as number) - nx;
         const ez = (enemies.z[e] as number) - nz;
-        const reach = r + 0.45;
+        const reach = r + enemies.radiusOf(e) * 0.9;
         if (ex * ex + ez * ez > reach * reach) continue;
         onHit(i, e);
         this.rememberHit(i, enemyId);

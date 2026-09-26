@@ -14,5 +14,7 @@ export const RENDER_ORDER = {
   // Transparentes
   blobShadow: 1,
   aura: 2,
+  /** Avisos de ataque y zonas en el suelo. */
+  telegraph: 3,
   damageNumbers: 10,
 } as const;

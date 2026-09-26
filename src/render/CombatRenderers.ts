@@ -1,8 +1,10 @@
-// Render instanciado de proyectiles y gemas, y el efecto visual del aura.
+// Render instanciado de proyectiles, gemas, monedas y proyectiles enemigos, y el
+// efecto visual del aura.
 import {
   BoxGeometry,
   CircleGeometry,
   Color,
+  CylinderGeometry,
   DynamicDrawUsage,
   Group,
   InstancedMesh,
@@ -13,6 +15,7 @@ import {
   RingGeometry,
 } from 'three';
 import { clamp } from '../core/math';
+import type { EnemyProjectileSystem } from '../systems/EnemyProjectileSystem';
 import { gemTier, type PickupSystem } from '../systems/PickupSystem';
 import type { ProjectileSystem } from '../systems/ProjectileSystem';
 import { colored, mergeColored } from './geometry';
@@ -116,5 +119,87 @@ export class AuraRenderer {
     this.ring.rotation.y = time * 0.4;
     this.discMaterial.opacity = 0.17 + pulse * 0.16;
     this.ringMaterial.opacity = 0.4 + pulse * 0.35;
+  }
+}
+
+const COIN_TIERS = [1, 5, 20] as const;
+const COIN_SCALE = [1, 1.3, 1.7];
+
+/** Monedas de oro: discos que giran y flotan (las de más valor, más grandes). */
+export class CoinRenderer {
+  readonly mesh: InstancedMesh;
+
+  constructor(capacity: number) {
+    const geometry = mergeColored([
+      colored(new CylinderGeometry(0.27, 0.27, 0.06, 10).rotateX(Math.PI / 2), PALETTE.coin),
+      colored(new CylinderGeometry(0.16, 0.16, 0.07, 8).rotateX(Math.PI / 2), PALETTE.coinDark),
+    ]);
+    const material = applyRetro(new MeshLambertMaterial({ vertexColors: true, flatShading: true, emissive: 0x5a4000 }));
+    this.mesh = new InstancedMesh(geometry, material, capacity);
+    this.mesh.instanceMatrix.setUsage(DynamicDrawUsage);
+    this.mesh.count = 0;
+    this.mesh.frustumCulled = false;
+    this.mesh.renderOrder = RENDER_ORDER.afterPlayer;
+  }
+
+  update(coins: PickupSystem): void {
+    const array = this.mesh.instanceMatrix.array as Float32Array;
+    for (let i = 0; i < coins.count; i++) {
+      const value = coins.value[i] as number;
+      let tier = 0;
+      for (let t = 1; t < COIN_TIERS.length; t++) if (value >= (COIN_TIERS[t] as number)) tier = t;
+      const scale = COIN_SCALE[tier] ?? 1;
+      const phase = coins.phase[i] as number;
+      writeYawMatrix(array, i, coins.x[i] as number, (coins.y[i] as number) + Math.sin(phase) * 0.08, coins.z[i] as number, phase * 1.6, scale, scale, scale);
+    }
+    this.mesh.count = coins.count;
+    this.mesh.instanceMatrix.needsUpdate = true;
+  }
+}
+
+/** Proyectiles enemigos: pipas de las palomas y bolas de polvo del jefe. */
+export class EnemyShotRenderer {
+  readonly group = new Group();
+  private readonly meshes: InstancedMesh[];
+
+  constructor(capacity: number) {
+    const material = applyRetro(new MeshLambertMaterial({ vertexColors: true, flatShading: true }));
+    const pipa = mergeColored([
+      colored(new OctahedronGeometry(0.2, 0).scale(0.55, 0.4, 1), PALETTE.pipa),
+      colored(new BoxGeometry(0.03, 0.09, 0.3).translate(0.07, 0.02, 0), PALETTE.pipaStripe),
+      colored(new BoxGeometry(0.03, 0.09, 0.3).translate(-0.07, 0.02, 0), PALETTE.pipaStripe),
+    ]);
+    const dust = colored(new OctahedronGeometry(0.45, 1), PALETTE.dustBall);
+    this.meshes = [pipa, dust].map((geometry) => {
+      const mesh = new InstancedMesh(geometry, material, capacity);
+      mesh.instanceMatrix.setUsage(DynamicDrawUsage);
+      mesh.count = 0;
+      mesh.frustumCulled = false;
+      mesh.renderOrder = RENDER_ORDER.afterPlayer;
+      this.group.add(mesh);
+      return mesh;
+    });
+  }
+
+  update(shots: EnemyProjectileSystem, alpha: number): void {
+    const counts = [0, 0];
+    for (let i = 0; i < shots.count; i++) {
+      const kind = shots.kind[i] as number;
+      const mesh = this.meshes[kind];
+      if (!mesh) continue;
+      const slot = counts[kind] as number;
+      counts[kind] = slot + 1;
+      const x = (shots.px[i] as number) + ((shots.x[i] as number) - (shots.px[i] as number)) * alpha;
+      const y = (shots.py[i] as number) + ((shots.y[i] as number) - (shots.py[i] as number)) * alpha;
+      const z = (shots.pz[i] as number) + ((shots.z[i] as number) - (shots.pz[i] as number)) * alpha;
+      const spin = shots.spin[i] as number;
+      const heading = Math.atan2(-(shots.vx[i] as number), -(shots.vz[i] as number));
+      const wobble = kind === 1 ? 1 + Math.sin(spin * 2) * 0.12 : 1;
+      writeYawMatrix(mesh.instanceMatrix.array as Float32Array, slot, x, y, z, kind === 1 ? spin : heading, wobble, wobble, wobble);
+    }
+    this.meshes.forEach((mesh, kind) => {
+      mesh.count = counts[kind] as number;
+      mesh.instanceMatrix.needsUpdate = true;
+    });
   }
 }

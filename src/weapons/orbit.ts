@@ -33,7 +33,7 @@ function bite(state: OrbitState, ctx: CombatContext, weapon: WeaponInstance): vo
     const a = state.angle + (k * Math.PI * 2) / count;
     const ox = player.x + Math.cos(a) * orbit;
     const oz = player.z + Math.sin(a) * orbit;
-    const n = enemies.grid.queryRadius(ox, oz, orb + 0.6, inRange);
+    const n = enemies.queryRadius(ox, oz, orb, inRange);
     for (let j = 0; j < n; j++) {
       const e = inRange[j] as number;
       if (e >= enemies.count || (enemies.hp[e] as number) <= 0) continue;

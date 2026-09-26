@@ -1,8 +1,10 @@
-// Orquestador del juego: estados (inicio, jugando, subida de nivel, pausa, game
-// over), bucle, entrada, mundo, jugador, partida, cámara, render e interfaz.
+// Orquestador del juego: estados (inicio, jugando, elegir carta, pausa y
+// resultados), bucle, entrada, mundo, jugador, partida, cámara, render e interfaz.
 import { Color, DirectionalLight, Fog, HemisphereLight, Scene, type Mesh } from 'three';
 import { CHARACTERS } from '../data/characters';
 import { PLAYER_BASE_STATS, PLAYER_TUNING, RENDER_CONFIG } from '../data/config';
+import { ENEMIES, ENEMY_LIST, type EnemyId } from '../data/enemies';
+import { ITEMS, type ItemId } from '../data/items';
 import { TOMES, type TomeId } from '../data/tomes';
 import type { WeaponId } from '../data/weapons';
 import { PlayerBody, type PlayerIntent } from '../entities/playerPhysics';
@@ -27,7 +29,7 @@ import { GameLoop } from './GameLoop';
 import { Input } from './Input';
 import { damp, lerp, RAD2DEG, type Vec3Like } from './math';
 import { normalizeSeed, randomSeed } from './rng';
-import { Run } from './Run';
+import { Run, type RunNotice } from './Run';
 
 export type GameState = 'loading' | 'title' | 'playing' | 'levelup' | 'paused' | 'gameover';
 
@@ -36,7 +38,7 @@ export interface GameOptions {
   testMode: boolean;
 }
 
-export type DebugAction = 'invincible' | 'level' | 'minute' | 'spawn' | 'kill';
+export type DebugAction = 'invincible' | 'level' | 'minute' | 'spawn' | 'kill' | 'boss' | 'gold' | 'reveal';
 
 export interface RunInfo {
   time: number;
@@ -52,6 +54,19 @@ export interface RunInfo {
   crowdSlow: number;
   /** Velocidad horizontal del jugador (m/s). */
   speed: number;
+  gold: number;
+  timeLeft: number;
+  swarm: boolean;
+  victory: boolean;
+  items: Array<{ id: string; count: number }>;
+  chestsOpened: number;
+  boss: { hp: number; maxHp: number; phase: string; attack: string | null } | null;
+  prompt: { kind: string; cost: number } | null;
+  challenge: number;
+  enemyShots: number;
+  coins: number;
+  /** Cuántos enemigos hay de cada tipo. */
+  enemyTypes: Record<string, number>;
 }
 
 /** Ganchos para las pruebas automáticas en navegador (solo con `?test`). */
@@ -73,14 +88,25 @@ export interface TestHooks {
   teleport(x: number, z: number): void;
   /** Quita vida al jugador (para probar el game over sin esperar). */
   hurtPlayer(amount: number): void;
-  /** Subida de nivel abierta (o null). */
-  levelUp(): { level: number; pending: number; cards: Array<{ kind: string; key: string | null; rarity?: string }> } | null;
+  /** Elección abierta (subida de nivel o santuario) o null. */
+  levelUp(): { source: string; pending: number; cards: Array<{ kind: string; key: string | null; rarity?: string }> } | null;
   choose(index: number): void;
   reroll(): void;
   skip(): void;
   banish(index: number): void;
   addWeapon(id: WeaponId): boolean;
   addTome(id: TomeId): boolean;
+  addItem(id: ItemId): void;
+  /** Usa lo que el jugador tenga delante (como la tecla E). */
+  interact(): boolean;
+  /** Interactuables del mapa con su estado. */
+  interactables(): Array<{ kind: string; x: number; y: number; z: number; discovered: boolean; used: boolean; charge: number }>;
+  /** Hace aparecer un enemigo a (dx, dz) del jugador. */
+  spawnEnemy(id: EnemyId, dx: number, dz: number): boolean;
+  /** Enemigos vivos con su tipo, posición, estado y vida. */
+  enemies(): Array<{ id: string; x: number; z: number; state: number; hp: number }>;
+  /** Activa o desactiva las armas del jugador. */
+  setWeapons(on: boolean): void;
   /** Congela los efectos visuales (no envejecen) para poder fotografiar los de un instante. */
   freezeEffects(frozen: boolean): void;
 }
@@ -91,8 +117,11 @@ declare global {
   }
 }
 
+const ENEMY_IDS = ENEMY_LIST.map((def) => def.id);
 const TITLE_ORBIT_SPEED = 0.12;
 const DEBUG_SPAWN_COUNT = 100;
+/** Segundos entre derrotar al jefe y la pantalla de resultados (para verlo reventar). */
+const VICTORY_DELAY = 1.6;
 
 export class Game {
   private readonly save: SaveManager;
@@ -113,6 +142,7 @@ export class Game {
   private run: Run | null = null;
   /** Solo pruebas: los efectos visuales no envejecen. */
   private effectsFrozen = false;
+  private victoryDelay = VICTORY_DELAY;
 
   private readonly prev = { x: 0, y: 0, z: 0 };
   /** Posición interpolada del jugador en el frame actual (la que se dibuja). */
@@ -145,6 +175,9 @@ export class Game {
         this.rig.shake(0.45);
         this.ui.hud.flashHurt();
       },
+      onNotice: (notice) => this.showNotice(notice),
+      onItem: (item) => this.ui.hud.notice(t(item.nameKey), true),
+      onShake: (amount) => this.rig.shake(amount),
     });
     this.sky = createSky();
     this.seed = randomSeed();
@@ -223,8 +256,11 @@ export class Game {
   /** Prepara una partida nueva en el mapa actual. */
   private beginRun(): void {
     this.resetPlayer();
-    this.run = new Run(this.world.collision, this.seed, CHARACTERS.remedios, this.runView);
+    this.run = new Run(this.world.collision, this.seed, CHARACTERS.remedios, this.runView, {
+      interactables: this.world.interactables,
+    });
     this.runView.attach(this.run);
+    this.victoryDelay = VICTORY_DELAY;
     this.ui.hud.invalidate();
   }
 
@@ -295,7 +331,7 @@ export class Game {
     this.ui.showLevelUp(
       {
         level: run.level - run.pendingLevelUps + 1,
-        pending: run.pendingLevelUps - 1,
+        pending: run.pendingLevelUps + run.pendingShrines - 1,
         cards: run.offer.map((card) => describeCard(card, owned)),
         rerolls: run.rerolls,
         skips: run.skips,
@@ -327,7 +363,8 @@ export class Game {
     return run ? { stats: statLines(run.stats, run.hp) } : null;
   }
 
-  private gameOver(): void {
+  /** Fin de la partida (la pantalla de resultados con victoria llega con la interfaz del hito 4). */
+  private finishRun(): void {
     const run = this.run;
     if (!run) return;
     this.state = 'gameover';
@@ -340,6 +377,46 @@ export class Game {
       seed: this.seed,
       cheated: run.cheated,
     });
+  }
+
+  /** Texto de cada aviso de la partida (y si va en grande). */
+  private showNotice(notice: RunNotice): void {
+    const hud = this.ui.hud;
+    switch (notice.kind) {
+      case 'wave':
+        hud.notice(t(notice.key), true);
+        break;
+      case 'elite':
+        hud.notice(t('notice.elite', { name: t(ENEMIES[notice.enemy].nameKey) }), true);
+        break;
+      case 'swarm':
+        hud.notice(t('notice.swarm'), true);
+        break;
+      case 'portalFound':
+        hud.notice(t('notice.portalFound'), true);
+        break;
+      case 'portalRevealed':
+        hud.notice(t('notice.portalRevealed'));
+        break;
+      case 'boss':
+        hud.notice(t('notice.boss', { name: t(ENEMIES[notice.enemy].nameKey) }), true);
+        break;
+      case 'noGold':
+        hud.notice(t('notice.noGold', { n: notice.missing }));
+        break;
+      case 'challengeStart':
+        hud.notice(t('notice.challengeStart'), true);
+        break;
+      case 'challengeDone':
+        hud.notice(t('notice.challengeDone'), true);
+        break;
+      case 'shrineCharged':
+        hud.notice(t('notice.shrineCharged'));
+        break;
+      case 'revive':
+        hud.notice(t('notice.revive'), true);
+        break;
+    }
   }
 
   private backToTitle(): void {
@@ -398,6 +475,9 @@ export class Game {
       Digit3: 'minute',
       Digit4: 'spawn',
       Digit5: 'kill',
+      Digit6: 'boss',
+      Digit7: 'gold',
+      Digit8: 'reveal',
     };
     const action = actions[code];
     if (action) this.debugAction(action);
@@ -425,6 +505,17 @@ export class Game {
       case 'kill':
         run.debugKillAll();
         this.ui.toast(t('debug.killAll'));
+        break;
+      case 'boss':
+        this.ui.toast(t(run.debugSummonBoss() ? 'debug.boss' : 'debug.bossBusy'));
+        break;
+      case 'gold':
+        run.debugAddGold(100);
+        this.ui.toast(t('debug.gold'));
+        break;
+      case 'reveal':
+        run.debugRevealMap();
+        this.ui.toast(t('debug.reveal'));
         break;
     }
   }
@@ -503,9 +594,16 @@ export class Game {
       }
       const run = this.run;
       if (run) {
+        if (this.input.wasPressed('interact')) run.interact();
         run.update(dt, this.body, this.rig.yaw);
-        if (run.dead) this.gameOver();
-        else if (run.openLevelUp()) this.enterLevelUp();
+        if (run.dead) {
+          this.finishRun();
+        } else if (run.victory) {
+          this.victoryDelay -= dt;
+          if (this.victoryDelay <= 0) this.finishRun();
+        } else if (run.openChoice()) {
+          this.enterLevelUp();
+        }
       }
     }
     this.input.endTick();
@@ -553,7 +651,7 @@ export class Game {
     );
     this.sky.position.copy(this.rig.camera.position);
     retroUniforms.uTime.value = now;
-    this.world.update(now);
+    this.world.update(now, run?.interactables.list ?? null);
     this.drawPos.x = x;
     this.drawPos.y = y;
     this.drawPos.z = z;
@@ -668,6 +766,28 @@ export class Game {
           dead: run.dead,
           crowdSlow: run.crowdSlow,
           speed: this.body.horizontalSpeed,
+          gold: run.gold,
+          timeLeft: run.timeLeft,
+          swarm: run.swarm,
+          victory: run.victory,
+          items: run.items.map((s) => ({ id: s.def.id, count: s.count })),
+          chestsOpened: run.chestsOpened,
+          boss: (() => {
+            const health = run.bossHealth;
+            return health && run.boss ? { hp: health.hp, maxHp: health.maxHp, phase: run.boss.phase, attack: run.boss.attack } : null;
+          })(),
+          prompt: run.prompt ? { kind: run.prompt.kind, cost: run.prompt.cost } : null,
+          challenge: run.interactables.challenge,
+          enemyShots: run.enemyShots.count,
+          coins: run.coins.count,
+          enemyTypes: (() => {
+            const counts: Record<string, number> = {};
+            for (let i = 0; i < run.enemies.count; i++) {
+              const id = ENEMY_IDS[run.enemies.type[i] as number] ?? '?';
+              counts[id] = (counts[id] ?? 0) + 1;
+            }
+            return counts;
+          })(),
         };
       },
       loopStats: () => ({
@@ -692,8 +812,8 @@ export class Game {
         const run = this.run;
         if (!run?.offer || this.state !== 'levelup') return null;
         return {
-          level: run.level - run.pendingLevelUps + 1,
-          pending: run.pendingLevelUps - 1,
+          source: run.offerSource,
+          pending: run.pendingLevelUps + run.pendingShrines - 1,
           cards: run.offer.map((c) => ({ kind: c.kind, key: c.key, rarity: 'rarity' in c ? c.rarity : undefined })),
         };
       },
@@ -703,6 +823,34 @@ export class Game {
       banish: (index) => this.levelUpAction((run) => run.banish(index), false),
       addWeapon: (id) => this.run?.debugAddWeapon(id) ?? false,
       addTome: (id) => (TOMES[id] ? (this.run?.debugAddTome(id) ?? false) : false),
+      addItem: (id) => {
+        if (ITEMS[id]) this.run?.debugAddItem(id);
+      },
+      interact: () => this.run?.interact() ?? false,
+      interactables: () =>
+        (this.run?.interactables.list ?? []).map((item) => ({
+          kind: item.spot.kind,
+          x: item.spot.x,
+          y: item.spot.y,
+          z: item.spot.z,
+          discovered: item.discovered,
+          used: item.used,
+          charge: item.charge,
+        })),
+      spawnEnemy: (id, dx, dz) => (this.run ? this.run.debugSpawnEnemy(id, this.body.x + dx, this.body.z + dz) >= 0 : false),
+      enemies: () => {
+        const run = this.run;
+        if (!run) return [];
+        const e = run.enemies;
+        const out: Array<{ id: string; x: number; z: number; state: number; hp: number }> = [];
+        for (let i = 0; i < e.count; i++) {
+          out.push({ id: ENEMY_IDS[e.type[i] as number] ?? '?', x: e.x[i] as number, z: e.z[i] as number, state: e.state[i] as number, hp: e.hp[i] as number });
+        }
+        return out;
+      },
+      setWeapons: (on) => {
+        if (this.run) this.run.weaponsOff = !on;
+      },
       freezeEffects: (frozen) => {
         this.effectsFrozen = frozen;
       },

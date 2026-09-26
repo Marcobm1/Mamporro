@@ -29,6 +29,7 @@ function build(partial: Partial<BuildView> = {}): BuildView {
     tomes: [],
     stats: computePlayerStats(character, []),
     banished: new Set(),
+    fillerGold: 20,
     ...partial,
   };
 }
@@ -190,6 +191,7 @@ describe('cartas', () => {
     const banished = new Set([...WEAPON_LIST.map((w) => weaponKey(w.id)), ...TOME_LIST.map((t) => tomeKey(t.id))]);
     expect(generateOffer(build({ banished }), 3, new Rng('vacío'))).toEqual([
       { kind: 'heal', key: null, amount: LEVEL_UP_CONFIG.fillerHeal },
+      { kind: 'gold', key: null, amount: 20 },
     ]);
   });
 });
@@ -203,7 +205,7 @@ describe('subida de nivel en la partida', () => {
     run.debugLevelUp();
     run.debugLevelUp();
     expect(run.pendingLevelUps).toBe(2);
-    expect(run.openLevelUp()).toBe(true);
+    expect(run.openChoice()).toBe(true);
     expect(run.offer).toHaveLength(LEVEL_UP_CONFIG.baseChoices);
     expect(run.choose(0)).toBe(true);
     expect(run.pendingLevelUps).toBe(1);
@@ -211,13 +213,13 @@ describe('subida de nivel en la partida', () => {
     expect(run.choose(1)).toBe(true);
     expect(run.pendingLevelUps).toBe(0);
     expect(run.offer).toBeNull();
-    expect(run.openLevelUp()).toBe(false);
+    expect(run.openChoice()).toBe(false);
   });
 
   it('Reroll y Saltar gastan usos y no funcionan sin ellos', () => {
     const run = newRun();
     for (let k = 0; k < 5; k++) run.debugLevelUp();
-    run.openLevelUp();
+    run.openChoice();
     for (let k = 0; k < LEVEL_UP_CONFIG.rerolls; k++) expect(run.reroll()).toBe(true);
     expect(run.reroll()).toBe(false);
     expect(run.rerolls).toBe(0);
@@ -229,7 +231,7 @@ describe('subida de nivel en la partida', () => {
   it('Descartar quita la opción para siempre y pone otra carta en su hueco', () => {
     const run = newRun();
     run.debugLevelUp();
-    run.openLevelUp();
+    run.openChoice();
     const offer = run.offer as OfferCard[];
     const index = offer.findIndex((c) => c.key !== null);
     const key = offer[index]?.key as string;
@@ -238,7 +240,7 @@ describe('subida de nivel en la partida', () => {
     expect(run.banished.has(key)).toBe(true);
     expect(run.offer).toHaveLength(LEVEL_UP_CONFIG.baseChoices);
     expect(run.offer?.some((c) => c.key === key)).toBe(false);
-    const view: BuildView = { weapons: run.weapons, tomes: run.tomes, stats: run.stats, banished: run.banished };
+    const view: BuildView = { weapons: run.weapons, tomes: run.tomes, stats: run.stats, banished: run.banished, fillerGold: 20 };
     for (let k = 0; k < 100; k++) expect(generateOffer(view, 3, new Rng(`d-${k}`)).some((c) => c.key === key)).toBe(false);
   });
 
@@ -276,7 +278,7 @@ describe('subida de nivel en la partida', () => {
     const b = newRun();
     for (const run of [a, b]) {
       run.debugLevelUp();
-      run.openLevelUp();
+      run.openChoice();
     }
     expect(a.offer).toEqual(b.offer);
   });

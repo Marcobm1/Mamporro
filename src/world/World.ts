@@ -10,6 +10,9 @@ import { decorationColliders, placeDecorations, type Decoration } from './decora
 import { placeGroundCover, type GroundCover } from './groundCover';
 import { createGroundCoverMeshes } from './GroundCoverMeshes';
 import { generateHeightfield, type Heightfield } from './Heightfield';
+import type { InteractableState } from '../systems/Interactables';
+import { InteractableMeshes } from './InteractableMeshes';
+import { interactableClearRadius, interactableCollider, placeInteractables, type InteractableSpot } from './interactables';
 import { createPropMeshes } from './PropMeshes';
 import { generateProps, type PropSet } from './props';
 import { flattenSites, isInAnySite, pickSites, type Site } from './sites';
@@ -20,6 +23,8 @@ export interface WorldData {
   heightfield: Heightfield;
   sites: Site[];
   props: PropSet;
+  /** Cofres, santuarios, tótems y el portal del jefe. */
+  interactables: InteractableSpot[];
   decorations: Decoration[];
   groundCover: GroundCover;
   colliders: Collider[];
@@ -47,30 +52,40 @@ export function generateWorldData(seed: string): WorldData {
   flattenSites(heightfield, sites);
   const props = generateProps(heightfield, sites, rng.derive('props'), { limit, spawnClear: 16 });
 
-  // Después la vegetación, fuera de las construcciones.
+  // Los interactuables, en sitios libres de obstáculos.
+  const interactables = placeInteractables(heightfield, sites, rng.derive('interactables'), {
+    limit,
+    obstacles: new ColliderGrid(props.colliders, heightfield.half),
+  });
+  const nearInteractable = (x: number, z: number): boolean =>
+    interactables.some((spot) => Math.hypot(spot.x - x, spot.z - z) < interactableClearRadius(spot.kind));
+
+  // Después la vegetación, fuera de las construcciones y sin tapar interactuables.
   const decorations = placeDecorations(heightfield, rng.derive('decorations'), {
     spawnRadius: WORLD_CONFIG.clearSpawnRadius,
     limit,
-    isReserved: (x, z) => isInAnySite(sites, x, z, 1.5),
+    isReserved: (x, z) => isInAnySite(sites, x, z, 1.5) || nearInteractable(x, z),
   });
   const groundCover = placeGroundCover(heightfield, rng.derive('ground-cover'), {
     limit,
     isReserved: (x, z) => isInAnySite(sites, x, z, -1),
   });
 
-  const colliders: Collider[] = [...decorationColliders(decorations), ...props.colliders];
+  const colliders: Collider[] = [...decorationColliders(decorations), ...props.colliders, ...interactables.map(interactableCollider)];
   const grid = new ColliderGrid(colliders, heightfield.half);
   const collision = new WorldCollision(heightfield, grid, limit);
-  return { heightfield, sites, props, decorations, groundCover, colliders, collision };
+  return { heightfield, sites, props, interactables, decorations, groundCover, colliders, collision };
 }
 
 export class World {
   readonly heightfield: Heightfield;
   readonly sites: Site[];
   readonly decorations: Decoration[];
+  readonly interactables: InteractableSpot[];
   readonly collision: WorldCollision;
   readonly group = new Group();
   private readonly fauna: AmbientLife;
+  private readonly interactableMeshes: InteractableMeshes;
 
   constructor(
     readonly seed: string,
@@ -80,6 +95,7 @@ export class World {
     this.heightfield = data.heightfield;
     this.sites = data.sites;
     this.decorations = data.decorations;
+    this.interactables = data.interactables;
     this.collision = data.collision;
 
     const rng = new Rng(seed);
@@ -89,15 +105,18 @@ export class World {
     this.group.add(createGroundCoverMeshes(data.groundCover));
     this.fauna = new AmbientLife(this.heightfield, data.groundCover.flowers, seed, WORLD_CONFIG.playableRadius);
     this.group.add(this.fauna.group);
+    this.interactableMeshes = new InteractableMeshes(this.interactables, this.heightfield);
+    this.group.add(this.interactableMeshes.group);
   }
 
   get spawnPoint(): { x: number; y: number; z: number } {
     return { x: 0, y: this.heightfield.heightAt(0, 0), z: 0 };
   }
 
-  /** Animaciones puramente visuales (fauna). */
-  update(time: number): void {
+  /** Animaciones: fauna y estado de los interactuables (`null` sin partida). */
+  update(time: number, interactables: readonly InteractableState[] | null): void {
     this.fauna.update(time);
+    this.interactableMeshes.update(interactables, time);
   }
 
   /** Libera geometrías y materiales (las texturas compartidas las gestiona quien las creó). */

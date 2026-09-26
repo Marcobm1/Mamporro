@@ -39,7 +39,7 @@ const updateArc: WeaponUpdate = (weapon, ctx: CombatContext, dt) => {
     ctx.fx.arcSwing(player.x, player.y + 0.9, player.z, angle, radius, ARC_HALF_ANGLE);
   }
 
-  const n = enemies.grid.queryRadius(player.x, player.z, radius + 0.6, inRange);
+  const n = enemies.queryRadius(player.x, player.z, radius, inRange);
   for (let k = 0; k < n; k++) {
     const e = inRange[k] as number;
     if (e >= enemies.count || (enemies.hp[e] as number) <= 0) continue;

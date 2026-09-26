@@ -82,9 +82,13 @@ describe('escalado de la dificultad', () => {
     for (let i = 0; i < 200; i++) expect(pickEnemy(0.2, () => rng.next())).toBe('pelusa');
     let roaches = 0;
     const n = 7000;
-    for (let i = 0; i < n; i++) if (pickEnemy(5, () => rng.next()) === 'cucaracha') roaches++;
-    // Pesos 10 y 4 → 4/14 ≈ 28,6 %.
+    for (let i = 0; i < n; i++) if (pickEnemy(2, () => rng.next()) === 'cucaracha') roaches++;
+    // En el minuto 2 solo hay pelusas y cucarachas: pesos 10 y 4 → 4/14 ≈ 28,6 %.
     expect(roaches / n).toBeGreaterThan(0.26);
     expect(roaches / n).toBeLessThan(0.31);
+    // Más adelante salen también tápers y palomas; los especiales (élite y jefe) nunca.
+    const seen = new Set<string>();
+    for (let i = 0; i < 4000; i++) seen.add(pickEnemy(8, () => rng.next()));
+    expect([...seen].sort()).toEqual(['cucaracha', 'paloma', 'pelusa', 'taper']);
   });
 });

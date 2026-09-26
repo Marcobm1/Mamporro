@@ -1,15 +1,16 @@
-// Textos de las cartas de subida de nivel y de las estadísticas de la pausa
-// (lógica pura de presentación: datos + traducciones, sin DOM).
-import { formatNumber, t, type TranslationKey } from '../i18n';
-import { rarityById, type RarityId } from '../data/rarities';
+// Textos de las cartas (subida de nivel, santuarios), de los objetos y de las
+// estadísticas de la pausa (lógica pura de presentación: datos + traducciones, sin DOM).
+import { formatNumber, t, type TranslationKey, type TranslationParams } from '../i18n';
 import type { BonusStat, StatEffect } from '../data/bonuses';
+import { ITEM_EFFECTS, type ItemDef } from '../data/items';
+import { rarityById, type RarityId } from '../data/rarities';
 import { TOMES } from '../data/tomes';
 import { LEVEL_UP_CONFIG, WEAPON_UPGRADE_STEPS, type WeaponStatKey } from '../data/upgrades';
 import { WEAPONS, type WeaponDef } from '../data/weapons';
 import type { OfferCard } from '../systems/levelup';
 import type { PlayerStats } from '../systems/stats';
 
-export type CardTone = RarityId | 'new' | 'heal';
+export type CardTone = RarityId | 'new' | 'heal' | 'gold';
 
 export interface CardView {
   tone: CardTone;
@@ -76,6 +77,43 @@ export function effectLine(effect: StatEffect, amount: number): string {
   return changeLine(amount, effect.display, t(STAT_LABELS[effect.stat]));
 }
 
+export interface ItemView {
+  tone: RarityId;
+  /** Rareza. */
+  tag: string;
+  title: string;
+  /** Lo que suma cada copia (vacío en los de efecto especial). */
+  lines: string[];
+  description: string;
+}
+
+/** Números de la descripción de los objetos con efecto especial (en porcentaje). */
+function itemDescriptionParams(def: ItemDef): TranslationParams {
+  const pct = (v: number): string => formatNumber(v * 100, 1);
+  switch (def.id) {
+    case 'perlas':
+      return { n: pct(ITEM_EFFECTS.perlas.chance), dmg: pct(ITEM_EFFECTS.perlas.damageFraction) };
+    case 'monedero':
+      return { n: pct(ITEM_EFFECTS.monedero.damagePer100), max: pct(ITEM_EFFECTS.monedero.maxBonus) };
+    case 'olla':
+      return { n: pct(ITEM_EFFECTS.olla.chance) };
+    case 'bata':
+      return { n: pct(ITEM_EFFECTS.bata.reviveHp) };
+    default:
+      return {};
+  }
+}
+
+export function describeItem(def: ItemDef): ItemView {
+  return {
+    tone: def.rarity,
+    tag: t(rarityById(def.rarity).nameKey),
+    title: t(def.nameKey),
+    lines: def.effects.map((effect) => effectLine(effect, effect.amount)),
+    description: t(def.descriptionKey, itemDescriptionParams(def)),
+  };
+}
+
 export function describeCard(card: OfferCard, owned: OwnedLevels): CardView {
   switch (card.kind) {
     case 'newWeapon': {
@@ -126,6 +164,26 @@ export function describeCard(card: OfferCard, owned: OwnedLevels): CardView {
         description: t('levelup.filler.desc', { n: Math.round(LEVEL_UP_CONFIG.fillerHeal * 100) }),
         banishable: false,
       };
+    case 'gold':
+      return {
+        tone: 'gold',
+        tag: '',
+        title: t('levelup.fillerGold'),
+        level: '',
+        lines: [],
+        description: t('levelup.fillerGold.desc', { n: card.amount }),
+        banishable: false,
+      };
+    case 'boost':
+      return {
+        tone: card.rarity,
+        tag: t(rarityById(card.rarity).nameKey),
+        title: t(card.boost.nameKey),
+        level: '',
+        lines: [effectLine(card.boost.effect, card.amount)],
+        description: '',
+        banishable: false,
+      };
   }
 }
 
@@ -153,9 +211,11 @@ export function statLines(stats: PlayerStats, hp: number): StatLine[] {
     line('stat.extraProjectiles', `+${formatNumber(stats.extraProjectiles, 0)}`),
     line('stat.area', percent(stats.area - 1)),
     line('stat.critChance', percent(stats.critChance)),
+    line('stat.critMultiplier', percent(stats.critDamage)),
     line('stat.moveSpeed', percent(stats.moveSpeed - 1)),
     line('stat.luck', formatNumber(stats.luck, 0)),
     line('stat.pickupRadius', `${formatNumber(stats.pickupRadius, 1)} m`),
     line('stat.xpGain', percent(stats.xpGain - 1)),
+    line('stat.goldGain', percent(stats.goldGain - 1)),
   ];
 }
