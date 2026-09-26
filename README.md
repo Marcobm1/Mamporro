@@ -4,12 +4,14 @@ Roguelike 3D de supervivencia contra hordas ("bullet heaven") con estética retr
 tipo PS1, hecho con Three.js + TypeScript + Vite. Todo el contenido (geometría,
 texturas, fuente, textos) se genera por código: no hay archivos externos.
 
-> **Estado: hito 3 de 6.** Doña Remedios recorre un mapa procedural con colinas,
+> **Estado: hito 4 de 6.** Doña Remedios recorre un mapa procedural con colinas,
 > acantilados, casas derruidas, templetes en ruinas, granjas y pozos, y se
-> enfrenta a hordas de Pelusas Rebeldes y Cucarachas Turbo. Al subir de nivel
-> eliges entre cartas con rareza: 6 armas automáticas, 8 tomos que mejoran sus
-> estadísticas, y Reroll, Saltar y Descartar. El oro, los cofres, los objetos,
-> el jefe y más enemigos llegan en el hito 4.
+> enfrenta a hordas de 4 tipos de enemigos, élites y un jefe. Al subir de nivel
+> eliges entre cartas con rareza (6 armas, 8 tomos, Reroll, Saltar y
+> Descartar). Por el mapa hay oro, baúles con 12 objetos, mesas camilla que dan
+> bendiciones, tótems de desafío y un armario escondido que invoca al jefe.
+> Tienes 5, 10 o 15 minutos: si se acaba el tiempo sin vencer al jefe, llega el
+> enjambre final.
 
 ## Requisitos
 
@@ -82,6 +84,7 @@ npm run typecheck  # solo la comprobación de tipos de TypeScript
 | Mirar        | Ratón                                   |
 | Saltar       | Espacio (mantén para saltar más alto)   |
 | Deslizarse   | Shift o C                               |
+| Usar         | E (abrir baúles, tótem, portal)         |
 | Pausa        | Esc                                     |
 | Panel debug  | F3                                      |
 
@@ -102,6 +105,86 @@ la tapa (una horda, un muro), se ve su silueta dorada a través.
   navegador pide confirmación antes de cerrar la página.
 - La semilla del mapa aparece en la pantalla de inicio y en la pausa. Puedes
   escribir una semilla antes de jugar para repetir un mapa.
+- En la pantalla de inicio eliges la **duración de la partida**: 5, 10 (la
+  normal) o 15 minutos. Se guarda para la próxima vez.
+
+### La partida
+
+- **Temporizador:** arriba, en el centro, cuenta hacia atrás. La dificultad
+  sube con el tiempo: más enemigos, con más vida, y tipos nuevos. En una
+  partida de 5 minutos todo va el doble de rápido (y los enemigos dan el doble
+  de experiencia y oro); en una de 15, más despacio.
+- **Oleadas especiales:** de vez en cuando entra una estampida de cucarachas en
+  fila, un anillo de tápers, un arco de palomas o una tormenta de pelusas.
+- **Élites:** cada 2 minutos (de dificultad) aparece una Rata de Gimnasio.
+- **Jefe:** la Pelusa Madre sale del **armario misterioso**, que está escondido
+  lejos del inicio. Búscalo y ábrelo con E cuando quieras: cuanto más tarde, más
+  vida tiene. Vencerla gana la partida.
+- **Enjambre final:** si el tiempo llega a 0 sin haberla vencido, el ritmo de
+  aparición se duplica cada 20 segundos hasta que caes o vences al jefe. Para
+  que haya salida, el armario aparece en el minimapa si aún no lo habías visto.
+- Al terminar (victoria o derrota) sale la pantalla de resultados: tiempo,
+  bajas, nivel, oro conseguido, baúles abiertos, objetos y daño por arma.
+
+### Enemigos
+
+| Enemigo            | Qué hace                                                        |
+| ------------------ | --------------------------------------------------------------- |
+| Pelusa Rebelde     | Básico: va a por ti a saltitos                                  |
+| Cucaracha Turbo    | Rápida y frágil                                                 |
+| Táper Caducado     | Tanque lento: mucha vida, pega fuerte y suelta más oro          |
+| Paloma Okupa       | Se queda a distancia, se hincha y te escupe pipas               |
+| Rata de Gimnasio   | Élite: se agacha, marca una franja en el suelo y embiste        |
+| La Pelusa Madre    | Jefe: rodillo, culetazo y estornudo, siempre avisados           |
+
+Los ataques de la rata y del jefe se avisan antes: una **franja** naranja en el
+suelo para las embestidas y el rodillo, y un **círculo** que se va llenando
+para el culetazo. El estornudo se nota porque se hincha: después suelta bolas
+de polvo en todas direcciones y pelusas hijas. Con media vida se enfada y
+ataca más a menudo. Contra ella no se pasa: te aparta.
+
+### Mapa vivo
+
+| Elemento              | Cómo se usa                                                          |
+| --------------------- | -------------------------------------------------------------------- |
+| Baúl de la abuela     | E para abrirlo por oro: da un objeto. Cada uno cuesta más (15, 30, 49, 74...) |
+| Mesa camilla          | Quédate en su círculo 9 s (vienen más enemigos): eliges 1 de 3 bendiciones |
+| Tótem de cacerolas    | E: 45 s de desafío (más enemigos y con más vida, pero doble de oro y +50 de suerte) y un objeto al superarlo |
+| Armario misterioso    | E: invoca al jefe                                                    |
+
+- Hay 14 baúles, 3 mesas camilla, 2 tótems y 1 armario, colocados según la
+  semilla. Al acercarte a unos 30 m aparecen en el **minimapa** (arriba a la
+  derecha); el armario hay que verlo más de cerca.
+- Si te sales del círculo de la mesa camilla, se descarga despacio.
+- Las **bendiciones** suben una estadística para el resto de la partida y
+  tienen rareza, como las cartas.
+- El **oro** lo sueltan a veces los enemigos (siempre los élites) y se recoge
+  como las gemas.
+
+### Objetos
+
+Salen de los baúles y de los tótems. No ocupan hueco: se acumulan y cada copia
+vuelve a sumar su efecto.
+
+| Objeto                    | Rareza      | Efecto                                                        |
+| ------------------------- | ----------- | ------------------------------------------------------------- |
+| Gafas de Culo de Vaso     | Común       | +7 % de probabilidad de crítico                               |
+| Zapatillas de Velcro      | Común       | +8 % de velocidad                                             |
+| Termo de Café de Puchero  | Común       | +8 % de velocidad de ataque                                   |
+| Cojín de Ganchillo        | Común       | +4 de armadura                                                |
+| Lupa de Leer Prospectos   | Poco común  | +25 % de daño crítico                                         |
+| Décimo de Lotería         | Poco común  | +40 % de oro                                                  |
+| Rulos de la Suerte        | Poco común  | +15 de suerte                                                 |
+| Collar de Perlas          | Rara        | En cada crítico, 30 % de que salte una perla a otro enemigo   |
+| Monedero Bien Lleno       | Rara        | +4 % de daño por cada 100 de oro que lleves (hasta +80 %)     |
+| Baraja del Tute           | Rara        | Una 4.ª carta al subir de nivel (solo una vez)                |
+| Olla Exprés               | Épica       | Los enemigos pueden explotar al morir (8 % por copia)         |
+| Bata de Guatiné           | Legendaria  | Si caes, te levantas con media vida y apartas a todos; se gasta |
+
+Sinergias: las gafas y la lupa con el collar de perlas (más críticos, más
+perlas); la lotería con el monedero (más oro, más daño, aunque gastarlo en
+baúles lo baja); la olla con el área y el daño (sus explosiones crecen con tu
+área y tu daño, y pueden encadenarse).
 
 ### Subir de nivel
 
@@ -128,7 +211,9 @@ subidas salen una detrás de otra.
 - **Reroll, Saltar y Descartar:** 2 usos de cada uno por partida (en el hito 5
   se podrán ampliar). Descartar quita esa arma o ese tomo del sorteo para el
   resto de la partida y pone otra carta en su hueco.
-- Si ya no queda nada que ofrecer, sale una carta de relleno que cura.
+- Con la **Baraja del Tute** salen 4 cartas en vez de 3.
+- Si ya no queda nada que ofrecer, salen cartas de relleno: una que cura y otra
+  que da oro.
 
 ### Armas
 
@@ -158,7 +243,8 @@ subidas salen una detrás de otra.
 
 Muestra FPS, tiempos de lógica y render, llamadas de dibujo, triángulos,
 entidades (enemigos, proyectiles, gemas, partículas) y datos de la partida
-(entre ellos, cuánto te frena la horda). Con
+(entre ellos, cuánto te frena la horda, el minuto de dificultad y el ritmo de
+aparición). Con
 el panel abierto y jugando, las teclas numéricas lanzan acciones de prueba:
 
 | Tecla | Acción                                        |
@@ -167,7 +253,10 @@ el panel abierto y jugando, las teclas numéricas lanzan acciones de prueba:
 | 2     | Subir un nivel                                |
 | 3     | Avanzar un minuto (más dificultad)            |
 | 4     | Aparecen 100 enemigos                         |
-| 5     | Eliminar a todos los enemigos                 |
+| 5     | Eliminar a todos los enemigos (jefe incluido) |
+| 6     | Invocar al jefe delante                       |
+| 7     | +100 de oro                                   |
+| 8     | Revelar todo el mapa en el minimapa           |
 
 **Prueba de rendimiento:** con F3 abierto, pulsa 1 (invencible) y 4 tres veces
 para tener 300 enemigos. Después mira el FPS y el tiempo de "Lógica".
@@ -178,8 +267,9 @@ En el hito 5 no darán moneda meta ni contarán para las misiones.
 ### Pausa
 
 Muestra las estadísticas del personaje (vida, regeneración, armadura, daño,
-velocidad de ataque, cantidad, área, crítico, velocidad, suerte, radio de
-recogida y experiencia) y las opciones: idioma (español / inglés),
+velocidad de ataque, cantidad, área, crítico y daño crítico, velocidad, suerte,
+radio de recogida, experiencia y oro), los objetos que llevas (pasa el ratón
+por encima para ver qué hacen) y las opciones: idioma (español / inglés),
 sensibilidad del ratón, resolución interna
 (240 / 360 / 480 px de alto), temblor de vértices estilo PS1, tramado de color
 (dithering), mostrar FPS y usar Ctrl para deslizarse. Se guardan en el
@@ -196,22 +286,33 @@ src/
   data/                 Contenido y ajustes en ficheros tipados:
     config.ts             mapa, construcciones, movimiento, cámara, niebla
     characters.ts         personajes (arma inicial, vida...)
-    enemies.ts            enemigos (vida, velocidad, daño, experiencia...)
+    enemies.ts            enemigos (vida, velocidad, daño, oro, comportamiento) y
+                          los ataques del jefe
     weapons.ts            armas (comportamiento, estadísticas y cuáles pueden mejorar)
-    tomes.ts              tomos (qué estadística suben y cuánto) y topes del jugador
+    bonuses.ts            estadísticas del jugador mejorables y sus topes
+    tomes.ts              tomos (qué estadística suben y cuánto)
+    items.ts              objetos (rareza, efectos) y parámetros de los especiales
     rarities.ts           rarezas (peso, efecto de la Suerte y potencia)
     upgrades.ts           cuánto sube cada estadística de arma, topes y usos de
                           Reroll/Saltar/Descartar
-    waves.ts              aparición de enemigos y escalado con el tiempo
-  systems/              Lógica pura: enemigos (IA), aparición, proyectiles, gemas,
-                        rejilla espacial, daño y críticos, experiencia, dificultad,
-                        estadísticas, subida de nivel (cartas) y frenado en la horda
+    waves.ts              aparición de enemigos, escalado, duraciones, oleadas
+                          especiales, élites y enjambre final
+    run.ts                oro, baúles, mesas camilla (y bendiciones), tótems,
+                          portal y colocación de los interactuables
+  systems/              Lógica pura: enemigos (IA y estados), aparición, director
+                        (tiempo, oleadas, élites, enjambre), jefe, proyectiles
+                        propios y enemigos, gemas y monedas, rejilla espacial, daño
+                        y críticos, experiencia, dificultad, estadísticas, subida de
+                        nivel (cartas), objetos, interactuables y frenado en la horda
   weapons/              Comportamientos de las armas: teledirigida, aura, arco,
                         órbita, cadena y rastro
   entities/             Física del jugador y modelos de jugador y enemigos
-  world/                Terreno, construcciones, vegetación, fauna, colisiones y sus mallas
-  render/               Render retro, cámara, cielo, texturas, paleta y efectos de combate
-  ui/                   Interfaz HTML/CSS (HUD, pantallas, subida de nivel), fuente pixelada
+  world/                Terreno, construcciones, vegetación, fauna, interactuables,
+                        colisiones y sus mallas
+  render/               Render retro, cámara, cielo, texturas, paleta, efectos de
+                        combate y avisos de ataque en el suelo
+  ui/                   Interfaz HTML/CSS (HUD, minimapa, pantallas, subida de nivel,
+                        resultados), fuente pixelada
   i18n/                 Textos en español (es.ts) e inglés (en.ts)
   save/                 Guardado versionado en localStorage con migraciones
   styles/               CSS de la interfaz
@@ -250,15 +351,25 @@ Los tests (`*.test.ts`) están junto al código que prueban.
     más una para todas sus sombras.
   - Persiguen al jugador, se separan y rodean los obstáculos cuando se atascan.
   - Suben a superficies bajas y alcanzan al jugador hasta 1,6 m por encima. Una
-    roca no es un refugio; lo alto de un muro, sí (hasta que lleguen los
-    enemigos a distancia).
+    roca no es un refugio; lo alto de un muro, sí, salvo de las pipas de las
+    palomas.
+  - Cada enemigo tiene un estado (moverse, avisar, embestir, recuperarse). Las
+    palomas se mueven de lado a su distancia preferida; la rata fija la
+    dirección al empezar a avisar, así que apartarse la esquiva. El jefe lo
+    dirige `BossController`, que usa esos mismos estados.
+  - Los enemigos enormes (el jefe) no caben en la búsqueda normal de la
+    rejilla: `EnemySystem.queryRadius` los añade aparte, para que todas las
+    armas los golpeen por su borde. La separación entre enemigos tiene en cuenta
+    la masa: una pelusa se aparta del jefe, no al revés.
   - Al atravesarlos, cada enemigo que Doña Remedios empuja de frente la frena
     según su masa (`CROWD_CONFIG` en `src/data/config.ts`).
 - **Rendimiento medido:**
   - En Node, la lógica completa (IA, armas, proyectiles, gemas) cuesta unos
-    0,5 ms por tick con 500 enemigos y las armas del hito 2.
+    0,5–0,6 ms por tick con 500 enemigos y las armas del hito 2.
   - Con las 4 armas nuevas mejoradas con tomos y 500 enemigos alrededor, unos
     0,9 ms por tick (el presupuesto es de 16,7 ms).
+  - En el enjambre final, con 750 enemigos de todos los tipos, palomas
+    disparando, el jefe, la olla y las perlas: unos 1,3 ms por tick.
   - En Chromium, 0,3 ms con 300 enemigos y 0,5 ms con unos 480.
   - Unas 35 llamadas de dibujo.
   - Los FPS reales dependen de la GPU de tu equipo.
@@ -271,7 +382,17 @@ Los tests (`*.test.ts`) están junto al código que prueban.
   - Lo que sube cada estadística y sus topes están en `src/data/upgrades.ts` y
     `src/data/tomes.ts`. Una estadística al tope deja de salir en las cartas.
   - El sorteo usa su propio RNG derivado de la semilla: con la misma semilla
-    y las mismas elecciones salen las mismas cartas.
+    y las mismas elecciones salen las mismas cartas (y los mismos objetos en los
+    baúles, con otro RNG propio).
+- **Estadísticas del jugador:** tomos, objetos, bendiciones y efectos del
+  momento (el monedero, la suerte del tótem) se suman como bonificaciones del
+  mismo tipo (`src/data/bonuses.ts`) y comparten los mismos topes.
+- **Equilibrio:** se ha ajustado simulando partidas completas sin gráficos (un
+  jugador que elige cartas con criterio, recoge lo que cae y abre baúles con el
+  oro que tiene). En 10 minutos se abren unos 6–8 baúles. La vida del jefe
+  crece con el cuadrado del minuto (`BOSS_CONFIG`), porque el daño del jugador
+  también se dispara: pegado a él y sin recibir daño, las builds simuladas lo
+  vencen en 15–85 s al final del temporizador.
 - **Física del jugador:** es lógica pura, sin Three.js, y está cubierta por
   tests. Incluye:
   - aceleración rápida y control en el aire;
@@ -303,10 +424,20 @@ Los tests (`*.test.ts`) están junto al código que prueban.
 La guía completa llegará en el hito 6. Mientras tanto:
 
 - **Un enemigo nuevo:**
-  1. Añade su entrada en `src/data/enemies.ts` (y en `ENEMY_LIST`).
-  2. Crea su modelo en `src/entities/enemyModels.ts`.
+  1. Añade su entrada en `src/data/enemies.ts` (y en `ENEMY_LIST`), con su
+     comportamiento: `chase` (persigue), `ranged` (con `ranged`: distancia,
+     recarga, aviso y proyectil) o `charger` (con `charge`: aviso y embestida).
+  2. Crea su modelo en `src/entities/enemyModels.ts` y, si quieres, su
+     animación en `EnemyRenderer.animate`.
   3. Escribe su nombre en `src/i18n/es.ts` y `src/i18n/en.ts`.
-  4. Dale un peso y un minuto de aparición en `src/data/waves.ts`.
+  4. Dale un peso y un minuto de aparición en `src/data/waves.ts` (o úsalo en
+     una oleada especial o como élite).
+- **Un objeto nuevo:**
+  1. Añade su entrada en `src/data/items.ts` con su rareza y sus efectos (qué
+     estadística sube cada copia). Si su efecto es especial, pon sus números en
+     `ITEM_EFFECTS` y aplícalo en `src/core/Run.ts`.
+  2. Escribe su nombre y descripción en los dos idiomas.
+  3. Saldrá solo en los baúles, según su rareza.
 - **Un arma nueva:**
   1. Añade su entrada en `src/data/weapons.ts`: estadísticas base, lista
      `upgradable` (lo que pueden subir sus cartas) y, si quieres, nombres
@@ -364,6 +495,24 @@ La guía completa llegará en el hito 6. Mientras tanto:
   cadena no repite ni salta fuera de alcance, y el rastro solo friega andando,
   daña, hace resbalar y se seca;
 - los textos de las cartas y de la pausa en español e inglés;
+- el director: la dificultad según la duración elegida, el ritmo de la partida,
+  las oleadas especiales (una vez cada una y en orden), los élites periódicos y
+  el enjambre final (ritmo que se duplica, con tope);
+- los objetos: 12 con todas las rarezas, suma por copias, topes, la cuarta
+  carta de la baraja, el sorteo de los baúles con la Suerte y los números del
+  collar, la olla y el monedero;
+- los interactuables: colocación determinista, lejos de obstáculos y de la
+  vegetación, portal lejos del inicio y con colisión; descubrirlos, cargar y
+  descargar la mesa camilla, el aviso de lo que se puede usar y el desafío;
+- los enemigos nuevos: la paloma se queda a su distancia y solo dispara tras
+  avisar; la rata avisa quieta, embiste y se queda vendida; el jefe alterna sus
+  tres ataques, se enfada a media vida y no se deja empujar; los proyectiles
+  enemigos dañan y caducan;
+- la partida: baúles (precio, objeto, encarecer), oro con la lotería, el
+  monedero, la mesa camilla y sus bendiciones, el tótem, el portal y la vida del
+  jefe, la victoria, el enjambre que revela el portal, la bata, la olla, las
+  perlas y el ritmo de las partidas cortas;
+- rendimiento del enjambre final con 750 enemigos;
 - la silueta: una por pieza del modelo, con la prueba de profundidad invertida
   y el orden de dibujo correcto.
 
@@ -373,8 +522,9 @@ Abriendo la página con `?test` (por ejemplo `http://localhost:5173/?test`) el
 juego no captura el ratón y expone `window.__MAMPORRO__` para scripts de prueba
 en navegador: mover al jugador, pausar, leer su posición y la partida, lanzar
 acciones de debug, medir los tiempos del bucle, manejar la subida de nivel
-(elegir, Reroll, Saltar, Descartar), dar armas o tomos y congelar los efectos
-visuales para fotografiarlos.
+(elegir, Reroll, Saltar, Descartar), dar armas, tomos u objetos, usar
+interactuables, ver su estado, hacer aparecer enemigos concretos, apagar las
+armas y congelar los efectos visuales para fotografiarlos.
 
 ## Hoja de ruta
 
@@ -385,8 +535,9 @@ visuales para fotografiarlos.
    fauna.
 3. ✅ **Progresión en partida:** subidas de nivel con rarezas, 6 armas, 8 tomos,
    Reroll/Saltar/Descartar. Además, estadísticas en la pausa.
-4. Mapa vivo: oro, cofres, objetos, santuarios, tótem, portal, jefe,
-   temporizador, enjambre final y más tipos de enemigos.
+4. ✅ **Mapa vivo:** oro, baúles, 12 objetos, mesas camilla, tótems, portal,
+   jefe, temporizador (5/10/15 min), oleadas especiales, élites, enjambre final,
+   minimapa, pantalla de resultados y 4 enemigos nuevos.
 5. Meta y UI: menús, personajes, moneda meta, desbloqueos, misiones, guardado
    completo e idiomas.
 6. Pulido: audio, partículas, balance, tests y guía para añadir contenido.
