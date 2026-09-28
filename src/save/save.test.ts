@@ -1,3 +1,4 @@
+import { defaultMeta } from '../systems/meta';
 import { describe, expect, it } from 'vitest';
 import { BACKUP_KEY, SAVE_KEY, SaveManager, type StorageLike } from './SaveManager';
 import { defaultSettings, parseSave, SAVE_VERSION, type Json } from './schema';
@@ -31,7 +32,7 @@ describe('parseSave', () => {
   it('sin datos crea un guardado nuevo con los valores por defecto', () => {
     const result = parseSave(null, 'es');
     expect(result.status).toBe('new');
-    expect(result.data).toEqual({ version: SAVE_VERSION, settings: defaultSettings('es') });
+    expect(result.data).toEqual({ version: SAVE_VERSION, settings: defaultSettings('es'), meta: defaultMeta() });
   });
 
   it('JSON corrupto o sin versión se reinicia', () => {
@@ -63,6 +64,9 @@ describe('parseSave', () => {
     const { data, status } = parseSave(raw, 'en');
     expect(status).toBe('ok');
     expect(data.settings).toEqual({
+      musicVolume: 0.5,
+      effectsVolume: 0.7,
+      muted: false,
       language: 'en',
       mouseSensitivity: 3,
       renderHeight: 360,

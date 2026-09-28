@@ -3,6 +3,14 @@
 import type { TranslationKey } from './es';
 
 export const en: Record<TranslationKey, string> = {
+  "mission.first": "Finish a run",
+  "mission.kills": "Defeat 1000 enemies in total",
+  "mission.chests": "Open 10 chests in total",
+  "mission.shrines": "Complete 3 shrines",
+  "mission.challenge": "Complete a cooking-pot challenge",
+  "mission.level": "Reach level 20 in one run",
+  "mission.victory": "Defeat Mother Dustball",
+  "mission.noLife": "Win without taking the Broth Recipe Book",
   'app.title': 'MAMPORRO',
   'app.tagline': 'Survival, one flying slipper at a time',
   'app.loading': 'Warming up the slipper...',

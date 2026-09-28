@@ -2,6 +2,14 @@
 // `TranslationKey`, y el inglés debe tener exactamente las mismas.
 
 export const es = {
+  "mission.first": "Termina una partida",
+  "mission.kills": "Acumula 1000 bajas",
+  "mission.chests": "Abre 10 baúles en total",
+  "mission.shrines": "Completa 3 mesas camilla",
+  "mission.challenge": "Supera un tótem de cacerolas",
+  "mission.level": "Alcanza el nivel 20 en una partida",
+  "mission.victory": "Derrota a la Pelusa Madre",
+  "mission.noLife": "Gana sin adquirir el Recetario del Caldito",
   'app.title': 'MAMPORRO',
   'app.tagline': 'Supervivencia a chanclazo limpio',
   'app.loading': 'Calentando la chancla...',

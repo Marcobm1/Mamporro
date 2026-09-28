@@ -1,10 +1,11 @@
 // Esquema del guardado en localStorage, con versión y migraciones.
 // Regla: los datos leídos nunca se usan "a pelo"; siempre se validan y se
 // completan con valores por defecto, así un guardado corrupto no rompe el juego.
+import { defaultMeta, sanitizeMeta, type MetaProgress } from '../systems/meta';
 import { RUN_DURATIONS, type RunMinutes } from '../data/waves';
 import { isLanguage, type Language } from '../i18n';
 
-export const SAVE_VERSION = 1;
+export const SAVE_VERSION = 2;
 
 export const RENDER_HEIGHTS = [240, 360, 480] as const;
 export type RenderHeight = (typeof RENDER_HEIGHTS)[number];
@@ -13,6 +14,9 @@ export const SENSITIVITY_MIN = 0.2;
 export const SENSITIVITY_MAX = 3;
 
 export interface Settings {
+  musicVolume: number;
+  effectsVolume: number;
+  muted: boolean;
   language: Language;
   /** Multiplicador de la sensibilidad base del ratón. */
   mouseSensitivity: number;
@@ -30,10 +34,14 @@ export interface Settings {
 export interface SaveData {
   version: number;
   settings: Settings;
+  meta: MetaProgress;
 }
 
 export function defaultSettings(language: Language): Settings {
   return {
+    musicVolume: 0.5,
+    effectsVolume: 0.7,
+    muted: false,
     language,
     mouseSensitivity: 1,
     renderHeight: 360,
@@ -46,7 +54,7 @@ export function defaultSettings(language: Language): Settings {
 }
 
 export function defaultSave(language: Language): SaveData {
-  return { version: SAVE_VERSION, settings: defaultSettings(language) };
+  return { version: SAVE_VERSION, settings: defaultSettings(language), meta: defaultMeta() };
 }
 
 export type Json = Record<string, unknown>;
@@ -80,6 +88,9 @@ export function sanitizeSettings(raw: unknown, language: Language): Settings {
   const d = defaultSettings(language);
   if (!isObject(raw)) return d;
   return {
+    musicVolume: readNumber(raw, 'musicVolume', d.musicVolume, 0, 1),
+    effectsVolume: readNumber(raw, 'effectsVolume', d.effectsVolume, 0, 1),
+    muted: readBool(raw, 'muted', d.muted),
     language: isLanguage(raw.language) ? raw.language : d.language,
     mouseSensitivity: readNumber(raw, 'mouseSensitivity', d.mouseSensitivity, SENSITIVITY_MIN, SENSITIVITY_MAX),
     renderHeight: readRenderHeight(raw, 'renderHeight', d.renderHeight),
@@ -95,7 +106,7 @@ export function sanitizeSettings(raw: unknown, language: Language): Settings {
  * Migraciones: la función en la clave `n` convierte datos de la versión `n`
  * a la `n + 1`. Al cambiar el esquema se sube SAVE_VERSION y se añade aquí.
  */
-export const MIGRATIONS: Readonly<Record<number, (data: Json) => Json>> = {};
+export const MIGRATIONS: Readonly<Record<number, (data: Json) => Json>> = { 1: (data) => ({ ...data, meta: defaultMeta() }) };
 
 export type LoadStatus = 'new' | 'ok' | 'migrated' | 'reset';
 
@@ -149,7 +160,7 @@ export function parseSave(
   }
 
   return {
-    data: { version: SAVE_VERSION, settings: sanitizeSettings(data.settings, language) },
+    data: { version: SAVE_VERSION, settings: sanitizeSettings(data.settings, language), meta: sanitizeMeta(data.meta) },
     status: migrated ? 'migrated' : 'ok',
   };
 }
