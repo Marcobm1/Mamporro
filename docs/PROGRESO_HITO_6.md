@@ -20,11 +20,11 @@ Base aprobada por el autor: `5e7b95a` (hito 5 completo).
 | Bloque | Estado | Próximo paso |
 | --- | --- | --- |
 | Acuerdos y continuidad | Registrados | Mantener este documento en cada bloque |
-| Audio y música | Pendiente | Motor WebAudio, límites/prioridades, eventos y tests |
+| Audio y música | Implementado; falta navegador | 192 tests pasan, typecheck/build correctos |
 | Pulido visual y opciones | Pendiente | Presupuesto de partículas, pasivas, guardado v3 |
 | Balance | Pendiente | Comparar personajes/duraciones y justificar ajustes |
 | Verificación final | Pendiente | Typecheck, tests, build, navegador y rendimiento |
-| Documentación y Unity | Pendiente | Guía de contenido y migración por fases |
+| Documentación y Unity | Guía Unity redactada | Completar guía de contenido y verificación |
 
 ## Cómo retomar
 
@@ -52,4 +52,5 @@ Base aprobada por el autor: `5e7b95a` (hito 5 completo).
 ## Verificación registrada
 
 - Base: 188 tests / 24 ficheros; typecheck/build y navegador correctos en hito 5.
-- Hito 6: implementación todavía no iniciada en este punto de control.
+- Audio: 192 tests / 25 ficheros, typecheck/build correctos. Falta QA en navegador.
+- Guía Unity U0–U6 redactada con fuentes oficiales; migración no iniciada.

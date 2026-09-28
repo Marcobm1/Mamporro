@@ -620,3 +620,10 @@ npm test
 npm run build
 npm run preview
 ```
+
+## Después del pulido: propuesta de migración a Unity
+
+Una vez aprobado el hito 6, antes de añadir contenido nuevo, se plantea trasladar
+el juego a Unity para continuar su pulido. La [guía de migración](docs/MIGRACION_UNITY.md)
+detalla las fases U0–U6, equivalencias, guardados y criterios de validación.
+Es una propuesta: la migración no está iniciada y requiere su propio arranque aprobado.

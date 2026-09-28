@@ -248,3 +248,12 @@ El autor aprobó el plan y las siguientes decisiones antes de programar
 - La captura real del ratón (Pointer Lock) y los FPS reales solo los puede
   comprobar el autor: las pruebas automáticas usan `?test` y una GPU por
   software.
+
+## Después del hito 6: migración propuesta a Unity (28/09/2026)
+
+- Solicitada por el autor: terminar y validar primero el pulido; plantear Unity
+  antes de incorporar más contenido.
+- Guía en [MIGRACION_UNITY.md](MIGRACION_UNITY.md), fases U0–U6 con validación
+  independiente. Se conserva Three.js como referencia hasta aprobar el reemplazo.
+- Es una planificación, no autorización para crear ya el proyecto Unity. Plataforma,
+  versión exacta, UI y traslado del guardado se concretarán al arrancar la migración.
