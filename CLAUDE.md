@@ -16,8 +16,10 @@ genera por código (no hay assets externos).
 ## Estado
 
 - **Hechos:** hitos 1–5: base, combate, progresión en partida, mapa vivo y meta/UI.
-  El historial está en `git log`. El autor confirmó el hito 4.
-- **Siguiente:** esperar la prueba del hito 5 por el autor; después, hito 6 (pulido).
+  El historial está en `git log`. El autor confirmó los hitos 4 y 5.
+- **En curso:** hito 6 (pulido). Consultar `docs/PROGRESO_HITO_6.md` antes de retomar.
+- **Después:** plantear migración a Unity antes de añadir contenido nuevo; requiere
+  plan y aprobación propios. No iniciar la migración durante el pulido.
 - El autor prueba cada hito antes de seguir. Si no ha dicho nada del último
   hito entregado, pregúntale primero qué tal y si hay que ajustar algo.
 
@@ -109,7 +111,7 @@ npm run preview     # sirve dist/ en http://localhost:4173
 - No se puede probar automáticamente la captura real del ratón (Pointer Lock)
   ni los FPS reales en el equipo del autor: díselo para que lo compruebe él.
 
-## Hito 5: meta y UI (implementado; pendiente de prueba del autor)
+## Hito 5: meta y UI (probado y aprobado por el autor)
 
 - Menú principal, preparación de partida, personajes, tienda, misiones y opciones ES/EN.
 - Doña Remedios: Chancla y ralentización del 20 % a 3 m. Sir Baguette: Barra,
