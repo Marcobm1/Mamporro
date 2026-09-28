@@ -355,3 +355,22 @@ no asumir que la petición de iconos autoriza assets de terceros.
 La guía inicial proponía LTS, pero el autor ya tiene 6.6. Se comprobará su revisión
 completa sin inventar paquetes ni obligar a cambiar a LTS por defecto. Política
 oficial consultada: https://unity.com/releases/unity-6/support .
+
+
+## Confirmaciones y traspaso a Proyecto de ChatGPT (28/09/2026)
+
+- **Escalada libre**, elegida expresamente frente a una trepada breve. No se ha
+  decidido control, superficies o comportamiento de enemigos en altura.
+- **Más oro de partida soltado por enemigos**, con aumento progresivo según
+  tiempo y dificultad. No es una petición de aumentar la moneda meta.
+- **Arte original en archivos autorizado** para imágenes/iconos de armas, tomos,
+  objetos, etc. Amplía la restricción procedural de la especificación original
+  para la versión Unity; no aprueba automáticamente assets de terceros.
+- El autor quiere centralizar contexto e instrucciones en un Proyecto de ChatGPT
+  para trabajar en conversaciones distintas. Se prepara un paquete Markdown.
+- La primera conversación nueva será instalar/verificar **Codex CLI en Windows**
+  y trabajar desde la carpeta del repositorio junto al Editor Unity. Instalación
+  local todavía pendiente; no suponer acceso automático a chats desde el CLI.
+- Dice adjuntar captura de Unity, pero no hay imagen recibida/legible en esta
+  conversación: sigue pendiente la revisión completa del Editor.
+- U1 aún no ha comenzado. No se han creado escenas, C# ni proyecto abrible en Hub.

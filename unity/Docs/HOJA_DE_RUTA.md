@@ -17,18 +17,19 @@ presupone reproducirlos. MAMPORRO mantiene nombres, arte y diseño propios.
 
 | Prioridad | Petición | Trabajo propuesto | Criterio para darlo por bueno |
 | --- | --- | --- | --- |
-| P0 | Movimiento más ágil; subir, bajar y escalar paredes | Prototipo de rampas, salto, deslizamiento, agarre/subida de bordes y escalada. Decidir controles y límites antes de implementarla. | Recorrido completo sin atascos, cámara legible y control al aterrizar; no quedar a salvo indefinidamente de la horda. |
+| P0 | Movimiento más ágil; subir, bajar y escalar paredes | Escalada libre confirmada por el autor (no limitarla a una trepada breve), junto con rampas, salto, deslizamiento y transición a bordes. Concretar controles y superficies. | Recorrido completo sin atascos, cámara legible y control al aterrizar; no quedar a salvo indefinidamente de la horda. |
 | P0 | Mundo y estructuras más grandes | Medir recorridos y densidad de lugares interesantes; ampliar mapa y edificios con rutas por suelo, tejados y desniveles. | Explorar ofrece decisiones y recompensas; el tamaño no añade largos trayectos vacíos. |
 | P0 | Colinas más cuadradas y rampas | Terreno low-poly con mesetas y cambios de nivel más marcados, rampas conectadas y bajadas claras. No asumir que debe ser un mundo de vóxeles/cubos. | Rutas de subida/bajada identificables; jugador y enemigos navegan desniveles sin atravesar geometría. |
 | P0 | Menos enemigos al principio; aumento progresivo | Separar introducción, crecimiento, presión alta y enjambre. Ajustar aparición, variedad y vida por separado, con límites de densidad. | Primeros minutos dejan aprender y explorar; aumenta la presión de forma perceptible sin picos involuntarios. Probar 5/10/15 minutos. |
-| P1 | Más monedas | Revisar frecuencia, cantidades, recogida y recompensas de exploración frente al precio de los baúles. Aclarar si se refiere al oro de partida, a la moneda meta o a ambos. | Se abren más oportunidades de compra sin que todas sean automáticas; medir tiempo al primer baúl y baúles por partida. |
+| P1 | Más monedas | Más oro de los enemigos durante la partida, confirmado por el autor; aumentar la recompensa progresivamente con tiempo y dificultad. Revisar frecuencia y cantidad frente al precio de baúles. | Se abren más oportunidades de compra sin que todas sean automáticas; medir tiempo al primer baúl y baúles por partida. |
 | P1 | Visual más profesional | Guía de arte: paleta, siluetas, iluminación, materiales, animaciones, composición y jerarquía del HUD. | Personaje, enemigos, proyectiles y recompensas se distinguen en movimiento y con horda; coherencia ES/EN y entre resoluciones. |
-| P1 | Imágenes para tomos, armas, etc. | Familia original de iconos para armas, tomos, objetos, personajes y recompensas; decidir si se mantiene generación por código o se admiten ilustraciones/archivos propios. | Se reconoce cada elemento en cartas y HUD; rareza no depende solo del color; estilo coherente y legibilidad a tamaño pequeño. |
+| P1 | Imágenes para tomos, armas, etc. | Familia original de iconos para armas, tomos, objetos, personajes y recompensas. El autor autoriza ilustraciones e iconos originales en archivos; se amplía para Unity la restricción de todo por código. | Se reconoce cada elemento en cartas y HUD; rareza no depende solo del color; estilo coherente y legibilidad a tamaño pequeño. |
 | P2 | Más enemigos | Añadir roles distintos: enemigos que cierren rutas, obliguen a desplazarse o amenacen alturas, con avisos y debilidades. | Cada tipo cambia decisiones y tiene respuesta clara; no se limita a cambiar vida o color. |
 | P2 | Más armas y tomos | Definir huecos entre patrones y sinergias; introducir un lote pequeño y comprobar combinaciones y desbloqueos. | Nuevas builds viables sin anular el catálogo existente ni saturar el render. |
 | P2 | Más personajes | Arma inicial, pasiva, silueta y modo de jugar diferenciados; condiciones de desbloqueo claras. | Se sienten distintos en movimiento y combate; ninguno necesita compras permanentes obligatorias para funcionar. |
 
-No hay cantidades de contenido, tamaño del mapa, tiempos de escalada ni porcentajes
+Están confirmados escalada libre, oro de partida progresivo e imágenes originales
+en archivos. No hay cantidades de contenido, tamaño del mapa ni porcentajes
 de oro fijados aún. Se decidirán a partir del prototipo y las pruebas; no se
 convierten ejemplos del plan en compromisos de lanzamiento.
 
@@ -78,10 +79,13 @@ Fuentes oficiales consultadas el 28/09/2026:
 
 ## Decisiones abiertas antes de sus bloques
 
-- Escalada: subida libre o impulso breve con agarre de bordes; superficies
-  permitidas, límite/recuperación y comportamiento de enemigos en altura.
-- Oro de partida, moneda meta o ambos: confirmar qué significa «más monedas».
-- Arte: confirmar si se relaja la restricción original de «todo por código» para
-  admitir arte original en archivos. No se aprueban packs de terceros por defecto.
+- Escalada libre confirmada: concretar controles, superficies permitidas, transición
+  a bordes y comportamiento de enemigos en altura. No introducir una trepada breve
+  obligatoria ni un límite de resistencia sin discutir ese cambio con el autor.
+- Oro confirmado: oro de partida soltado por enemigos, aumentando con tiempo y
+  dificultad. Ajustar la curva y su relación con precios; no se ha pedido aumentar
+  la moneda meta.
+- Arte confirmado: se permiten imágenes e iconos originales en archivos. Definir
+  estilo y tamaños; no implica comprar o usar packs de terceros automáticamente.
 - Tamaño del mundo y cantidad de contenido: fijar tras medir movilidad, densidad
   de objetivos, presupuesto de memoria y rendimiento en el equipo de referencia.

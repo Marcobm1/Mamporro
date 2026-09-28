@@ -104,3 +104,16 @@ autor y perfilar una build, no solo el Editor.
 Verificación de esta preparación: 202 tests/27 ficheros, typecheck y build
 correctos; comprobación de referencia y huellas de medios correcta. El build web
 resultante es idéntico al aprobado. No se ha compilado ni ejecutado código Unity.
+
+## Continuidad en Proyecto de ChatGPT y Codex CLI
+
+El 28/09/2026 el autor confirma escalada libre, más oro de los enemigos durante
+la partida que aumente con dificultad/tiempo, y arte original en archivos.
+El siguiente paso inmediato pasa a ser preparar un Proyecto de ChatGPT y, en su
+primera conversación, instalar/verificar Codex CLI en Windows para trabajar con
+el repositorio y Unity. No se ha instalado Codex en el equipo del autor desde aquí.
+
+El autor menciona una captura del Editor, pero no llegó una imagen legible a esta
+conversación. La revisión exacta sigue pendiente; no deducirla de «Unity 6.6».
+Los documentos exportados para el Proyecto de ChatGPT son una instantánea; el
+estado posterior debe consultarse en el repositorio y guardarse en estos Markdown.

@@ -71,7 +71,9 @@ genera por código (no hay assets externos).
   referencia) y `src/i18n/en.ts` (mismas claves: lo comprueban el compilador y un
   test). La fuente pixelada (`src/ui/font/glyphs.ts`) debe tener todos los
   caracteres usados (hay un test que lo comprueba).
-- **Sin assets externos:** geometría, texturas, fuente y sonido, por código.
+- **Assets:** la base web es procedural. Para Unity, el autor autoriza imágenes
+  e iconos originales en archivos (28/09/2026); no usar contenido de terceros
+  sin acordarlo. Mantener la identidad original de MAMPORRO.
 - **Capas:** la lógica de la partida es pura, sin Three.js (`src/core/Run.ts`,
   `src/systems/`), y se prueba con Vitest. El dibujo va en `src/render/` y en las
   mallas de `src/world/`; la interfaz HTML/CSS, en `src/ui/`. `src/core/Game.ts`
@@ -158,3 +160,12 @@ npm run preview     # sirve dist/ en http://localhost:4173
   en Windows hasta disponer de un entorno de Unity ejecutable.
 - Las recomendaciones adicionales de la hoja de ruta requieren aceptación; Steam
   es el destino deseado, no autorización para publicar o gastar dinero.
+
+## Próxima conversación
+
+Preparar Codex CLI en el Windows del autor, desde el repositorio, para trabajar
+junto al Editor Unity. El contexto del Proyecto de ChatGPT no sustituye los
+Markdown versionados del repositorio. U1 no ha comenzado; aún falta revisión
+exacta del Editor (la captura mencionada no llegó a esta conversación).
+Confirmado para Unity: escalada libre; más oro de enemigos que aumenta con
+el tiempo/dificultad; imágenes originales en archivos. Ver DECISIONES y hoja de ruta.
