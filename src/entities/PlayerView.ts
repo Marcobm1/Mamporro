@@ -16,6 +16,7 @@ import {
   type Texture,
 } from 'three';
 import { clamp, damp, lerp, type Vec3Like } from '../core/math';
+import type { CharacterId } from '../data/characters';
 import { PLAYER_BASE_STATS } from '../data/config';
 import { colored, mergeColored } from '../render/geometry';
 import { PALETTE } from '../render/palette';
@@ -133,10 +134,45 @@ function buildUpperBody(): Mesh['geometry'] {
   ]);
 }
 
+/** Armadura de hojalata, casco con cresta de pan y escudo de hogaza. */
+function buildKnightBody(): Mesh['geometry'] {
+  return mergeColored([
+    colored(new CylinderGeometry(0.23, 0.27, 0.65, 6).translate(0, 0.37, 0), 0x8796a6),
+    colored(new BoxGeometry(0.34, 0.46, 0.045).translate(0, 0.39, -0.24), 0xd7aa52),
+    colored(new BoxGeometry(0.08, 0.35, 0.055).translate(0, 0.39, -0.27), 0x803d48),
+    colored(new BoxGeometry(0.26, 0.075, 0.055).translate(0, 0.44, -0.28), 0x803d48),
+    colored(new CylinderGeometry(0.2, 0.22, 0.35, 8).translate(0, 0.92, 0), 0xc1c9cb),
+    colored(new BoxGeometry(0.3, 0.055, 0.04).translate(0, 0.95, -0.19), 0x252936),
+    colored(new BoxGeometry(0.035, 0.25, 0.06).translate(0, 0.92, -0.21), 0xd7aa52),
+    colored(new CylinderGeometry(0.065, 0.085, 0.38, 6).rotateX(0.5).translate(0, 1.18, 0.06), 0xbf813f),
+    colored(new BoxGeometry(0.36, 0.6, 0.045).translate(0, 0.4, 0.26), 0x803d48),
+    colored(new IcosahedronGeometry(0.15, 0).translate(-0.27, 0.73, 0), 0xc1c9cb),
+    colored(new IcosahedronGeometry(0.15, 0).translate(0.27, 0.73, 0), 0xc1c9cb),
+  ]);
+}
+function buildKnightLimb(side: number, arm: boolean): Mesh['geometry'] {
+  const x = side * (arm ? 0.27 : 0.12);
+  const parts = [
+    colored(new BoxGeometry(0.13, 0.37, 0.14).translate(x, -0.19, 0), 0x8796a6),
+    colored(new BoxGeometry(0.17, 0.1, arm ? 0.15 : 0.28).translate(x, -0.4, -0.04), 0xc1c9cb),
+  ];
+  if (arm && side > 0) {
+    parts.push(colored(new CylinderGeometry(0.075, 0.1, 0.95, 7).rotateX(Math.PI / 2).translate(x, -0.42, -0.38), 0xc99047));
+    for (let i = 0; i < 4; i++) parts.push(colored(new BoxGeometry(0.12, 0.02, 0.035).rotateY(0.4).translate(x, -0.33, -0.16 - i * 0.17), 0xf1ce84));
+  }
+  if (arm && side < 0) {
+    parts.push(colored(new CylinderGeometry(0.25, 0.25, 0.1, 8).rotateX(Math.PI / 2).translate(x, -0.36, -0.13), 0xc99047));
+    parts.push(colored(new BoxGeometry(0.3, 0.04, 0.025).rotateZ(0.6).translate(x, -0.36, -0.19), 0xf1ce84));
+  }
+  return mergeColored(parts);
+}
+
 export class PlayerView {
   readonly root = new Group();
   private readonly hips = new Group();
   private readonly upper = new Group();
+  private readonly torso: Mesh;
+  private character: CharacterId = 'remedios';
   private readonly legL: Mesh;
   private readonly legR: Mesh;
   private readonly armL: Mesh;
@@ -159,7 +195,7 @@ export class PlayerView {
     this.legR = new Mesh(buildLeg(1), material);
     this.armL = new Mesh(buildArm(-1, 'bag'), material);
     this.armR = new Mesh(buildArm(1, 'chancla'), material);
-    const body = new Mesh(buildUpperBody(), material);
+    const body = this.torso = new Mesh(buildUpperBody(), material);
 
     // Los brazos giran desde el hombro.
     this.armL.position.set(0, 0.76, 0);
@@ -190,6 +226,23 @@ export class PlayerView {
     });
     this.shadow = new Mesh(new PlaneGeometry(1.1, 1.1).rotateX(-Math.PI / 2), this.shadowMaterial);
     this.shadow.renderOrder = RENDER_ORDER.blobShadow;
+  }
+
+  setCharacter(id: CharacterId): void {
+    if (this.character === id) return;
+    this.character = id;
+    const knight = id === 'baguette';
+    const meshes = [this.torso, this.legL, this.legR, this.armL, this.armR];
+    const geometries = knight
+      ? [buildKnightBody(), buildKnightLimb(-1, false), buildKnightLimb(1, false), buildKnightLimb(-1, true), buildKnightLimb(1, true)]
+      : [buildUpperBody(), buildLeg(-1), buildLeg(1), buildArm(-1, 'bag'), buildArm(1, 'chancla')];
+    meshes.forEach((mesh, i) => {
+      const geometry = geometries[i];
+      if (!geometry) return;
+      mesh.geometry.dispose();
+      mesh.geometry = geometry;
+      for (const child of mesh.children) if (child instanceof Mesh) child.geometry = geometry;
+    });
   }
 
   /** Objetos a añadir a la escena. */

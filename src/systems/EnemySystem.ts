@@ -224,6 +224,8 @@ export class EnemySystem {
 
   /** Ralentiza al enemigo `i` (se queda con la mayor de las ralentizaciones activas). */
   applySlow(i: number, amount: number, seconds: number): void {
+    // Una fuente débil no prolonga indefinidamente una ralentización más fuerte.
+    if ((this.slowTime[i] as number) > 0 && (this.slow[i] as number) > amount + 1e-6) return;
     this.slow[i] = Math.max(this.slow[i] as number, amount);
     this.slowTime[i] = Math.max(this.slowTime[i] as number, seconds);
   }

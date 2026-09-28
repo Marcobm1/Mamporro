@@ -437,6 +437,9 @@ export class Game {
       case 'shrineCharged':
         hud.notice(t('notice.shrineCharged'));
         break;
+      case 'shield':
+        hud.notice(t('notice.shield'));
+        break;
       case 'revive':
         hud.notice(t('notice.revive'), true);
         break;

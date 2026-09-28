@@ -66,6 +66,7 @@ export type OfferCard = NewWeaponCard | WeaponUpgradeCard | TomeCard | HealCard 
 
 /** Lo que el generador de cartas necesita saber de la partida. */
 export interface BuildView {
+  allowedWeapons?: readonly WeaponId[];
   weapons: ReadonlyArray<{ def: WeaponDef; bonus: WeaponStats }>;
   tomes: readonly TomeInstance[];
   stats: PlayerStats;
@@ -165,6 +166,7 @@ function candidates(build: BuildView, exclude: ReadonlySet<string>): Candidate[]
   }
   if (build.weapons.length < LEVEL_UP_CONFIG.maxWeapons) {
     for (const def of WEAPON_LIST) {
+      if (build.allowedWeapons && !build.allowedWeapons.includes(def.id)) continue;
       const key = weaponKey(def.id);
       if (!allowed(key) || build.weapons.some((w) => w.def.id === def.id)) continue;
       out.push({ key, weight: W.newWeapon, make: () => ({ kind: 'newWeapon', key, weapon: def.id }) });

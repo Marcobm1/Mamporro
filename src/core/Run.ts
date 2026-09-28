@@ -2,6 +2,7 @@
 // proyectiles, gemas, experiencia, vida, subidas de nivel, interactuables del
 // mapa, oleadas, élites, enjambre final y jefe. Es lógica pura (sin Three.js): el
 // render y la interfaz reciben los sucesos a través de `RunEffects`.
+import type { ExtraAction } from '../data/meta';
 import type { CharacterDef } from '../data/characters';
 import { BOSS_CONFIG, ENEMY_LIST, enemyTypeIndex, type EnemyId } from '../data/enemies';
 import { ITEM_EFFECTS, ITEMS, type ItemDef, type ItemId } from '../data/items';
@@ -64,7 +65,8 @@ export type RunNotice =
   | { kind: 'challengeStart' }
   | { kind: 'challengeDone' }
   | { kind: 'shrineCharged' }
-  | { kind: 'revive' };
+  | { kind: 'revive' }
+  | { kind: 'shield' };
 
 /** Sucesos que el render y la interfaz convierten en efectos (partículas, números, avisos...). */
 export interface RunEffects extends WeaponEffects {
@@ -108,6 +110,9 @@ export const NO_EFFECTS: RunEffects = {
 };
 
 export interface RunOptions {
+  allowedWeapons?: readonly WeaponId[];
+  allowedItems?: readonly ItemId[];
+  extras?: Readonly<Record<ExtraAction, number>>;
   /** Duración de la partida (minutos). */
   minutes?: RunMinutes;
   /** Interactuables del mapa. */
@@ -121,6 +126,12 @@ export class Run {
   /** Segundos de partida. */
   time = 0;
   kills = 0;
+  shrinesCompleted = 0;
+  challengesCompleted = 0;
+  usedLifeTome = false;
+  shieldCharge = 0;
+  private readonly allowedWeapons?: readonly WeaponId[];
+  private readonly allowedItems?: readonly ItemId[];
   hp: number;
   invulnerable = 0;
   /** Debug: el jugador no recibe daño. */
@@ -198,6 +209,11 @@ export class Run {
     private readonly fx: RunEffects = NO_EFFECTS,
     options: RunOptions = {},
   ) {
+    this.allowedWeapons = options.allowedWeapons ? [...options.allowedWeapons] : undefined;
+    this.allowedItems = options.allowedItems ? [...options.allowedItems] : undefined;
+    this.rerolls += options.extras?.rerolls ?? 0;
+    this.skips += options.extras?.skips ?? 0;
+    this.banishes += options.extras?.banishes ?? 0;
     const rng = new Rng(`${seed}/run`);
     this.rng = rng.derive('combat');
     this.offerRng = rng.derive('offers');
@@ -241,6 +257,7 @@ export class Run {
       },
       shrineCharged: () => {
         this.pendingShrines++;
+        this.shrinesCompleted++;
         this.fx.notice({ kind: 'shrineCharged' });
       },
     };
@@ -302,6 +319,7 @@ export class Run {
     if (this.dead || this.victory) return;
     this.time += dt;
     this.syncPlayer(body, viewYaw);
+    this.updatePassive(dt);
 
     const params = this.director.spawnParams(this.time, this.modifiers(), this.spawnParams);
     this.director.update(this.time, this.directorEvents);
@@ -340,6 +358,22 @@ export class Run {
 
     this.invulnerable = Math.max(0, this.invulnerable - dt);
     if (this.stats.regen > 0 && this.hp > 0) this.hp = Math.min(this.stats.maxHp, this.hp + this.stats.regen * dt);
+  }
+
+  /** Pasivas sin asignaciones en el bucle caliente. */
+  private updatePassive(dt: number): void {
+    const passive = this.character.passive;
+    if (passive.kind === 'shield') {
+      this.shieldCharge = Math.min(passive.recharge, this.shieldCharge + dt);
+      return;
+    }
+    const e = this.enemies, p = this.player;
+    for (let i = 0; i < e.count; i++) {
+      const dx = (e.x[i] as number) - p.x, dz = (e.z[i] as number) - p.z;
+      if (dx * dx + dz * dz <= passive.radius * passive.radius && Math.abs((e.y[i] as number) - p.y) < 2) {
+        e.applySlow(i, passive.amount, dt * 2);
+      }
+    }
   }
 
   private syncPlayer(body: PlayerBody, viewYaw: number): void {
@@ -498,6 +532,15 @@ export class Run {
 
   private hurtPlayer(amount: number): void {
     if (this.invincible || this.invulnerable > 0 || this.hp <= 0) return;
+    if (amount <= 0) return;
+    const passive = this.character.passive;
+    if (passive.kind === 'shield' && this.shieldCharge >= passive.recharge) {
+      this.shieldCharge = 0;
+      this.invulnerable = INVULNERABILITY_TIME;
+      this.fx.notice({ kind: 'shield' });
+      return;
+    }
+    this.shieldCharge = 0;
     const damage = mitigate(amount, this.stats.armor);
     this.hp = Math.max(0, this.hp - damage);
     this.invulnerable = INVULNERABILITY_TIME;
@@ -597,7 +640,7 @@ export class Run {
     this.interactables.chestsOpened++;
     item.used = true;
     this.fx.chestOpened(item.spot.x, item.spot.y + 0.9, item.spot.z);
-    const def = rollItem(this.stats.luck, this.itemRng, this.items, this.stats);
+    const def = rollItem(this.stats.luck, this.itemRng, this.items, this.stats, this.allowedItems);
     if (def) this.addItem(def);
     else this.gainGold(cost);
     this.checkPurse();
@@ -615,9 +658,10 @@ export class Run {
 
   /** Desafío superado: vuelve la calma y cae un objeto con mucha suerte. */
   private finishChallenge(): void {
+    this.challengesCompleted++;
     this.refreshStats();
     this.fx.notice({ kind: 'challengeDone' });
-    const def = rollItem(this.stats.luck + TOTEM_CONFIG.rewardLuck, this.itemRng, this.items, this.stats);
+    const def = rollItem(this.stats.luck + TOTEM_CONFIG.rewardLuck, this.itemRng, this.items, this.stats, this.allowedItems);
     if (def) this.addItem(def);
   }
 
@@ -658,6 +702,7 @@ export class Run {
 
   private get build(): BuildView {
     return {
+      allowedWeapons: this.allowedWeapons,
       weapons: this.weapons,
       tomes: this.tomes,
       stats: this.stats,
@@ -765,6 +810,7 @@ export class Run {
       tome = { def, level: 0, bonus: def.effects.map(() => 0) };
       this.tomes.push(tome);
     }
+    if (id === 'vitality') this.usedLifeTome = true;
     tome.level++;
     amounts.forEach((amount, i) => {
       if (tome) tome.bonus[i] = (tome.bonus[i] ?? 0) + amount;

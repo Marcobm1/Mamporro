@@ -35,7 +35,7 @@ export function isItemAvailable(def: ItemDef, owned: number, stats: PlayerStats)
  * Sortea un objeto: primero la rareza (con la Suerte) y luego uno de esa rareza.
  * Si no queda ninguno de esa rareza, prueba con las más cercanas (antes las de abajo).
  */
-export function rollItem(luck: number, rng: Rng, items: readonly ItemStack[], stats: PlayerStats): ItemDef | null {
+export function rollItem(luck: number, rng: Rng, items: readonly ItemStack[], stats: PlayerStats, allowed?: readonly ItemId[]): ItemDef | null {
   const rarity = rollRarity(luck, rng);
   const order = RARITIES.map((r, i) => ({ id: r.id, i }));
   const start = order.findIndex((r) => r.id === rarity.id);
@@ -45,14 +45,14 @@ export function rollItem(luck: number, rng: Rng, items: readonly ItemStack[], st
     return da !== db ? da - db : a.i - b.i;
   });
   for (const { id } of order) {
-    const pool = candidatesOf(id, items, stats);
+    const pool = candidatesOf(id, items, stats, allowed);
     if (pool.length > 0) return rng.pick(pool);
   }
   return null;
 }
 
-function candidatesOf(rarity: RarityId, items: readonly ItemStack[], stats: PlayerStats): ItemDef[] {
-  return ITEM_LIST.filter((def) => def.rarity === rarity && isItemAvailable(def, itemCount(items, def.id), stats));
+function candidatesOf(rarity: RarityId, items: readonly ItemStack[], stats: PlayerStats, allowed?: readonly ItemId[]): ItemDef[] {
+  return ITEM_LIST.filter((def) => (!allowed || allowed.includes(def.id)) && def.rarity === rarity && isItemAvailable(def, itemCount(items, def.id), stats));
 }
 
 // ------------------------------------------------------------------ efectos especiales
