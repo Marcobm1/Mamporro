@@ -1,14 +1,14 @@
 # U0: referencia para la migración
 
-Estado: **referencia preparada; cierre pendiente de revisión exacta del Editor**.
+Estado: **referencia preparada; versión del Editor confirmada por captura; comprobación local pendiente**.
 Hito 6 probado y aprobado por el autor el 28/09/2026.
 
 ## Acuerdos confirmados
 
 - Plataforma inicial: Windows de escritorio; objetivo comercial Steam y similares.
-- El autor tiene Unity 6.6. Falta la cadena completa del Editor mostrada en Hub
-  (incluidos revisión y sufijo). No se ha elegido una revisión distinta ni se ha
-  dado por hecho que «6.6» signifique LTS o que sea una edición final.
+- Captura recibida el 29/09/2026: Unity 6.6 (6000.6.3f1), marcada como
+  «Compatible» y «Descarga completa» en Hub. Falta verificar módulos, ruta y
+  ejecución local; la captura no demuestra que el proyecto se haya abierto.
 - Conservar cuanto progreso sea compatible: moneda meta, desbloqueos, misiones,
   usos extra y selección. Validar/migrar opciones equivalentes; conservar una
   copia del original para valores que no tengan correspondencia.
@@ -17,7 +17,7 @@ Hito 6 probado y aprobado por el autor el 28/09/2026.
   [HOJA_DE_RUTA.md](HOJA_DE_RUTA.md); aún sin implementación.
 
 La política oficial distingue LTS, Update y versiones preliminares. Revisaremos
-la versión exacta instalada antes de fijar Editor y paquetes; no es necesario
+la compatibilidad de paquetes con 6000.6.3f1 antes de fijarlos; no es necesario
 cambiar de versión solo por tener una Update final.
 [Fuente: soporte de Unity 6](https://unity.com/releases/unity-6/support),
 consultada el 28/09/2026.
@@ -92,8 +92,8 @@ autor y perfilar una build, no solo el Editor.
 
 ## Siguiente bloque
 
-1. Recibir revisión exacta del Editor y comprobar que es una versión final
-   soportada; fijar también versiones compatibles de paquetes.
+1. Comprobar entorno local, módulos y soporte de 6000.6.3f1; fijar
+   versiones compatibles de paquetes. La revisión ya se ha recibido por captura.
 2. Proponer U1: plantilla URP, Input System, cámara/controlador, escena de
    pendientes/obstáculos y ensayo de 300+ enemigos. Elegir UI cuando toque su
    prototipo; no llenar ahora el proyecto de paquetes innecesarios.
@@ -113,7 +113,7 @@ El siguiente paso inmediato pasa a ser preparar un Proyecto de ChatGPT y, en su
 primera conversación, instalar/verificar Codex CLI en Windows para trabajar con
 el repositorio y Unity. No se ha instalado Codex en el equipo del autor desde aquí.
 
-El autor menciona una captura del Editor, pero no llegó una imagen legible a esta
-conversación. La revisión exacta sigue pendiente; no deducirla de «Unity 6.6».
+La captura del Editor se recibió finalmente el 29/09/2026 y confirma 6000.6.3f1.
+No volver a pedir la revisión; quedan comprobaciones del entorno local.
 Los documentos exportados para el Proyecto de ChatGPT son una instantánea; el
 estado posterior debe consultarse en el repositorio y guardarse en estos Markdown.

@@ -20,7 +20,7 @@ genera por código (no hay assets externos).
 - **En curso:** U0 de migración a Unity. Referencia y mejoras en `unity/Docs/`;
   leer `unity/Docs/U0_REFERENCIA.md` y `unity/Docs/HOJA_DE_RUTA.md` al retomar.
 - Destino confirmado: Windows, futura publicación en Steam/plataformas similares.
-  El autor tiene Unity 6.6; falta revisión exacta antes de crear el proyecto.
+  Captura del autor: Unity 6.6 (6000.6.3f1); falta verificar módulos y entorno local.
 - Conservar progreso compatible. No se ha creado aún un proyecto abrible con Hub.
 - Próximo: cerrar U0 y proponer U1. Seguir un bloque cada vez, con aprobación.
   El autor ha pedido mejoras de mundo, movilidad, ritmo, arte y contenido para
@@ -147,8 +147,8 @@ npm run preview     # sirve dist/ en http://localhost:4173
   1280×720 y 1600×900, sin errores. Script: `scripts/verify-browser.cjs`.
 - No se modifican valores de balance: matriz inicial documentada y limitada;
   hace falta valoración humana de partidas completas, mezcla de audio y FPS.
-- Migración: `docs/MIGRACION_UNITY.md`, fases U0–U6. U0 autorizado; versión exacta
-  y plan de U1 pendientes. Las mejoras posteriores están en `unity/Docs/HOJA_DE_RUTA.md`.
+- Migración: `docs/MIGRACION_UNITY.md`, fases U0–U6. U0 autorizado; versión 6000.6.3f1 confirmada por captura;
+  entorno local y plan de U1 pendientes. Las mejoras posteriores están en `unity/Docs/HOJA_DE_RUTA.md`.
 
 ## Preparación Unity
 
@@ -165,7 +165,7 @@ npm run preview     # sirve dist/ en http://localhost:4173
 
 Preparar Codex CLI en el Windows del autor, desde el repositorio, para trabajar
 junto al Editor Unity. El contexto del Proyecto de ChatGPT no sustituye los
-Markdown versionados del repositorio. U1 no ha comenzado; aún falta revisión
-exacta del Editor (la captura mencionada no llegó a esta conversación).
+Markdown versionados del repositorio. U1 no ha comenzado. Captura recibida el 29/09/2026: Unity 6.6 (6000.6.3f1).
+Falta comprobar módulos, ruta del Editor y ejecución local.
 Confirmado para Unity: escalada libre; más oro de enemigos que aumenta con
 el tiempo/dificultad; imágenes originales en archivos. Ver DECISIONES y hoja de ruta.

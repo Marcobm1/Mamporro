@@ -374,3 +374,10 @@ oficial consultada: https://unity.com/releases/unity-6/support .
 - Dice adjuntar captura de Unity, pero no hay imagen recibida/legible en esta
   conversación: sigue pendiente la revisión completa del Editor.
 - U1 aún no ha comenzado. No se han creado escenas, C# ni proyecto abrible en Hub.
+
+
+## 29/09/2026 — revisión del Editor confirmada
+
+- Captura del autor leída: **Unity 6.6 (6000.6.3f1)**; Hub muestra Compatible y Descarga completa.
+- Sustituye el pendiente anterior de recibir la versión exacta. Quedan ruta, módulos, compatibilidad de paquetes y ejecución local.
+- No acredita una build ni un proyecto Unity abierto. U1 sigue sin iniciar; el siguiente bloque es preparar Codex CLI en Windows.
