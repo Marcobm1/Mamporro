@@ -26,6 +26,7 @@ export interface HudBoss {
 }
 
 export interface HudData {
+  passive?: string;
   hp: number;
   maxHp: number;
   level: number;
@@ -77,6 +78,7 @@ function emptyLast() {
     boss: '',
     prompt: '',
     progress: '',
+    passive: '',
   };
 }
 
@@ -88,6 +90,7 @@ export class Hud {
   private readonly hpFill: HTMLDivElement;
   private readonly hpText: HTMLDivElement;
   private readonly goldEl: HTMLDivElement;
+  private readonly passiveEl: HTMLDivElement;
   private readonly timer: HTMLDivElement;
   private readonly swarmLabel: HTMLDivElement;
   private readonly bossEl: HTMLDivElement;
@@ -113,6 +116,7 @@ export class Hud {
     this.hpFill = h('div', { className: 'hpbar__fill' });
     this.hpText = h('div', { className: 'hpbar__text' });
     this.goldEl = h('div', { className: 'hud__gold' });
+    this.passiveEl = h('div', { className: 'meta-gold' });
     this.timer = h('div', { className: 'hud__timer' });
     this.swarmLabel = h('div', { className: 'hud__swarm' });
     this.bossName = h('div', { className: 'bossbar__name' });
@@ -138,7 +142,7 @@ export class Hud {
       { className: 'hud' },
       this.hurt,
       h('div', { className: 'xpbar' }, this.xpFill),
-      h('div', { className: 'hud__topleft' }, this.level, h('div', { className: 'hpbar' }, this.hpFill, this.hpText), this.goldEl),
+      h('div', { className: 'hud__topleft' }, this.level, h('div', { className: 'hpbar' }, this.hpFill, this.hpText), this.goldEl, this.passiveEl),
       h('div', { className: 'hud__top' }, this.timer, this.swarmLabel, this.bossEl),
       h('div', { className: 'hud__topright' }, this.minimap.root, this.kills),
       h('div', { className: 'hud__bottomleft' }, this.items, h('div', { className: 'hud__build' }, this.weapons, this.tomes)),
@@ -179,6 +183,10 @@ export class Hud {
     if (d.level !== last.level) {
       last.level = d.level;
       this.level.textContent = t('hud.level', { n: d.level });
+    }
+    if ((d.passive ?? '') !== last.passive) {
+      last.passive = d.passive ?? '';
+      this.passiveEl.textContent = last.passive;
     }
     const gold = Math.floor(d.gold);
     if (gold !== last.gold) {

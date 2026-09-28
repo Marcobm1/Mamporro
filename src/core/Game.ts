@@ -1,6 +1,7 @@
 // Orquestador del juego: estados (inicio, jugando, elegir carta, pausa y
 // resultados), bucle, entrada, mundo, jugador, partida, cámara, render e interfaz.
 import { Color, DirectionalLight, Fog, HemisphereLight, Scene, type Mesh } from 'three';
+import { purchase, purchaseExtra, settleRun } from '../systems/meta';
 import { CHARACTERS } from '../data/characters';
 import { PLAYER_BASE_STATS, PLAYER_TUNING, RENDER_CONFIG, WORLD_CONFIG } from '../data/config';
 import { BOSS_CONFIG, ENEMIES, ENEMY_LIST, type EnemyId } from '../data/enemies';
@@ -147,6 +148,8 @@ export class Game {
   /** Solo pruebas: los efectos visuales no envejecen. */
   private effectsFrozen = false;
   private victoryDelay = VICTORY_DELAY;
+  private runId = '';
+  private runSettled = false;
 
   private readonly prev = { x: 0, y: 0, z: 0 };
   /** Posición interpolada del jugador en el frame actual (la que se dibuja). */
@@ -174,6 +177,7 @@ export class Game {
     this.textures = { detail: createDetailTexture(), stone: createStoneTexture() };
     const shadowTexture = createBlobShadowTexture();
     this.playerView = new PlayerView(shadowTexture);
+    this.playerView.setCharacter(this.save.data.meta.selected);
     this.runView = new RunView(shadowTexture, {
       onPlayerHit: () => {
         this.rig.shake(0.45);
@@ -190,8 +194,25 @@ export class Game {
 
     this.ui = new UI(
       uiRoot,
-      { settings: () => this.save.settings, seed: () => this.seed, runInfo: () => this.pauseRunInfo() },
+      { meta: () => this.save.data.meta, canSave: () => this.save.canSave, settings: () => this.save.settings, seed: () => this.seed, runInfo: () => this.pauseRunInfo() },
       {
+        onSelectCharacter: (id) => {
+          if (this.state !== 'title' || !this.save.data.meta.characters.includes(id)) return;
+          this.save.data.meta.selected = id;
+          this.playerView.setCharacter(id);
+          this.save.persist();
+          this.ui.refresh();
+        },
+        onPurchase: (id) => {
+          if (this.state !== 'title') return;
+          if (purchase(this.save.data.meta, id)) this.save.persist();
+          this.ui.refresh();
+        },
+        onPurchaseExtra: (action) => {
+          if (this.state !== 'title') return;
+          if (purchaseExtra(this.save.data.meta, action)) this.save.persist();
+          this.ui.refresh();
+        },
         onPlay: (seedText) => this.startRun(seedText),
         onNewMap: () => this.regenerateWorld(randomSeed()),
         onResume: () => this.resume(),
@@ -266,7 +287,14 @@ export class Game {
   /** Prepara una partida nueva en el mapa actual. */
   private beginRun(): void {
     this.resetPlayer();
-    this.run = new Run(this.world.collision, this.seed, CHARACTERS.remedios, this.runView, {
+    const meta = this.save.data.meta;
+    this.runId = crypto.randomUUID();
+    this.runSettled = false;
+    this.playerView.setCharacter(meta.selected);
+    this.run = new Run(this.world.collision, this.seed, CHARACTERS[meta.selected], this.runView, {
+      allowedWeapons: meta.weapons,
+      allowedItems: meta.items,
+      extras: meta.extras,
       minutes: this.save.settings.runMinutes,
       interactables: this.world.interactables,
     });
@@ -385,11 +413,18 @@ export class Game {
   /** Fin de la partida: resultados de la victoria (jefe derrotado) o de la derrota. */
   private finishRun(victory: boolean): void {
     const run = this.run;
-    if (!run) return;
+    if (!run || this.runSettled) return;
+    this.runSettled = true;
+    const receipt = settleRun(this.save.data.meta, {
+      id: this.runId, cheated: run.cheated, time: run.time, kills: run.kills, chests: run.chestsOpened,
+      shrines: run.shrinesCompleted, challenges: run.challengesCompleted, level: run.level, victory, usedLifeTome: run.usedLifeTome,
+    });
+    this.save.persist();
     this.state = 'gameover';
     this.input.exitPointerLock();
     this.ui.hud.setVisible(false);
     this.ui.showResults({
+      meta: receipt,
       victory,
       time: run.time,
       kills: run.kills,
@@ -691,7 +726,9 @@ export class Game {
 
   private updateHud(run: Run, x: number, z: number, now: number): void {
     const boss = run.bossHealth;
+    const passive = CHARACTERS[this.save.data.meta.selected].passive;
     this.ui.hud.update({
+      passive: passive.kind === 'shield' ? (run.shieldCharge >= passive.recharge ? t('passive.shieldReady') : t('passive.shieldCharge', { n: Math.ceil(passive.recharge - run.shieldCharge) })) : '',
       hp: run.hp,
       maxHp: run.stats.maxHp,
       level: run.level,
@@ -875,9 +912,10 @@ export class Game {
       }),
       sites: () => this.world.sites.map((site) => ({ kind: site.kind, x: site.x, z: site.z, rotation: site.rotation })),
       hurtPlayer: (amount) => {
-        if (this.run) this.run.hp = Math.max(0, this.run.hp - amount);
+        if (this.run) { this.run.cheated = true; this.run.hp = Math.max(0, this.run.hp - amount); }
       },
       teleport: (x, z) => {
+        if (this.run) this.run.cheated = true;
         const y = this.world.collision.groundHeight(x, z, Number.POSITIVE_INFINITY);
         this.body.placeAt(x, y, z);
         this.prev.x = x;
@@ -925,7 +963,7 @@ export class Game {
         return out;
       },
       setWeapons: (on) => {
-        if (this.run) this.run.weaponsOff = !on;
+        if (this.run) { this.run.cheated = true; this.run.weaponsOff = !on; }
       },
       freezeEffects: (frozen) => {
         this.effectsFrozen = frozen;

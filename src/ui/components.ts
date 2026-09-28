@@ -46,11 +46,19 @@ export function optionsPanel(settings: Settings, onChange: (patch: Partial<Setti
   const row = (label: string, control: Node): HTMLDivElement =>
     h('div', { className: 'row' }, h('span', { className: 'option-label', text: label }), control);
 
+  const volume = (key: 'musicVolume' | 'effectsVolume'): HTMLElement => {
+    const value = h('span', { text: `${Math.round(settings[key] * 100)} %` });
+    const input = h('input', { className: 'slider', attrs: { type: 'range', min: '0', max: '100', step: '1', value: String(Math.round(settings[key] * 100)), 'aria-label': t(`options.${key}`) } });
+    input.addEventListener('input', () => { value.textContent = `${input.value} %`; onChange({ [key]: Number(input.value) / 100 }); });
+    return row(t(`options.${key}`), h('div', { className: 'row' }, input, value));
+  };
+
   // Sensibilidad del ratón
   const sensitivityValue = h('span', { text: settings.mouseSensitivity.toFixed(1) });
   const slider = h('input', {
     className: 'slider',
     attrs: {
+      'aria-label': t('options.sensitivity'),
       type: 'range',
       min: String(SENSITIVITY_MIN),
       max: String(SENSITIVITY_MAX),
@@ -90,5 +98,9 @@ export function optionsPanel(settings: Settings, onChange: (patch: Partial<Setti
       onChange({ slideWithCtrl });
     }),
     ctrlWarning,
+    volume('musicVolume'),
+    volume('effectsVolume'),
+    toggle(t('options.muted'), settings.muted, muted => onChange({ muted })),
+    h('p', { className: 'muted', text: t('options.audioPending') }),
   );
 }

@@ -28,12 +28,14 @@ export function browserStorage(): StorageLike | null {
 
 export class SaveManager {
   data: SaveData;
+  canSave: boolean;
   readonly loadStatus: LoadStatus;
 
   constructor(
     private readonly storage: StorageLike | null,
     defaultLanguage: Language,
   ) {
+    this.canSave = storage !== null;
     let raw: string | null = null;
     try {
       raw = storage?.getItem(SAVE_KEY) ?? null;
@@ -68,7 +70,9 @@ export class SaveManager {
   private write(key: string, value: string): void {
     try {
       this.storage?.setItem(key, value);
+      this.canSave = this.storage !== null;
     } catch {
+      this.canSave = false;
       // Almacenamiento lleno o bloqueado: seguimos sin guardar.
     }
   }
