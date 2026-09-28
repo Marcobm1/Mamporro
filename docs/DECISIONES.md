@@ -120,7 +120,7 @@ casas derruidas...) y un poco más de velocidad: velocidad base 9,5 m/s.
 
 ## Hito 4: mapa vivo
 
-Pendientes de que el autor las pruebe y las confirme:
+Probadas y confirmadas por el autor antes de empezar el hito 5 (28/09/2026):
 
 1. **Partidas cortas o largas:** la curva de dificultad se comprime o se estira
    a la duración elegida; en 5 minutos los enemigos dan el doble de experiencia
@@ -154,6 +154,92 @@ Pendientes de que el autor las pruebe y las confirme:
     `src/data/items.ts`.
 12. Tras vencer al jefe pasan 1,6 s antes de los resultados, para verlo
     reventar.
+
+## Hito 5: meta y UI
+
+El autor aprobó el plan y las siguientes decisiones antes de programar
+(28/09/2026). Implementación entregada para que la pruebe.
+
+### Personajes y contenido
+
+- **Doña Remedios:** Chancla Teledirigida y mirada de desaprobación: ralentiza
+  un 20 % a enemigos a 3 m y a menos de 2 m de diferencia de altura. No suma
+  ralentizaciones; prevalece la más fuerte. La mirada no prolonga la duración
+  de una ralentización superior, como la del suelo fregado.
+- **Sir Baguette:** Barra de Pan Duro y Corteza defensiva. Tras 8 s sin recibir
+  daño bloquea un golpe y recarga desde cero. Empieza sin escudo, el daño real
+  reinicia la carga y bloquear concede la invulnerabilidad breve habitual para
+  que una horda no anule el bloqueo en el mismo tick. Indicador en el HUD.
+  Mismos atributos base que Remedios; modelo procedural con casco, armadura,
+  escudo de hogaza y barra de pan, con animación y silueta compartidas.
+- **Armas iniciales:** Chancla, Naftalina, Barra y Dentaduras.
+- **Objetos iniciales:** Gafas, Zapatillas, Termo, Cojín, Lupa, Décimo, Rulos y
+  Monedero. Los ocho tomos están disponibles desde el principio.
+- **Por misiones:** Suelo Recién Fregado, Collar de Perlas y Bata de Guatiné.
+- **Tienda:** Sir Baguette (220), Jersey Estático (140), Baraja del Tute (160)
+  y Olla Exprés (180). Precios en Calderilla del Caos.
+- Los desbloqueos amplían el catálogo de futuras partidas; no entregan el
+  objeto directamente ni cambian la partida que acaba de terminar.
+
+### Economía y misiones
+
+- **Calderilla del Caos**, separada del oro de partida. Por morir o ganar:
+  `floor(bajas / 20) + min(60, floor(segundos / 15)) + (victoria ? 60 : 0)`.
+  A eso se suman recompensas de misiones nuevas. El resultado desglosa todo.
+- Objetivo orientativo aprobado: Sir Baguette tras 2–3 partidas razonables.
+  Depende del rendimiento y de las misiones; pendiente de balance jugando.
+- Cada ampliación permanente de Reroll/Saltar/Descartar cuesta 80, 140 y 220.
+  Cada acción comienza con 2 usos por partida y puede llegar a 5. No son
+  consumibles que haya que volver a comprar. No hay mejoras globales de stats.
+- Ocho misiones, siempre activas, de recompensa única y concesión automática:
+
+| Misión | Alcance | Calderilla | Desbloqueo |
+| --- | --- | ---: | --- |
+| Terminar una partida | Victoria o derrota | 30 | — |
+| Matar 1000 enemigos | Acumulado | 60 | Suelo Recién Fregado |
+| Abrir 10 baúles | Acumulado | 40 | — |
+| Completar 3 mesas camilla | Acumulado | 40 | — |
+| Superar un tótem | Una vez | 50 | Collar de Perlas |
+| Alcanzar el nivel 20 | En una partida | 50 | — |
+| Vencer al jefe | Una vez | 80 | — |
+| Ganar sin adquirir el tomo de vida | En una partida | 100 | Bata de Guatiné |
+
+### Guardado, opciones y límites
+
+- Guardado v2 con migración desde v1, conservando idioma y ajustes. Valida IDs,
+  saldos, rangos, duplicados, misiones y selección de personajes desbloqueados.
+- Guarda moneda, contenido, ampliaciones, misiones, selección y opciones.
+  **No reanuda partidas en curso**. Cerrar o abandonar no concede recompensas
+  ni progreso parcial. Abandonar desde pausa pide confirmación.
+- `run.cheated` invalida toda la partida, aunque se apaguen luego los trucos.
+  F3 para consultar métricas no invalida. Las manipulaciones de estado de los
+  ganchos `?test` también marcan trucos.
+- La liquidación se protege en el orquestador y mediante el ID de la última
+  partida guardada. Recargar o volver a resultados no duplica el pago.
+- Si localStorage no está disponible o falla al escribir, el juego continúa
+  en memoria y avisa en menú/resultados. No se promete persistencia en ese caso.
+- Música al 50 %, efectos al 70 %, silencio desactivado por defecto. Ajustes
+  preparados para hito 6; la interfaz lo indica. Siguen las opciones retro,
+  sensibilidad, FPS, Ctrl e idioma del navegador en primer arranque.
+
+### Verificación del hito 5
+
+- Typecheck, 188 tests de 24 ficheros y build correctos. Incluye migración v1,
+  validación, compras, topes, objetivos acumulados, cobro único, exclusión de
+  trucos, restricciones de ofertas/botín y las dos pasivas.
+- Chromium 154 con SwiftShader y `?test`: navegación, 8 misiones, compras por
+  interfaz, máximos, selección/arma inicial, abandono, victoria con trucos sin
+  recompensa, opciones e idioma persistentes. Sin errores de consola.
+- Capturas revisadas: español a 1280×720 e inglés a 1600×900, además de partida
+  con Sir Baguette y resultados. Los paneles largos permiten desplazamiento.
+- Integración de una derrota normal en navegador: simulación a 60 Hz omitiendo
+  renders intermedios, sin trucos; 73,88 s, 80 bajas, 38 monedas (4 bajas + 4
+  supervivencia + 30 primera misión). Repetir liquidación no cobra de nuevo y
+  recargar conserva el progreso. Esta prueba no mide tiempo real ni FPS.
+- Benchmarks Node: aproximadamente 0,42 ms/tick con 500 enemigos, 0,79 con las
+  cuatro armas nuevas y 0,99 con 750 enemigos, jefe y proyectiles. No equivalen
+  a FPS reales. Pointer Lock real y rendimiento en el equipo del autor siguen
+  pendientes, igual que la comprobación manual en Edge y Firefox.
 
 ## Limitaciones conocidas
 

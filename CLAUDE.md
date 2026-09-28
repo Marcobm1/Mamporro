@@ -15,9 +15,9 @@ genera por código (no hay assets externos).
 
 ## Estado
 
-- **Hechos:** hitos 1 (base), 2 (combate), 3 (progresión en partida) y 4 (mapa
-  vivo). El historial está en `git log`.
-- **Siguiente:** hito 5 (meta y UI) y después el 6 (pulido). Ver abajo.
+- **Hechos:** hitos 1–5: base, combate, progresión en partida, mapa vivo y meta/UI.
+  El historial está en `git log`. El autor confirmó el hito 4.
+- **Siguiente:** esperar la prueba del hito 5 por el autor; después, hito 6 (pulido).
 - El autor prueba cada hito antes de seguir. Si no ha dicho nada del último
   hito entregado, pregúntale primero qué tal y si hay que ajustar algo.
 
@@ -109,30 +109,23 @@ npm run preview     # sirve dist/ en http://localhost:4173
 - No se puede probar automáticamente la captura real del ratón (Pointer Lock)
   ni los FPS reales en el equipo del autor: díselo para que lo compruebe él.
 
-## Hito 5: meta y UI (lo que falta)
+## Hito 5: meta y UI (implementado; pendiente de prueba del autor)
 
-De la especificación y las decisiones ya acordadas:
-
-- Menú principal: Jugar, Personajes, Tienda/Desbloqueos, Misiones, Opciones e
-  idioma. La pantalla de inicio actual es provisional.
-- Selección de personaje: 2 personajes con arma inicial y pasiva única.
-  - Doña Remedios (desbloqueada): Chancla Teledirigida; pasiva, su mirada de
-    desaprobación ralentiza a los enemigos cercanos (hay
-    `EnemySystem.applySlow`).
-  - Sir Baguette, Paladín del Pan Duro (desbloqueable): Barra de Pan Duro;
-    pasiva por proponer. Los personajes están en `src/data/characters.ts`.
-- Moneda meta con nombre original, que se gana al terminar cada partida según el
-  rendimiento (no en partidas con trucos). Debe salir en la pantalla de
-  resultados.
-- En qué se gasta: desbloquear armas, objetos y el 2.º personaje, y más usos de
-  Reroll/Saltar/Descartar. Sin grandes mejoras permanentes de estadísticas.
-- Al empezar hay desbloqueados 1 personaje, 4 de las 6 armas y 8 de los 12
-  objetos. Lo bloqueado no debe salir en las cartas ni en los baúles.
-- Al menos 8 misiones o logros (por ejemplo, "mata a 1000 enemigos" o "gana sin
-  tomo de vida") que desbloquean contenido y dan moneda.
-- Guardado de todo lo anterior en `localStorage`, con versión y migración.
-- Opciones: volumen, sensibilidad del ratón, idioma, efectos retro y mostrar
-  FPS (el sonido llega en el hito 6, pero la opción puede quedar preparada).
+- Menú principal, preparación de partida, personajes, tienda, misiones y opciones ES/EN.
+- Doña Remedios: Chancla y ralentización del 20 % a 3 m. Sir Baguette: Barra,
+  modelo propio y escudo que se carga tras 8 s sin daño; bloquea un golpe.
+- Calderilla del Caos: bajas, supervivencia, victoria y ocho misiones. Tienda de
+  desbloqueos y ampliaciones permanentes de Reroll/Saltar/Descartar (2 a 5 usos).
+- Catálogo inicial: 1 personaje, 4 armas y 8 objetos. Los filtros afectan a cartas,
+  rerolls, descartes, baúles y tótems. Tomos disponibles desde el inicio.
+- Guardado v2: migra opciones v1, guarda progreso, compras y selección. No guarda
+  partidas en curso. Aviso si no se puede persistir. Recompensas una sola vez.
+- Abandonos y partidas con trucos no conceden moneda ni progreso de misiones.
+  También marcan trucos los ganchos de pruebas que dañan, teletransportan o
+  desactivan las armas. Cambiar cámara o consultar estado no marca trucos.
+- Volúmenes de música/efectos y silencio guardados; audio pendiente del hito 6.
+- Datos: `src/data/meta.ts`; lógica pura: `src/systems/meta.ts`; pantallas:
+  `src/ui/MetaScreens.ts`. Números, reparto y verificación en `docs/DECISIONES.md`.
 
 ## Hito 6: pulido
 

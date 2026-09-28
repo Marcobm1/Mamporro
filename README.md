@@ -4,12 +4,13 @@ Roguelike 3D de supervivencia contra hordas ("bullet heaven") con estética retr
 tipo PS1, hecho con Three.js + TypeScript + Vite. Todo el contenido (geometría,
 texturas, fuente, textos) se genera por código: no hay archivos externos.
 
-> **Estado: hito 4 de 6.** Doña Remedios recorre un mapa procedural con colinas,
+> **Estado: hito 5 de 6.** Doña Remedios y Sir Baguette recorren un mapa procedural con colinas,
 > acantilados, casas derruidas, templetes en ruinas, granjas y pozos, y se
-> enfrenta a hordas de 4 tipos de enemigos, élites y un jefe. Al subir de nivel
+> enfrentan a hordas de 4 tipos de enemigos, élites y un jefe. Al subir de nivel
 > eliges entre cartas con rareza (6 armas, 8 tomos, Reroll, Saltar y
 > Descartar). Por el mapa hay oro, baúles con 12 objetos, mesas camilla que dan
 > bendiciones, tótems de desafío y un armario escondido que invoca al jefe.
+> Hay menú, personajes con pasivas, tienda, ocho misiones y progreso guardado.
 > Tienes 5, 10 o 15 minutos: si se acaba el tiempo sin vencer al jefe, llega el
 > enjambre final.
 
@@ -93,7 +94,8 @@ Remedios aparta a los enemigos al pasar, pero los que empuja de frente la
 frenan (como mucho hasta el 60 % de su velocidad); nunca la encierran. Si algo
 la tapa (una horda, un muro), se ve su silueta dorada a través.
 
-- Al pulsar **Jugar** el juego captura el ratón. **Esc** lo suelta y pausa; para
+- En el menú, **Jugar** abre la preparación (semilla y duración). Al pulsar
+  **Jugar** en esa pantalla, el juego captura el ratón. **Esc** lo suelta y pausa; para
   volver, pulsa **Continuar**. El navegador exige un clic para volver a
   capturarlo. Chrome, además, no deja recapturarlo justo después de soltarlo:
   si falla, espera un momento y vuelve a hacer clic.
@@ -103,10 +105,51 @@ la tapa (una horda, un muro), se ve su silueta dorada a través.
   Viene desactivado porque en Chrome y Edge **Ctrl+W cierra la pestaña** y
   ninguna web puede impedirlo. Como red de seguridad, durante una partida el
   navegador pide confirmación antes de cerrar la página.
-- La semilla del mapa aparece en la pantalla de inicio y en la pausa. Puedes
+- La semilla del mapa aparece en la preparación de partida y en la pausa. Puedes
   escribir una semilla antes de jugar para repetir un mapa.
-- En la pantalla de inicio eliges la **duración de la partida**: 5, 10 (la
+- En la preparación eliges la **duración de la partida**: 5, 10 (la
   normal) o 15 minutos. Se guarda para la próxima vez.
+
+### Menú, personajes y progreso entre partidas
+
+El menú permite jugar, seleccionar personaje, comprar desbloqueos, consultar
+las ocho misiones y cambiar opciones. Español e inglés se pueden cambiar
+antes de jugar; se recuerda la selección.
+
+| Personaje | Arma inicial | Pasiva | Disponibilidad |
+| --- | --- | --- | --- |
+| Doña Remedios | Chancla Teledirigida | Ralentiza un 20 % a enemigos a 3 m; prevalece el efecto más fuerte | Desde el inicio |
+| Sir Baguette, Paladín del Pan Duro | Barra de Pan Duro | Tras 8 s sin daño, bloquea un golpe y vuelve a cargar | Tienda: 220 |
+
+La **Calderilla del Caos** es distinta del oro que gastas en los baúles. Al
+morir o ganar recibes una moneda por cada 20 bajas, una por cada 15 segundos
+sobrevividos (máximo 60 por tiempo) y 60 por victoria, más las misiones nuevas.
+Las fracciones se redondean hacia abajo; los resultados muestran el desglose.
+
+- Disponibles inicialmente: Chancla, Naftalina, Barra y Dentaduras; Gafas,
+  Zapatillas, Termo, Cojín, Lupa, Décimo, Rulos y Monedero; los ocho tomos.
+- La tienda vende a Sir Baguette (220), Jersey Estático (140), Baraja del Tute
+  (160) y Olla Exprés (180). Una compra los desbloquea para futuras partidas.
+- También vende tres ampliaciones de cada acción: Reroll, Saltar y Descartar.
+  Cuestan 80/140/220 y elevan los usos por partida de 2 a 3/4/5 permanentemente.
+- Misiones siempre activas: terminar una partida, acumular 1000 bajas, abrir
+  10 baúles, completar 3 mesas camilla, superar un tótem, llegar al nivel 20,
+  vencer al jefe y ganar sin adquirir el tomo de vida. Recompensas únicas de
+  30/60/40/40/50/50/80/100 monedas respectivamente. Las de 1000 bajas, tótem y
+  victoria sin vida desbloquean Suelo Recién Fregado, Collar y Bata.
+- El contenido bloqueado no sale en cartas (incluidos rerolls y descartes),
+  baúles ni recompensas de tótems. La tienda muestra cómo obtenerlo.
+- **Abandonar o cerrar no concede moneda ni avance de misiones.** Las partidas
+  con trucos tampoco cuentan. Abrir F3 solo para consultar métricas sí permite
+  progresar, siempre que no ejecutes acciones de debug.
+
+El guardado v2 usa `localStorage`, migra tus opciones anteriores y conserva
+progreso, compras, personaje elegido e idioma. **No guarda partidas a medias**.
+Si el navegador bloquea el guardado se muestra un aviso y el progreso dura
+solo esa sesión. Borrar los datos del navegador borra también el progreso.
+
+Opciones incluye volumen de música y efectos y silencio: quedan preparados,
+pero **el sonido llega en el hito 6**.
 
 ### La partida
 
@@ -208,8 +251,8 @@ subidas salen una detrás de otra.
   Desde Rara, siempre 2, y cuanto más rara, más suben. La carta dice exactamente
   qué sube y cuánto.
 - **Tomos:** suman a una estadística global, de forma aditiva nivel a nivel.
-- **Reroll, Saltar y Descartar:** 2 usos de cada uno por partida (en el hito 5
-  se podrán ampliar). Descartar quita esa arma o ese tomo del sorteo para el
+- **Reroll, Saltar y Descartar:** 2 usos de cada uno por partida, ampliables permanentemente
+  hasta 5 en la tienda. Descartar quita esa arma o ese tomo del sorteo para el
   resto de la partida y pone otra carta en su hueco.
 - Con la **Baraja del Tute** salen 4 cartas en vez de 3.
 - Si ya no queda nada que ofrecer, salen cartas de relleno: una que cura y otra
@@ -262,7 +305,7 @@ el panel abierto y jugando, las teclas numéricas lanzan acciones de prueba:
 para tener 300 enemigos. Después mira el FPS y el tiempo de "Lógica".
 
 Las partidas en las que se usan estas acciones quedan marcadas como "con trucos".
-En el hito 5 no darán moneda meta ni contarán para las misiones.
+No dan moneda meta ni cuentan para las misiones, aunque se desactiven después.
 
 ### Pausa
 
@@ -289,7 +332,8 @@ src/
   core/                 Bucle a paso fijo, entrada, RNG con semilla, orquestador (Game) y partida (Run)
   data/                 Contenido y ajustes en ficheros tipados:
     config.ts             mapa, construcciones, movimiento, cámara, niebla
-    characters.ts         personajes (arma inicial, vida...)
+    characters.ts         personajes (arma inicial, atributos y pasivas)
+    meta.ts               catálogo inicial, misiones, precios y economía meta
     enemies.ts            enemigos (vida, velocidad, daño, oro, comportamiento) y
                           los ataques del jefe
     weapons.ts            armas (comportamiento, estadísticas y cuáles pueden mejorar)
@@ -307,7 +351,7 @@ src/
                         (tiempo, oleadas, élites, enjambre), jefe, proyectiles
                         propios y enemigos, gemas y monedas, rejilla espacial, daño
                         y críticos, experiencia, dificultad, estadísticas, subida de
-                        nivel (cartas), objetos, interactuables y frenado en la horda
+                        nivel (cartas), objetos, interactuables, progreso meta y frenado en la horda
   weapons/              Comportamientos de las armas: teledirigida, aura, arco,
                         órbita, cadena y rastro
   entities/             Física del jugador y modelos de jugador y enemigos
@@ -316,7 +360,7 @@ src/
   render/               Render retro, cámara, cielo, texturas, paleta, efectos de
                         combate y avisos de ataque en el suelo
   ui/                   Interfaz HTML/CSS (HUD, minimapa, pantallas, subida de nivel,
-                        resultados), fuente pixelada
+                        resultados, personajes, tienda y misiones), fuente pixelada
   i18n/                 Textos en español (es.ts) e inglés (en.ts)
   save/                 Guardado versionado en localStorage con migraciones
   styles/               CSS de la interfaz
@@ -441,7 +485,8 @@ La guía completa llegará en el hito 6. Mientras tanto:
      estadística sube cada copia). Si su efecto es especial, pon sus números en
      `ITEM_EFFECTS` y aplícalo en `src/core/Run.ts`.
   2. Escribe su nombre y descripción en los dos idiomas.
-  3. Saldrá solo en los baúles, según su rareza.
+  3. Añádelo al catálogo inicial o a una recompensa en `src/data/meta.ts`;
+     una vez desbloqueado podrá salir en baúles y tótems según su rareza.
 - **Un arma nueva:**
   1. Añade su entrada en `src/data/weapons.ts`: estadísticas base, lista
      `upgradable` (lo que pueden subir sus cartas) y, si quieres, nombres
@@ -450,7 +495,8 @@ La guía completa llegará en el hito 6. Mientras tanto:
      `src/data/weapons.ts`), escríbelo en `src/weapons/` (con `update` y
      `createState`) y regístralo en `src/weapons/index.ts`.
   3. Escribe su nombre y descripción en los dos idiomas.
-  4. Aparecerá sola en las cartas.
+  4. Añádela al catálogo inicial o a un desbloqueo en `src/data/meta.ts`;
+     aparecerá en las cartas cuando esté desbloqueada.
 - **Un tomo nuevo:**
   1. Añade su entrada en `src/data/tomes.ts`: qué estadística sube y cuánto por
      nivel Común (las rarezas lo multiplican).
@@ -468,7 +514,9 @@ La guía completa llegará en el hito 6. Mientras tanto:
   - aceleración y salto, con coyote time y buffer;
   - deslizamiento, pendientes y escalones;
   - que los acantilados no se puedan trepar;
-- el guardado (valores corruptos, versiones futuras, migraciones);
+- el guardado (valores corruptos, versiones futuras, migración v1 a v2);
+- la meta: compras, topes, recompensas únicas, misiones acumuladas, persistencia,
+  bloqueo de contenido y exclusión de trucos; las pasivas de ambos personajes;
 - la traducción;
 - la fuente pixelada (contornos correctos y cobertura de caracteres);
 - los colisionadores de caja y círculo;
@@ -542,6 +590,33 @@ armas y congelar los efectos visuales para fotografiarlos.
 4. ✅ **Mapa vivo:** oro, baúles, 12 objetos, mesas camilla, tótems, portal,
    jefe, temporizador (5/10/15 min), oleadas especiales, élites, enjambre final,
    minimapa, pantalla de resultados y 4 enemigos nuevos.
-5. Meta y UI: menús, personajes, moneda meta, desbloqueos, misiones, guardado
-   completo e idiomas.
+5. ✅ **Meta y UI:** menús, dos personajes con pasivas, Calderilla del Caos,
+   tienda, ocho misiones, guardado v2, opciones e idiomas. Pendiente de prueba
+   del autor antes de continuar.
 6. Pulido: audio, partículas, balance, tests y guía para añadir contenido.
+
+### Probar el hito 5 (CMD en Windows)
+
+Desde la carpeta del repositorio:
+
+```cmd
+git switch claude/zen-pasteur-674ik0
+git pull --ff-only
+npm ci
+npm run dev
+```
+
+Abre `http://localhost:5173`. Revisa Personajes, Tienda, Misiones y Opciones;
+termina una partida sin trucos y comprueba el desglose de calderilla. Recarga
+para verificar el progreso. Tras comprar a Sir Baguette, selecciónalo y juega:
+empieza con la barra y muestra la recarga del escudo. Comprueba también el
+ratón y los FPS reales, que no se pueden validar con la GPU por software.
+
+Verificación local:
+
+```cmd
+npm run typecheck
+npm test
+npm run build
+npm run preview
+```
