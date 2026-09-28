@@ -67,6 +67,9 @@ describe('parseSave', () => {
       musicVolume: 0.5,
       effectsVolume: 0.7,
       muted: false,
+      reducedParticles: false,
+      cameraShake: true,
+      flashes: true,
       language: 'en',
       mouseSensitivity: 3,
       renderHeight: 360,
@@ -129,5 +132,28 @@ describe('SaveManager', () => {
     expect(manager.loadStatus).toBe('new');
     expect(() => manager.updateSettings({ dithering: false })).not.toThrow();
     expect(manager.settings.dithering).toBe(false);
+  });
+});
+
+
+describe('guardado v3 de pulido', () => {
+  it('migra v2 sin perder monedas, compras ni opciones anteriores', () => {
+    const meta = defaultMeta();
+    meta.coins = 321;
+    meta.characters.push('baguette');
+    meta.selected = 'baguette';
+    const result = parseSave(JSON.stringify({ version: 2, meta, settings: { muted: true, effectsVolume: 0.3, language: 'en' } }), 'es');
+    expect(result.status).toBe('migrated');
+    expect(result.data.version).toBe(3);
+    expect(result.data.meta).toEqual(meta);
+    expect(result.data.settings).toMatchObject({ muted: true, effectsVolume: 0.3, language: 'en', reducedParticles: false, flashes: true, cameraShake: true });
+  });
+  it('persiste las tres opciones y descarta valores no booleanos', () => {
+    const storage = new MemoryStorage();
+    const save = new SaveManager(storage, 'es');
+    save.updateSettings({ reducedParticles: true, cameraShake: false, flashes: false });
+    expect(new SaveManager(storage, 'es').settings).toMatchObject({ reducedParticles: true, cameraShake: false, flashes: false });
+    const result = parseSave(JSON.stringify({ version: 3, settings: { reducedParticles: 1, cameraShake: null, flashes: 'no' } }), 'es');
+    expect(result.data.settings).toMatchObject({ reducedParticles: false, cameraShake: true, flashes: true });
   });
 });

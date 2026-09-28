@@ -27,6 +27,12 @@ export class CameraRig {
   private distance: number = CAMERA_CONFIG.distance;
   /** "Trauma" de la sacudida (0..1): el temblor es proporcional a su cuadrado. */
   private trauma = 0;
+  private shakeEnabled = true;
+
+  setShakeEnabled(enabled: boolean): void {
+    this.shakeEnabled = enabled;
+    if (!enabled) this.trauma = 0;
+  }
   private pivotHeight: number = CAMERA_CONFIG.pivotHeight;
   private fovExtra = 0;
   private readonly pivot = new Vector3();
@@ -66,6 +72,7 @@ export class CameraRig {
 
   /** Sacude la cámara (golpes recibidos, explosiones...). */
   shake(amount: number): void {
+    if (!this.shakeEnabled) return;
     this.trauma = Math.min(1, this.trauma + amount);
   }
 

@@ -5,7 +5,7 @@ import { defaultMeta, sanitizeMeta, type MetaProgress } from '../systems/meta';
 import { RUN_DURATIONS, type RunMinutes } from '../data/waves';
 import { isLanguage, type Language } from '../i18n';
 
-export const SAVE_VERSION = 2;
+export const SAVE_VERSION = 3;
 
 export const RENDER_HEIGHTS = [240, 360, 480] as const;
 export type RenderHeight = (typeof RENDER_HEIGHTS)[number];
@@ -17,6 +17,9 @@ export interface Settings {
   musicVolume: number;
   effectsVolume: number;
   muted: boolean;
+  reducedParticles: boolean;
+  cameraShake: boolean;
+  flashes: boolean;
   language: Language;
   /** Multiplicador de la sensibilidad base del ratón. */
   mouseSensitivity: number;
@@ -42,6 +45,9 @@ export function defaultSettings(language: Language): Settings {
     musicVolume: 0.5,
     effectsVolume: 0.7,
     muted: false,
+    reducedParticles: false,
+    cameraShake: true,
+    flashes: true,
     language,
     mouseSensitivity: 1,
     renderHeight: 360,
@@ -91,6 +97,9 @@ export function sanitizeSettings(raw: unknown, language: Language): Settings {
     musicVolume: readNumber(raw, 'musicVolume', d.musicVolume, 0, 1),
     effectsVolume: readNumber(raw, 'effectsVolume', d.effectsVolume, 0, 1),
     muted: readBool(raw, 'muted', d.muted),
+    reducedParticles: readBool(raw, 'reducedParticles', d.reducedParticles),
+    cameraShake: readBool(raw, 'cameraShake', d.cameraShake),
+    flashes: readBool(raw, 'flashes', d.flashes),
     language: isLanguage(raw.language) ? raw.language : d.language,
     mouseSensitivity: readNumber(raw, 'mouseSensitivity', d.mouseSensitivity, SENSITIVITY_MIN, SENSITIVITY_MAX),
     renderHeight: readRenderHeight(raw, 'renderHeight', d.renderHeight),
@@ -106,7 +115,11 @@ export function sanitizeSettings(raw: unknown, language: Language): Settings {
  * Migraciones: la función en la clave `n` convierte datos de la versión `n`
  * a la `n + 1`. Al cambiar el esquema se sube SAVE_VERSION y se añade aquí.
  */
-export const MIGRATIONS: Readonly<Record<number, (data: Json) => Json>> = { 1: (data) => ({ ...data, meta: defaultMeta() }) };
+export const MIGRATIONS: Readonly<Record<number, (data: Json) => Json>> = {
+  1: (data) => ({ ...data, meta: defaultMeta() }),
+  // Los ajustes nuevos se completan en sanitizeSettings; la meta v2 se conserva.
+  2: (data) => ({ ...data }),
+};
 
 export type LoadStatus = 'new' | 'ok' | 'migrated' | 'reset';
 

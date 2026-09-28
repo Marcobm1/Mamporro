@@ -264,7 +264,7 @@ export class UI {
       const panel = page === 'characters' ? charactersPanel(meta, id => this.callbacks.onSelectCharacter(id))
         : page === 'shop' ? shopPanel(meta, id => this.callbacks.onPurchase(id), action => this.callbacks.onPurchaseExtra(action))
         : page === 'missions' ? missionsPanel(meta)
-        : optionsPanel(this.ctx.settings(), patch => this.callbacks.onSettingsChange(patch));
+        : optionsPanel(this.ctx.settings(), patch => this.callbacks.onSettingsChange(patch), false);
       content = h('div', { className: 'stack' }, h('h2', { className: 'panel-title', text: t(heading) }), panel);
     }
     return h('div', { className: 'screen screen--menu' }, h('div', { className: 'panel menu-panel stack' }, header,

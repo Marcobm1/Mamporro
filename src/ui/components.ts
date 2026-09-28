@@ -42,7 +42,7 @@ export function controlsLegend(slideWithCtrl: boolean): HTMLDivElement {
  * Panel de opciones. Cada control actualiza su propio aspecto y avisa con
  * `onChange`; así un deslizador no se reconstruye mientras se arrastra.
  */
-export function optionsPanel(settings: Settings, onChange: (patch: Partial<Settings>) => void): HTMLDivElement {
+export function optionsPanel(settings: Settings, onChange: (patch: Partial<Settings>) => void, includeHeader = true): HTMLDivElement {
   const row = (label: string, control: Node): HTMLDivElement =>
     h('div', { className: 'row' }, h('span', { className: 'option-label', text: label }), control);
 
@@ -79,8 +79,8 @@ export function optionsPanel(settings: Settings, onChange: (patch: Partial<Setti
   return h(
     'div',
     { className: 'stack' },
-    h('div', { className: 'muted', text: t('options.title') }),
-    row(t('options.language'), languageSelector(settings.language, (language) => onChange({ language }))),
+    includeHeader && h('div', { className: 'muted', text: t('options.title') }),
+    includeHeader && row(t('options.language'), languageSelector(settings.language, (language) => onChange({ language }))),
     row(t('options.sensitivity'), h('div', { className: 'row' }, slider, sensitivityValue)),
     row(
       t('options.resolution'),
@@ -92,6 +92,9 @@ export function optionsPanel(settings: Settings, onChange: (patch: Partial<Setti
     ),
     toggle(t('options.vertexSnap'), settings.vertexSnap, (vertexSnap) => onChange({ vertexSnap })),
     toggle(t('options.dithering'), settings.dithering, (dithering) => onChange({ dithering })),
+    toggle(t('options.reducedParticles'), settings.reducedParticles, (reducedParticles) => onChange({ reducedParticles })),
+    toggle(t('options.cameraShake'), settings.cameraShake, (cameraShake) => onChange({ cameraShake })),
+    toggle(t('options.flashes'), settings.flashes, (flashes) => onChange({ flashes })),
     toggle(t('options.showFps'), settings.showFps, (showFps) => onChange({ showFps })),
     toggle(t('options.slideCtrl'), settings.slideWithCtrl, (slideWithCtrl) => {
       ctrlWarning.hidden = !slideWithCtrl;

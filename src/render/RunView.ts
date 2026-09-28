@@ -85,6 +85,11 @@ export class RunView implements RunEffects {
     this.group.visible = false;
   }
 
+  setEffects(reducedParticles: boolean, flashes: boolean): void {
+    this.particles.setReduced(reducedParticles);
+    this.enemyRenderer.flashesEnabled = flashes;
+  }
+
   get particleCount(): number {
     return this.particles.active;
   }
@@ -226,6 +231,9 @@ export class RunView implements RunEffects {
   damageNumber(x: number, y: number, z: number, amount: number, critLevel: number): void {
     this.hooks.onSound(critLevel > 0 ? 'critical' : 'hit');
     this.numbers.spawn(x, y, z, amount, critLevel);
+    if (critLevel > 0) this.particles.burst(x, y, z, {
+      count: 3, colors: [PALETTE.numberCrit, PALETTE.breadCrust], speed: 2.5, size: 0.08, life: 0.25,
+    });
   }
 
   enemyKilled(x: number, y: number, z: number, type: number): void {
@@ -233,7 +241,7 @@ export class RunView implements RunEffects {
     if (!def) return;
     this.hooks.onSound(def.special === 'boss' ? 'blast' : 'death');
     this.particles.burst(x, y + def.height * 0.5, z, {
-      count: 12,
+      count: def.special === 'boss' ? 80 : def.special ? 24 : 12,
       colors: def.debrisColors,
       speed: 5,
       size: 0.14,
@@ -270,7 +278,13 @@ export class RunView implements RunEffects {
   }
 
   notice(notice: RunNotice): void {
-    if (notice.kind === 'shield') this.hooks.onSound('shield');
+    if (notice.kind === 'shield') {
+      this.hooks.onSound('shield');
+      const p = this.run?.player;
+      if (p) this.particles.burst(p.x, p.y + 1, p.z, {
+        count: 18, colors: [PALETTE.breadCrust, PALETTE.numberCrit], speed: 3, size: 0.14, life: 0.45,
+      });
+    }
     this.hooks.onNotice(notice);
   }
 

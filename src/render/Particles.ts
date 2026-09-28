@@ -1,3 +1,4 @@
+import { ParticleBudget } from './ParticleBudget';
 // Partículas sencillas (cubitos que salen disparados, caen y se encogen), en una
 // sola malla instanciada. Son solo decorativas: se animan en el render.
 import { BoxGeometry, Color, DynamicDrawUsage, InstancedMesh, MeshBasicMaterial } from 'three';
@@ -24,6 +25,14 @@ export interface BurstOptions {
 export class Particles {
   readonly mesh: InstancedMesh;
   private count = 0;
+  private readonly budget = new ParticleBudget();
+
+  setReduced(reduced: boolean): void {
+    this.budget.reduced = reduced;
+    this.budget.reset();
+    this.count = Math.min(this.count, this.budget.capacity);
+    this.mesh.count = this.count;
+  }
   private readonly x: Float32Array;
   private readonly y: Float32Array;
   private readonly z: Float32Array;
@@ -70,7 +79,8 @@ export class Particles {
 
   burst(x: number, y: number, z: number, o: BurstOptions): void {
     const rng = this.rng;
-    for (let n = 0; n < o.count; n++) {
+    const count = this.budget.take(o.count, this.count);
+    for (let n = 0; n < count; n++) {
       // Si está lleno, se reutiliza una partícula al azar (las viejas desaparecen antes).
       const i = this.count < this.capacity ? this.count++ : rng.int(0, this.capacity - 1);
       const angle = rng.next() * Math.PI * 2;
@@ -114,9 +124,11 @@ export class Particles {
   clear(): void {
     this.count = 0;
     this.mesh.count = 0;
+    this.budget.reset();
   }
 
   update(dt: number): void {
+    this.budget.reset();
     for (let i = this.count - 1; i >= 0; i--) {
       this.life[i] = (this.life[i] as number) - dt;
       if ((this.life[i] as number) <= 0) {

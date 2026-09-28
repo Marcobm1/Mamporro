@@ -67,6 +67,7 @@ interface Pose {
 }
 
 export class EnemyRenderer {
+  flashesEnabled = true;
   readonly group = new Group();
   private readonly meshes: InstancedMesh[] = [];
   private readonly flashes: InstancedBufferAttribute[] = [];
@@ -132,7 +133,7 @@ export class EnemyRenderer {
       const z = (enemies.pz[i] as number) + ((enemies.z[i] as number) - (enemies.pz[i] as number)) * alpha;
       this.animate(enemies, i, boss);
       writeYawMatrix(mesh.instanceMatrix.array as Float32Array, slot, x, ground + pose.lift, z, enemies.heading[i] as number, pose.sx, pose.sy, pose.sz);
-      (flash.array as Float32Array)[slot] = (enemies.flash[i] as number) * (def.special ? FLASH_SCALE[def.special] : 1);
+      (flash.array as Float32Array)[slot] = (this.flashesEnabled ? (enemies.flash[i] as number) : 0) * (def.special ? FLASH_SCALE[def.special] : 1);
       // La sombra encoge si el enemigo salta.
       const size = def.radius * 2.4 * Math.max(0.4, 1 - pose.lift * 0.15);
       writeYawMatrix(shadowArray, i, x, ground + 0.04, z, 0, size, 1, size);

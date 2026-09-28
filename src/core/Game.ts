@@ -185,7 +185,7 @@ export class Game {
       onSound: (id) => this.audio.play(id),
       onPlayerHit: () => {
         this.rig.shake(0.45);
-        this.ui.hud.flashHurt();
+        if (this.save.settings.flashes) this.ui.hud.flashHurt();
       },
       onNotice: (notice) => this.showNotice(notice),
       onItem: (item) => this.ui.hud.showItem(describeItem(item)),
@@ -602,6 +602,8 @@ export class Game {
 
   private applySettings(settings: Settings): void {
     this.audio.configure(settings);
+    this.rig.setShakeEnabled(settings.cameraShake);
+    this.runView.setEffects(settings.reducedParticles, settings.flashes);
     this.renderer.setTargetHeight(settings.renderHeight);
     this.rig.setAspect(this.renderer.aspect);
     this.renderer.setVertexSnap(settings.vertexSnap);
@@ -718,7 +720,7 @@ export class Game {
     this.frameEvents.landingSpeed = 0;
     // Parpadea mientras es invulnerable tras un golpe.
     const run = this.run;
-    this.playerView.root.visible = !run || run.invulnerable <= 0 || Math.floor(now * 16) % 2 === 0;
+    this.playerView.root.visible = !this.save.settings.flashes || !run || run.invulnerable <= 0 || Math.floor(now * 16) % 2 === 0;
 
     this.rig.update(
       { x, y, z },
