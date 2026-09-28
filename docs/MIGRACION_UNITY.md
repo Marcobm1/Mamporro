@@ -1,9 +1,10 @@
 # Migración propuesta a Unity
 
-Estado: **plan de trabajo, migración no iniciada**. Propuesta solicitada por el autor
-el 28/09/2026. Se abordará **después de terminar y validar el pulido del hito 6 y
-antes de añadir más contenido**. La versión Three.js seguirá siendo la referencia
-jugable hasta que el autor apruebe la sustitución.
+Estado: **U0 autorizado y en preparación** (28/09/2026). Hito 6 aprobado por el
+autor. Windows de escritorio confirmado, con objetivo Steam/plataformas similares;
+conservar el progreso compatible. El autor dispone de Unity 6.6, pendiente de
+revisión exacta. Aún no se ha creado el proyecto de Editor ni una build Unity.
+La versión Three.js seguirá siendo la referencia hasta aprobar la sustitución.
 
 ## Objetivo y alcance
 
@@ -23,15 +24,17 @@ casos de prueba; se reescriben sus implementaciones e integraciones con el motor
 
 ## Decisiones que confirmar al arrancar
 
-Propuesta inicial, todavía sin fijar como requisitos nuevos:
+Acuerdos actualizados y asuntos pendientes. Detalle operativo en
+[`unity/Docs/U0_REFERENCIA.md`](../unity/Docs/U0_REFERENCIA.md). Mejoras solicitadas
+por el autor y recomendaciones en
+[`unity/Docs/HOJA_DE_RUTA.md`](../unity/Docs/HOJA_DE_RUTA.md).
 
-- **Plataforma:** Windows de escritorio como primer destino. Confirmar si además
-  debe mantenerse una edición web Unity y qué navegadores soportar; no asumir
-  que el comportamiento o rendimiento de escritorio se trasladan a web.
-- **Editor:** una versión LTS soportada de Unity 6 al comenzar. Comprobar entonces
-  soporte, licencia y compatibilidad; fijar versión exacta del Editor, URP, Input
-  System y Test Framework en el repositorio. Evitar previews y actualizaciones a
-  mitad de una fase sin necesidad demostrada.
+- **Plataforma confirmada:** Windows de escritorio, con futuro lanzamiento en
+  Steam/plataformas similares. La edición web no es el primer objetivo Unity.
+- **Editor indicado por el autor:** Unity 6.6. Pedir revisión completa de Hub y
+  comprobar canal/soporte antes de fijar `ProjectVersion.txt` y paquetes. La
+  recomendación inicial de LTS se revisa con esta información: una Update final
+  no se descarta por no ser LTS; tampoco se asume que cualquier 6.6 sea final.
 - **Render:** probar URP con una escena representativa antes de comprometer toda
   la migración. Mantener 240/360/480 píxeles de altura interna, filtrado puntual,
   paleta, niebla, geometría sencilla, dither y cuantización de vértices.
@@ -42,10 +45,10 @@ Propuesta inicial, todavía sin fijar como requisitos nuevos:
   `unity/`, sobre la rama actual salvo instrucción posterior. No borrar ni
   sobrescribir la referencia web. Versionar `Assets/` con sus `.meta`,
   `Packages/` y `ProjectSettings/`; excluir cachés y builds de Unity.
-- **Guardado:** ofrecer exportación desde la versión web e importación validada
-  en Unity. Confirmar con el autor que desea conservar su progreso y qué hacer
-  ante un guardado Unity ya existente; propuesta: copia de seguridad y sustitución
-  explícita, nunca sumar saldos ni fusionar recompensas.
+- **Guardado confirmado:** conservar todo el progreso compatible mediante
+  exportación web/importación Unity validada. Ante un guardado Unity existente,
+  propuesta: copia de seguridad y sustitución explícita, nunca sumar saldos ni
+  fusionar recompensas. No se importa automáticamente el localStorage del navegador.
 
 ## Correspondencia de sistemas
 

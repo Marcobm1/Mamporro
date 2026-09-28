@@ -1,5 +1,7 @@
 # Hito 6: punto de continuidad
 
+Hito probado y aprobado por el autor el 28/09/2026. Continuación: `unity/Docs/U0_REFERENCIA.md`.
+
 Actualizado: 28/09/2026. Rama: `claude/zen-pasteur-674ik0`. Sin PR.
 Base aprobada por el autor: `5e7b95a` (hito 5 completo).
 
@@ -75,13 +77,13 @@ Base aprobada por el autor: `5e7b95a` (hito 5 completo).
 
 ## Para continuar tras esta entrega
 
-1. Esperar que el autor pruebe audio, opciones, combate y guardado.
+1. Completado: el autor ha probado y aprobado el hito 6.
 2. Recoger su valoración de mezcla/estilo musical, movilidad de Baguette, balance
    de partidas completas, Pointer Lock y FPS en su Windows. No se han podido
    comprobar la escucha humana ni estas condiciones físicas desde aquí.
 3. Corregir lo que encuentre dentro del pulido; no añadir contenido nuevo todavía.
-4. Tras aprobar el hito 6, concretar U0 de `MIGRACION_UNITY.md`: plataforma,
-   Editor disponible, versión exacta y traslado de progreso. Migración no iniciada.
+4. U0 autorizado: Windows para Steam/similares, Unity 6.6 (revisión pendiente),
+   conservar progreso. Preparación en `unity/Docs/`; proyecto de Editor no creado.
 
 Para regenerar las pruebas de navegador, ver los comandos CMD del README. Los
 resultados de `qa-results/` son temporales y se ignoran en git; este resumen y el

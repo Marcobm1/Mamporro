@@ -4,7 +4,7 @@ Roguelike 3D de supervivencia contra hordas ("bullet heaven") con estética retr
 tipo PS1, hecho con Three.js + TypeScript + Vite. Todo el contenido (geometría,
 texturas, fuente, textos y audio) se genera por código: no hay archivos externos.
 
-> **Estado: hito 6 de 6, pendiente de validación del autor.** Doña Remedios y Sir Baguette recorren un mapa procedural con colinas,
+> **Estado: los 6 hitos web aprobados; preparando la migración a Unity (U0).** Doña Remedios y Sir Baguette recorren un mapa procedural con colinas,
 > acantilados, casas derruidas, templetes en ruinas, granjas y pozos, y se
 > enfrentan a hordas de 4 tipos de enemigos, élites y un jefe. Al subir de nivel
 > eliges entre cartas con rareza (6 armas, 8 tomos, Reroll, Saltar y
@@ -634,8 +634,8 @@ armas y congelar los efectos visuales para fotografiarlos.
 5. ✅ **Meta y UI:** menús, dos personajes con pasivas, Calderilla del Caos,
    tienda, ocho misiones, guardado v2, opciones e idiomas. Aprobado por el autor.
 6. ✅ **Pulido:** audio/música procedural, partículas y opciones de efectos,
-   guardado v3, revisión de balance, tests y guía de contenido. Pendiente de
-   prueba final del autor; no se ha iniciado Unity.
+   guardado v3, revisión de balance, tests y guía de contenido. Aprobado por el
+   autor. La preparación de Unity está en U0; aún no existe build Unity.
 
 ### Probar el hito 6 (CMD en Windows)
 
@@ -668,12 +668,25 @@ npm run build
 npm run preview
 ```
 
-## Después del pulido: propuesta de migración a Unity
+## Migración a Unity y futuro del juego
 
-Una vez aprobado el hito 6, antes de añadir contenido nuevo, se plantea trasladar
-el juego a Unity para continuar su pulido. La [guía de migración](docs/MIGRACION_UNITY.md)
-detalla las fases U0–U6, equivalencias, guardados y criterios de validación.
-Es una propuesta: la migración no está iniciada y requiere su propio arranque aprobado.
+El autor aprobó los seis hitos y el arranque de U0. Destino inicial: **Windows de
+escritorio**, con futura publicación en Steam y plataformas similares; conservar
+el progreso compatible. Tiene Unity 6.6: falta la revisión exacta del Editor.
+
+- [Plan U0–U6](docs/MIGRACION_UNITY.md).
+- [Estado de la preparación y referencia](unity/Docs/U0_REFERENCIA.md).
+- [Mejoras solicitadas para Unity](unity/Docs/HOJA_DE_RUTA.md): mundo/estructuras
+  mayores, terreno más marcado y rampas, escalada, hordas progresivas, más monedas,
+  arte e iconos propios y más contenido.
+
+`unity/` contiene documentación y referencias; todavía no puede abrirse como
+proyecto en Hub. La base web se conserva en el commit `0505b16`. Para comprobar
+catálogo, RNG, fórmulas, guardados y medios de referencia desde CMD:
+
+```cmd
+node scripts\unity-reference.mjs
+```
 
 ### Automatización de navegador del hito 6
 

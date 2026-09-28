@@ -323,3 +323,35 @@ suspensión/reanudación, PCM con OfflineAudioContext, combate, jefe y pausa.
 Capturas revisadas. Script reproducible: `scripts/verify-browser.cjs`.
 Pendientes del autor: escucha y mezcla en su equipo, Pointer Lock, FPS reales y
 balance jugando partidas completas. Se detiene el desarrollo para esa prueba.
+
+
+## U0: arranque de Unity y objetivos posteriores (28/09/2026)
+
+Respuestas del autor tras probar y aprobar el hito 6:
+
+1. Windows de escritorio, pensando en publicar en Steam/plataformas similares.
+2. Dispone de Unity 6.6; aún no se conoce la revisión exacta mostrada por Hub.
+3. Conservar todo el progreso que se pueda trasladar de forma compatible.
+
+Base fijada: `0505b1690656d15188860157612455639820fe1f`. Referencia exportada en
+`unity/Docs/Reference/baseline.json`: catálogo, i18n, RNG, fórmulas, guardados,
+semillas/mundo y audio; capturas y muestras conservadas junto al informe de QA.
+Comprobación: `node scripts/unity-reference.mjs`. Solo preparación U0: todavía
+sin proyecto abrible en Hub ni código C# o escenas verificados.
+
+El autor pide para Unity: mundo y estructuras mayores, colinas más cuadradas,
+rampas y desniveles transitables, escalada de paredes y movilidad ágil; más
+monedas; menos enemigos al principio y aumento progresivo; mejor acabado visual,
+imágenes para armas/tomos/etc. y más enemigos, armas, tomos y personajes.
+La hoja de ruta está **dentro de `unity/Docs/HOJA_DE_RUTA.md`**, con prioridades,
+criterios de prueba y decisiones abiertas. No se aplican esos cambios al juego web.
+
+Recomendaciones, aún no aprobadas como alcance: cámara con colisión en edificios,
+mando/reasignación, introducción breve, métricas locales de balance, accesibilidad
+y preparación de servicios de tienda. No se ha integrado Steamworks ni publicado.
+Detalles de escalada, tipo de moneda y producción del arte se preguntarán juntos;
+no asumir que la petición de iconos autoriza assets de terceros.
+
+La guía inicial proponía LTS, pero el autor ya tiene 6.6. Se comprobará su revisión
+completa sin inventar paquetes ni obligar a cambiar a LTS por defecto. Política
+oficial consultada: https://unity.com/releases/unity-6/support .

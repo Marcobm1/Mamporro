@@ -15,14 +15,16 @@ genera por código (no hay assets externos).
 
 ## Estado
 
-- **Hechos:** hitos 1–5: base, combate, progresión en partida, mapa vivo y meta/UI.
-  El historial está en `git log`. El autor confirmó los hitos 4 y 5.
-- **Hito 6 implementado y verificado:** pendiente de prueba/aceptación del autor.
-  Consultar `docs/PROGRESO_HITO_6.md` antes de retomar.
-- **Después:** plantear migración a Unity antes de añadir contenido nuevo; requiere
-  plan y aprobación propios. No iniciar la migración durante el pulido.
-- El autor prueba cada hito antes de seguir. Si no ha dicho nada del último
-  hito entregado, pregúntale primero qué tal y si hay que ajustar algo.
+- **Hechos y aprobados por el autor:** hitos 1–6. Base web aprobada:
+  `0505b1690656d15188860157612455639820fe1f`.
+- **En curso:** U0 de migración a Unity. Referencia y mejoras en `unity/Docs/`;
+  leer `unity/Docs/U0_REFERENCIA.md` y `unity/Docs/HOJA_DE_RUTA.md` al retomar.
+- Destino confirmado: Windows, futura publicación en Steam/plataformas similares.
+  El autor tiene Unity 6.6; falta revisión exacta antes de crear el proyecto.
+- Conservar progreso compatible. No se ha creado aún un proyecto abrible con Hub.
+- Próximo: cerrar U0 y proponer U1. Seguir un bloque cada vez, con aprobación.
+  El autor ha pedido mejoras de mundo, movilidad, ritmo, arte y contenido para
+  Unity; están registradas, no implementadas ni con todos sus detalles decididos.
 
 ## Proceso de cada hito
 
@@ -130,7 +132,7 @@ npm run preview     # sirve dist/ en http://localhost:4173
 - Datos: `src/data/meta.ts`; lógica pura: `src/systems/meta.ts`; pantallas:
   `src/ui/MetaScreens.ts`. Números, reparto y verificación en `docs/DECISIONES.md`.
 
-## Hito 6: pulido (pendiente de aprobación del autor)
+## Hito 6: pulido (probado y aprobado por el autor)
 
 - Efectos de sonido con WebAudio, con un límite para que cientos de golpes no
   saturen; música chiptune por código con volumen separado y silencio.
@@ -143,5 +145,16 @@ npm run preview     # sirve dist/ en http://localhost:4173
   1280×720 y 1600×900, sin errores. Script: `scripts/verify-browser.cjs`.
 - No se modifican valores de balance: matriz inicial documentada y limitada;
   hace falta valoración humana de partidas completas, mezcla de audio y FPS.
-- Plan posterior: `docs/MIGRACION_UNITY.md`, fases U0–U6. No crear el proyecto
-  Unity ni añadir contenido hasta recibir aprobación tras la prueba del pulido.
+- Migración: `docs/MIGRACION_UNITY.md`, fases U0–U6. U0 autorizado; versión exacta
+  y plan de U1 pendientes. Las mejoras posteriores están en `unity/Docs/HOJA_DE_RUTA.md`.
+
+## Preparación Unity
+
+- `node scripts/unity-reference.mjs` comprueba la referencia contra la base web
+  aprobada; no actualizar los valores esperados para hacer pasar un port incorrecto.
+- `unity/` contiene documentación y referencia de U0, aún sin Assets/Packages/
+  ProjectSettings. No inventar revisiones del Editor ni dar por probado C# sin Unity.
+- Aquí no se encontró Editor Unity; las escenas/builds se verificarán con el autor
+  en Windows hasta disponer de un entorno de Unity ejecutable.
+- Las recomendaciones adicionales de la hoja de ruta requieren aceptación; Steam
+  es el destino deseado, no autorización para publicar o gastar dinero.

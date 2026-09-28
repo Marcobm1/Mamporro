@@ -1,0 +1,87 @@
+# Mejoras de MAMPORRO en Unity
+
+Registradas el 28/09/2026 a petición del autor. **Son objetivos del proyecto, no
+funciones ya implementadas.** Este documento acompañará al proyecto Unity y debe
+actualizarse al aprobar cada bloque. Las propuestas del asistente se distinguen
+de las peticiones del autor.
+
+## Dirección del juego acordada
+
+Juego de escritorio para una futura publicación en Steam/plataformas similares.
+Conservar humor e identidad propios, supervivencia contra hordas, progresión y
+estética retro. Megabonk sirve de referencia expresada por el autor para escala,
+verticalidad y agilidad; no se han analizado sus sistemas en esta fase ni se
+presupone reproducirlos. MAMPORRO mantiene nombres, arte y diseño propios.
+
+## Peticiones del autor y orden propuesto
+
+| Prioridad | Petición | Trabajo propuesto | Criterio para darlo por bueno |
+| --- | --- | --- | --- |
+| P0 | Movimiento más ágil; subir, bajar y escalar paredes | Prototipo de rampas, salto, deslizamiento, agarre/subida de bordes y escalada. Decidir controles y límites antes de implementarla. | Recorrido completo sin atascos, cámara legible y control al aterrizar; no quedar a salvo indefinidamente de la horda. |
+| P0 | Mundo y estructuras más grandes | Medir recorridos y densidad de lugares interesantes; ampliar mapa y edificios con rutas por suelo, tejados y desniveles. | Explorar ofrece decisiones y recompensas; el tamaño no añade largos trayectos vacíos. |
+| P0 | Colinas más cuadradas y rampas | Terreno low-poly con mesetas y cambios de nivel más marcados, rampas conectadas y bajadas claras. No asumir que debe ser un mundo de vóxeles/cubos. | Rutas de subida/bajada identificables; jugador y enemigos navegan desniveles sin atravesar geometría. |
+| P0 | Menos enemigos al principio; aumento progresivo | Separar introducción, crecimiento, presión alta y enjambre. Ajustar aparición, variedad y vida por separado, con límites de densidad. | Primeros minutos dejan aprender y explorar; aumenta la presión de forma perceptible sin picos involuntarios. Probar 5/10/15 minutos. |
+| P1 | Más monedas | Revisar frecuencia, cantidades, recogida y recompensas de exploración frente al precio de los baúles. Aclarar si se refiere al oro de partida, a la moneda meta o a ambos. | Se abren más oportunidades de compra sin que todas sean automáticas; medir tiempo al primer baúl y baúles por partida. |
+| P1 | Visual más profesional | Guía de arte: paleta, siluetas, iluminación, materiales, animaciones, composición y jerarquía del HUD. | Personaje, enemigos, proyectiles y recompensas se distinguen en movimiento y con horda; coherencia ES/EN y entre resoluciones. |
+| P1 | Imágenes para tomos, armas, etc. | Familia original de iconos para armas, tomos, objetos, personajes y recompensas; decidir si se mantiene generación por código o se admiten ilustraciones/archivos propios. | Se reconoce cada elemento en cartas y HUD; rareza no depende solo del color; estilo coherente y legibilidad a tamaño pequeño. |
+| P2 | Más enemigos | Añadir roles distintos: enemigos que cierren rutas, obliguen a desplazarse o amenacen alturas, con avisos y debilidades. | Cada tipo cambia decisiones y tiene respuesta clara; no se limita a cambiar vida o color. |
+| P2 | Más armas y tomos | Definir huecos entre patrones y sinergias; introducir un lote pequeño y comprobar combinaciones y desbloqueos. | Nuevas builds viables sin anular el catálogo existente ni saturar el render. |
+| P2 | Más personajes | Arma inicial, pasiva, silueta y modo de jugar diferenciados; condiciones de desbloqueo claras. | Se sienten distintos en movimiento y combate; ninguno necesita compras permanentes obligatorias para funcionar. |
+
+No hay cantidades de contenido, tamaño del mapa, tiempos de escalada ni porcentajes
+de oro fijados aún. Se decidirán a partir del prototipo y las pruebas; no se
+convierten ejemplos del plan en compromisos de lanzamiento.
+
+## Recomendaciones adicionales (pendientes de aprobación)
+
+1. **Cámara que resuelva obstáculos y combates verticales.** Antes de agrandar
+   edificios, evitar que paredes/techos oculten al jugador o que la cámara entre
+   en ellos. Probar espacios estrechos, tejados y cambios de altura.
+2. **Mando y reasignación de controles**, incluida navegación completa por menús,
+   sensibilidad, inversión de cámara y señales según dispositivo. Tiene sentido
+   para el destino de escritorio; Steam Deck será una prueba específica posterior,
+   no una compatibilidad que se dé por supuesta.
+3. **Primer minuto claro.** Enseñar movimiento y objetivo mediante acciones y
+   avisos breves; un primer baúl alcanzable ayuda a explicar la economía sin
+   cargar al jugador con un tutorial largo.
+4. **Medidas locales para balance.** Registrar en pruebas tiempo al primer nivel/
+   baúl, daño por arma, causa de muerte y minutos sin recoger recompensas. Sin
+   enviar datos de jugadores a servicios externos en esta fase.
+5. **Ajustes de legibilidad y comodidad.** Tamaño de UI, intensidad de efectos,
+   distancia/FOV de cámara y límites de sacudidas; avisos de ataques por forma y
+   movimiento, además de color. Mantener las opciones del hito 6.
+6. **Preparación de publicación.** Build autónoma y guardados robustos antes de
+   integrar servicios de tienda. Después valorar logros, Steam Cloud, demo,
+   página de tienda y materiales promocionales. Mantener el juego utilizable
+   sin depender de la conexión a una plataforma para una partida local.
+
+Steam Input y Steam Cloud tienen documentación propia: no aparecen simplemente
+por compilar con Unity. Su integración se planificará cuando exista una build
+estable y el autor disponga de la configuración necesaria de Steamworks.
+Fuentes oficiales consultadas el 28/09/2026:
+[Steam Input](https://partner.steamgames.com/doc/features/steam_controller) y
+[Steam Cloud](https://partner.steamgames.com/doc/features/cloud).
+
+## Relación con la migración
+
+- **U0:** conservar referencia, decisiones y este listado. Ninguna mejora altera
+  el juego web aprobado.
+- **U1:** prototipo técnico de movimiento, render y 300+ enemigos. Diseñarlo para
+  poder evaluar después las rampas/escalada; cualquier variante de movimiento
+  requiere su plan concreto y aceptación, conservando una escena de referencia.
+- **U2–U6:** trasladar y validar los sistemas existentes. Las diferencias
+  intencionadas se documentarán en vez de hacer pasar un cambio de diseño por
+  un fallo del port. No ampliar el catálogo durante la migración.
+- **Después de la base Unity aprobada:** bloques P0, luego P1 y lotes pequeños P2.
+  Se podrá adelantar un prototipo aislado si el autor lo aprueba; no reconstruir
+  un mundo grande antes de validar cómo se mueve el jugador por él.
+
+## Decisiones abiertas antes de sus bloques
+
+- Escalada: subida libre o impulso breve con agarre de bordes; superficies
+  permitidas, límite/recuperación y comportamiento de enemigos en altura.
+- Oro de partida, moneda meta o ambos: confirmar qué significa «más monedas».
+- Arte: confirmar si se relaja la restricción original de «todo por código» para
+  admitir arte original en archivos. No se aprueban packs de terceros por defecto.
+- Tamaño del mundo y cantidad de contenido: fijar tras medir movilidad, densidad
+  de objetivos, presupuesto de memoria y rendimiento en el equipo de referencia.
