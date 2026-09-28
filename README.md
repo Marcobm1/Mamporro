@@ -279,6 +279,10 @@ navegador (`localStorage`).
 
 ```
 index.html              Página con el canvas y la capa de interfaz
+CLAUDE.md               Proceso y normas para seguir desarrollándolo con Claude Code
+docs/
+  ESPECIFICACION.md     Especificación original del proyecto
+  DECISIONES.md         Decisiones acordadas en cada hito
 scripts/check-node.cjs  Aviso si la versión de Node es demasiado antigua
 src/
   main.ts               Punto de entrada
