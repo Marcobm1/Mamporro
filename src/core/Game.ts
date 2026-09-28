@@ -1,3 +1,4 @@
+import { AudioEngine } from '../audio/AudioEngine';
 // Orquestador del juego: estados (inicio, jugando, elegir carta, pausa y
 // resultados), bucle, entrada, mundo, jugador, partida, cámara, render e interfaz.
 import { Color, DirectionalLight, Fog, HemisphereLight, Scene, type Mesh } from 'three';
@@ -76,6 +77,7 @@ export interface RunInfo {
 
 /** Ganchos para las pruebas automáticas en navegador (solo con `?test`). */
 export interface TestHooks {
+  audio(): { state: string; voices: number; mode: string; tracks: number };
   state(): GameState;
   seed(): string;
   start(seed?: string): void;
@@ -129,6 +131,7 @@ const DEBUG_SPAWN_COUNT = 100;
 const VICTORY_DELAY = 1.6;
 
 export class Game {
+  private readonly audio = new AudioEngine();
   private readonly save: SaveManager;
   private readonly input: Input;
   private readonly renderer: RetroRenderer;
@@ -179,6 +182,7 @@ export class Game {
     this.playerView = new PlayerView(shadowTexture);
     this.playerView.setCharacter(this.save.data.meta.selected);
     this.runView = new RunView(shadowTexture, {
+      onSound: (id) => this.audio.play(id),
       onPlayerHit: () => {
         this.rig.shake(0.45);
         this.ui.hud.flashHurt();
@@ -205,12 +209,12 @@ export class Game {
         },
         onPurchase: (id) => {
           if (this.state !== 'title') return;
-          if (purchase(this.save.data.meta, id)) this.save.persist();
+          if (purchase(this.save.data.meta, id)) { this.save.persist(); this.audio.play('reward'); }
           this.ui.refresh();
         },
         onPurchaseExtra: (action) => {
           if (this.state !== 'title') return;
-          if (purchaseExtra(this.save.data.meta, action)) this.save.persist();
+          if (purchaseExtra(this.save.data.meta, action)) { this.save.persist(); this.audio.play('reward'); }
           this.ui.refresh();
         },
         onPlay: (seedText) => this.startRun(seedText),
@@ -420,6 +424,8 @@ export class Game {
       shrines: run.shrinesCompleted, challenges: run.challengesCompleted, level: run.level, victory, usedLifeTome: run.usedLifeTome,
     });
     this.save.persist();
+    this.audio.clearEffects();
+    this.audio.play(victory ? 'victory' : 'defeat');
     this.state = 'gameover';
     this.input.exitPointerLock();
     this.ui.hud.setVisible(false);
@@ -490,6 +496,11 @@ export class Game {
   }
 
   private bindEvents(): void {
+    document.addEventListener('pointerdown', () => this.audio.unlock());
+    document.addEventListener('keydown', () => this.audio.unlock());
+    document.addEventListener('click', (event) => {
+      if (event.target instanceof Element && event.target.closest('button')) this.audio.play('ui');
+    });
     this.input.onPointerLockChange((locked) => {
       if (locked && (this.state === 'title' || this.state === 'paused' || this.state === 'gameover')) this.enterPlaying();
       else if (locked && this.state === 'levelup' && !this.run?.offer) this.enterPlaying();
@@ -515,6 +526,7 @@ export class Game {
       if (this.ui.debugVisible && this.state === 'playing') this.handleDebugKey(code);
     });
     document.addEventListener('visibilitychange', () => {
+      this.audio.setHidden(document.hidden);
       if (document.hidden) this.pause();
     });
     window.addEventListener('blur', () => {
@@ -589,6 +601,7 @@ export class Game {
   }
 
   private applySettings(settings: Settings): void {
+    this.audio.configure(settings);
     this.renderer.setTargetHeight(settings.renderHeight);
     this.rig.setAspect(this.renderer.aspect);
     this.renderer.setVertexSnap(settings.vertexSnap);
@@ -672,6 +685,8 @@ export class Game {
   }
 
   private draw(alpha: number, frameDt: number): void {
+    this.audio.setMode(this.state === 'playing' ? (this.run?.boss || this.run?.swarm ? 'intense' : 'playing') :
+      this.state === 'paused' || this.state === 'levelup' ? 'paused' : this.state === 'gameover' ? 'results' : 'menu');
     if (this.renderer.resize()) this.rig.setAspect(this.renderer.aspect);
 
     this.input.consumeMouse(this.mouse);
@@ -842,6 +857,7 @@ export class Game {
 
   private exposeTestHooks(): void {
     window.__MAMPORRO__ = {
+      audio: () => this.audio.stats,
       state: () => this.state,
       seed: () => this.seed,
       start: (seed = '') => this.startRun(seed),

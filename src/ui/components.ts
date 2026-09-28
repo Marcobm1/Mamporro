@@ -101,6 +101,6 @@ export function optionsPanel(settings: Settings, onChange: (patch: Partial<Setti
     volume('musicVolume'),
     volume('effectsVolume'),
     toggle(t('options.muted'), settings.muted, muted => onChange({ muted })),
-    h('p', { className: 'muted', text: t('options.audioPending') }),
+    h('p', { className: 'muted', text: t('options.audioHelp') }),
   );
 }

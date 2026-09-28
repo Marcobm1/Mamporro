@@ -1,3 +1,5 @@
+import type { SoundId } from '../data/audio';
+import type { WeaponId } from '../data/weapons';
 // Parte visual de una partida: enemigos, proyectiles, gemas, monedas, efectos de
 // las armas, avisos de ataque, partículas y números de daño. Recibe los sucesos de
 // la lógica (RunEffects) y los convierte en efectos; los avisos de interfaz y la
@@ -23,6 +25,7 @@ import { TelegraphRenderer } from './Telegraphs';
 import { ArcRenderer, ChainRenderer, OrbitRenderer, TrailRenderer } from './WeaponEffects';
 
 export interface RunViewHooks {
+  onSound(id: SoundId): void;
   onPlayerHit(damage: number): void;
   onNotice(notice: RunNotice): void;
   onItem(item: ItemDef): void;
@@ -88,6 +91,8 @@ export class RunView implements RunEffects {
 
   attach(run: Run): void {
     this.run = run;
+    this.lastAuraPulse = Infinity;
+    this.lastTrailPulse = Infinity;
     this.particles.clear();
     this.numbers.clear();
     this.arcs.clear();
@@ -214,13 +219,19 @@ export class RunView implements RunEffects {
 
   // ------------------------------------------------------------ RunEffects
 
+  weaponFired(id: WeaponId): void { this.hooks.onSound(id); }
+
+  pickup(kind: 'xp' | 'gold'): void { this.hooks.onSound(kind); }
+
   damageNumber(x: number, y: number, z: number, amount: number, critLevel: number): void {
+    this.hooks.onSound(critLevel > 0 ? 'critical' : 'hit');
     this.numbers.spawn(x, y, z, amount, critLevel);
   }
 
   enemyKilled(x: number, y: number, z: number, type: number): void {
     const def = ENEMY_LIST[type];
     if (!def) return;
+    this.hooks.onSound(def.special === 'boss' ? 'blast' : 'death');
     this.particles.burst(x, y + def.height * 0.5, z, {
       count: 12,
       colors: def.debrisColors,
@@ -236,6 +247,7 @@ export class RunView implements RunEffects {
   }
 
   playerHit(damage: number): void {
+    this.hooks.onSound('hurt');
     const run = this.run;
     if (!run) return;
     this.numbers.spawn(run.player.x, run.player.y + 2, run.player.z, damage, -1);
@@ -243,6 +255,7 @@ export class RunView implements RunEffects {
   }
 
   levelUp(): void {
+    this.hooks.onSound('level');
     const run = this.run;
     if (!run) return;
     this.particles.burst(run.player.x, run.player.y + 1, run.player.z, {
@@ -257,14 +270,17 @@ export class RunView implements RunEffects {
   }
 
   notice(notice: RunNotice): void {
+    if (notice.kind === 'shield') this.hooks.onSound('shield');
     this.hooks.onNotice(notice);
   }
 
   itemGained(item: ItemDef): void {
+    this.hooks.onSound('reward');
     this.hooks.onItem(item);
   }
 
   chestOpened(x: number, y: number, z: number): void {
+    this.hooks.onSound('reward');
     this.particles.burst(x, y, z, {
       count: 26,
       colors: [PALETTE.coin, PALETTE.numberCrit, 0xffffff],
@@ -281,11 +297,13 @@ export class RunView implements RunEffects {
   }
 
   bossSpawned(x: number, y: number, z: number): void {
+    this.hooks.onSound('boss');
     this.particles.burst(x, y + 1, z, { count: 60, colors: [PALETTE.dust, PALETTE.pelusa, PALETTE.pelusaDark], speed: 7, size: 0.4, life: 1.4, lift: 3, gravity: 3 });
     this.hooks.onShake(0.8);
   }
 
   bossSlam(x: number, y: number, z: number, radius: number): void {
+    this.hooks.onSound('blast');
     for (let k = 0; k < 20; k++) {
       const a = (k / 20) * Math.PI * 2;
       this.particles.burst(x + Math.cos(a) * radius * 0.8, y + 0.2, z + Math.sin(a) * radius * 0.8, {
@@ -304,6 +322,7 @@ export class RunView implements RunEffects {
   }
 
   explosion(x: number, y: number, z: number, radius: number): void {
+    this.hooks.onSound('blast');
     this.particles.burst(x, y + 0.5, z, { count: 14, colors: [PALETTE.blast, PALETTE.numberCrit, 0xffffff], speed: radius * 2.2, size: 0.18, life: 0.45, lift: 2 });
     this.particles.burst(x, y + 0.6, z, { count: 6, colors: [PALETTE.blastSmoke], speed: 1.2, size: 0.4, life: 0.9, gravity: -1.5 });
   }
@@ -325,6 +344,7 @@ export class RunView implements RunEffects {
   }
 
   revive(x: number, y: number, z: number, radius: number): void {
+    this.hooks.onSound('shield');
     for (let k = 0; k < 28; k++) {
       const a = (k / 28) * Math.PI * 2;
       this.particles.burst(x + Math.cos(a) * 1.2, y + 0.8, z + Math.sin(a) * 1.2, {

@@ -70,6 +70,8 @@ export type RunNotice =
 
 /** Sucesos que el render y la interfaz convierten en efectos (partículas, números, avisos...). */
 export interface RunEffects extends WeaponEffects {
+  weaponFired(id: WeaponId): void;
+  pickup(kind: 'xp' | 'gold'): void;
   damageNumber(x: number, y: number, z: number, amount: number, critLevel: number): void;
   enemyKilled(x: number, y: number, z: number, type: number): void;
   enemySpawned(x: number, y: number, z: number): void;
@@ -91,6 +93,8 @@ export interface RunEffects extends WeaponEffects {
 }
 
 export const NO_EFFECTS: RunEffects = {
+  weaponFired: () => {},
+  pickup: () => {},
   damageNumber: () => {},
   enemyKilled: () => {},
   enemySpawned: () => {},
@@ -335,7 +339,10 @@ export class Run {
     if (contact > 0) this.hurtPlayer(contact);
     this.crowdSlow = smoothCrowdSlow(this.crowdSlow, crowdSlowFor(this.enemies.playerPressure), dt);
 
-    if (!this.weaponsOff) for (const weapon of this.weapons) BEHAVIORS[weapon.def.behavior].update(weapon, this.ctx, dt);
+    if (!this.weaponsOff) for (const weapon of this.weapons) {
+      BEHAVIORS[weapon.def.behavior].update(weapon, this.ctx, dt);
+      if (weapon.sincePulse === 0) this.fx.weaponFired(weapon.def.id);
+    }
     this.projectiles.update(dt, this.enemies, this.world.heightfield, (p, e) => {
       const weapon = this.weapons[this.projectiles.weapon[p] as number];
       if (!weapon) return;
@@ -349,8 +356,10 @@ export class Run {
     this.flushDead();
 
     const xp = this.gems.update(dt, body.x, body.y, body.z, this.stats.pickupRadius);
+    if (xp > 0) this.fx.pickup('xp');
     if (xp > 0) this.gainExperience(xp);
     const gold = this.coins.update(dt, body.x, body.y, body.z, this.stats.pickupRadius);
+    if (gold > 0) this.fx.pickup('gold');
     if (gold > 0) this.gainGold(gold * this.stats.goldGain);
 
     if (this.interactables.update(dt, body.x, body.z, this.interactableEvents)) this.finishChallenge();

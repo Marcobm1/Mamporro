@@ -51,7 +51,7 @@ export const es = {
   "options.musicVolume": "Volumen de música",
   "options.effectsVolume": "Volumen de efectos",
   "options.muted": "Silenciar audio",
-  "options.audioPending": "Audio preparado: música y efectos llegarán en el hito 6.",
+  "options.audioHelp": "Audio original generado por código. Pulsa una tecla o haz clic para activarlo.",
   "meta.hero": "La horda no se barre sola.",
   "meta.heroText": "Elige a tu héroe, prepara la chancla y vuelve con algo de calderilla.",
   "meta.current": "Tu personaje: {name}",
