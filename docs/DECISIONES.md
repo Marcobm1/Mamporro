@@ -257,3 +257,69 @@ El autor aprobó el plan y las siguientes decisiones antes de programar
   independiente. Se conserva Three.js como referencia hasta aprobar el reemplazo.
 - Es una planificación, no autorización para crear ya el proyecto Unity. Plataforma,
   versión exacta, UI y traslado del guardado se concretarán al arrancar la migración.
+
+## Hito 6: pulido (28/09/2026)
+
+- Plan aprobado por el autor: música arcade cómica, variante intensa para jefe y
+  enjambre, efectos moderados, opciones para reducirlos y balance justificado.
+- Audio original PCM a 22050 Hz, sintetizado una vez tras el primer gesto, con
+  dos arreglos de ocho compases a 132 BPM. Un contexto WebAudio, una pista musical,
+  volúmenes independientes y compresor. La pausa atenúa música y ocultar pestaña
+  suspende el contexto y elimina efectos; no hay cola de sonidos al volver.
+- Hasta 16 efectos simultáneos; 4 espacios reservados para señales importantes.
+  Cada timbre tiene enfriamiento. Se limita tanto la admisión lógica como los
+  nodos pendientes: el reloj de audio puede avanzar mientras JS retrasa `onended`.
+  Los sonidos descartados no se reproducen más tarde.
+- Los eventos nuevos `weaponFired` y `pickup` mantienen la lógica independiente de
+  audio/render. Los buffers se reutilizan; la aleatoriedad sonora es independiente
+  de la semilla de partida. Tests comparan simulaciones con/sin efectos.
+- Partículas decorativas: 1500 activas/256 nuevas por frame; reducidas: 400/64 y
+  25 % de densidad por ráfaga (redondeo hacia arriba para efectos pequeños).
+  Mejora de críticos, muertes especiales y escudo, sin alterar avisos de ataques.
+- Tres opciones persistentes: reducir partículas, sacudidas de cámara y destellos
+  de daño. El último controla flashes de enemigos, parpadeo del jugador y HUD.
+  El snap PS1 conserva su opción separada. Migración v3 conserva la meta de v2;
+  las opciones nuevas arrancan con partículas normales, sacudidas/destellos activos.
+- En Opciones del menú se eliminan título e idioma duplicados; la pausa mantiene
+  sus encabezados. Guía ampliada de armas, tomos, objetos y enemigos en README.
+
+### Revisión de balance y límites de la evidencia
+
+No se cambian números de combate/economía sin evidencia de partidas representativas.
+Se añade una matriz reproducible: semilla `PULIDO-REFERENCIA`, quieto mirando al
+norte, primera carta de cada elección, sin compras/trucos, hasta muerte o 120 s.
+Es una prueba inicial de regresión, **no una medición de equilibrio entre personajes**:
+la Chancla busca objetivos y la Barra exige orientar el golpe. No sustituye jugar
+partidas completas de 5/10/15 minutos.
+
+| Personaje | Duración elegida | Supervivencia (s) | Bajas | Nivel |
+| --- | --- | ---: | ---: | ---: |
+| Remedios | 5 min | 69,18 | 131 | 7 |
+| Remedios | 10 min | 97,50 | 152 | 5 |
+| Remedios | 15 min | 112,43 | 130 | 3 |
+| Baguette | 5 min | 40,25 | 42 | 5 |
+| Baguette | 10 min | 21,58 | 10 | 2 |
+| Baguette | 15 min | 21,77 | 10 | 1 |
+
+Con y sin los eventos sonoros, los estados finales coinciden exactamente. La
+menor supervivencia de Baguette en este ensayo señala que hay que probar orientación
+y movilidad con el autor; no justifica por sí sola mejorar sus estadísticas.
+Benchmarks de lógica en este entorno: ~499 enemigos 1,08 ms/tick; 500 con cuatro
+armas mejoradas 2,01 ms; 750 con jefe y pipas 2,77 ms. No incluyen render ni prueban
+60 FPS reales. Pruebas reproducibles en `core/polish.test.ts` y `systems/combat.test.ts`.
+
+Fuentes de integración WebAudio: [MDN AudioContext](https://developer.mozilla.org/en-US/docs/Web/API/AudioContext),
+[resume](https://developer.mozilla.org/en-US/docs/Web/API/AudioContext/resume) y
+[suspend](https://developer.mozilla.org/en-US/docs/Web/API/AudioContext/suspend),
+consultadas el 28/09/2026. Audio iniciado con gesto y suspendido al ocultarse.
+
+
+### Verificación de entrega del hito 6
+
+202 tests / 27 ficheros, typecheck y build correctos. Navegador Chromium con
+SwiftShader y `?test`: ES/EN, 1280×720 y 1600×900, sin errores de consola. Se
+verificaron opciones y persistencia v3, 16 nodos máximos de efectos, silencio,
+suspensión/reanudación, PCM con OfflineAudioContext, combate, jefe y pausa.
+Capturas revisadas. Script reproducible: `scripts/verify-browser.cjs`.
+Pendientes del autor: escucha y mezcla en su equipo, Pointer Lock, FPS reales y
+balance jugando partidas completas. Se detiene el desarrollo para esa prueba.

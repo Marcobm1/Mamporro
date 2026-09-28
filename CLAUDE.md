@@ -17,7 +17,8 @@ genera por código (no hay assets externos).
 
 - **Hechos:** hitos 1–5: base, combate, progresión en partida, mapa vivo y meta/UI.
   El historial está en `git log`. El autor confirmó los hitos 4 y 5.
-- **En curso:** hito 6 (pulido). Consultar `docs/PROGRESO_HITO_6.md` antes de retomar.
+- **Hito 6 implementado y verificado:** pendiente de prueba/aceptación del autor.
+  Consultar `docs/PROGRESO_HITO_6.md` antes de retomar.
 - **Después:** plantear migración a Unity antes de añadir contenido nuevo; requiere
   plan y aprobación propios. No iniciar la migración durante el pulido.
 - El autor prueba cada hito antes de seguir. Si no ha dicho nada del último
@@ -125,13 +126,22 @@ npm run preview     # sirve dist/ en http://localhost:4173
 - Abandonos y partidas con trucos no conceden moneda ni progreso de misiones.
   También marcan trucos los ganchos de pruebas que dañan, teletransportan o
   desactivan las armas. Cambiar cámara o consultar estado no marca trucos.
-- Volúmenes de música/efectos y silencio guardados; audio pendiente del hito 6.
+- Volúmenes de música/efectos y silencio guardados; audio incorporado en hito 6.
 - Datos: `src/data/meta.ts`; lógica pura: `src/systems/meta.ts`; pantallas:
   `src/ui/MetaScreens.ts`. Números, reparto y verificación en `docs/DECISIONES.md`.
 
-## Hito 6: pulido
+## Hito 6: pulido (pendiente de aprobación del autor)
 
 - Efectos de sonido con WebAudio, con un límite para que cientos de golpes no
   saturen; música chiptune por código con volumen separado y silencio.
 - Partículas y feedback, balance básico y tests completos.
 - Guía en el README para añadir un arma, un tomo, un objeto o un enemigo.
+
+- Implementado: audio PCM original/WebAudio, música normal/intensa, presupuestos
+  de voces/partículas y opciones para reducir efectos; migración de guardado a v3.
+- Verificado: 202 tests/27 ficheros, typecheck y build. Navegador `?test` ES/EN,
+  1280×720 y 1600×900, sin errores. Script: `scripts/verify-browser.cjs`.
+- No se modifican valores de balance: matriz inicial documentada y limitada;
+  hace falta valoración humana de partidas completas, mezcla de audio y FPS.
+- Plan posterior: `docs/MIGRACION_UNITY.md`, fases U0–U6. No crear el proyecto
+  Unity ni añadir contenido hasta recibir aprobación tras la prueba del pulido.

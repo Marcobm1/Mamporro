@@ -171,7 +171,7 @@ Editor Unity disponible con sus módulos y licencia válidos. No asumir que este
 entorno tiene Editor, GPU o acceso al equipo Windows del autor.
 
 Al iniciar U0 comprobaremos esas capacidades. Si el Editor no está disponible
- aquí, el autor abrirá el proyecto y ejecutará las comprobaciones locales con una
+aquí, el autor abrirá el proyecto y ejecutará las comprobaciones locales con una
 lista breve; compartirá resultados y logs para continuar. Las pruebas automatizadas
 por línea de comandos se prepararán para **CMD**, usando la ruta real del Editor.
 No declarar una escena o build verificada solo porque el código se haya escrito.

@@ -2,9 +2,9 @@
 
 Roguelike 3D de supervivencia contra hordas ("bullet heaven") con estética retro
 tipo PS1, hecho con Three.js + TypeScript + Vite. Todo el contenido (geometría,
-texturas, fuente, textos) se genera por código: no hay archivos externos.
+texturas, fuente, textos y audio) se genera por código: no hay archivos externos.
 
-> **Estado: hito 5 de 6.** Doña Remedios y Sir Baguette recorren un mapa procedural con colinas,
+> **Estado: hito 6 de 6, pendiente de validación del autor.** Doña Remedios y Sir Baguette recorren un mapa procedural con colinas,
 > acantilados, casas derruidas, templetes en ruinas, granjas y pozos, y se
 > enfrentan a hordas de 4 tipos de enemigos, élites y un jefe. Al subir de nivel
 > eliges entre cartas con rareza (6 armas, 8 tomos, Reroll, Saltar y
@@ -143,13 +143,28 @@ Las fracciones se redondean hacia abajo; los resultados muestran el desglose.
   con trucos tampoco cuentan. Abrir F3 solo para consultar métricas sí permite
   progresar, siempre que no ejecutes acciones de debug.
 
-El guardado v2 usa `localStorage`, migra tus opciones anteriores y conserva
+El guardado v3 usa `localStorage`, migra tus opciones anteriores y conserva
 progreso, compras, personaje elegido e idioma. **No guarda partidas a medias**.
 Si el navegador bloquea el guardado se muestra un aviso y el progreso dura
 solo esa sesión. Borrar los datos del navegador borra también el progreso.
 
-Opciones incluye volumen de música y efectos y silencio: quedan preparados,
-pero **el sonido llega en el hito 6**.
+### Audio y efectos (hito 6)
+
+- Música chiptune original sintetizada, con variante intensa para jefe/enjambre.
+- Sonidos propios para las seis armas, impactos, críticos, bajas, daño, recogidas,
+  niveles, compras, escudo, explosiones y resultados. Máximo 16 efectos y una
+  pista musical; cuatro voces reservadas para avisos, con límites de repetición.
+- El audio se activa al hacer clic o pulsar una tecla. La música baja durante
+  pausa/elecciones; al ocultar la pestaña se suspende y se descartan efectos pendientes.
+- Volúmenes separados de música/efectos y silencio. Sin descargas de sonido.
+- Opciones de partículas reducidas, sacudidas y destellos de daño. El modo reducido
+  limita partículas decorativas a 400 (64 nuevas por frame), frente a 1500 (256).
+  Los avisos de embestidas y del jefe permanecen visibles.
+- Críticos, muertes de élites/jefe y escudo tienen feedback adicional moderado.
+  Desactivar destellos evita el parpadeo de jugador/enemigos y el flash de daño del HUD;
+  el temblor de vértices PS1 tiene su propio ajuste independiente.
+
+El guardado v3 migra v1/v2 y conserva opciones, monedas, compras y misiones.
 
 ### La partida
 
@@ -469,7 +484,9 @@ Los tests (`*.test.ts`) están junto al código que prueban.
 
 ## Cómo añadir contenido
 
-La guía completa llegará en el hito 6. Mientras tanto:
+Los datos viven en `src/data/`; la lógica no debe depender de Three.js ni de la UI.
+La lista siguiente sirve para futuras ampliaciones, **después de validar el pulido
+y decidir la migración a Unity**. Mantén IDs estables para no romper guardados.
 
 - **Un enemigo nuevo:**
   1. Añade su entrada en `src/data/enemies.ts` (y en `ENEMY_LIST`), con su
@@ -497,10 +514,32 @@ La guía completa llegará en el hito 6. Mientras tanto:
   3. Escribe su nombre y descripción en los dos idiomas.
   4. Añádela al catálogo inicial o a un desbloqueo en `src/data/meta.ts`;
      aparecerá en las cartas cuando esté desbloqueada.
+  5. Añade el timbre con el mismo ID en `src/data/audio.ts`. Al disparar, el
+     comportamiento debe poner `sincePulse = 0`; `Run` emite `weaponFired`.
+     Si necesita efectos nuevos, emite un evento de `RunEffects`, con su noop
+     en `NO_EFFECTS`, y resuélvelo en `RunView`. No crees WebAudio dentro del arma.
 - **Un tomo nuevo:**
   1. Añade su entrada en `src/data/tomes.ts`: qué estadística sube y cuánto por
      nivel Común (las rarezas lo multiplican).
   2. Escribe su nombre, nombre corto y descripción en los dos idiomas.
+
+Para cualquiera de los cuatro tipos:
+
+1. Usa estadísticas y topes del sistema existente; si introduces una estadística,
+   completa su cálculo, cartas, descripción, icono/textos y casos límite.
+2. Registra los IDs en las listas y tipos correspondientes. Decide disponibilidad
+   inicial, compra o misión. Los guardados antiguos deben seguir siendo válidos;
+   si cambia su esquema, sube la versión y añade migración y test.
+3. Añade pruebas del comportamiento: daño/alcance/recarga y casos límite para
+   armas/enemigos; suma, topes y sinergias para tomos/objetos. Comprueba también
+   que el contenido bloqueado no aparece antes de desbloquearlo.
+4. Verifica textos ES/EN, fuente, typecheck, tests y build. En `?test`, usa F3 y los
+   ganchos para ejercer el caso; recuerda que las acciones de trucos excluyen meta.
+5. Si hay muchas entidades o efectos, repite los benchmarks y comprueba presupuestos.
+   Actualiza catálogo, README y `docs/DECISIONES.md`; commit pequeño en español.
+
+Ejemplos de referencia: `weapons/arc.ts`, `data/tomes.ts`, efectos especiales en
+`core/Run.ts` y comportamientos de enemigos en `systems/EnemySystem.ts`.
 
 ## Pruebas
 
@@ -514,9 +553,11 @@ La guía completa llegará en el hito 6. Mientras tanto:
   - aceleración y salto, con coyote time y buffer;
   - deslizamiento, pendientes y escalones;
   - que los acantilados no se puedan trepar;
-- el guardado (valores corruptos, versiones futuras, migración v1 a v2);
+- el guardado (valores corruptos, versiones futuras, migraciones v1/v2 a v3);
 - la meta: compras, topes, recompensas únicas, misiones acumuladas, persistencia,
   bloqueo de contenido y exclusión de trucos; las pasivas de ambos personajes;
+- audio PCM determinista, límites de voces, presupuestos de partículas y matriz
+  inicial de ambos personajes en 5/10/15 minutos;
 - la traducción;
 - la fuente pixelada (contornos correctos y cobertura de caracteres);
 - los colisionadores de caja y círculo;
@@ -591,11 +632,12 @@ armas y congelar los efectos visuales para fotografiarlos.
    jefe, temporizador (5/10/15 min), oleadas especiales, élites, enjambre final,
    minimapa, pantalla de resultados y 4 enemigos nuevos.
 5. ✅ **Meta y UI:** menús, dos personajes con pasivas, Calderilla del Caos,
-   tienda, ocho misiones, guardado v2, opciones e idiomas. Pendiente de prueba
-   del autor antes de continuar.
-6. Pulido: audio, partículas, balance, tests y guía para añadir contenido.
+   tienda, ocho misiones, guardado v2, opciones e idiomas. Aprobado por el autor.
+6. ✅ **Pulido:** audio/música procedural, partículas y opciones de efectos,
+   guardado v3, revisión de balance, tests y guía de contenido. Pendiente de
+   prueba final del autor; no se ha iniciado Unity.
 
-### Probar el hito 5 (CMD en Windows)
+### Probar el hito 6 (CMD en Windows)
 
 Desde la carpeta del repositorio:
 
@@ -606,11 +648,16 @@ npm ci
 npm run dev
 ```
 
-Abre `http://localhost:5173`. Revisa Personajes, Tienda, Misiones y Opciones;
-termina una partida sin trucos y comprueba el desglose de calderilla. Recarga
-para verificar el progreso. Tras comprar a Sir Baguette, selecciónalo y juega:
-empieza con la barra y muestra la recarga del escudo. Comprueba también el
-ratón y los FPS reales, que no se pueden validar con la GPU por software.
+Abre `http://localhost:5173`. Haz clic para activar el audio y prueba los dos
+volúmenes, silencio y las tres opciones de efectos. Recarga: deben conservarse
+junto con tu progreso anterior. Juega con ambos personajes, escucha armas,
+recogidas, escudo y resultados; entra en pausa y cambia de pestaña. La variante
+intensa se activa con el jefe o al entrar en enjambre.
+
+Para comprobar casos concretos abre `http://localhost:5173/?test`, activa F3 y
+usa sus acciones para invocar hordas/jefe. Las partidas con trucos no conceden
+moneda ni misiones. Revisa sensación del combate, mezcla de audio, captura del
+ratón y FPS reales en tu equipo: estas pruebas requieren tu valoración.
 
 Verificación local:
 
@@ -627,3 +674,28 @@ Una vez aprobado el hito 6, antes de añadir contenido nuevo, se plantea traslad
 el juego a Unity para continuar su pulido. La [guía de migración](docs/MIGRACION_UNITY.md)
 detalla las fases U0–U6, equivalencias, guardados y criterios de validación.
 Es una propuesta: la migración no está iniciada y requiere su propio arranque aprobado.
+
+### Automatización de navegador del hito 6
+
+`scripts/verify-browser.cjs` prueba contra Vite en desarrollo con `?test`: ES/EN,
+1280×720 y 1600×900, opciones/persistencia, grafo WebAudio, presupuesto de sonidos,
+pausa, combate y jefe. Requiere Playwright en el entorno de QA. Si no lo tienes:
+
+```cmd
+npm install --no-save --package-lock=false playwright
+npx playwright install chromium
+npm run dev
+```
+
+En otra ventana CMD, desde el repositorio:
+
+```cmd
+node scripts\verify-browser.cjs
+```
+
+Genera `qa-results/` (ignorado por git). Puedes configurar `MAMPORRO_BROWSER` con
+la ruta a Chromium y `MAMPORRO_URL` con el servidor. La instrumentación temporal
+solo se añade a la respuesta servida durante el test; no modifica el juego ni
+el build. Las capturas detienen el render continuo para no saturar SwiftShader;
+esto no mide FPS. El sonido se valida mediante PCM y WebAudio, no con una escucha
+humana de altavoces. Resultados y límites: `docs/PROGRESO_HITO_6.md`.
