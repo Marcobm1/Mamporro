@@ -81,6 +81,9 @@ export class AudioEngine {
   play(id: SoundId): void {
     const ctx = this.context;
     if (!ctx || ctx.state !== 'running' || this.hidden || this.settings.muted || this.settings.effectsVolume === 0 || !this.effects) return;
+    // El reloj de audio avanza aunque JS esté ocupado: onended puede llegar tarde.
+    // Limitar también los nodos pendientes evita acumularlos durante una ráfaga.
+    if (this.voices.size >= AUDIO_CONFIG.voices) return;
     const key = this.budget.claim(id, ctx.currentTime);
     if (key === null) return;
     const source = ctx.createBufferSource();
