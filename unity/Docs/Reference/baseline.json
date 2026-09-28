@@ -1,0 +1,5022 @@
+{
+  "formatVersion": 1,
+  "baseCommit": "0505b1690656d15188860157612455639820fe1f",
+  "sourceHashes": {
+    "package-lock.json": "43ad887c8a4cbc92a6c12da5fd28f6a4ebf76c731b64214c2584659eab708ff7",
+    "src/audio/AudioEngine.ts": "7b79aa351eb7821846840512d0bb1db85dddbf92495c7dabd11c8903b599a755",
+    "src/audio/VoiceBudget.ts": "16d5d8cc6a89018cae59988a85b3394de506f9aeeda1290e6e077e6481d08586",
+    "src/audio/audio.test.ts": "ab13970e20f398d5f0d75ddfa4836161f923a62d846fd8e2675f7fca43b46f42",
+    "src/audio/synth.ts": "de0e8a8b2370f5aaf2bd7d90206a6a54b4355430e1128e59f40a21d52c7626f7",
+    "src/core/Game.ts": "7b21574a0c550df0ae1974635ce567de755c10631b30e2b35e444d4ac9b02ae6",
+    "src/core/GameLoop.ts": "5ac417e4787132fdd82bad289cb46e2716079c2841d9f54a70b503a1e0b68c99",
+    "src/core/Input.ts": "ede3ff1c1ab30f3bd1ffe7ec6adc09346206d464c11d9281637f2ef9acd50bff",
+    "src/core/Run.ts": "c64fc8cd3afebc0453f03b6af9d11304c89f9c7ed210d918b8e35dcc79b02b29",
+    "src/core/math.ts": "c232c5d61f364ff50738cdf58bbd539b03249bbe40616bb7d602191dc0014240",
+    "src/core/metaRun.test.ts": "eb121d36b9137da1b7a32d649b6dfcb1c732f9b1cbe077132076e832ea0b39e5",
+    "src/core/polish.test.ts": "2d86a13960734a92641549f8132ed1ba05436d3be1be30cb4dcd5606909af323",
+    "src/core/rng.test.ts": "4baee14c87015388f8a15695096830492997bfb66b4fe978b0c2ecbfb099c3a7",
+    "src/core/rng.ts": "ed03bafc603213ce43c56f16dde50365ba3ec400a4fe7a963777b8ffa1aaa9b7",
+    "src/core/run.test.ts": "e538ef98a178522ba902556b15fa4f83b080c1c3241a43bbb8959f7f0753c54b",
+    "src/data/audio.ts": "ed125ed93ea2fb0f70be96ac41951fbc19e583259fd45bbf825843f42e061ae9",
+    "src/data/bonuses.ts": "6ae4c02ec8785600dcb0b2641cbf518082d3873b64c23b5fd454692c1a2f3e5a",
+    "src/data/characters.ts": "64c0639e582f942999b060e2e3e30687b72c346db7a9114d8dc66694227835f4",
+    "src/data/config.ts": "d0ffbe83cff0562def2ce4b0ccc31cdd9a6e00aa064a45f1edf7f05f6edc7a8c",
+    "src/data/enemies.ts": "3c772ea9c639e85cd075e40adf624528effeac59be332d4148351399165c6697",
+    "src/data/items.ts": "b7209773ef82a7887d60401ba97bde44d30c4f1e89540de9413a7e8dbdc00bba",
+    "src/data/meta.ts": "22aace3c567a240ab6813f3c3fa09bbca26925d130ed904ff15818de43a312f6",
+    "src/data/rarities.ts": "374d2905f311f7759449a4e7d77ef41ada5bd47e91ecd0899204d3e1229ea947",
+    "src/data/run.ts": "89b7484c3f572e1a78598f1f0fcb038fe0dbd827dc962b26f1ab709d098b96e1",
+    "src/data/tomes.ts": "79f0f9d4948f686472ca2e35302b3b37e1d0034cab2124ee42b1035606c4c156",
+    "src/data/upgrades.ts": "b727414aa8c7ac907fa3193826884472e53606c9c5ba0b5fb18e92235bfa3a8f",
+    "src/data/waves.ts": "496c89ab773015f631958b0b35fef0fbb9fd4dae6bb9c5f76489f3c78cab6e1e",
+    "src/data/weapons.ts": "d7c46947cf7c8d3eec844b8152dce2943c94f0c586752e9a516749124961f32a",
+    "src/entities/PlayerView.test.ts": "ef6aa4dcc853e0dadfc064225b5fa5b2c333579d9e79a6ec5baf6a138f768852",
+    "src/entities/PlayerView.ts": "b9cbe78abd511cc606dfbfe0767aa4a7e540971a53bda5994949a0b57ca2c5c2",
+    "src/entities/enemyModels.ts": "feb43d37494c126fdb931155e369129008a69f27ac8dbe026894f6a734e91adb",
+    "src/entities/playerPhysics.test.ts": "4d49ab1da8688364d75b7464fbf54f03af738cfae42a5f736edabe1c97969116",
+    "src/entities/playerPhysics.ts": "a57298bf9c97e0471e036f4e2417c8e570a8f67fc748144d2587d606028f608d",
+    "src/i18n/en.ts": "d4b320a42bd6e40f7208bdd711934bd4e10c8b4603262c0165aea6f819fcb20d",
+    "src/i18n/es.ts": "5e2715a5e15a8fd078e39aa9707055d395f56ccc34c2a45008eb8934223b8996",
+    "src/i18n/i18n.test.ts": "8bbab757106170b8d44ff2a658754811ab822469185bcc779d78154caefd752f",
+    "src/i18n/index.ts": "ae8832a9095bbbbe418781bdd3c750cdfbfce9e7de66bb777a597e7f384cc22f",
+    "src/main.ts": "16bb9230cdc21a55d2eab35dabbbc0ad789411fbf8dca85bd30bf0220e6ddc2c",
+    "src/render/CameraRig.ts": "d7f2b4c7cbed6143c6ef27f26bb6361e942b1fa3d66d88158e104fa87c478e93",
+    "src/render/CombatRenderers.ts": "bac393052c375d94be5eec4aab63e508f6d7c0551d9d2482df61fd3e33260e62",
+    "src/render/DamageNumbers.ts": "dd464dd649dec131529cc9a4f0524616aef5ed28cb1d040480a383dad299b73f",
+    "src/render/EnemyRenderer.ts": "b971c691991a945afd24f12dc5cb2934f6561ce0bb6ecc2f384c41e39e143875",
+    "src/render/ParticleBudget.test.ts": "4df7dbb27e2857ff4f841974f49d3851b1773247fe5086a29c330e765cb0d000",
+    "src/render/ParticleBudget.ts": "4f14f3a6cd8354ab79bf330696ec37dcc2b2b4e4912af2ef4fba3a693ff43ed4",
+    "src/render/Particles.ts": "95b1fb258c4a871f5f60944f2da203512d2d9d9cc000b9a836700cd8db385f5d",
+    "src/render/RetroRenderer.ts": "da9f195c2cbf65fbeadcc802d60d95fe25837e1300923fa0cf26933cbed5de69",
+    "src/render/RunView.ts": "0064df978a0562f04f83de170091011f1578fb344c8788cb9d401631b9cddcbe",
+    "src/render/Sky.ts": "111132df6da465405354da2d1dcfd01fff704552ccff34dff1a824fbb82c2926",
+    "src/render/Telegraphs.ts": "d8ac19d91ecd348bbfa8c90edf775ee489c78956d34166fc82be5f14ceffd9a3",
+    "src/render/WeaponEffects.ts": "c3b799bfeb54c81241ef7cff3400fa275708d8f3a82ccdec16f8b46d49381b68",
+    "src/render/geometry.ts": "3c82737c5b39c5b3e0c8508813c6bb914c3ba574d74c3944643b05d285f7b9ed",
+    "src/render/palette.ts": "c8ea1b667da7c5925d7b6505012d21667593342bb989ab1fd832947b2840ffd1",
+    "src/render/renderOrder.ts": "bd976856d11b612bde6896e30998c2c8511946f8f01d6ffdbcbf9ab036a25b4e",
+    "src/render/retroMaterial.test.ts": "1fcb134e599c9486ab94d609bb214fc00853bbed506bc176d909ae4d230fa5a0",
+    "src/render/retroMaterial.ts": "4e2e608b619420f1226674e67fe9f7f9a9f129ffcfc9292bcb8c6d0bb3bd0a2a",
+    "src/render/textures.ts": "a92f09316c443b451958d0f66271cc22046ef2c10028253cde03c15a48754ca2",
+    "src/save/SaveManager.ts": "7de8aaf389700b561410fd05289e84d5c470d2eb278974a5c9cfabf1994f1178",
+    "src/save/save.test.ts": "342e83c16cb8b997d7e4dd7d019e5af9b1ca22a89f135fa526519d6f346dfda2",
+    "src/save/schema.ts": "f0e2be6e05fab3428a59ff6be8991ce828cb3a24ee3bbfdd858514e8f6da732e",
+    "src/styles/main.css": "fb168eecdec09c798557382934dcfe8626c2ca7496afd0907f1932ba29699301",
+    "src/systems/BossController.ts": "9681de76a4f5a09cc1bfad76256af2224fb5b805a516d086622fe001af37e174",
+    "src/systems/Director.ts": "0e74fcad86de2e77708b953d5f984d867102cddbe202f8112db9928ee842538e",
+    "src/systems/EnemyProjectileSystem.ts": "f293341a0de08cc6c8695871e3506d5e49a21b835bfc57a6ed5c65354334086c",
+    "src/systems/EnemySystem.ts": "51f8de619a1aeaba9d6c7704469ce72c7c5d82d5775936582a49bcfe967c7be6",
+    "src/systems/Interactables.ts": "9292c9f1f4172ccb7a62fa883599af9ac55ffd262093df1af5c828c79fee6fd7",
+    "src/systems/PickupSystem.ts": "086f6144457154379435b135f5ad512c206b728a26729e1ed85c8318dd8d6ec1",
+    "src/systems/ProjectileSystem.ts": "22885c47156c6b4301f03ac0fe1ee664644c341829e50d1ed234f304e5d28ec1",
+    "src/systems/SpatialGrid.test.ts": "850c4c6b01425b2381b2ab68e00291f2490a2d8bdda80d766fcd8910314e77ab",
+    "src/systems/SpatialGrid.ts": "d2843466cc051583a05b53fd574cb8785636218d66c7e2dc5ea2bc4591d99108",
+    "src/systems/SpawnSystem.ts": "aa905ed75fd12df2ae8ba2dac4564b1ee0f39aa094de0c45ee90155d641ed20e",
+    "src/systems/combat.test.ts": "327e8542e0337266fdf26e6e391af9010c4d5c7ea5fc2eca77fffcccdc09ab77",
+    "src/systems/crowd.ts": "2357a88f3259f3e415d4953a277e574070e5c31655f0ed9eb07acd4dabf41079",
+    "src/systems/damage.ts": "62dbcf7e7aa0b8814bbb2bf0349e9b6fca9df5cfe764b8c3329537a55c3b871f",
+    "src/systems/difficulty.ts": "101516ce041810d155a2c4e443f95c5b4ee36c47077838ac9b5057756a8360db",
+    "src/systems/director.test.ts": "2bd20e0d20433f82ae4c060668bb5106658c7c36fd098c41bb7fb0f01f76a246",
+    "src/systems/enemies.test.ts": "1aba299a9f592ecf2f55260c2de254fc9e08f8509d677173a581a7f9c369d22b",
+    "src/systems/formulas.test.ts": "68c63d82daab98fedb49ff254245603118a83f5a875522971cda8d66fbb0347c",
+    "src/systems/interactables.test.ts": "89773cd78bf5a57d905167ff920a5f66dbfdd28020775cfff6c5886c8aec9384",
+    "src/systems/items.test.ts": "40d9f8be899ddbbf96cdf8e6f0666a0bc1f99255017908cb6f172c721cf8445f",
+    "src/systems/items.ts": "58a571a743bd24553cfaeb357833828c40d2cc941c110c1a3af31dd12bf165aa",
+    "src/systems/levelup.test.ts": "1204c120f82078cec7be1bbe6ee29f711e3672318e47c64d7bb39824ed6e6a40",
+    "src/systems/levelup.ts": "1312f3f0533f957f1d12a01adbe17714cae3c144993e18b314bff236aef08270",
+    "src/systems/meta.test.ts": "55b15c8910bd3b3152a16462790ac67da8a94462558a09854d1ff3202a644690",
+    "src/systems/meta.ts": "60572222d3569c3b12e502a7deedd5f1c71d394b63003fa7a9516207a34a2692",
+    "src/systems/progression.ts": "d055af1a62f02d3e9b42a9ecb1dcdfe4321e56dd8971aa79ad2a731637c21e26",
+    "src/systems/stats.ts": "6c710c84164d8a8eb92d7356197257f06d70c137861575464a577ac05445e3a0",
+    "src/types/opentype.d.ts": "b2edb0fc168bbc2d9cfe43b20b5b8ea9d90adfa7569d5a36776def55c651b1d2",
+    "src/ui/Hud.ts": "c36a3be9e4f87a5257b921fcfb1b17e575e2eb0233480ad7a0d3ecf9b769573a",
+    "src/ui/LevelUpScreen.ts": "a95b2dd1f17ff6c5dace93d5cdd9a905866a31e7bf2c42d0f29244dcfd983c6f",
+    "src/ui/MetaScreens.ts": "ad4456b675ad162dd63ad7d1523706edf67e19bd113aeb89ce60a216884dc83f",
+    "src/ui/Minimap.ts": "823d1263fc3d529b63d3ccdd73beb97e379cc38c219a44724cee2e94d7c010d6",
+    "src/ui/UI.ts": "5bdac2e30f5f6bc894da392ef53b6ae58ca417f9915fb8dd1c1986d8fd377607",
+    "src/ui/cards.test.ts": "5e01b7c1e4630df97503f6f54d3ea3e8a85231e0e43f131dedc06267a189372f",
+    "src/ui/cards.ts": "8ce7954340c68fdef333dd6330f6b5cefb5083243d005869bdc9f76b86610d9a",
+    "src/ui/components.ts": "d91afad16d8b1ab5a28ca97927acd5278cba6e7b613e7f521a416b792b12fc54",
+    "src/ui/dom.ts": "d5d3a2b087a55c75b9022eec309671abf3186262e38a52f769a2cf6f80154aed",
+    "src/ui/font/glyphs.ts": "7923301c8a20be12a44171a4ffadc03178f4c1cf086dd374b7a40adca0d8e0c9",
+    "src/ui/font/pixelFont.test.ts": "dad563e53c139b1edc9a10331cd2e7d88aa35d6fcded7a786d790d1d59f23f74",
+    "src/ui/font/pixelFont.ts": "ca5d2ca678190d8e6db3a0c2e151f5ba49db908a22e023f6fdb44a4087b9fedb",
+    "src/weapons/arc.ts": "b9394ec59a92682688c7bca2aa4edabfc583734b5fde7e57086b12ad9d546f5a",
+    "src/weapons/aura.ts": "71b3bfcf9656d41a62d7d71f4855e5ee6bc0496cc137c0650822baa9662569ac",
+    "src/weapons/chain.ts": "80088998b554cc4e298f26807825b1f203f42613c1ed1d1cc62726ae17289236",
+    "src/weapons/homing.ts": "bfa01dd0d728ddea5763d18d81708700c099a386d70d250a5c1a2edbb23ec679",
+    "src/weapons/index.ts": "2229461918990d79f473ac50af9cd2d6b4f42738f14636fc72ee58f6d9ddce3f",
+    "src/weapons/orbit.ts": "248cb35c2659be6f1c985dff122c53f621e750e296d3e5c7458d54b0f5495d0b",
+    "src/weapons/trail.ts": "404477906b2c9b70f4a1e44ec3f3c75d6e4144e559dfc9da0e9c623ef577ffa8",
+    "src/weapons/types.ts": "dfec1d0710dfbbd5847e7e2b2dc07ab386b7b2eab300c835ce566e45975f9a0a",
+    "src/weapons/weapons.test.ts": "b40e91990dceb8a34e8b843f4036f0d40204869117465fa96b5abdde71b5bc47",
+    "src/world/AmbientLife.ts": "605d78bbe523f691b636cc10dcbf0d747094c2728bfde20eddf9dc86cef8625d",
+    "src/world/DecorationMeshes.ts": "9286b671045d86cae48da89adda0520d6485f78929f26d626423fcdd4798fc9e",
+    "src/world/GroundCoverMeshes.ts": "1c1ca1cce2ee46761fdae0220a729d41e34bc4d6fb5cc2db3d106c0388982691",
+    "src/world/Heightfield.ts": "1e6a1f8ec468cf8f22dde3a284bf82bf99f926ed02021a2e0cb50c764fed0007",
+    "src/world/InteractableMeshes.ts": "5521d24c4d892b068ad872d5b6a91b9c9624e194a106a50f9876f129ef2fc1cf",
+    "src/world/PropMeshes.ts": "118a0d68f5aafcc773178146c49a0f5ff94461c39e09e423c3f338f0bd62b34b",
+    "src/world/TerrainMesh.ts": "cb23bfd5c3ac75b680de037b6615273225adebaf39266324616c7d0ecbfdb4d8",
+    "src/world/World.ts": "da4ec24a404d25a8f56ab027ea58424fe276fcc335fcea15a3d2de797a8c47ef",
+    "src/world/WorldCollision.ts": "9e341da1e986632b43da94879211a26c812f738c34bdccf973f1669544b0b3c8",
+    "src/world/colliders.test.ts": "b43ae9c98bfff416d0ad2573d704f1c4a3154d5f76f50a287e9b70f6c67c01d8",
+    "src/world/colliders.ts": "c64457367edb04db27cde08da00e5c3d3dc46a793b28b13c3fcf8a7bb9851d51",
+    "src/world/decorations.test.ts": "4bdee643152c0e1bb5088520f5311297acec78dbde5c2dd99a07e6b72d7908de",
+    "src/world/decorations.ts": "0c8666006623f98f42b0a45475964005fa12a9b84f82719de597e360474e327e",
+    "src/world/groundCover.ts": "fcc059e8b056426f5f4fa260a0da1355511437184b32cb41d119eb36fe1d6826",
+    "src/world/heightfield.test.ts": "bcc6047954dedfafcd408702c3c37396c7e918dd423cb791c94aed7e1b326adb",
+    "src/world/interactables.ts": "66f361ea3eb7b6d93afcabefce4dc8e731e20668f76ee56511c9cc6940baa400",
+    "src/world/props.ts": "2e23f3032ebcf2239e6035f00a9a9761d1966a3efb95a8ac2ea438e03762e45d",
+    "src/world/sites.test.ts": "757ec39b106e8cb83c54c6303c331a071df758f2f5ca50f95412253f8b28eab6",
+    "src/world/sites.ts": "ec524524d689ca759f73b813d44dccf812b15303fc21e31b33e300c7c270d827"
+  },
+  "comparison": {
+    "rng": "Exact uint32; UTF-16, overflow unchecked, unsigned shifts and 12 warmup steps.",
+    "doubles": "Absolute tolerance 1e-9 for formulas; preserve JS rounding for XP.",
+    "world": "Baseline reference only: agree tolerances before comparing float meshes or changing terrain.",
+    "audio": "Numeric reference; allow platform floating point tolerance, do not use PCM hashes as gameplay gates."
+  },
+  "catalog": {
+    "characters": {
+      "remedios": {
+        "id": "remedios",
+        "nameKey": "character.remedios",
+        "startingWeapon": "chancla",
+        "passiveKey": "character.remedios.passive",
+        "passive": {
+          "kind": "slow",
+          "radius": 3,
+          "amount": 0.2
+        },
+        "maxHp": 100,
+        "armor": 0,
+        "pickupRadius": 3.2
+      },
+      "baguette": {
+        "id": "baguette",
+        "nameKey": "character.baguette",
+        "startingWeapon": "barra",
+        "passiveKey": "character.baguette.passive",
+        "passive": {
+          "kind": "shield",
+          "recharge": 8
+        },
+        "maxHp": 100,
+        "armor": 0,
+        "pickupRadius": 3.2
+      }
+    },
+    "weapons": [
+      {
+        "id": "chancla",
+        "nameKey": "weapon.chancla",
+        "descriptionKey": "weapon.chancla.desc",
+        "behavior": "homing",
+        "base": {
+          "damage": 10,
+          "cooldown": 0.85,
+          "count": 1,
+          "area": 1,
+          "speed": 17,
+          "duration": 2.2,
+          "pierce": 1,
+          "critChance": 0.05,
+          "critMultiplier": 2,
+          "knockback": 4
+        },
+        "hitFlash": 1,
+        "upgradable": [
+          "damage",
+          "cooldown",
+          "count",
+          "area",
+          "speed",
+          "pierce",
+          "critChance"
+        ]
+      },
+      {
+        "id": "naftalina",
+        "nameKey": "weapon.naftalina",
+        "descriptionKey": "weapon.naftalina.desc",
+        "behavior": "aura",
+        "base": {
+          "damage": 6,
+          "cooldown": 0.5,
+          "count": 0,
+          "area": 1,
+          "speed": 0,
+          "duration": 0,
+          "pierce": 0,
+          "critChance": 0.05,
+          "critMultiplier": 2,
+          "knockback": 1.2
+        },
+        "hitFlash": 0.35,
+        "upgradable": [
+          "damage",
+          "cooldown",
+          "area",
+          "critChance",
+          "knockback"
+        ]
+      },
+      {
+        "id": "barra",
+        "nameKey": "weapon.barra",
+        "descriptionKey": "weapon.barra.desc",
+        "behavior": "arc",
+        "base": {
+          "damage": 16,
+          "cooldown": 1.2,
+          "count": 1,
+          "area": 1,
+          "speed": 0,
+          "duration": 0,
+          "pierce": 0,
+          "critChance": 0.08,
+          "critMultiplier": 2,
+          "knockback": 7
+        },
+        "hitFlash": 1,
+        "upgradable": [
+          "damage",
+          "cooldown",
+          "count",
+          "area",
+          "critChance",
+          "knockback"
+        ],
+        "statLabels": {
+          "count": "stat.count.swings"
+        }
+      },
+      {
+        "id": "dentaduras",
+        "nameKey": "weapon.dentaduras",
+        "descriptionKey": "weapon.dentaduras.desc",
+        "behavior": "orbit",
+        "base": {
+          "damage": 8,
+          "cooldown": 2.5,
+          "count": 2,
+          "area": 1,
+          "speed": 1,
+          "duration": 4,
+          "pierce": 0,
+          "critChance": 0.05,
+          "critMultiplier": 2,
+          "knockback": 2.5
+        },
+        "hitFlash": 0.6,
+        "upgradable": [
+          "damage",
+          "cooldown",
+          "count",
+          "area",
+          "speed",
+          "duration",
+          "critChance"
+        ],
+        "statLabels": {
+          "count": "stat.count.dentures",
+          "speed": "stat.speed.spin"
+        }
+      },
+      {
+        "id": "jersey",
+        "nameKey": "weapon.jersey",
+        "descriptionKey": "weapon.jersey.desc",
+        "behavior": "chain",
+        "base": {
+          "damage": 13,
+          "cooldown": 1.5,
+          "count": 1,
+          "area": 1,
+          "speed": 0,
+          "duration": 0,
+          "pierce": 3,
+          "critChance": 0.06,
+          "critMultiplier": 2.2,
+          "knockback": 0.6
+        },
+        "hitFlash": 1,
+        "upgradable": [
+          "damage",
+          "cooldown",
+          "count",
+          "area",
+          "pierce",
+          "critChance"
+        ],
+        "statLabels": {
+          "count": "stat.count.chains",
+          "pierce": "stat.pierce.jumps"
+        }
+      },
+      {
+        "id": "fregona",
+        "nameKey": "weapon.fregona",
+        "descriptionKey": "weapon.fregona.desc",
+        "behavior": "trail",
+        "base": {
+          "damage": 5,
+          "cooldown": 0.4,
+          "count": 1,
+          "area": 1,
+          "speed": 0,
+          "duration": 3,
+          "pierce": 0,
+          "critChance": 0.04,
+          "critMultiplier": 2,
+          "knockback": 0
+        },
+        "hitFlash": 0.35,
+        "upgradable": [
+          "damage",
+          "cooldown",
+          "count",
+          "area",
+          "duration",
+          "critChance"
+        ],
+        "statLabels": {
+          "count": "stat.count.puddles"
+        }
+      }
+    ],
+    "tomes": [
+      {
+        "id": "damage",
+        "nameKey": "tome.damage",
+        "shortKey": "tome.damage.short",
+        "descriptionKey": "tome.damage.desc",
+        "effects": [
+          {
+            "stat": "damage",
+            "amount": 0.12,
+            "mode": "add",
+            "display": "percent"
+          }
+        ]
+      },
+      {
+        "id": "attackSpeed",
+        "nameKey": "tome.attackSpeed",
+        "shortKey": "tome.attackSpeed.short",
+        "descriptionKey": "tome.attackSpeed.desc",
+        "effects": [
+          {
+            "stat": "attackSpeed",
+            "amount": 0.1,
+            "mode": "add",
+            "display": "percent"
+          }
+        ]
+      },
+      {
+        "id": "projectiles",
+        "nameKey": "tome.projectiles",
+        "shortKey": "tome.projectiles.short",
+        "descriptionKey": "tome.projectiles.desc",
+        "effects": [
+          {
+            "stat": "extraProjectiles",
+            "amount": 1,
+            "mode": "add",
+            "integer": true,
+            "display": "number"
+          }
+        ]
+      },
+      {
+        "id": "area",
+        "nameKey": "tome.area",
+        "shortKey": "tome.area.short",
+        "descriptionKey": "tome.area.desc",
+        "effects": [
+          {
+            "stat": "area",
+            "amount": 0.12,
+            "mode": "add",
+            "display": "percent"
+          }
+        ]
+      },
+      {
+        "id": "moveSpeed",
+        "nameKey": "tome.moveSpeed",
+        "shortKey": "tome.moveSpeed.short",
+        "descriptionKey": "tome.moveSpeed.desc",
+        "effects": [
+          {
+            "stat": "moveSpeed",
+            "amount": 0.08,
+            "mode": "add",
+            "display": "percent"
+          }
+        ]
+      },
+      {
+        "id": "vitality",
+        "nameKey": "tome.vitality",
+        "shortKey": "tome.vitality.short",
+        "descriptionKey": "tome.vitality.desc",
+        "effects": [
+          {
+            "stat": "maxHp",
+            "amount": 20,
+            "mode": "add",
+            "integer": true,
+            "display": "number"
+          },
+          {
+            "stat": "regen",
+            "amount": 0.4,
+            "mode": "add",
+            "display": "number"
+          }
+        ]
+      },
+      {
+        "id": "luck",
+        "nameKey": "tome.luck",
+        "shortKey": "tome.luck.short",
+        "descriptionKey": "tome.luck.desc",
+        "effects": [
+          {
+            "stat": "luck",
+            "amount": 10,
+            "mode": "add",
+            "integer": true,
+            "display": "number"
+          }
+        ]
+      },
+      {
+        "id": "magnet",
+        "nameKey": "tome.magnet",
+        "shortKey": "tome.magnet.short",
+        "descriptionKey": "tome.magnet.desc",
+        "effects": [
+          {
+            "stat": "pickupRadius",
+            "amount": 0.25,
+            "mode": "base",
+            "display": "percent"
+          },
+          {
+            "stat": "xpGain",
+            "amount": 0.08,
+            "mode": "add",
+            "display": "percent"
+          }
+        ]
+      }
+    ],
+    "items": [
+      {
+        "id": "gafas",
+        "nameKey": "item.gafas",
+        "descriptionKey": "item.gafas.desc",
+        "rarity": "common",
+        "effects": [
+          {
+            "stat": "critChance",
+            "amount": 0.07,
+            "mode": "add",
+            "display": "percent"
+          }
+        ]
+      },
+      {
+        "id": "zapatillas",
+        "nameKey": "item.zapatillas",
+        "descriptionKey": "item.zapatillas.desc",
+        "rarity": "common",
+        "effects": [
+          {
+            "stat": "moveSpeed",
+            "amount": 0.08,
+            "mode": "add",
+            "display": "percent"
+          }
+        ]
+      },
+      {
+        "id": "termo",
+        "nameKey": "item.termo",
+        "descriptionKey": "item.termo.desc",
+        "rarity": "common",
+        "effects": [
+          {
+            "stat": "attackSpeed",
+            "amount": 0.08,
+            "mode": "add",
+            "display": "percent"
+          }
+        ]
+      },
+      {
+        "id": "cojin",
+        "nameKey": "item.cojin",
+        "descriptionKey": "item.cojin.desc",
+        "rarity": "common",
+        "effects": [
+          {
+            "stat": "armor",
+            "amount": 4,
+            "mode": "add",
+            "integer": true,
+            "display": "number"
+          }
+        ]
+      },
+      {
+        "id": "lupa",
+        "nameKey": "item.lupa",
+        "descriptionKey": "item.lupa.desc",
+        "rarity": "uncommon",
+        "effects": [
+          {
+            "stat": "critDamage",
+            "amount": 0.25,
+            "mode": "add",
+            "display": "percent"
+          }
+        ]
+      },
+      {
+        "id": "loteria",
+        "nameKey": "item.loteria",
+        "descriptionKey": "item.loteria.desc",
+        "rarity": "uncommon",
+        "effects": [
+          {
+            "stat": "goldGain",
+            "amount": 0.4,
+            "mode": "add",
+            "display": "percent"
+          }
+        ]
+      },
+      {
+        "id": "rulos",
+        "nameKey": "item.rulos",
+        "descriptionKey": "item.rulos.desc",
+        "rarity": "uncommon",
+        "effects": [
+          {
+            "stat": "luck",
+            "amount": 15,
+            "mode": "add",
+            "integer": true,
+            "display": "number"
+          }
+        ]
+      },
+      {
+        "id": "perlas",
+        "nameKey": "item.perlas",
+        "descriptionKey": "item.perlas.desc",
+        "rarity": "rare",
+        "effects": []
+      },
+      {
+        "id": "monedero",
+        "nameKey": "item.monedero",
+        "descriptionKey": "item.monedero.desc",
+        "rarity": "rare",
+        "effects": []
+      },
+      {
+        "id": "baraja",
+        "nameKey": "item.baraja",
+        "descriptionKey": "item.baraja.desc",
+        "rarity": "rare",
+        "effects": [
+          {
+            "stat": "choices",
+            "amount": 1,
+            "mode": "add",
+            "integer": true,
+            "display": "number"
+          }
+        ],
+        "maxStacks": 1
+      },
+      {
+        "id": "olla",
+        "nameKey": "item.olla",
+        "descriptionKey": "item.olla.desc",
+        "rarity": "epic",
+        "effects": []
+      },
+      {
+        "id": "bata",
+        "nameKey": "item.bata",
+        "descriptionKey": "item.bata.desc",
+        "rarity": "legendary",
+        "effects": []
+      }
+    ],
+    "enemies": [
+      {
+        "id": "pelusa",
+        "nameKey": "enemy.pelusa",
+        "behavior": "chase",
+        "hp": 14,
+        "speed": 4.2,
+        "agility": 5,
+        "damage": 8,
+        "radius": 0.5,
+        "height": 0.95,
+        "xp": 1,
+        "mass": 1,
+        "gold": {
+          "chance": 0.08,
+          "min": 1,
+          "max": 1
+        },
+        "debrisColors": [
+          12104900,
+          9407134,
+          14210272
+        ]
+      },
+      {
+        "id": "cucaracha",
+        "nameKey": "enemy.cucaracha",
+        "behavior": "chase",
+        "hp": 7,
+        "speed": 7.2,
+        "agility": 9,
+        "damage": 5,
+        "radius": 0.42,
+        "height": 0.5,
+        "xp": 1,
+        "mass": 0.7,
+        "gold": {
+          "chance": 0.06,
+          "min": 1,
+          "max": 1
+        },
+        "debrisColors": [
+          7027230,
+          3809298,
+          15777856
+        ]
+      },
+      {
+        "id": "taper",
+        "nameKey": "enemy.taper",
+        "behavior": "chase",
+        "hp": 60,
+        "speed": 2.6,
+        "agility": 3,
+        "damage": 14,
+        "radius": 0.8,
+        "height": 1,
+        "xp": 4,
+        "mass": 4,
+        "gold": {
+          "chance": 0.35,
+          "min": 2,
+          "max": 4
+        },
+        "debrisColors": [
+          13624298,
+          8368714,
+          4161472
+        ]
+      },
+      {
+        "id": "paloma",
+        "nameKey": "enemy.paloma",
+        "behavior": "ranged",
+        "hp": 12,
+        "speed": 5,
+        "agility": 6,
+        "damage": 6,
+        "radius": 0.45,
+        "height": 0.8,
+        "xp": 2,
+        "mass": 0.8,
+        "gold": {
+          "chance": 0.2,
+          "min": 1,
+          "max": 2
+        },
+        "ranged": {
+          "preferred": 10,
+          "range": 16,
+          "cooldown": 2.6,
+          "windup": 0.5,
+          "projectileSpeed": 11,
+          "projectileDamage": 7,
+          "projectileRadius": 0.3
+        },
+        "debrisColors": [
+          9080732,
+          5922668,
+          7319178
+        ]
+      },
+      {
+        "id": "rata",
+        "nameKey": "enemy.rata",
+        "behavior": "charger",
+        "hp": 420,
+        "speed": 5.2,
+        "agility": 5,
+        "damage": 20,
+        "radius": 0.9,
+        "height": 1.5,
+        "xp": 40,
+        "mass": 6,
+        "gold": {
+          "chance": 1,
+          "min": 20,
+          "max": 30
+        },
+        "special": "elite",
+        "charge": {
+          "cooldown": 3.5,
+          "range": 14,
+          "windup": 0.8,
+          "dashTime": 0.55,
+          "dashSpeed": 19,
+          "damageMultiplier": 1.5,
+          "recover": 0.7
+        },
+        "debrisColors": [
+          8022626,
+          14712722,
+          16730698
+        ]
+      },
+      {
+        "id": "pelusaMadre",
+        "nameKey": "enemy.pelusaMadre",
+        "behavior": "boss",
+        "hp": 3000,
+        "speed": 3.4,
+        "agility": 3,
+        "damage": 25,
+        "radius": 2.4,
+        "height": 4.4,
+        "xp": 0,
+        "mass": 50,
+        "gold": {
+          "chance": 0,
+          "min": 0,
+          "max": 0
+        },
+        "special": "boss",
+        "debrisColors": [
+          12104900,
+          14210272,
+          15777856
+        ]
+      }
+    ],
+    "meta": {
+      "INITIAL_WEAPONS": [
+        "chancla",
+        "naftalina",
+        "barra",
+        "dentaduras"
+      ],
+      "INITIAL_ITEMS": [
+        "gafas",
+        "zapatillas",
+        "termo",
+        "cojin",
+        "lupa",
+        "loteria",
+        "rulos",
+        "monedero"
+      ],
+      "MISSIONS": [
+        {
+          "id": "first",
+          "nameKey": "mission.first",
+          "target": 1,
+          "coins": 30
+        },
+        {
+          "id": "kills",
+          "nameKey": "mission.kills",
+          "target": 1000,
+          "coins": 60,
+          "unlock": {
+            "kind": "weapon",
+            "id": "fregona"
+          }
+        },
+        {
+          "id": "chests",
+          "nameKey": "mission.chests",
+          "target": 10,
+          "coins": 40
+        },
+        {
+          "id": "shrines",
+          "nameKey": "mission.shrines",
+          "target": 3,
+          "coins": 40
+        },
+        {
+          "id": "challenge",
+          "nameKey": "mission.challenge",
+          "target": 1,
+          "coins": 50,
+          "unlock": {
+            "kind": "item",
+            "id": "perlas"
+          }
+        },
+        {
+          "id": "level",
+          "nameKey": "mission.level",
+          "target": 20,
+          "coins": 50
+        },
+        {
+          "id": "victory",
+          "nameKey": "mission.victory",
+          "target": 1,
+          "coins": 80
+        },
+        {
+          "id": "noLife",
+          "nameKey": "mission.noLife",
+          "target": 1,
+          "coins": 100,
+          "unlock": {
+            "kind": "item",
+            "id": "bata"
+          }
+        }
+      ],
+      "SHOP": [
+        {
+          "id": "baguette",
+          "price": 220,
+          "unlock": {
+            "kind": "character",
+            "id": "baguette"
+          }
+        },
+        {
+          "id": "jersey",
+          "price": 140,
+          "unlock": {
+            "kind": "weapon",
+            "id": "jersey"
+          }
+        },
+        {
+          "id": "baraja",
+          "price": 160,
+          "unlock": {
+            "kind": "item",
+            "id": "baraja"
+          }
+        },
+        {
+          "id": "olla",
+          "price": 180,
+          "unlock": {
+            "kind": "item",
+            "id": "olla"
+          }
+        }
+      ],
+      "EXTRA_PRICES": [
+        80,
+        140,
+        220
+      ],
+      "META_REWARD": {
+        "killsPerCoin": 20,
+        "secondsPerCoin": 15,
+        "maxTimeCoins": 60,
+        "victory": 60
+      }
+    },
+    "waves": {
+      "SPAWN_TABLE": [
+        {
+          "enemy": "pelusa",
+          "fromMinute": 0,
+          "weight": 10
+        },
+        {
+          "enemy": "cucaracha",
+          "fromMinute": 0.75,
+          "weight": 4
+        },
+        {
+          "enemy": "taper",
+          "fromMinute": 2.5,
+          "weight": 2.5
+        },
+        {
+          "enemy": "paloma",
+          "fromMinute": 4,
+          "weight": 3
+        }
+      ],
+      "SPAWN_CURVE": {
+        "baseRate": 0.9,
+        "rateGrowth": 0.55,
+        "rateCurve": 0.06,
+        "maxRate": 20,
+        "baseMaxAlive": 60,
+        "maxAliveGrowth": 45,
+        "maxAliveCap": 450,
+        "hpGrowth": 0.22,
+        "hpCurve": 0.02,
+        "xpGrowth": 0.12,
+        "spawnDistanceMin": 26,
+        "spawnDistanceMax": 38,
+        "recycleDistance": 85
+      },
+      "RUN_DURATIONS": [
+        5,
+        10,
+        15
+      ],
+      "REFERENCE_MINUTES": 10,
+      "SPECIAL_WAVES": [
+        {
+          "at": 1.5,
+          "enemy": "cucaracha",
+          "count": 30,
+          "formation": "line",
+          "noticeKey": "wave.stampede"
+        },
+        {
+          "at": 3,
+          "enemy": "taper",
+          "count": 8,
+          "formation": "ring",
+          "noticeKey": "wave.tupperware"
+        },
+        {
+          "at": 4.5,
+          "enemy": "paloma",
+          "count": 12,
+          "formation": "arc",
+          "noticeKey": "wave.pigeons"
+        },
+        {
+          "at": 6,
+          "enemy": "cucaracha",
+          "count": 60,
+          "formation": "line",
+          "noticeKey": "wave.stampede"
+        },
+        {
+          "at": 7.5,
+          "enemy": "taper",
+          "count": 14,
+          "formation": "ring",
+          "noticeKey": "wave.tupperware"
+        },
+        {
+          "at": 9,
+          "enemy": "pelusa",
+          "count": 80,
+          "formation": "ring",
+          "noticeKey": "wave.dust"
+        }
+      ],
+      "ELITE_SCHEDULE": {
+        "enemy": "rata",
+        "first": 2,
+        "every": 2
+      },
+      "SWARM_CONFIG": {
+        "doublingSeconds": 20,
+        "maxRate": 60,
+        "maxAlive": 750,
+        "hpPerMinute": 0.6
+      }
+    },
+    "worldAndPlayer": {
+      "TERRAIN_CONFIG": {
+        "size": 320,
+        "cells": 256,
+        "borderStart": 128,
+        "spawnRadius": 14,
+        "relief": 26,
+        "terraceStep": 4.5
+      },
+      "WORLD_CONFIG": {
+        "playableRadius": 136,
+        "clearSpawnRadius": 12,
+        "siteSpawnClear": 32,
+        "sites": [
+          {
+            "kind": "house",
+            "count": 5,
+            "radius": 6.5
+          },
+          {
+            "kind": "temple",
+            "count": 2,
+            "radius": 7.5
+          },
+          {
+            "kind": "farm",
+            "count": 2,
+            "radius": 6.5
+          },
+          {
+            "kind": "well",
+            "count": 3,
+            "radius": 3.5
+          }
+        ]
+      },
+      "PLAYER_TUNING": {
+        "radius": 0.4,
+        "height": 1.55,
+        "groundAccel": 75,
+        "groundDecel": 55,
+        "airAccel": 30,
+        "overspeedDecel": 9,
+        "gravity": 27,
+        "fallGravityMultiplier": 1.55,
+        "lowJumpGravityMultiplier": 2.3,
+        "maxFallSpeed": 42,
+        "jumpVelocity": 9.8,
+        "coyoteTime": 0.1,
+        "jumpBuffer": 0.13,
+        "stepHeight": 0.45,
+        "maxSlopeDeg": 48,
+        "slide": {
+          "entrySpeedMultiplier": 1.45,
+          "boost": 3.5,
+          "minSpeed": 3.2,
+          "friction": 4,
+          "brakeFriction": 14,
+          "gravityScale": 1.25,
+          "turnRate": 2.4,
+          "cooldown": 0.6,
+          "maxSpeed": 30,
+          "jumpBoost": 1.5,
+          "boostSpeedCap": 1.8
+        }
+      },
+      "PLAYER_BASE_STATS": {
+        "moveSpeed": 9.5
+      },
+      "CROWD_CONFIG": {
+        "slowPerMass": 0.2,
+        "maxSlow": 0.4,
+        "response": 15,
+        "brake": 45
+      },
+      "CAMERA_CONFIG": {
+        "distance": 6.2,
+        "minDistance": 1.1,
+        "pivotHeight": 1.9,
+        "pivotHeightSliding": 1.2,
+        "fov": 70,
+        "fovBoost": 12,
+        "minPitch": -1.25,
+        "maxPitch": 0.55,
+        "baseSensitivity": 0.0022,
+        "collisionMargin": 0.35,
+        "near": 0.1,
+        "far": 420
+      },
+      "RENDER_CONFIG": {
+        "fogNear": 30,
+        "fogFar": 170
+      }
+    },
+    "run": {
+      "GOLD_CONFIG": {
+        "capacity": 300,
+        "fillerChestFraction": 0.5,
+        "fillerMin": 10
+      },
+      "CHEST_CONFIG": {
+        "baseCost": 15,
+        "costStep": 12,
+        "costCurve": 2.5,
+        "reach": 2.4
+      },
+      "SHRINE_CONFIG": {
+        "radius": 4.2,
+        "chargeTime": 9,
+        "decayRate": 0.35,
+        "spawnMultiplier": 1.7,
+        "choices": 3
+      },
+      "SHRINE_BOOSTS": [
+        {
+          "id": "damage",
+          "nameKey": "boost.damage",
+          "effect": {
+            "stat": "damage",
+            "amount": 0.1,
+            "mode": "add",
+            "display": "percent",
+            "integer": false
+          }
+        },
+        {
+          "id": "attackSpeed",
+          "nameKey": "boost.attackSpeed",
+          "effect": {
+            "stat": "attackSpeed",
+            "amount": 0.08,
+            "mode": "add",
+            "display": "percent",
+            "integer": false
+          }
+        },
+        {
+          "id": "area",
+          "nameKey": "boost.area",
+          "effect": {
+            "stat": "area",
+            "amount": 0.1,
+            "mode": "add",
+            "display": "percent",
+            "integer": false
+          }
+        },
+        {
+          "id": "maxHp",
+          "nameKey": "boost.maxHp",
+          "effect": {
+            "stat": "maxHp",
+            "amount": 15,
+            "mode": "add",
+            "display": "number",
+            "integer": true
+          }
+        },
+        {
+          "id": "regen",
+          "nameKey": "boost.regen",
+          "effect": {
+            "stat": "regen",
+            "amount": 0.5,
+            "mode": "add",
+            "display": "number",
+            "integer": false
+          }
+        },
+        {
+          "id": "moveSpeed",
+          "nameKey": "boost.moveSpeed",
+          "effect": {
+            "stat": "moveSpeed",
+            "amount": 0.06,
+            "mode": "add",
+            "display": "percent",
+            "integer": false
+          }
+        },
+        {
+          "id": "critChance",
+          "nameKey": "boost.critChance",
+          "effect": {
+            "stat": "critChance",
+            "amount": 0.05,
+            "mode": "add",
+            "display": "percent",
+            "integer": false
+          }
+        },
+        {
+          "id": "critDamage",
+          "nameKey": "boost.critDamage",
+          "effect": {
+            "stat": "critDamage",
+            "amount": 0.2,
+            "mode": "add",
+            "display": "percent",
+            "integer": false
+          }
+        },
+        {
+          "id": "armor",
+          "nameKey": "boost.armor",
+          "effect": {
+            "stat": "armor",
+            "amount": 5,
+            "mode": "add",
+            "display": "number",
+            "integer": true
+          }
+        },
+        {
+          "id": "luck",
+          "nameKey": "boost.luck",
+          "effect": {
+            "stat": "luck",
+            "amount": 10,
+            "mode": "add",
+            "display": "number",
+            "integer": true
+          }
+        },
+        {
+          "id": "xpGain",
+          "nameKey": "boost.xpGain",
+          "effect": {
+            "stat": "xpGain",
+            "amount": 0.08,
+            "mode": "add",
+            "display": "percent",
+            "integer": false
+          }
+        },
+        {
+          "id": "goldGain",
+          "nameKey": "boost.goldGain",
+          "effect": {
+            "stat": "goldGain",
+            "amount": 0.15,
+            "mode": "add",
+            "display": "percent",
+            "integer": false
+          }
+        }
+      ],
+      "TOTEM_CONFIG": {
+        "duration": 45,
+        "spawnMultiplier": 2.2,
+        "hpMultiplier": 1.25,
+        "goldMultiplier": 2,
+        "luck": 50,
+        "rewardLuck": 100,
+        "reach": 2.4
+      },
+      "PORTAL_CONFIG": {
+        "reach": 2.8,
+        "bossDistance": 4
+      },
+      "INTERACTABLE_PLACEMENT": [
+        {
+          "kind": "portal",
+          "count": 1,
+          "minSpawnDistance": 95,
+          "spacing": 20,
+          "clearRadius": 2.2
+        },
+        {
+          "kind": "shrine",
+          "count": 3,
+          "minSpawnDistance": 30,
+          "spacing": 26,
+          "clearRadius": 4.6
+        },
+        {
+          "kind": "totem",
+          "count": 2,
+          "minSpawnDistance": 34,
+          "spacing": 26,
+          "clearRadius": 2
+        },
+        {
+          "kind": "chest",
+          "count": 14,
+          "minSpawnDistance": 14,
+          "spacing": 13,
+          "clearRadius": 1.6
+        }
+      ],
+      "DISCOVERY_CONFIG": {
+        "radius": 30,
+        "portalRadius": 22
+      }
+    },
+    "itemEffects": {
+      "perlas": {
+        "chance": 0.3,
+        "damageFraction": 0.5,
+        "range": 7
+      },
+      "monedero": {
+        "damagePer100": 0.04,
+        "maxBonus": 0.8
+      },
+      "olla": {
+        "chance": 0.08,
+        "maxChance": 0.4,
+        "damage": 16,
+        "hpFraction": 0.5,
+        "radius": 3.2
+      },
+      "bata": {
+        "reviveHp": 0.5,
+        "invulnerability": 2.5,
+        "shockwaveRadius": 8,
+        "shockwavePush": 14
+      }
+    },
+    "boss": {
+      "enemy": "pelusaMadre",
+      "hpGrowth": 0.2,
+      "hpCurve": 0.06,
+      "idle": [
+        1.6,
+        2.6
+      ],
+      "recover": 0.9,
+      "enrageAt": 0.5,
+      "enrageSpeed": 1.5,
+      "roll": {
+        "windup": 0.9,
+        "speed": 18,
+        "length": 22,
+        "damage": 28
+      },
+      "slam": {
+        "windup": 1.3,
+        "radius": 5.5,
+        "damage": 32
+      },
+      "sneeze": {
+        "windup": 0.8,
+        "projectiles": 16,
+        "enragedProjectiles": 24,
+        "speed": 8,
+        "damage": 10,
+        "radius": 0.45,
+        "minions": 5
+      }
+    }
+  },
+  "translations": {
+    "es": {
+      "mission.first": "Termina una partida",
+      "mission.kills": "Acumula 1000 bajas",
+      "mission.chests": "Abre 10 baúles en total",
+      "mission.shrines": "Completa 3 mesas camilla",
+      "mission.challenge": "Supera un tótem de cacerolas",
+      "mission.level": "Alcanza el nivel 20 en una partida",
+      "mission.victory": "Derrota a la Pelusa Madre",
+      "mission.noLife": "Gana sin adquirir el Recetario del Caldito",
+      "character.baguette": "Sir Baguette, Paladín del Pan Duro",
+      "character.remedios.passive": "Mirada de desaprobación: ralentiza un 20 % a los enemigos a 3 m. Prevalece la ralentización más fuerte.",
+      "character.baguette.passive": "Corteza defensiva: tras 8 s sin recibir daño, bloquea el siguiente golpe y vuelve a cargar.",
+      "notice.shield": "¡La corteza bloquea el golpe!",
+      "menu.characters": "Personajes",
+      "menu.shop": "Tienda / Desbloqueos",
+      "menu.missions": "Misiones",
+      "menu.back": "Volver",
+      "meta.currency": "Calderilla del Caos",
+      "meta.balance": "Calderilla del Caos: {n}",
+      "meta.selected": "Seleccionado",
+      "meta.select": "Seleccionar",
+      "meta.locked": "Bloqueado",
+      "meta.owned": "Desbloqueado",
+      "meta.buy": "Comprar · {n}",
+      "meta.need": "Faltan {n}",
+      "meta.weapon": "Arma inicial: {name}",
+      "meta.shopHint": "Compras permanentes. Las armas y objetos desbloqueados podrán aparecer en próximas partidas.",
+      "meta.missionHint": "Recompensas automáticas al morir o ganar. Los abandonos y partidas con trucos no cuentan.",
+      "meta.reward": "Recompensa: {n} de calderilla",
+      "meta.unlock": "Desbloquea: {name}",
+      "meta.done": "Completada",
+      "meta.progress": "{n} / {target}",
+      "meta.extras": "Más oportunidades por partida",
+      "meta.extrasHint": "Cada compra añade un uso a todas las partidas. Máximo: 5 de cada acción.",
+      "meta.rerolls": "Reroll",
+      "meta.skips": "Saltar",
+      "meta.banishes": "Descartar",
+      "meta.uses": "{n} usos por partida",
+      "meta.max": "Máximo alcanzado",
+      "meta.results": "Calderilla ganada: {n}",
+      "meta.breakdown": "Bajas: {kills} · Supervivencia: {survival} · Victoria: {victory} · Misiones: {missions}",
+      "meta.newMission": "¡Completada! {name}",
+      "meta.cheated": "Partida con trucos: sin calderilla ni progreso de misiones.",
+      "meta.abandon": "¿Abandonar? No recibirás calderilla ni progreso de misiones.",
+      "meta.cancel": "Seguir aquí",
+      "meta.confirm": "Abandonar partida",
+      "meta.saveWarning": "No se puede guardar en este navegador. El progreso solo se conservará durante esta sesión.",
+      "options.musicVolume": "Volumen de música",
+      "options.effectsVolume": "Volumen de efectos",
+      "options.muted": "Silenciar audio",
+      "options.reducedParticles": "Reducir partículas",
+      "options.cameraShake": "Sacudidas de cámara",
+      "options.flashes": "Destellos de daño",
+      "options.audioHelp": "Audio original generado por código. Pulsa una tecla o haz clic para activarlo.",
+      "meta.hero": "La horda no se barre sola.",
+      "meta.heroText": "Elige a tu héroe, prepara la chancla y vuelve con algo de calderilla.",
+      "meta.current": "Tu personaje: {name}",
+      "meta.sourceShop": "Disponible en la tienda",
+      "meta.sourceMission": "Misión: {name}",
+      "passive.shieldReady": "Corteza: lista",
+      "passive.shieldCharge": "Corteza: {n} s",
+      "app.title": "MAMPORRO",
+      "app.tagline": "Supervivencia a chanclazo limpio",
+      "app.loading": "Calentando la chancla...",
+      "app.prototype": "Hito 5 · Meta y personajes",
+      "error.webgl": "Tu navegador no puede ejecutar WebGL2. Prueba con Chrome, Edge o Firefox actualizados.",
+      "error.pointerLock": "No se pudo capturar el ratón. Espera un segundo y vuelve a hacer clic.",
+      "title.play": "Jugar",
+      "title.clickHint": "Al jugar se captura el ratón. Pulsa Esc para soltarlo.",
+      "title.seedLabel": "Semilla",
+      "title.seedPlaceholder": "Aleatoria",
+      "title.newMap": "Nuevo mapa",
+      "title.currentSeed": "Mapa actual: {seed}",
+      "title.duration": "Duración",
+      "title.minutes": "{n} min",
+      "controls.title": "Controles",
+      "controls.move": "Moverse",
+      "controls.look": "Mirar",
+      "controls.jump": "Saltar",
+      "controls.slide": "Deslizarse",
+      "controls.interact": "Usar",
+      "controls.pause": "Pausa",
+      "controls.debug": "Panel de debug",
+      "controls.keys.move": "W A S D",
+      "controls.keys.look": "Ratón",
+      "controls.keys.jump": "Espacio",
+      "controls.keys.slide": "Shift / C",
+      "controls.keys.slideCtrl": "Shift / C / Ctrl",
+      "controls.keys.interact": "E",
+      "controls.keys.pause": "Esc",
+      "controls.keys.debug": "F3",
+      "pause.title": "Pausa",
+      "pause.resume": "Continuar",
+      "pause.seed": "Semilla: {seed}",
+      "pause.backToTitle": "Volver al inicio",
+      "pause.stats": "Estadísticas",
+      "pause.items": "Objetos",
+      "pause.noItems": "Aún no llevas objetos",
+      "options.title": "Opciones",
+      "options.language": "Idioma",
+      "options.sensitivity": "Sensibilidad del ratón",
+      "options.resolution": "Resolución interna",
+      "options.resolutionValue": "{h} px",
+      "options.vertexSnap": "Temblor de vértices (PS1)",
+      "options.dithering": "Tramado de color (dithering)",
+      "options.showFps": "Mostrar FPS",
+      "options.slideCtrl": "Usar Ctrl para deslizarse",
+      "options.slideCtrlWarning": "¡Cuidado! En Chrome y Edge, Ctrl+W cierra la pestaña y el juego no puede evitarlo.",
+      "lang.es": "Español",
+      "lang.en": "English",
+      "hud.fps": "{fps} FPS",
+      "hud.level": "Nv {n}",
+      "hud.kills": "Bajas: {n}",
+      "hud.weaponLevel": "{name} · Nv {n}",
+      "hud.gold": "Oro {n}",
+      "hud.swarm": "ENJAMBRE",
+      "hud.challenge": "Desafío: {time}",
+      "hud.shrine": "Mesa camilla: {n} %",
+      "hud.itemCount": "{name} ×{n}",
+      "prompt.chest": "[E] Abrir el baúl · {cost} de oro",
+      "prompt.totem": "[E] Tocar el tótem · desafío de {s} s",
+      "prompt.portal": "[E] Abrir el armario · invoca al jefe",
+      "notice.elite": "¡Élite a la vista: {name}!",
+      "notice.swarm": "¡ENJAMBRE FINAL!",
+      "notice.portalFound": "¡Has encontrado el portal del jefe!",
+      "notice.portalRevealed": "El portal del jefe aparece en el mapa",
+      "notice.boss": "¡{name} ha despertado!",
+      "notice.noGold": "No te llega: faltan {n} de oro",
+      "notice.challengeStart": "¡Desafío aceptado! Más bichos, mejor botín",
+      "notice.challengeDone": "¡Desafío superado!",
+      "notice.shrineCharged": "¡Mesa camilla a tope!",
+      "notice.revive": "¡La bata de guatiné te ha salvado!",
+      "wave.stampede": "¡Estampida de cucarachas!",
+      "wave.tupperware": "¡Rebelión de los tápers!",
+      "wave.pigeons": "¡Bandada de palomas okupas!",
+      "wave.dust": "¡Tormenta de pelusas!",
+      "character.remedios": "Doña Remedios",
+      "enemy.pelusa": "Pelusa Rebelde",
+      "enemy.cucaracha": "Cucaracha Turbo",
+      "enemy.taper": "Táper Caducado",
+      "enemy.paloma": "Paloma Okupa",
+      "enemy.rata": "Rata de Gimnasio",
+      "enemy.pelusaMadre": "La Pelusa Madre",
+      "weapon.chancla": "Chancla Teledirigida",
+      "weapon.chancla.desc": "Busca al enemigo más cercano. Nunca falla. Casi nunca.",
+      "weapon.naftalina": "Eau de Naftalina",
+      "weapon.naftalina.desc": "Nube de olor a armario de abuela que daña a todo el que se acerque.",
+      "weapon.barra": "Barra de Pan Duro",
+      "weapon.barra.desc": "Barrazo en arco delante de ti. Lleva tres días en la panera y ya es un arma.",
+      "weapon.dentaduras": "Dentaduras Orbitales",
+      "weapon.dentaduras.desc": "Dientes postizos que dan vueltas a tu alrededor y muerden lo que pillan.",
+      "weapon.jersey": "Jersey Estático",
+      "weapon.jersey.desc": "De tanto frotar la lana, el calambre salta de bicho en bicho.",
+      "weapon.fregona": "Suelo Recién Fregado",
+      "weapon.fregona.desc": "Dejas un rastro recién fregado. Quien lo pisa, resbala y se lleva lo suyo.",
+      "tome.damage": "Manual del Mamporro",
+      "tome.damage.short": "Daño",
+      "tome.damage.desc": "Todas tus armas pegan más fuerte.",
+      "tome.attackSpeed": "Tomo del Café Cargado",
+      "tome.attackSpeed.short": "Cadencia",
+      "tome.attackSpeed.desc": "Todas tus armas atacan más a menudo.",
+      "tome.projectiles": "Tablas de Multiplicar",
+      "tome.projectiles.short": "Cantidad",
+      "tome.projectiles.desc": "Más chanclas, más dentaduras, más de todo.",
+      "tome.area": "Catálogo de Tallas Grandes",
+      "tome.area.short": "Área",
+      "tome.area.desc": "Todo lo que haces ocupa más.",
+      "tome.moveSpeed": "Manual de Marcha Nórdica",
+      "tome.moveSpeed.short": "Velocidad",
+      "tome.moveSpeed.desc": "Caminas más rápido. Sin bastones.",
+      "tome.vitality": "Recetario del Caldito",
+      "tome.vitality.short": "Vida",
+      "tome.vitality.desc": "Más vida máxima, y la vas recuperando poco a poco.",
+      "tome.luck": "Horóscopo del Periódico",
+      "tome.luck.short": "Suerte",
+      "tome.luck.desc": "Salen cartas más raras. Lo dicen los astros.",
+      "tome.magnet": "Colección de Imanes de Nevera",
+      "tome.magnet.short": "Imán",
+      "tome.magnet.desc": "Atraes la experiencia desde más lejos y ganas más.",
+      "item.gafas": "Gafas de Culo de Vaso",
+      "item.gafas.desc": "Ahora ves los puntos débiles. Y la pelusa de debajo del sofá.",
+      "item.zapatillas": "Zapatillas de Velcro",
+      "item.zapatillas.desc": "Sin cordones que atar: más tiempo para correr.",
+      "item.termo": "Termo de Café de Puchero",
+      "item.termo.desc": "Café de los de antes. Te deja un temblorcillo muy útil.",
+      "item.cojin": "Cojín de Ganchillo",
+      "item.cojin.desc": "Acolchado estratégico: los golpes duelen menos.",
+      "item.lupa": "Lupa de Leer Prospectos",
+      "item.lupa.desc": "Tus críticos, en letra grande y más gordos.",
+      "item.loteria": "Décimo de Lotería",
+      "item.loteria.desc": "Esta vez sí que toca: recoges más oro.",
+      "item.rulos": "Rulos de la Suerte",
+      "item.rulos.desc": "Un peinado así atrae a la fortuna.",
+      "item.perlas": "Collar de Perlas",
+      "item.perlas.desc": "Cada crítico tiene un {n} % de hacer saltar una perla al enemigo más cercano ({dmg} % del golpe).",
+      "item.monedero": "Monedero Bien Lleno",
+      "item.monedero.desc": "+{n} % de daño por cada 100 de oro que lleves encima (hasta +{max} %).",
+      "item.baraja": "Baraja del Tute",
+      "item.baraja.desc": "Una carta más para elegir al subir de nivel.",
+      "item.olla": "Olla Exprés",
+      "item.olla.desc": "Los enemigos tienen un {n} % de explotar al morir y dañar a los de alrededor.",
+      "item.bata": "Bata de Guatiné",
+      "item.bata.desc": "Si caes, te levantas con el {n} % de la vida y apartas a todos. Se gasta al usarla.",
+      "boost.damage": "Mala Leche",
+      "boost.attackSpeed": "Prisas de Mercado",
+      "boost.area": "Bata Ancha",
+      "boost.maxHp": "Cocido Completo",
+      "boost.regen": "Siesta Reparadora",
+      "boost.moveSpeed": "Paso Ligero",
+      "boost.critChance": "Ojo de Portera",
+      "boost.critDamage": "Zapatillazo Certero",
+      "boost.armor": "Faja Reforzada",
+      "boost.luck": "Estampita de la Suerte",
+      "boost.xpGain": "Crucigrama Resuelto",
+      "boost.goldGain": "Hucha de Cerdito",
+      "rarity.common": "Común",
+      "rarity.uncommon": "Poco común",
+      "rarity.rare": "Rara",
+      "rarity.epic": "Épica",
+      "rarity.legendary": "Legendaria",
+      "stat.damage": "daño",
+      "stat.cooldown": "velocidad de ataque",
+      "stat.count": "cantidad",
+      "stat.area": "área",
+      "stat.speed": "velocidad del proyectil",
+      "stat.duration": "duración",
+      "stat.pierce": "perforación",
+      "stat.critChance": "prob. de crítico",
+      "stat.critMultiplier": "daño crítico",
+      "stat.knockback": "empuje",
+      "stat.count.swings": "barrazos",
+      "stat.count.dentures": "dentaduras",
+      "stat.count.chains": "cadenas",
+      "stat.count.puddles": "charcos",
+      "stat.speed.spin": "velocidad de giro",
+      "stat.pierce.jumps": "saltos",
+      "stat.extraProjectiles": "cantidad",
+      "stat.moveSpeed": "velocidad",
+      "stat.maxHp": "vida máxima",
+      "stat.regen": "vida por segundo",
+      "stat.luck": "suerte",
+      "stat.pickupRadius": "radio de recogida",
+      "stat.xpGain": "experiencia",
+      "stat.armor": "armadura",
+      "stat.health": "vida",
+      "stat.goldGain": "oro",
+      "stat.choices": "opciones al subir de nivel",
+      "upgrade.percent": "{stat} +{value} %",
+      "upgrade.number": "{stat} +{value}",
+      "format.percent": "{value} %",
+      "levelup.title": "¡Nivel {n}!",
+      "levelup.subtitle": "Elige una mejora",
+      "levelup.pending": "Quedan {n} más",
+      "levelup.newWeapon": "Arma nueva",
+      "levelup.newTome": "Tomo nuevo",
+      "levelup.level": "Nv {from} → {to}",
+      "levelup.reroll": "Reroll ({n})",
+      "levelup.skip": "Saltar ({n})",
+      "levelup.banish": "Descartar ({n})",
+      "levelup.banishHint": "Elige la carta que no quieres volver a ver en esta partida",
+      "levelup.cancel": "Cancelar",
+      "levelup.filler": "Tila Reparadora",
+      "levelup.filler.desc": "No queda nada más que ofrecerte. Recuperas un {n} % de la vida.",
+      "levelup.fillerGold": "Calderilla del Sofá",
+      "levelup.fillerGold.desc": "Rebuscando entre los cojines aparecen {n} de oro.",
+      "shrine.title": "¡Mesa camilla cargada!",
+      "shrine.subtitle": "Elige una bendición calentita",
+      "gameover.title": "¡A la cama sin cenar!",
+      "gameover.subtitle": "Has caído (pero volverás)",
+      "gameover.time": "Tiempo",
+      "gameover.kills": "Bajas",
+      "gameover.level": "Nivel",
+      "gameover.damage": "Daño por arma",
+      "gameover.seed": "Semilla: {seed}",
+      "gameover.cheated": "Partida con trucos de debug",
+      "gameover.retry": "Reintentar",
+      "gameover.newMap": "Nuevo mapa",
+      "gameover.backToTitle": "Volver al inicio",
+      "results.victory": "¡Victoria!",
+      "results.victorySubtitle": "La Pelusa Madre ha mordido el polvo (literalmente)",
+      "results.gold": "Oro conseguido",
+      "results.chests": "Baúles abiertos",
+      "results.items": "Objetos",
+      "results.noItems": "Ninguno",
+      "debug.title": "DEBUG · F3",
+      "debug.fps": "FPS",
+      "debug.frame": "Frame",
+      "debug.logic": "Lógica",
+      "debug.render": "Render",
+      "debug.drawCalls": "Draw calls",
+      "debug.triangles": "Triángulos",
+      "debug.resolution": "Resolución",
+      "debug.position": "Posición",
+      "debug.speed": "Velocidad",
+      "debug.state": "Estado",
+      "debug.slope": "Pendiente",
+      "debug.seed": "Semilla",
+      "debug.state.grounded": "suelo",
+      "debug.state.airborne": "aire",
+      "debug.state.sliding": "deslizando",
+      "debug.state.steep": "resbalando",
+      "debug.entities": "Enemigos: {enemies} · Proyectiles: {projectiles} · Gemas: {gems} · Partículas: {particles}",
+      "debug.run": "Tiempo: {time} · Vida: {hp} · XP: {xp}/{next} · Frenado: {slow} %",
+      "debug.director": "Dificultad: min {minutes} · Ritmo: {rate}/s · Máx.: {max} · Oro: {gold}",
+      "debug.keys": "[1] Invencible [2] +Nivel [3] +1 min [4] +100 enemigos [5] Matar todo",
+      "debug.keys2": "[6] Invocar jefe [7] +100 de oro [8] Revelar mapa",
+      "debug.invincibleOn": "Invencible: SÍ",
+      "debug.invincibleOff": "Invencible: NO",
+      "debug.levelUp": "+1 nivel",
+      "debug.skipTime": "+1 minuto",
+      "debug.spawn": "+100 enemigos",
+      "debug.killAll": "Todos eliminados",
+      "debug.boss": "Jefe invocado",
+      "debug.bossBusy": "El jefe ya está en juego",
+      "debug.gold": "+100 de oro",
+      "debug.reveal": "Mapa revelado"
+    },
+    "en": {
+      "mission.first": "Finish a run",
+      "mission.kills": "Defeat 1000 enemies in total",
+      "mission.chests": "Open 10 chests in total",
+      "mission.shrines": "Complete 3 shrines",
+      "mission.challenge": "Complete a cooking-pot challenge",
+      "mission.level": "Reach level 20 in one run",
+      "mission.victory": "Defeat Mother Dustball",
+      "mission.noLife": "Win without taking the Broth Recipe Book",
+      "character.baguette": "Sir Baguette, Paladin of Stale Bread",
+      "character.remedios.passive": "Disapproving stare: slows enemies within 3 m by 20%. The strongest slow takes priority.",
+      "character.baguette.passive": "Defensive crust: after 8 s without taking damage, blocks the next hit and recharges.",
+      "notice.shield": "Your crust blocks the hit!",
+      "menu.characters": "Characters",
+      "menu.shop": "Shop / Unlocks",
+      "menu.missions": "Missions",
+      "menu.back": "Back",
+      "meta.currency": "Chaos Change",
+      "meta.balance": "Chaos Change: {n}",
+      "meta.selected": "Selected",
+      "meta.select": "Select",
+      "meta.locked": "Locked",
+      "meta.owned": "Unlocked",
+      "meta.buy": "Buy · {n}",
+      "meta.need": "Need {n} more",
+      "meta.weapon": "Starting weapon: {name}",
+      "meta.shopHint": "Permanent purchases. Unlocked weapons and items can appear in future runs.",
+      "meta.missionHint": "Rewards are granted on defeat or victory. Abandoned runs and cheated runs do not count.",
+      "meta.reward": "Reward: {n} change",
+      "meta.unlock": "Unlocks: {name}",
+      "meta.done": "Completed",
+      "meta.progress": "{n} / {target}",
+      "meta.extras": "More chances each run",
+      "meta.extrasHint": "Each purchase adds one use to every run. Maximum: 5 of each action.",
+      "meta.rerolls": "Reroll",
+      "meta.skips": "Skip",
+      "meta.banishes": "Banish",
+      "meta.uses": "{n} uses per run",
+      "meta.max": "Maximum reached",
+      "meta.results": "Change earned: {n}",
+      "meta.breakdown": "Kills: {kills} · Survival: {survival} · Victory: {victory} · Missions: {missions}",
+      "meta.newMission": "Completed! {name}",
+      "meta.cheated": "Cheated run: no change or mission progress.",
+      "meta.abandon": "Abandon this run? You will receive no change or mission progress.",
+      "meta.cancel": "Stay here",
+      "meta.confirm": "Abandon run",
+      "meta.saveWarning": "Saving is unavailable in this browser. Progress will last only for this session.",
+      "options.musicVolume": "Music volume",
+      "options.effectsVolume": "Effects volume",
+      "options.muted": "Mute audio",
+      "options.reducedParticles": "Reduce particles",
+      "options.cameraShake": "Camera shake",
+      "options.flashes": "Damage flashes",
+      "options.audioHelp": "Original audio generated by code. Press a key or click to enable it.",
+      "meta.hero": "This horde will not sweep itself.",
+      "meta.heroText": "Pick your hero, ready your slipper and bring home some change.",
+      "meta.current": "Your character: {name}",
+      "meta.sourceShop": "Available in the shop",
+      "meta.sourceMission": "Mission: {name}",
+      "passive.shieldReady": "Crust: ready",
+      "passive.shieldCharge": "Crust: {n} s",
+      "app.title": "MAMPORRO",
+      "app.tagline": "Survival, one flying slipper at a time",
+      "app.loading": "Warming up the slipper...",
+      "app.prototype": "Milestone 5 · Meta and characters",
+      "error.webgl": "Your browser cannot run WebGL2. Try an up-to-date Chrome, Edge or Firefox.",
+      "error.pointerLock": "Could not capture the mouse. Wait a second and click again.",
+      "title.play": "Play",
+      "title.clickHint": "Playing captures the mouse. Press Esc to release it.",
+      "title.seedLabel": "Seed",
+      "title.seedPlaceholder": "Random",
+      "title.newMap": "New map",
+      "title.currentSeed": "Current map: {seed}",
+      "title.duration": "Length",
+      "title.minutes": "{n} min",
+      "controls.title": "Controls",
+      "controls.move": "Move",
+      "controls.look": "Look",
+      "controls.jump": "Jump",
+      "controls.slide": "Slide",
+      "controls.interact": "Use",
+      "controls.pause": "Pause",
+      "controls.debug": "Debug panel",
+      "controls.keys.move": "W A S D",
+      "controls.keys.look": "Mouse",
+      "controls.keys.jump": "Space",
+      "controls.keys.slide": "Shift / C",
+      "controls.keys.slideCtrl": "Shift / C / Ctrl",
+      "controls.keys.interact": "E",
+      "controls.keys.pause": "Esc",
+      "controls.keys.debug": "F3",
+      "pause.title": "Paused",
+      "pause.resume": "Resume",
+      "pause.seed": "Seed: {seed}",
+      "pause.backToTitle": "Back to title",
+      "pause.stats": "Stats",
+      "pause.items": "Items",
+      "pause.noItems": "No items yet",
+      "options.title": "Options",
+      "options.language": "Language",
+      "options.sensitivity": "Mouse sensitivity",
+      "options.resolution": "Internal resolution",
+      "options.resolutionValue": "{h} px",
+      "options.vertexSnap": "Vertex jitter (PS1)",
+      "options.dithering": "Color dithering",
+      "options.showFps": "Show FPS",
+      "options.slideCtrl": "Use Ctrl to slide",
+      "options.slideCtrlWarning": "Careful! In Chrome and Edge, Ctrl+W closes the tab and the game cannot prevent it.",
+      "lang.es": "Español",
+      "lang.en": "English",
+      "hud.fps": "{fps} FPS",
+      "hud.level": "Lv {n}",
+      "hud.kills": "Kills: {n}",
+      "hud.weaponLevel": "{name} · Lv {n}",
+      "hud.gold": "Gold {n}",
+      "hud.swarm": "SWARM",
+      "hud.challenge": "Challenge: {time}",
+      "hud.shrine": "Brazier table: {n}%",
+      "hud.itemCount": "{name} ×{n}",
+      "prompt.chest": "[E] Open the trunk · {cost} gold",
+      "prompt.totem": "[E] Touch the totem · {s}s challenge",
+      "prompt.portal": "[E] Open the wardrobe · summons the boss",
+      "notice.elite": "Elite incoming: {name}!",
+      "notice.swarm": "FINAL SWARM!",
+      "notice.portalFound": "You found the boss portal!",
+      "notice.portalRevealed": "The boss portal shows up on the map",
+      "notice.boss": "{name} has awoken!",
+      "notice.noGold": "Not enough: {n} gold short",
+      "notice.challengeStart": "Challenge accepted! More critters, better loot",
+      "notice.challengeDone": "Challenge complete!",
+      "notice.shrineCharged": "Brazier table fully charged!",
+      "notice.revive": "The quilted housecoat saved you!",
+      "wave.stampede": "Cockroach stampede!",
+      "wave.tupperware": "Tupperware uprising!",
+      "wave.pigeons": "A flock of squatter pigeons!",
+      "wave.dust": "Dust bunny storm!",
+      "character.remedios": "Doña Remedios",
+      "enemy.pelusa": "Rebel Dust Bunny",
+      "enemy.cucaracha": "Turbo Cockroach",
+      "enemy.taper": "Expired Tupperware",
+      "enemy.paloma": "Squatter Pigeon",
+      "enemy.rata": "Gym Rat",
+      "enemy.pelusaMadre": "The Mother Dust Bunny",
+      "weapon.chancla": "Homing Slipper",
+      "weapon.chancla.desc": "Seeks the nearest enemy. Never misses. Almost never.",
+      "weapon.naftalina": "Eau de Mothball",
+      "weapon.naftalina.desc": "A cloud of grandma's-wardrobe smell that hurts anyone who gets close.",
+      "weapon.barra": "Stale Baguette",
+      "weapon.barra.desc": "A sweeping swing in front of you. Three days in the bread bin made it a weapon.",
+      "weapon.dentaduras": "Orbital Dentures",
+      "weapon.dentaduras.desc": "False teeth that circle around you and bite whatever they catch.",
+      "weapon.jersey": "Static Sweater",
+      "weapon.jersey.desc": "So much wool rubbing that the zap jumps from critter to critter.",
+      "weapon.fregona": "Freshly Mopped Floor",
+      "weapon.fregona.desc": "You leave a freshly mopped trail. Whoever steps on it slips and gets what's coming.",
+      "tome.damage": "The Wallop Manual",
+      "tome.damage.short": "Damage",
+      "tome.damage.desc": "All your weapons hit harder.",
+      "tome.attackSpeed": "Strong Coffee Tome",
+      "tome.attackSpeed.short": "Attack speed",
+      "tome.attackSpeed.desc": "All your weapons attack more often.",
+      "tome.projectiles": "Times Tables",
+      "tome.projectiles.short": "Amount",
+      "tome.projectiles.desc": "More slippers, more dentures, more of everything.",
+      "tome.area": "Big Sizes Catalogue",
+      "tome.area.short": "Area",
+      "tome.area.desc": "Everything you do takes up more room.",
+      "tome.moveSpeed": "Nordic Walking Manual",
+      "tome.moveSpeed.short": "Speed",
+      "tome.moveSpeed.desc": "You walk faster. No poles needed.",
+      "tome.vitality": "Chicken Soup Cookbook",
+      "tome.vitality.short": "Health",
+      "tome.vitality.desc": "More max health, and it slowly comes back.",
+      "tome.luck": "Newspaper Horoscope",
+      "tome.luck.short": "Luck",
+      "tome.luck.desc": "Rarer cards show up. The stars say so.",
+      "tome.magnet": "Fridge Magnet Collection",
+      "tome.magnet.short": "Magnet",
+      "tome.magnet.desc": "You pull experience from farther away and earn more of it.",
+      "item.gafas": "Bottle-Bottom Glasses",
+      "item.gafas.desc": "Now you can see weak spots. And the dust under the sofa.",
+      "item.zapatillas": "Velcro Sneakers",
+      "item.zapatillas.desc": "No laces to tie: more time to run.",
+      "item.termo": "Flask of Stewed Coffee",
+      "item.termo.desc": "Old-school coffee. It leaves you with a very useful jitter.",
+      "item.cojin": "Crochet Cushion",
+      "item.cojin.desc": "Strategic padding: hits hurt less.",
+      "item.lupa": "Leaflet Magnifier",
+      "item.lupa.desc": "Your crits, in large print and bigger.",
+      "item.loteria": "Lottery Ticket",
+      "item.loteria.desc": "This time you win for sure: you pick up more gold.",
+      "item.rulos": "Lucky Curlers",
+      "item.rulos.desc": "A hairdo like this attracts good fortune.",
+      "item.perlas": "Pearl Necklace",
+      "item.perlas.desc": "Each crit has a {n}% chance to bounce a pearl to the nearest enemy ({dmg}% of the hit).",
+      "item.monedero": "Bulging Coin Purse",
+      "item.monedero.desc": "+{n}% damage for every 100 gold you carry (up to +{max}%).",
+      "item.baraja": "Deck of Cards",
+      "item.baraja.desc": "One more card to choose from when you level up.",
+      "item.olla": "Pressure Cooker",
+      "item.olla.desc": "Enemies have a {n}% chance to explode on death and hurt those nearby.",
+      "item.bata": "Quilted Housecoat",
+      "item.bata.desc": "If you fall, you get back up with {n}% health and push everyone away. Used up on use.",
+      "boost.damage": "Bad Temper",
+      "boost.attackSpeed": "Market Rush",
+      "boost.area": "Roomy Housecoat",
+      "boost.maxHp": "Hearty Stew",
+      "boost.regen": "Restorative Nap",
+      "boost.moveSpeed": "Brisk Pace",
+      "boost.critChance": "Nosy Neighbor Eye",
+      "boost.critDamage": "Well-Aimed Slipper",
+      "boost.armor": "Reinforced Girdle",
+      "boost.luck": "Lucky Prayer Card",
+      "boost.xpGain": "Solved Crossword",
+      "boost.goldGain": "Piggy Bank",
+      "rarity.common": "Common",
+      "rarity.uncommon": "Uncommon",
+      "rarity.rare": "Rare",
+      "rarity.epic": "Epic",
+      "rarity.legendary": "Legendary",
+      "stat.damage": "damage",
+      "stat.cooldown": "attack speed",
+      "stat.count": "amount",
+      "stat.area": "area",
+      "stat.speed": "projectile speed",
+      "stat.duration": "duration",
+      "stat.pierce": "pierce",
+      "stat.critChance": "crit chance",
+      "stat.critMultiplier": "crit damage",
+      "stat.knockback": "knockback",
+      "stat.count.swings": "swings",
+      "stat.count.dentures": "dentures",
+      "stat.count.chains": "chains",
+      "stat.count.puddles": "puddles",
+      "stat.speed.spin": "spin speed",
+      "stat.pierce.jumps": "jumps",
+      "stat.extraProjectiles": "amount",
+      "stat.moveSpeed": "move speed",
+      "stat.maxHp": "max health",
+      "stat.regen": "health per second",
+      "stat.luck": "luck",
+      "stat.pickupRadius": "pickup radius",
+      "stat.xpGain": "experience",
+      "stat.armor": "armor",
+      "stat.health": "health",
+      "stat.goldGain": "gold",
+      "stat.choices": "level-up choices",
+      "upgrade.percent": "{stat} +{value}%",
+      "upgrade.number": "{stat} +{value}",
+      "format.percent": "{value}%",
+      "levelup.title": "Level {n}!",
+      "levelup.subtitle": "Choose an upgrade",
+      "levelup.pending": "{n} more to go",
+      "levelup.newWeapon": "New weapon",
+      "levelup.newTome": "New tome",
+      "levelup.level": "Lv {from} → {to}",
+      "levelup.reroll": "Reroll ({n})",
+      "levelup.skip": "Skip ({n})",
+      "levelup.banish": "Banish ({n})",
+      "levelup.banishHint": "Pick the card you don't want to see again this run",
+      "levelup.cancel": "Cancel",
+      "levelup.filler": "Soothing Linden Tea",
+      "levelup.filler.desc": "Nothing left to offer you. You recover {n}% of your health.",
+      "levelup.fillerGold": "Sofa Change",
+      "levelup.fillerGold.desc": "Digging between the cushions turns up {n} gold.",
+      "shrine.title": "Brazier table charged!",
+      "shrine.subtitle": "Pick a toasty blessing",
+      "gameover.title": "Straight to bed, no dinner!",
+      "gameover.subtitle": "You have fallen (but you will be back)",
+      "gameover.time": "Time",
+      "gameover.kills": "Kills",
+      "gameover.level": "Level",
+      "gameover.damage": "Damage by weapon",
+      "gameover.seed": "Seed: {seed}",
+      "gameover.cheated": "Run with debug cheats",
+      "gameover.retry": "Retry",
+      "gameover.newMap": "New map",
+      "gameover.backToTitle": "Back to title",
+      "results.victory": "Victory!",
+      "results.victorySubtitle": "The Mother Dust Bunny bit the dust (literally)",
+      "results.gold": "Gold earned",
+      "results.chests": "Trunks opened",
+      "results.items": "Items",
+      "results.noItems": "None",
+      "debug.title": "DEBUG · F3",
+      "debug.fps": "FPS",
+      "debug.frame": "Frame",
+      "debug.logic": "Logic",
+      "debug.render": "Render",
+      "debug.drawCalls": "Draw calls",
+      "debug.triangles": "Triangles",
+      "debug.resolution": "Resolution",
+      "debug.position": "Position",
+      "debug.speed": "Speed",
+      "debug.state": "State",
+      "debug.slope": "Slope",
+      "debug.seed": "Seed",
+      "debug.state.grounded": "ground",
+      "debug.state.airborne": "air",
+      "debug.state.sliding": "sliding",
+      "debug.state.steep": "slipping",
+      "debug.entities": "Enemies: {enemies} · Projectiles: {projectiles} · Gems: {gems} · Particles: {particles}",
+      "debug.run": "Time: {time} · HP: {hp} · XP: {xp}/{next} · Slowdown: {slow}%",
+      "debug.director": "Difficulty: min {minutes} · Rate: {rate}/s · Max: {max} · Gold: {gold}",
+      "debug.keys": "[1] Invincible [2] +Level [3] +1 min [4] +100 enemies [5] Kill all",
+      "debug.keys2": "[6] Summon boss [7] +100 gold [8] Reveal map",
+      "debug.invincibleOn": "Invincible: ON",
+      "debug.invincibleOff": "Invincible: OFF",
+      "debug.levelUp": "+1 level",
+      "debug.skipTime": "+1 minute",
+      "debug.spawn": "+100 enemies",
+      "debug.killAll": "All enemies removed",
+      "debug.boss": "Boss summoned",
+      "debug.bossBusy": "The boss is already here",
+      "debug.gold": "+100 gold",
+      "debug.reveal": "Map revealed"
+    }
+  },
+  "rng": [
+    {
+      "seed": "HITO6QA",
+      "hash": [
+        47511918,
+        334013887,
+        4181956179,
+        1190401435
+      ],
+      "nextU32": [
+        2766437270,
+        1948340099,
+        2443143269,
+        2764493707,
+        240777032,
+        189155766,
+        3378823334,
+        514366836,
+        3711429414,
+        3777800021,
+        2015023186,
+        3544865905,
+        2515916893,
+        1172757711,
+        674812126,
+        1269524994
+      ],
+      "terrainU32": [
+        1074318414,
+        3810990562,
+        1300517275,
+        2029115882,
+        1105648341,
+        3497148224,
+        3837710323,
+        1085946664
+      ]
+    },
+    {
+      "seed": "PULIDO-REFERENCIA",
+      "hash": [
+        3246948289,
+        118014398,
+        3771484590,
+        1589671608
+      ],
+      "nextU32": [
+        3525576531,
+        517383422,
+        1764508336,
+        949155195,
+        2842717269,
+        2021857559,
+        1468996114,
+        599813435,
+        1336527306,
+        2127006273,
+        370862282,
+        780417611,
+        648469623,
+        2141502045,
+        361307486,
+        380270581
+      ],
+      "terrainU32": [
+        2382426954,
+        2471117882,
+        4195989015,
+        4184098225,
+        433060282,
+        4185999510,
+        3071216190,
+        134545267
+      ]
+    },
+    {
+      "seed": "MAMPORRO",
+      "hash": [
+        238559238,
+        487619149,
+        1222263658,
+        2173641692
+      ],
+      "nextU32": [
+        4226521494,
+        4224142474,
+        96037810,
+        977492123,
+        903880220,
+        1877676522,
+        1069193190,
+        3381591342,
+        2819984456,
+        3499970232,
+        2802348384,
+        3497363209,
+        1642694516,
+        174599220,
+        2995282176,
+        1142532759
+      ],
+      "terrainU32": [
+        2084383758,
+        282968223,
+        2571041499,
+        1967031256,
+        4237037578,
+        4178477478,
+        3332975653,
+        476471422
+      ]
+    },
+    {
+      "seed": "",
+      "hash": [
+        41608494,
+        3485963809,
+        1435736333,
+        1262568316
+      ],
+      "nextU32": [
+        780688151,
+        1369530603,
+        4170761935,
+        2420727049,
+        3315390910,
+        31621017,
+        4095259433,
+        4180064351,
+        2911900625,
+        2048170805,
+        1255559921,
+        37096647,
+        3933766783,
+        324343889,
+        2959807682,
+        3007692281
+      ],
+      "terrainU32": [
+        2060070569,
+        4255517435,
+        379570127,
+        2443935802,
+        1555491244,
+        4022964694,
+        2483787144,
+        2786606561
+      ]
+    }
+  ],
+  "formulas": {
+    "xp": [
+      {
+        "level": 1,
+        "needed": 10
+      },
+      {
+        "level": 2,
+        "needed": 16
+      },
+      {
+        "level": 5,
+        "needed": 37
+      },
+      {
+        "level": 10,
+        "needed": 81
+      },
+      {
+        "level": 20,
+        "needed": 194
+      },
+      {
+        "level": 50,
+        "needed": 676
+      },
+      {
+        "level": 100,
+        "needed": 1831
+      }
+    ],
+    "damage": [
+      {
+        "base": 10,
+        "chance": 0,
+        "multiplier": 2,
+        "random": 0,
+        "result": {
+          "amount": 10,
+          "critLevel": 0
+        }
+      },
+      {
+        "base": 10,
+        "chance": 0,
+        "multiplier": 2,
+        "random": 0.049,
+        "result": {
+          "amount": 10,
+          "critLevel": 0
+        }
+      },
+      {
+        "base": 10,
+        "chance": 0,
+        "multiplier": 2,
+        "random": 0.5,
+        "result": {
+          "amount": 10,
+          "critLevel": 0
+        }
+      },
+      {
+        "base": 10,
+        "chance": 0,
+        "multiplier": 2,
+        "random": 0.99,
+        "result": {
+          "amount": 10,
+          "critLevel": 0
+        }
+      },
+      {
+        "base": 10,
+        "chance": 0.05,
+        "multiplier": 2,
+        "random": 0,
+        "result": {
+          "amount": 20,
+          "critLevel": 1
+        }
+      },
+      {
+        "base": 10,
+        "chance": 0.05,
+        "multiplier": 2,
+        "random": 0.049,
+        "result": {
+          "amount": 20,
+          "critLevel": 1
+        }
+      },
+      {
+        "base": 10,
+        "chance": 0.05,
+        "multiplier": 2,
+        "random": 0.5,
+        "result": {
+          "amount": 10,
+          "critLevel": 0
+        }
+      },
+      {
+        "base": 10,
+        "chance": 0.05,
+        "multiplier": 2,
+        "random": 0.99,
+        "result": {
+          "amount": 10,
+          "critLevel": 0
+        }
+      },
+      {
+        "base": 10,
+        "chance": 1,
+        "multiplier": 2,
+        "random": 0,
+        "result": {
+          "amount": 20,
+          "critLevel": 1
+        }
+      },
+      {
+        "base": 10,
+        "chance": 1,
+        "multiplier": 2,
+        "random": 0.049,
+        "result": {
+          "amount": 20,
+          "critLevel": 1
+        }
+      },
+      {
+        "base": 10,
+        "chance": 1,
+        "multiplier": 2,
+        "random": 0.5,
+        "result": {
+          "amount": 20,
+          "critLevel": 1
+        }
+      },
+      {
+        "base": 10,
+        "chance": 1,
+        "multiplier": 2,
+        "random": 0.99,
+        "result": {
+          "amount": 20,
+          "critLevel": 1
+        }
+      },
+      {
+        "base": 10,
+        "chance": 1.5,
+        "multiplier": 2,
+        "random": 0,
+        "result": {
+          "amount": 30,
+          "critLevel": 2
+        }
+      },
+      {
+        "base": 10,
+        "chance": 1.5,
+        "multiplier": 2,
+        "random": 0.049,
+        "result": {
+          "amount": 30,
+          "critLevel": 2
+        }
+      },
+      {
+        "base": 10,
+        "chance": 1.5,
+        "multiplier": 2,
+        "random": 0.5,
+        "result": {
+          "amount": 20,
+          "critLevel": 1
+        }
+      },
+      {
+        "base": 10,
+        "chance": 1.5,
+        "multiplier": 2,
+        "random": 0.99,
+        "result": {
+          "amount": 20,
+          "critLevel": 1
+        }
+      },
+      {
+        "base": 10,
+        "chance": 2.5,
+        "multiplier": 2,
+        "random": 0,
+        "result": {
+          "amount": 40,
+          "critLevel": 3
+        }
+      },
+      {
+        "base": 10,
+        "chance": 2.5,
+        "multiplier": 2,
+        "random": 0.049,
+        "result": {
+          "amount": 40,
+          "critLevel": 3
+        }
+      },
+      {
+        "base": 10,
+        "chance": 2.5,
+        "multiplier": 2,
+        "random": 0.5,
+        "result": {
+          "amount": 30,
+          "critLevel": 2
+        }
+      },
+      {
+        "base": 10,
+        "chance": 2.5,
+        "multiplier": 2,
+        "random": 0.99,
+        "result": {
+          "amount": 30,
+          "critLevel": 2
+        }
+      }
+    ],
+    "armor": [
+      {
+        "damage": 20,
+        "armor": -10,
+        "result": 20
+      },
+      {
+        "damage": 20,
+        "armor": 0,
+        "result": 20
+      },
+      {
+        "damage": 20,
+        "armor": 50,
+        "result": 13.333333333333334
+      },
+      {
+        "damage": 20,
+        "armor": 100,
+        "result": 10
+      },
+      {
+        "damage": 20,
+        "armor": 200,
+        "result": 6.666666666666667
+      }
+    ],
+    "chest": [
+      {
+        "opened": 0,
+        "cost": 15
+      },
+      {
+        "opened": 1,
+        "cost": 30
+      },
+      {
+        "opened": 2,
+        "cost": 49
+      },
+      {
+        "opened": 3,
+        "cost": 74
+      },
+      {
+        "opened": 4,
+        "cost": 103
+      },
+      {
+        "opened": 5,
+        "cost": 138
+      },
+      {
+        "opened": 6,
+        "cost": 177
+      },
+      {
+        "opened": 7,
+        "cost": 222
+      },
+      {
+        "opened": 8,
+        "cost": 271
+      },
+      {
+        "opened": 9,
+        "cost": 326
+      },
+      {
+        "opened": 10,
+        "cost": 385
+      },
+      {
+        "opened": 11,
+        "cost": 450
+      },
+      {
+        "opened": 12,
+        "cost": 519
+      },
+      {
+        "opened": 13,
+        "cost": 594
+      }
+    ],
+    "director": [
+      {
+        "minutes": 5,
+        "time": 0,
+        "result": {
+          "minutes": 0,
+          "hp": 1,
+          "xp": 2,
+          "gold": 2,
+          "rate": 0.9,
+          "maxAlive": 60
+        }
+      },
+      {
+        "minutes": 5,
+        "time": 75,
+        "result": {
+          "minutes": 2.5,
+          "hp": 1.675,
+          "xp": 2.6,
+          "gold": 2,
+          "rate": 2.65,
+          "maxAlive": 173
+        }
+      },
+      {
+        "minutes": 5,
+        "time": 150,
+        "result": {
+          "minutes": 5,
+          "hp": 2.6,
+          "xp": 3.2,
+          "gold": 2,
+          "rate": 5.15,
+          "maxAlive": 285
+        }
+      },
+      {
+        "minutes": 5,
+        "time": 300,
+        "result": {
+          "minutes": 10,
+          "hp": 5.2,
+          "xp": 4.4,
+          "gold": 2,
+          "rate": 12.4,
+          "maxAlive": 450
+        }
+      },
+      {
+        "minutes": 5,
+        "time": 330,
+        "result": {
+          "minutes": 11,
+          "hp": 7.592,
+          "xp": 4.64,
+          "gold": 2,
+          "rate": 40.19194944264336,
+          "maxAlive": 750
+        }
+      },
+      {
+        "minutes": 10,
+        "time": 0,
+        "result": {
+          "minutes": 0,
+          "hp": 1,
+          "xp": 1,
+          "gold": 1,
+          "rate": 0.9,
+          "maxAlive": 60
+        }
+      },
+      {
+        "minutes": 10,
+        "time": 150,
+        "result": {
+          "minutes": 2.5,
+          "hp": 1.675,
+          "xp": 1.3,
+          "gold": 1,
+          "rate": 2.65,
+          "maxAlive": 173
+        }
+      },
+      {
+        "minutes": 10,
+        "time": 300,
+        "result": {
+          "minutes": 5,
+          "hp": 2.6,
+          "xp": 1.6,
+          "gold": 1,
+          "rate": 5.15,
+          "maxAlive": 285
+        }
+      },
+      {
+        "minutes": 10,
+        "time": 600,
+        "result": {
+          "minutes": 10,
+          "hp": 5.2,
+          "xp": 2.2,
+          "gold": 1,
+          "rate": 12.4,
+          "maxAlive": 450
+        }
+      },
+      {
+        "minutes": 10,
+        "time": 660,
+        "result": {
+          "minutes": 11,
+          "hp": 9.344,
+          "xp": 2.32,
+          "gold": 1,
+          "rate": 60,
+          "maxAlive": 750
+        }
+      },
+      {
+        "minutes": 15,
+        "time": 0,
+        "result": {
+          "minutes": 0,
+          "hp": 1,
+          "xp": 0.6666666666666666,
+          "gold": 0.6666666666666666,
+          "rate": 0.9,
+          "maxAlive": 60
+        }
+      },
+      {
+        "minutes": 15,
+        "time": 225,
+        "result": {
+          "minutes": 2.5,
+          "hp": 1.675,
+          "xp": 0.8666666666666667,
+          "gold": 0.6666666666666666,
+          "rate": 2.65,
+          "maxAlive": 173
+        }
+      },
+      {
+        "minutes": 15,
+        "time": 450,
+        "result": {
+          "minutes": 5,
+          "hp": 2.6,
+          "xp": 1.0666666666666667,
+          "gold": 0.6666666666666666,
+          "rate": 5.15,
+          "maxAlive": 285
+        }
+      },
+      {
+        "minutes": 15,
+        "time": 900,
+        "result": {
+          "minutes": 10,
+          "hp": 5.2,
+          "xp": 1.4666666666666668,
+          "gold": 0.6666666666666666,
+          "rate": 12.4,
+          "maxAlive": 450
+        }
+      },
+      {
+        "minutes": 15,
+        "time": 990.0000000000001,
+        "result": {
+          "minutes": 11.000000000000002,
+          "hp": 11.096000000000009,
+          "xp": 1.5466666666666669,
+          "gold": 0.6666666666666666,
+          "rate": 60,
+          "maxAlive": 750
+        }
+      }
+    ]
+  },
+  "saves": [
+    {
+      "id": "new",
+      "raw": null,
+      "result": {
+        "data": {
+          "version": 3,
+          "settings": {
+            "musicVolume": 0.5,
+            "effectsVolume": 0.7,
+            "muted": false,
+            "reducedParticles": false,
+            "cameraShake": true,
+            "flashes": true,
+            "language": "es",
+            "mouseSensitivity": 1,
+            "renderHeight": 360,
+            "vertexSnap": true,
+            "dithering": true,
+            "slideWithCtrl": false,
+            "showFps": false,
+            "runMinutes": 10
+          },
+          "meta": {
+            "coins": 0,
+            "selected": "remedios",
+            "characters": [
+              "remedios"
+            ],
+            "weapons": [
+              "chancla",
+              "naftalina",
+              "barra",
+              "dentaduras"
+            ],
+            "items": [
+              "gafas",
+              "zapatillas",
+              "termo",
+              "cojin",
+              "lupa",
+              "loteria",
+              "rulos",
+              "monedero"
+            ],
+            "extras": {
+              "rerolls": 0,
+              "skips": 0,
+              "banishes": 0
+            },
+            "missions": {
+              "first": 0,
+              "kills": 0,
+              "chests": 0,
+              "shrines": 0,
+              "challenge": 0,
+              "level": 0,
+              "victory": 0,
+              "noLife": 0
+            },
+            "completed": [],
+            "lastRun": ""
+          }
+        },
+        "status": "new"
+      }
+    },
+    {
+      "id": "corrupt",
+      "raw": "{broken",
+      "result": {
+        "data": {
+          "version": 3,
+          "settings": {
+            "musicVolume": 0.5,
+            "effectsVolume": 0.7,
+            "muted": false,
+            "reducedParticles": false,
+            "cameraShake": true,
+            "flashes": true,
+            "language": "es",
+            "mouseSensitivity": 1,
+            "renderHeight": 360,
+            "vertexSnap": true,
+            "dithering": true,
+            "slideWithCtrl": false,
+            "showFps": false,
+            "runMinutes": 10
+          },
+          "meta": {
+            "coins": 0,
+            "selected": "remedios",
+            "characters": [
+              "remedios"
+            ],
+            "weapons": [
+              "chancla",
+              "naftalina",
+              "barra",
+              "dentaduras"
+            ],
+            "items": [
+              "gafas",
+              "zapatillas",
+              "termo",
+              "cojin",
+              "lupa",
+              "loteria",
+              "rulos",
+              "monedero"
+            ],
+            "extras": {
+              "rerolls": 0,
+              "skips": 0,
+              "banishes": 0
+            },
+            "missions": {
+              "first": 0,
+              "kills": 0,
+              "chests": 0,
+              "shrines": 0,
+              "challenge": 0,
+              "level": 0,
+              "victory": 0,
+              "noLife": 0
+            },
+            "completed": [],
+            "lastRun": ""
+          }
+        },
+        "status": "reset"
+      }
+    },
+    {
+      "id": "v1-options",
+      "raw": "{\"version\":1,\"settings\":{\"language\":\"en\",\"musicVolume\":0.25,\"runMinutes\":5}}",
+      "result": {
+        "data": {
+          "version": 3,
+          "settings": {
+            "musicVolume": 0.25,
+            "effectsVolume": 0.7,
+            "muted": false,
+            "reducedParticles": false,
+            "cameraShake": true,
+            "flashes": true,
+            "language": "en",
+            "mouseSensitivity": 1,
+            "renderHeight": 360,
+            "vertexSnap": true,
+            "dithering": true,
+            "slideWithCtrl": false,
+            "showFps": false,
+            "runMinutes": 5
+          },
+          "meta": {
+            "coins": 0,
+            "selected": "remedios",
+            "characters": [
+              "remedios"
+            ],
+            "weapons": [
+              "chancla",
+              "naftalina",
+              "barra",
+              "dentaduras"
+            ],
+            "items": [
+              "gafas",
+              "zapatillas",
+              "termo",
+              "cojin",
+              "lupa",
+              "loteria",
+              "rulos",
+              "monedero"
+            ],
+            "extras": {
+              "rerolls": 0,
+              "skips": 0,
+              "banishes": 0
+            },
+            "missions": {
+              "first": 0,
+              "kills": 0,
+              "chests": 0,
+              "shrines": 0,
+              "challenge": 0,
+              "level": 0,
+              "victory": 0,
+              "noLife": 0
+            },
+            "completed": [],
+            "lastRun": ""
+          }
+        },
+        "status": "migrated"
+      }
+    },
+    {
+      "id": "v2-progress",
+      "raw": "{\"version\":2,\"settings\":{\"language\":\"es\"},\"meta\":{\"coins\":280,\"selected\":\"baguette\",\"characters\":[\"remedios\",\"baguette\"],\"weapons\":[\"chancla\",\"naftalina\",\"barra\",\"dentaduras\"],\"items\":[\"gafas\",\"zapatillas\",\"termo\",\"cojin\",\"lupa\",\"loteria\",\"rulos\",\"monedero\"],\"extras\":{\"rerolls\":0,\"skips\":0,\"banishes\":0},\"missions\":{\"first\":0,\"kills\":0,\"chests\":0,\"shrines\":0,\"challenge\":0,\"level\":0,\"victory\":0,\"noLife\":0},\"completed\":[],\"lastRun\":\"\"}}",
+      "result": {
+        "data": {
+          "version": 3,
+          "settings": {
+            "musicVolume": 0.5,
+            "effectsVolume": 0.7,
+            "muted": false,
+            "reducedParticles": false,
+            "cameraShake": true,
+            "flashes": true,
+            "language": "es",
+            "mouseSensitivity": 1,
+            "renderHeight": 360,
+            "vertexSnap": true,
+            "dithering": true,
+            "slideWithCtrl": false,
+            "showFps": false,
+            "runMinutes": 10
+          },
+          "meta": {
+            "coins": 280,
+            "selected": "baguette",
+            "characters": [
+              "remedios",
+              "baguette"
+            ],
+            "weapons": [
+              "chancla",
+              "naftalina",
+              "barra",
+              "dentaduras"
+            ],
+            "items": [
+              "gafas",
+              "zapatillas",
+              "termo",
+              "cojin",
+              "lupa",
+              "loteria",
+              "rulos",
+              "monedero"
+            ],
+            "extras": {
+              "rerolls": 0,
+              "skips": 0,
+              "banishes": 0
+            },
+            "missions": {
+              "first": 0,
+              "kills": 0,
+              "chests": 0,
+              "shrines": 0,
+              "challenge": 0,
+              "level": 0,
+              "victory": 0,
+              "noLife": 0
+            },
+            "completed": [],
+            "lastRun": ""
+          }
+        },
+        "status": "migrated"
+      }
+    },
+    {
+      "id": "v3-progress",
+      "raw": "{\"version\":3,\"settings\":{\"musicVolume\":0.5,\"effectsVolume\":0.7,\"muted\":false,\"reducedParticles\":false,\"cameraShake\":true,\"flashes\":true,\"language\":\"en\",\"mouseSensitivity\":1,\"renderHeight\":360,\"vertexSnap\":true,\"dithering\":true,\"slideWithCtrl\":false,\"showFps\":false,\"runMinutes\":10},\"meta\":{\"coins\":280,\"selected\":\"baguette\",\"characters\":[\"remedios\",\"baguette\"],\"weapons\":[\"chancla\",\"naftalina\",\"barra\",\"dentaduras\"],\"items\":[\"gafas\",\"zapatillas\",\"termo\",\"cojin\",\"lupa\",\"loteria\",\"rulos\",\"monedero\"],\"extras\":{\"rerolls\":0,\"skips\":0,\"banishes\":0},\"missions\":{\"first\":0,\"kills\":0,\"chests\":0,\"shrines\":0,\"challenge\":0,\"level\":0,\"victory\":0,\"noLife\":0},\"completed\":[],\"lastRun\":\"\"}}",
+      "result": {
+        "data": {
+          "version": 3,
+          "settings": {
+            "musicVolume": 0.5,
+            "effectsVolume": 0.7,
+            "muted": false,
+            "reducedParticles": false,
+            "cameraShake": true,
+            "flashes": true,
+            "language": "en",
+            "mouseSensitivity": 1,
+            "renderHeight": 360,
+            "vertexSnap": true,
+            "dithering": true,
+            "slideWithCtrl": false,
+            "showFps": false,
+            "runMinutes": 10
+          },
+          "meta": {
+            "coins": 280,
+            "selected": "baguette",
+            "characters": [
+              "remedios",
+              "baguette"
+            ],
+            "weapons": [
+              "chancla",
+              "naftalina",
+              "barra",
+              "dentaduras"
+            ],
+            "items": [
+              "gafas",
+              "zapatillas",
+              "termo",
+              "cojin",
+              "lupa",
+              "loteria",
+              "rulos",
+              "monedero"
+            ],
+            "extras": {
+              "rerolls": 0,
+              "skips": 0,
+              "banishes": 0
+            },
+            "missions": {
+              "first": 0,
+              "kills": 0,
+              "chests": 0,
+              "shrines": 0,
+              "challenge": 0,
+              "level": 0,
+              "victory": 0,
+              "noLife": 0
+            },
+            "completed": [],
+            "lastRun": ""
+          }
+        },
+        "status": "ok"
+      }
+    },
+    {
+      "id": "future",
+      "raw": "{\"version\":999,\"settings\":{},\"meta\":{\"coins\":280,\"selected\":\"baguette\",\"characters\":[\"remedios\",\"baguette\"],\"weapons\":[\"chancla\",\"naftalina\",\"barra\",\"dentaduras\"],\"items\":[\"gafas\",\"zapatillas\",\"termo\",\"cojin\",\"lupa\",\"loteria\",\"rulos\",\"monedero\"],\"extras\":{\"rerolls\":0,\"skips\":0,\"banishes\":0},\"missions\":{\"first\":0,\"kills\":0,\"chests\":0,\"shrines\":0,\"challenge\":0,\"level\":0,\"victory\":0,\"noLife\":0},\"completed\":[],\"lastRun\":\"\"}}",
+      "result": {
+        "data": {
+          "version": 3,
+          "settings": {
+            "musicVolume": 0.5,
+            "effectsVolume": 0.7,
+            "muted": false,
+            "reducedParticles": false,
+            "cameraShake": true,
+            "flashes": true,
+            "language": "es",
+            "mouseSensitivity": 1,
+            "renderHeight": 360,
+            "vertexSnap": true,
+            "dithering": true,
+            "slideWithCtrl": false,
+            "showFps": false,
+            "runMinutes": 10
+          },
+          "meta": {
+            "coins": 0,
+            "selected": "remedios",
+            "characters": [
+              "remedios"
+            ],
+            "weapons": [
+              "chancla",
+              "naftalina",
+              "barra",
+              "dentaduras"
+            ],
+            "items": [
+              "gafas",
+              "zapatillas",
+              "termo",
+              "cojin",
+              "lupa",
+              "loteria",
+              "rulos",
+              "monedero"
+            ],
+            "extras": {
+              "rerolls": 0,
+              "skips": 0,
+              "banishes": 0
+            },
+            "missions": {
+              "first": 0,
+              "kills": 0,
+              "chests": 0,
+              "shrines": 0,
+              "challenge": 0,
+              "level": 0,
+              "victory": 0,
+              "noLife": 0
+            },
+            "completed": [],
+            "lastRun": ""
+          }
+        },
+        "status": "reset"
+      }
+    }
+  ],
+  "worlds": [
+    {
+      "seed": "HITO6QA",
+      "sites": [
+        {
+          "kind": "house",
+          "x": -83.09774135705084,
+          "z": 31.867262698709965,
+          "radius": 6.5,
+          "rotation": 3.9884286598685748,
+          "floorY": 9.131174299943272
+        },
+        {
+          "kind": "house",
+          "x": -105.9402064292226,
+          "z": 2.7101840884424746,
+          "radius": 6.5,
+          "rotation": 1.2170375393900181,
+          "floorY": 14.068774880137358
+        },
+        {
+          "kind": "house",
+          "x": 33.967129138763994,
+          "z": 56.155008032452315,
+          "radius": 6.5,
+          "rotation": 5.166625165419343,
+          "floorY": 9.162376382118593
+        },
+        {
+          "kind": "house",
+          "x": 110.5773537682835,
+          "z": -56.185799481812865,
+          "radius": 6.5,
+          "rotation": 2.355337161681171,
+          "floorY": 11.31092962366555
+        },
+        {
+          "kind": "house",
+          "x": -97.07168258493766,
+          "z": 60.235364314867184,
+          "radius": 6.5,
+          "rotation": 0.10809047012766006,
+          "floorY": 8.758305952039702
+        },
+        {
+          "kind": "temple",
+          "x": -80.39282690687105,
+          "z": -20.270635354798287,
+          "radius": 7.5,
+          "rotation": 3.20874314183145,
+          "floorY": 17.065781052299844
+        },
+        {
+          "kind": "temple",
+          "x": -81.23183848289773,
+          "z": -93.4252415644005,
+          "radius": 7.5,
+          "rotation": 2.9061865779018428,
+          "floorY": 10.383488054043335
+        },
+        {
+          "kind": "farm",
+          "x": -2.005665696458891,
+          "z": -48.11745312879793,
+          "radius": 6.5,
+          "rotation": 5.87684792299082,
+          "floorY": 13.509577629690325
+        },
+        {
+          "kind": "farm",
+          "x": 49.799298827769235,
+          "z": -0.49799738242290914,
+          "radius": 6.5,
+          "rotation": 5.853021538617703,
+          "floorY": 7.170719465302236
+        },
+        {
+          "kind": "well",
+          "x": 6.432684243423864,
+          "z": 97.25034002424218,
+          "radius": 3.5,
+          "rotation": 3.3963025857951368,
+          "floorY": 8.486193494326697
+        },
+        {
+          "kind": "well",
+          "x": 113.99346091109328,
+          "z": 32.35017827525735,
+          "radius": 3.5,
+          "rotation": 4.96321432380989,
+          "floorY": 13.40120420293333
+        },
+        {
+          "kind": "well",
+          "x": 65.37867639353499,
+          "z": -88.17763751163147,
+          "radius": 3.5,
+          "rotation": 0.7719492166348328,
+          "floorY": 15.77237434729395
+        }
+      ],
+      "interactables": [
+        {
+          "kind": "portal",
+          "x": 111.6813771771267,
+          "y": 13.792440712910237,
+          "z": -9.632391032762825,
+          "rotation": 2.21844550649712
+        },
+        {
+          "kind": "shrine",
+          "x": -102.99808234255761,
+          "y": 6.495681355700419,
+          "z": 95.74114729464054,
+          "rotation": 2.449094450545728
+        },
+        {
+          "kind": "shrine",
+          "x": 96.07512400019914,
+          "y": 13.46476549140956,
+          "z": -81.6736212959513,
+          "rotation": 5.7787206535161735
+        },
+        {
+          "kind": "shrine",
+          "x": 66.60117941256613,
+          "y": 9.201928131005788,
+          "z": -18.725713818334043,
+          "rotation": 3.00380307245495
+        },
+        {
+          "kind": "totem",
+          "x": -42.14442569296807,
+          "y": 18.206192172669017,
+          "z": 49.478229716420174,
+          "rotation": 1.4321581200485334
+        },
+        {
+          "kind": "totem",
+          "x": -70.98957210034132,
+          "y": 18.306220768263795,
+          "z": 107.82184222899377,
+          "rotation": 5.1505318713433335
+        },
+        {
+          "kind": "chest",
+          "x": 72.73355909530073,
+          "y": 13.353768112050204,
+          "z": 90.03814596589655,
+          "rotation": 0.33186615690608606
+        },
+        {
+          "kind": "chest",
+          "x": -123.85206490103155,
+          "y": 14.732285821260561,
+          "z": 10.506126629188657,
+          "rotation": 3.938128174708609
+        },
+        {
+          "kind": "chest",
+          "x": 30.118762931786478,
+          "y": 4.248105911349125,
+          "z": -19.947529250755906,
+          "rotation": 5.6717991032101445
+        },
+        {
+          "kind": "chest",
+          "x": -27.820363149046898,
+          "y": 13.60270514693777,
+          "z": -107.37244864460081,
+          "rotation": 6.259512208825733
+        },
+        {
+          "kind": "chest",
+          "x": 67.40686445776373,
+          "y": 8.794100194228175,
+          "z": -59.84600424114615,
+          "rotation": 4.348353657217991
+        },
+        {
+          "kind": "chest",
+          "x": 28.080946980044246,
+          "y": 9.102033539910732,
+          "z": 65.59867142233998,
+          "rotation": 0.37408004054092486
+        },
+        {
+          "kind": "chest",
+          "x": 108.54290227219462,
+          "y": 13.48923782958946,
+          "z": -70.37494252994657,
+          "rotation": 6.003931495114558
+        },
+        {
+          "kind": "chest",
+          "x": 87.76472030673176,
+          "y": 13.860112184462725,
+          "z": 87.49052942823619,
+          "rotation": 5.993233320029767
+        },
+        {
+          "kind": "chest",
+          "x": 114.37152776028961,
+          "y": 17.664201413211707,
+          "z": 78.74287682399154,
+          "rotation": 5.151496646798676
+        },
+        {
+          "kind": "chest",
+          "x": -33.162104208022356,
+          "y": 17.820681979307096,
+          "z": 65.87216185871512,
+          "rotation": 1.5990542791663234
+        },
+        {
+          "kind": "chest",
+          "x": -88.64348033443093,
+          "y": 8.837860104066834,
+          "z": 61.69670780003071,
+          "rotation": 3.3214145790033465
+        },
+        {
+          "kind": "chest",
+          "x": 28.360377855598927,
+          "y": 13.17274588563138,
+          "z": 27.47453513648361,
+          "rotation": 5.121269289239332
+        },
+        {
+          "kind": "chest",
+          "x": 52.11614162195474,
+          "y": 13.189941030065894,
+          "z": -55.831022657454014,
+          "rotation": 5.432219092563907
+        },
+        {
+          "kind": "chest",
+          "x": 31.177594436332583,
+          "y": 12.955267164811946,
+          "z": -116.93422228563577,
+          "rotation": 3.98161918436373
+        }
+      ],
+      "heights": [
+        {
+          "x": -100,
+          "z": -100,
+          "height": 7.574537754058838
+        },
+        {
+          "x": -100,
+          "z": -50,
+          "height": 13.669548034667969
+        },
+        {
+          "x": -100,
+          "z": 0,
+          "height": 14.068760871887207
+        },
+        {
+          "x": -100,
+          "z": 50,
+          "height": 8.869186401367188
+        },
+        {
+          "x": -100,
+          "z": 100,
+          "height": 5.541339874267578
+        },
+        {
+          "x": -50,
+          "z": -100,
+          "height": 9.18556022644043
+        },
+        {
+          "x": -50,
+          "z": -50,
+          "height": 15.944823265075684
+        },
+        {
+          "x": -50,
+          "z": 0,
+          "height": 17.713136672973633
+        },
+        {
+          "x": -50,
+          "z": 50,
+          "height": 17.788156509399414
+        },
+        {
+          "x": -50,
+          "z": 100,
+          "height": 17.357269287109375
+        },
+        {
+          "x": 0,
+          "z": -100,
+          "height": 15.757073402404785
+        },
+        {
+          "x": 0,
+          "z": -50,
+          "height": 13.509577751159668
+        },
+        {
+          "x": 0,
+          "z": 0,
+          "height": 13.5
+        },
+        {
+          "x": 0,
+          "z": 50,
+          "height": 13.45534610748291
+        },
+        {
+          "x": 0,
+          "z": 100,
+          "height": 7.203762054443359
+        },
+        {
+          "x": 50,
+          "z": -100,
+          "height": 13.352056503295898
+        },
+        {
+          "x": 50,
+          "z": -50,
+          "height": 12.426513671875
+        },
+        {
+          "x": 50,
+          "z": 0,
+          "height": 7.170719623565674
+        },
+        {
+          "x": 50,
+          "z": 50,
+          "height": 13.50352954864502
+        },
+        {
+          "x": 50,
+          "z": 100,
+          "height": 8.419317245483398
+        },
+        {
+          "x": 100,
+          "z": -100,
+          "height": 12.737076759338379
+        },
+        {
+          "x": 100,
+          "z": -50,
+          "height": 8.944568634033203
+        },
+        {
+          "x": 100,
+          "z": 0,
+          "height": 11.543814659118652
+        },
+        {
+          "x": 100,
+          "z": 50,
+          "height": 13.303359031677246
+        },
+        {
+          "x": 100,
+          "z": 100,
+          "height": 17.23996925354004
+        }
+      ]
+    },
+    {
+      "seed": "PULIDO-REFERENCIA",
+      "sites": [
+        {
+          "kind": "house",
+          "x": -40.33058025385253,
+          "z": -50.07077777176164,
+          "radius": 6.5,
+          "rotation": 2.2017130488830974,
+          "floorY": 17.99292343212306
+        },
+        {
+          "kind": "house",
+          "x": -91.38174311001785,
+          "z": -34.276654332643375,
+          "radius": 6.5,
+          "rotation": 3.008421513608705,
+          "floorY": 6.307482030474884
+        },
+        {
+          "kind": "house",
+          "x": -70.51971614477225,
+          "z": 10.761895423056558,
+          "radius": 6.5,
+          "rotation": 1.5665158562904045,
+          "floorY": 12.634218892967326
+        },
+        {
+          "kind": "house",
+          "x": 86.6884189445991,
+          "z": -41.897776189493015,
+          "radius": 6.5,
+          "rotation": 4.357918119067646,
+          "floorY": 11.042212192546435
+        },
+        {
+          "kind": "house",
+          "x": 10.21805808879435,
+          "z": 114.35563358105719,
+          "radius": 6.5,
+          "rotation": 5.228939838972765,
+          "floorY": 16.961404267824765
+        },
+        {
+          "kind": "temple",
+          "x": -34.531848014798015,
+          "z": 94.92555859987624,
+          "radius": 7.5,
+          "rotation": 1.330287010605067,
+          "floorY": 8.975636557193667
+        },
+        {
+          "kind": "temple",
+          "x": 109.13302400754765,
+          "z": 88.57336533791386,
+          "radius": 7.5,
+          "rotation": 2.705097858343808,
+          "floorY": 14.742041782203192
+        },
+        {
+          "kind": "farm",
+          "x": 8.471035449532792,
+          "z": 65.73417940270156,
+          "radius": 6.5,
+          "rotation": 4.186062480407626,
+          "floorY": 15.58703360716566
+        },
+        {
+          "kind": "farm",
+          "x": 3.0040314816869795,
+          "z": -63.963244050741196,
+          "radius": 6.5,
+          "rotation": 5.536958308492663,
+          "floorY": 8.955188687727855
+        },
+        {
+          "kind": "well",
+          "x": 45.434946657158434,
+          "z": 2.61250185710378,
+          "radius": 3.5,
+          "rotation": 5.748808598690454,
+          "floorY": 4.430737609303449
+        },
+        {
+          "kind": "well",
+          "x": 121.62154908641241,
+          "z": -15.270777411060408,
+          "radius": 3.5,
+          "rotation": 5.598201688599556,
+          "floorY": 17.824816040523338
+        },
+        {
+          "kind": "well",
+          "x": 112.87048856983893,
+          "z": -52.928748737555,
+          "radius": 3.5,
+          "rotation": 2.493275359200769,
+          "floorY": 14.312317611637837
+        }
+      ],
+      "interactables": [
+        {
+          "kind": "portal",
+          "x": -70.65798932500184,
+          "y": 13.649410772514655,
+          "z": 64.5365242883563,
+          "rotation": 1.530151316007052
+        },
+        {
+          "kind": "shrine",
+          "x": 50.54547450598329,
+          "y": 8.213848102858286,
+          "z": 36.59140376094729,
+          "rotation": 2.3253479379267707
+        },
+        {
+          "kind": "shrine",
+          "x": 34.9055209569633,
+          "y": 8.174083864258218,
+          "z": -34.42052029352635,
+          "rotation": 1.2433575042021985
+        },
+        {
+          "kind": "shrine",
+          "x": -64.49559237062931,
+          "y": 17.868551359842616,
+          "z": -106.13653283938766,
+          "rotation": 6.077851430496574
+        },
+        {
+          "kind": "totem",
+          "x": 63.01488037593663,
+          "y": 8.954087952123222,
+          "z": -16.309784095734358,
+          "rotation": 2.8749780177800455
+        },
+        {
+          "kind": "totem",
+          "x": -94.6768600512296,
+          "y": 8.696127390316107,
+          "z": -53.50475122779608,
+          "rotation": 0.8534533465118492
+        },
+        {
+          "kind": "chest",
+          "x": -69.53947091661394,
+          "y": 13.695178925836041,
+          "z": -78.97374936472625,
+          "rotation": 2.3430300868478193
+        },
+        {
+          "kind": "chest",
+          "x": -7.3624772652983665,
+          "y": 12.759336973308555,
+          "z": 93.42334060650319,
+          "rotation": 5.034100705449359
+        },
+        {
+          "kind": "chest",
+          "x": 119.8528502471745,
+          "y": 13.59348921179197,
+          "z": -70.83494401630014,
+          "rotation": 3.3551284448526117
+        },
+        {
+          "kind": "chest",
+          "x": -100.76458440721035,
+          "y": 9.353245804758831,
+          "z": -20.49488551542163,
+          "rotation": 6.25364595414125
+        },
+        {
+          "kind": "chest",
+          "x": -74.94082630053163,
+          "y": 13.506857810664423,
+          "z": 47.15935740340501,
+          "rotation": 2.080693759349643
+        },
+        {
+          "kind": "chest",
+          "x": 68.48185084015131,
+          "y": 11.469471873646729,
+          "z": 67.21160938125104,
+          "rotation": 3.735491104118396
+        },
+        {
+          "kind": "chest",
+          "x": -116.66898454539478,
+          "y": 17.658385312686363,
+          "z": 48.47012036014348,
+          "rotation": 0.40387270515927687
+        },
+        {
+          "kind": "chest",
+          "x": 10.600899416953325,
+          "y": 13.422338100651713,
+          "z": 32.1320196390152,
+          "rotation": 5.671060487575267
+        },
+        {
+          "kind": "chest",
+          "x": 50.87295912578702,
+          "y": 4.7577534530221195,
+          "z": -8.41840807814151,
+          "rotation": 0.6105876613583655
+        },
+        {
+          "kind": "chest",
+          "x": 20.00065829604864,
+          "y": 8.957836358695607,
+          "z": -25.047389186918736,
+          "rotation": 1.4311591971593856
+        },
+        {
+          "kind": "chest",
+          "x": 36.75163884367794,
+          "y": 18.26745371474767,
+          "z": -117.58067755680531,
+          "rotation": 4.469421596092172
+        },
+        {
+          "kind": "chest",
+          "x": -86.22775737661868,
+          "y": 18.110630117411933,
+          "z": 38.44888262171298,
+          "rotation": 2.918938966461442
+        },
+        {
+          "kind": "chest",
+          "x": -58.83733003679663,
+          "y": 17.39484937783355,
+          "z": 24.13789912406355,
+          "rotation": 4.863322049524279
+        },
+        {
+          "kind": "chest",
+          "x": -94.77598029747605,
+          "y": 18.05509881647664,
+          "z": 68.88649563118815,
+          "rotation": 0.5681974873174666
+        }
+      ],
+      "heights": [
+        {
+          "x": -100,
+          "z": -100,
+          "height": 12.473079681396484
+        },
+        {
+          "x": -100,
+          "z": -50,
+          "height": 6.908273220062256
+        },
+        {
+          "x": -100,
+          "z": 0,
+          "height": 9.191354751586914
+        },
+        {
+          "x": -100,
+          "z": 50,
+          "height": 17.932453155517578
+        },
+        {
+          "x": -100,
+          "z": 100,
+          "height": 9.844321250915527
+        },
+        {
+          "x": -50,
+          "z": -100,
+          "height": 18.197555541992188
+        },
+        {
+          "x": -50,
+          "z": -50,
+          "height": 14.793479919433594
+        },
+        {
+          "x": -50,
+          "z": 0,
+          "height": 15.19417953491211
+        },
+        {
+          "x": -50,
+          "z": 50,
+          "height": 13.541035652160645
+        },
+        {
+          "x": -50,
+          "z": 100,
+          "height": 11.900483131408691
+        },
+        {
+          "x": 0,
+          "z": -100,
+          "height": 13.437965393066406
+        },
+        {
+          "x": 0,
+          "z": -50,
+          "height": 8.962221145629883
+        },
+        {
+          "x": 0,
+          "z": 0,
+          "height": 13.5
+        },
+        {
+          "x": 0,
+          "z": 50,
+          "height": 14.120567321777344
+        },
+        {
+          "x": 0,
+          "z": 100,
+          "height": 14.616104125976562
+        },
+        {
+          "x": 50,
+          "z": -100,
+          "height": 17.8278865814209
+        },
+        {
+          "x": 50,
+          "z": -50,
+          "height": 9.667336463928223
+        },
+        {
+          "x": 50,
+          "z": 0,
+          "height": 4.482957363128662
+        },
+        {
+          "x": 50,
+          "z": 50,
+          "height": 13.679516792297363
+        },
+        {
+          "x": 50,
+          "z": 100,
+          "height": 18.063053131103516
+        },
+        {
+          "x": 100,
+          "z": -100,
+          "height": 8.745213508605957
+        },
+        {
+          "x": 100,
+          "z": -50,
+          "height": 15.494583129882812
+        },
+        {
+          "x": 100,
+          "z": 0,
+          "height": 9.221943855285645
+        },
+        {
+          "x": 100,
+          "z": 50,
+          "height": 9.349273681640625
+        },
+        {
+          "x": 100,
+          "z": 100,
+          "height": 18.411399841308594
+        }
+      ]
+    },
+    {
+      "seed": "MAMPORRO",
+      "sites": [
+        {
+          "kind": "house",
+          "x": 12.4017441815231,
+          "z": 105.4118736772798,
+          "radius": 6.5,
+          "rotation": 3.5471846854059264,
+          "floorY": 13.787386631887562
+        },
+        {
+          "kind": "house",
+          "x": 74.36349739460275,
+          "z": -110.0502127269283,
+          "radius": 6.5,
+          "rotation": 1.7730389829675948,
+          "floorY": 11.857617004739007
+        },
+        {
+          "kind": "house",
+          "x": -57.845894414465874,
+          "z": 101.82822554372251,
+          "radius": 6.5,
+          "rotation": 3.71172934415143,
+          "floorY": 7.262296989216862
+        },
+        {
+          "kind": "house",
+          "x": 31.31409716256894,
+          "z": -57.9412993255537,
+          "radius": 6.5,
+          "rotation": 5.995656052809169,
+          "floorY": 14.345532256133039
+        },
+        {
+          "kind": "house",
+          "x": 75.92672389815561,
+          "z": -37.6092425219249,
+          "radius": 6.5,
+          "rotation": 1.5274260268992501,
+          "floorY": 8.33203345944879
+        },
+        {
+          "kind": "temple",
+          "x": 109.58126643951982,
+          "z": 66.23959532473236,
+          "radius": 7.5,
+          "rotation": 0.7058350244504951,
+          "floorY": 17.37722595345939
+        },
+        {
+          "kind": "temple",
+          "x": 90.10842149658129,
+          "z": 35.26131317624822,
+          "radius": 7.5,
+          "rotation": 0.04224268410306533,
+          "floorY": 17.99996788860568
+        },
+        {
+          "kind": "farm",
+          "x": 17.953952257987112,
+          "z": 52.68443156313151,
+          "radius": 6.5,
+          "rotation": 3.063525708256738,
+          "floorY": 12.43471943852308
+        },
+        {
+          "kind": "farm",
+          "x": -53.355496992589906,
+          "z": -65.68646289105527,
+          "radius": 6.5,
+          "rotation": 4.64061835839306,
+          "floorY": 10.199513820567566
+        },
+        {
+          "kind": "well",
+          "x": -80.51548228482716,
+          "z": -29.812535528326407,
+          "radius": 3.5,
+          "rotation": 6.1545734581855545,
+          "floorY": 9.172916645302074
+        },
+        {
+          "kind": "well",
+          "x": -118.33591413823888,
+          "z": 73.29505412233993,
+          "radius": 3.5,
+          "rotation": 0.8739743537970291,
+          "floorY": 13.989098378853651
+        },
+        {
+          "kind": "well",
+          "x": -119.81005172757432,
+          "z": -4.332371697295457,
+          "radius": 3.5,
+          "rotation": 1.5141540259299944,
+          "floorY": 18.274842067289917
+        }
+      ],
+      "interactables": [
+        {
+          "kind": "portal",
+          "x": 93.9046922000125,
+          "y": 8.89230962900825,
+          "z": -39.89650016371161,
+          "rotation": 3.160557752407997
+        },
+        {
+          "kind": "shrine",
+          "x": -77.49169598054141,
+          "y": 16.295197892439457,
+          "z": -81.97336376085877,
+          "rotation": 1.9257709322491912
+        },
+        {
+          "kind": "shrine",
+          "x": -108.88169412128627,
+          "y": 13.990560682795847,
+          "z": -108.88785974867642,
+          "rotation": 4.768090363062287
+        },
+        {
+          "kind": "shrine",
+          "x": 81.3911637570709,
+          "y": 17.96943510174444,
+          "z": 84.86973669659346,
+          "rotation": 2.9931937286817685
+        },
+        {
+          "kind": "totem",
+          "x": -116.70863955561072,
+          "y": 13.40449767924559,
+          "z": -32.174076148308814,
+          "rotation": 4.158500163137908
+        },
+        {
+          "kind": "totem",
+          "x": -48.95584352687001,
+          "y": 9.093432511398488,
+          "z": -15.086890188977122,
+          "rotation": 5.671416406766444
+        },
+        {
+          "kind": "chest",
+          "x": -43.91088292747736,
+          "y": 9.00762761972376,
+          "z": 36.211919674649835,
+          "rotation": 0.12999753670205863
+        },
+        {
+          "kind": "chest",
+          "x": -40.10334633104503,
+          "y": 12.481630494107367,
+          "z": -105.68577779922634,
+          "rotation": 1.7273460987384168
+        },
+        {
+          "kind": "chest",
+          "x": 58.42285940051079,
+          "y": 9.11725792124996,
+          "z": 81.04224553797394,
+          "rotation": 5.317233569149601
+        },
+        {
+          "kind": "chest",
+          "x": 24.67962726764381,
+          "y": 13.283833590064068,
+          "z": 29.96009213849902,
+          "rotation": 3.6619087019731364
+        },
+        {
+          "kind": "chest",
+          "x": -58.66758025344461,
+          "y": 9.043999722581386,
+          "z": 52.1986232874915,
+          "rotation": 5.283844077588969
+        },
+        {
+          "kind": "chest",
+          "x": 80.73883176594973,
+          "y": 9.105380797481518,
+          "z": -67.98147395253181,
+          "rotation": 3.514243881060633
+        },
+        {
+          "kind": "chest",
+          "x": 29.97704996075481,
+          "y": 9.268119130081416,
+          "z": 101.37446865532547,
+          "rotation": 2.8952710263567356
+        },
+        {
+          "kind": "chest",
+          "x": -103.78395375888795,
+          "y": 17.89021343947853,
+          "z": -95.64743684604764,
+          "rotation": 3.7026174360095956
+        },
+        {
+          "kind": "chest",
+          "x": -63.73266603704542,
+          "y": 8.331519679417664,
+          "z": 71.44961477536708,
+          "rotation": 4.384474661139933
+        },
+        {
+          "kind": "chest",
+          "x": -40.667771075852215,
+          "y": 14.738711329073222,
+          "z": -119.21623578295112,
+          "rotation": 0.5938833005489738
+        },
+        {
+          "kind": "chest",
+          "x": 50.137156119570136,
+          "y": 9.036973997999468,
+          "z": 62.21674130670726,
+          "rotation": 2.2523562284548038
+        },
+        {
+          "kind": "chest",
+          "x": 92.08438429702073,
+          "y": 17.67739899210929,
+          "z": -16.393198432400823,
+          "rotation": 6.206830189585314
+        },
+        {
+          "kind": "chest",
+          "x": 73.27506117057055,
+          "y": 8.332729515208737,
+          "z": -43.47343270853162,
+          "rotation": 0.26507113873975624
+        },
+        {
+          "kind": "chest",
+          "x": 13.216091251932085,
+          "y": 9.1921964604669,
+          "z": -23.548734655603766,
+          "rotation": 4.8070185678011255
+        }
+      ],
+      "heights": [
+        {
+          "x": -100,
+          "z": -100,
+          "height": 18.323705673217773
+        },
+        {
+          "x": -100,
+          "z": -50,
+          "height": 8.942914962768555
+        },
+        {
+          "x": -100,
+          "z": 0,
+          "height": 19.232141494750977
+        },
+        {
+          "x": -100,
+          "z": 50,
+          "height": 6.699319839477539
+        },
+        {
+          "x": -100,
+          "z": 100,
+          "height": 13.243630409240723
+        },
+        {
+          "x": -50,
+          "z": -100,
+          "height": 14.403244018554688
+        },
+        {
+          "x": -50,
+          "z": -50,
+          "height": 8.736923217773438
+        },
+        {
+          "x": -50,
+          "z": 0,
+          "height": 13.252120971679688
+        },
+        {
+          "x": -50,
+          "z": 50,
+          "height": 9.79533863067627
+        },
+        {
+          "x": -50,
+          "z": 100,
+          "height": 7.70820951461792
+        },
+        {
+          "x": 0,
+          "z": -100,
+          "height": 8.924091339111328
+        },
+        {
+          "x": 0,
+          "z": -50,
+          "height": 12.745655059814453
+        },
+        {
+          "x": 0,
+          "z": 0,
+          "height": 13.5
+        },
+        {
+          "x": 0,
+          "z": 50,
+          "height": 15.741071701049805
+        },
+        {
+          "x": 0,
+          "z": 100,
+          "height": 18.84125518798828
+        },
+        {
+          "x": 50,
+          "z": -100,
+          "height": 9.003277778625488
+        },
+        {
+          "x": 50,
+          "z": -50,
+          "height": 14.287123680114746
+        },
+        {
+          "x": 50,
+          "z": 0,
+          "height": 16.505842208862305
+        },
+        {
+          "x": 50,
+          "z": 50,
+          "height": 10.975312232971191
+        },
+        {
+          "x": 50,
+          "z": 100,
+          "height": 7.821399688720703
+        },
+        {
+          "x": 100,
+          "z": -100,
+          "height": 17.78811264038086
+        },
+        {
+          "x": 100,
+          "z": -50,
+          "height": 9.049016952514648
+        },
+        {
+          "x": 100,
+          "z": 0,
+          "height": 14.955348014831543
+        },
+        {
+          "x": 100,
+          "z": 50,
+          "height": 13.239862442016602
+        },
+        {
+          "x": 100,
+          "z": 100,
+          "height": 13.97940444946289
+        }
+      ]
+    }
+  ],
+  "audio": {
+    "sampleRate": 22050,
+    "sounds": {
+      "ui": {
+        "frames": 1213,
+        "peak": 0.12019386887550354,
+        "sumSquares": 3.717259302409164,
+        "first32": [
+          0,
+          0.0015846833121031523,
+          0.0031641346868127584,
+          0.0047383601777255535,
+          0.006307366769760847,
+          0.00787116028368473,
+          0.0094297481700778,
+          0.010983135551214218,
+          0.01253132987767458,
+          0.014074337668716908,
+          0.015612165443599224,
+          0.01714481972157955,
+          0.018672306090593338,
+          0.020194631069898605,
+          0.02171180211007595,
+          -0.02322382666170597,
+          -0.024730708450078964,
+          -0.026232454925775528,
+          -0.02772907353937626,
+          -0.029220571741461754,
+          -0.03070695325732231,
+          -0.03218822553753853,
+          -0.03366439417004585,
+          -0.03513547033071518,
+          -0.03660145401954651,
+          -0.038062356412410736,
+          -0.03951818123459816,
+          -0.04096893593668938,
+          -0.042414627969264984,
+          -0.04385526105761528,
+          -0.04529084265232086,
+          0.046721383929252625
+        ]
+      },
+      "chancla": {
+        "frames": 3088,
+        "peak": 0.128143310546875,
+        "sumSquares": 5.084797152318025,
+        "first32": [
+          0,
+          0.0009603205835446715,
+          0.00242042588070035,
+          0.0039705331437289715,
+          0.002429029904305935,
+          0.0062260436825454235,
+          0.0053414045833051205,
+          0.010717942379415035,
+          0.00969866942614317,
+          0.008448516950011253,
+          0.009059053845703602,
+          0.010811246931552887,
+          0.011761149391531944,
+          0.007739287335425615,
+          0.016155065968632698,
+          0.017894839867949486,
+          0.012341132387518883,
+          0.016004612669348717,
+          0.02493988908827305,
+          0.02345924824476242,
+          0.012025191448628902,
+          0.012940209358930588,
+          0.018290657550096512,
+          0.013097364455461502,
+          0.033681947737932205,
+          0.023576173931360245,
+          0.023927273228764534,
+          0.03287500888109207,
+          0.03557265177369118,
+          0.04133555665612221,
+          0.023975985124707222,
+          0.043350253254175186
+        ]
+      },
+      "naftalina": {
+        "frames": 4410,
+        "peak": 0.08474314957857132,
+        "sumSquares": 4.329645919348683,
+        "first32": [
+          0,
+          0.0007899588090367615,
+          0.0017633240204304457,
+          0.002769582672044635,
+          0.002639089711010456,
+          0.004470976069569588,
+          0.004581210669130087,
+          0.006994083058089018,
+          0.00705418735742569,
+          0.007028789259493351,
+          0.0076876673847436905,
+          0.008766522631049156,
+          0.009549825452268124,
+          0.008501873351633549,
+          0.012034367769956589,
+          0.013108085840940475,
+          0.01149404514580965,
+          0.01327596791088581,
+          0.017001422122120857,
+          0.016887295991182327,
+          0.013101894408464432,
+          0.013869489543139935,
+          0.01627318747341633,
+          0.01478660199791193,
+          0.022812841460108757,
+          0.019512401893734932,
+          0.02007099613547325,
+          0.02380392700433731,
+          0.02522919699549675,
+          0.027786897495388985,
+          0.021801017224788666,
+          0.029388485476374626
+        ]
+      },
+      "barra": {
+        "frames": 3528,
+        "peak": 0.1287802904844284,
+        "sumSquares": 4.1795444351136775,
+        "first32": [
+          0,
+          0.0006921110907569528,
+          0.002099309116601944,
+          0.0036362209357321262,
+          0.0007562460377812386,
+          0.005506225395947695,
+          0.0035665284376591444,
+          0.010577008128166199,
+          0.00844670832157135,
+          0.005986873991787434,
+          0.006187800318002701,
+          0.008022032678127289,
+          0.008710193447768688,
+          0.0022893277928233147,
+          0.013656553812325,
+          0.0154777392745018,
+          0.0068672895431518555,
+          0.011441920883953571,
+          0.023560335859656334,
+          0.020778724923729897,
+          0.003755227429792285,
+          0.004401513375341892,
+          0.011396462097764015,
+          0.003302718745544553,
+          0.03210609033703804,
+          0.01698233000934124,
+          0.01682703010737896,
+          0.02898053638637066,
+          0.0321878045797348,
+          0.03978579118847847,
+          0.014272860251367092,
+          0.041366416960954666
+        ]
+      },
+      "dentaduras": {
+        "frames": 1985,
+        "peak": 0.12772123515605927,
+        "sumSquares": 6.69896964351565,
+        "first32": [
+          0,
+          0.001585701946169138,
+          0.00316820596344769,
+          0.004747514612972736,
+          0.006323630455881357,
+          0.007896555587649345,
+          0.009466293267905712,
+          0.011032843962311745,
+          0.012596212327480316,
+          0.014156400226056576,
+          0.015713408589363098,
+          0.017267242074012756,
+          0.018817901611328125,
+          0.020365389063954353,
+          0.02190970815718174,
+          0.023450862616300583,
+          0.024988850578665733,
+          0.026523679494857788,
+          0.028055347502231598,
+          0.02958385832607746,
+          -0.031109217554330826,
+          -0.03263142332434654,
+          -0.03415047749876976,
+          -0.035666387528181076,
+          -0.03717915341258049,
+          -0.038688775151968,
+          -0.04019526019692421,
+          -0.041698604822158813,
+          -0.04319881647825241,
+          -0.044695895165205,
+          -0.046189844608306885,
+          -0.04768066480755806
+        ]
+      },
+      "jersey": {
+        "frames": 4410,
+        "peak": 0.1283530443906784,
+        "sumSquares": 4.552855344528988,
+        "first32": [
+          0,
+          0.000513311242684722,
+          0.0018853980582207441,
+          0.003413866274058819,
+          -0.0003596307069528848,
+          0.0050275204703211784,
+          0.002383171347901225,
+          0.010487338528037071,
+          0.00761479651555419,
+          0.0043461136519908905,
+          0.004273590631783009,
+          -0.007734810467809439,
+          -0.008477563038468361,
+          -0.01776215434074402,
+          -0.005667316727340221,
+          -0.005042754579335451,
+          -0.016957053914666176,
+          -0.013019516132771969,
+          -0.000008158221135090571,
+          -0.0049108280800282955,
+          -0.026942113414406776,
+          -0.027722075581550598,
+          -0.020862890407443047,
+          -0.003251929534599185,
+          0.03109666146337986,
+          0.012590283527970314,
+          0.01209557056427002,
+          0.026417290791869164,
+          0.029972784221172333,
+          0.03881580010056496,
+          0.007791623938828707,
+          0.04011259600520134
+        ]
+      },
+      "fregona": {
+        "frames": 3969,
+        "peak": 0.0907733216881752,
+        "sumSquares": 1.837037952051709,
+        "first32": [
+          0,
+          0.00023886853887233883,
+          0.0011934584472328424,
+          0.0022784213069826365,
+          -0.0010539664654061198,
+          0.0032461003866046667,
+          0.0008550139609724283,
+          0.007418271154165268,
+          0.004837473854422569,
+          0.0019271406345069408,
+          0.0016793940449133515,
+          0.003066570498049259,
+          0.00330749386921525,
+          -0.0035659130662679672,
+          0.007364171091467142,
+          0.008741050027310848,
+          -0.0003235883777961135,
+          0.0038104113191366196,
+          0.015497836284339428,
+          0.012269290164113045,
+          -0.005219101440161467,
+          -0.005015894304960966,
+          0.0015453726518899202,
+          -0.007002728059887886,
+          0.021401915699243546,
+          0.005813836585730314,
+          0.0052174534648656845,
+          0.0169514250010252,
+          0.019725251942873,
+          0.02689875103533268,
+          0.0008995975949801505,
+          0.02760784700512886
+        ]
+      },
+      "hit": {
+        "frames": 1434,
+        "peak": 0.06607207655906677,
+        "sumSquares": 0.36799715873775385,
+        "first32": [
+          0,
+          0.00024198440951295197,
+          0.00101420225109905,
+          0.0018815642688423395,
+          -0.0005224472843110561,
+          0.0027223192155361176,
+          0.0010172331240028143,
+          0.005925408564507961,
+          0.004080444574356079,
+          0.0019958883058279753,
+          0.0018752904143184423,
+          0.0029574406798928976,
+          0.0031951849814504385,
+          -0.0017912180628627539,
+          0.006291604600846767,
+          0.007358047179877758,
+          0.0007766371127218008,
+          0.0038630806375294924,
+          0.01246487908065319,
+          0.01015838235616684,
+          -0.0025480296462774277,
+          -0.0023353227879852057,
+          0.0025073615834116936,
+          -0.00365260592661798,
+          0.017061378806829453,
+          0.005786185618489981,
+          0.005409817676991224,
+          0.013973078690469265,
+          0.016030792146921158,
+          0.02126840129494667,
+          0.002513488056138158,
+          0.021863790228962898
+        ]
+      },
+      "critical": {
+        "frames": 2646,
+        "peak": 0.1256449818611145,
+        "sumSquares": 4.800072806456856,
+        "first32": [
+          0,
+          0.0010496287140995264,
+          0.0025270304176956415,
+          0.004080937709659338,
+          0.0029854110907763243,
+          0.006463220342993736,
+          0.0059297457337379456,
+          0.01075874175876379,
+          0.010109029710292816,
+          0.009261462837457657,
+          0.010006931610405445,
+          0.011729339137673378,
+          0.012764295563101768,
+          0.009543241932988167,
+          0.016967209056019783,
+          0.018676305189728737,
+          0.014144059270620346,
+          -0.019795380532741547,
+          -0.01409599557518959,
+          -0.017304761335253716,
+          -0.029023179784417152,
+          -0.030175764113664627,
+          -0.027532856911420822,
+          -0.03390280902385712,
+          -0.018231309950351715,
+          -0.028794998303055763,
+          -0.030416199937462807,
+          -0.024687664583325386,
+          -0.024298693984746933,
+          -0.02128821797668934,
+          -0.03803017735481262,
+          -0.023386400192975998
+        ]
+      },
+      "death": {
+        "frames": 3969,
+        "peak": 0.09223850816488266,
+        "sumSquares": 1.964752653868375,
+        "first32": [
+          0,
+          0.000302750471746549,
+          0.0012700178194791079,
+          0.0023582640569657087,
+          -0.0006553968996740878,
+          0.0034181401133537292,
+          0.0012783817946910858,
+          0.0074532898142933846,
+          0.005137208383530378,
+          0.0025150482542812824,
+          0.0023652082309126854,
+          0.0037334300577640533,
+          0.004037192557007074,
+          -0.0022652901243418455,
+          0.007963959127664566,
+          0.009322294034063816,
+          0.0009848529007285833,
+          0.004903208930045366,
+          0.01583537831902504,
+          0.012916922569274902,
+          -0.003242899663746357,
+          -0.002974889473989606,
+          0.003196952398866415,
+          -0.004661414306610823,
+          0.02179340086877346,
+          0.0073977503925561905,
+          0.006922879256308079,
+          0.01789754256606102,
+          0.02055198885500431,
+          0.027291767299175262,
+          0.003228285815566778,
+          0.028107311576604843
+        ]
+      },
+      "hurt": {
+        "frames": 7718,
+        "peak": 0.209701806306839,
+        "sumSquares": 41.99898564641408,
+        "first32": [
+          0,
+          0.0017908114241436124,
+          0.00414351187646389,
+          0.006598260719329119,
+          0.005578417796641588,
+          0.010560741648077965,
+          0.010278821922838688,
+          0.017042789608240128,
+          0.016609741374850273,
+          0.01591537334024906,
+          0.017316220328211784,
+          0.02000419609248638,
+          0.021788597106933594,
+          0.017964564263820648,
+          0.0281736571341753,
+          0.03085237741470337,
+          0.025294451043009758,
+          0.030145930126309395,
+          0.040959328413009644,
+          0.04000191017985344,
+          0.027783025056123734,
+          0.029528990387916565,
+          0.03629692271351814,
+          0.031127598136663437,
+          0.05516032874584198,
+          0.04442434757947922,
+          0.04553624615073204,
+          0.05639981850981712,
+          0.060178350657224655,
+          0.06743880361318588,
+          0.048443734645843506,
+          0.07116804271936417
+        ]
+      },
+      "xp": {
+        "frames": 1544,
+        "peak": 0.07103738188743591,
+        "sumSquares": 1.6295461084569796,
+        "first32": [
+          0,
+          0.0009058541618287563,
+          0.0018093592952936888,
+          0.002710517728701234,
+          0.0036093315575271845,
+          0.004505803342908621,
+          0.005399934947490692,
+          0.006291729398071766,
+          0.007181188091635704,
+          0.00806831382215023,
+          0.008953108452260494,
+          0.009835575707256794,
+          -0.01071571558713913,
+          -0.0115935318171978,
+          -0.012469027191400528,
+          -0.013342202641069889,
+          -0.014213060960173607,
+          -0.01508160401135683,
+          -0.01594783551990986,
+          -0.016811756417155266,
+          -0.017673369497060776,
+          -0.018532676622271538,
+          -0.01938968151807785,
+          -0.020244384184479713,
+          0.021096788346767426,
+          0.021946895867586136,
+          0.022794708609580994,
+          0.023640230298042297,
+          0.024483462795615196,
+          0.02532440796494484,
+          0.026163067668676376,
+          0.026999443769454956
+        ]
+      },
+      "gold": {
+        "frames": 2205,
+        "peak": 0.08287815749645233,
+        "sumSquares": 3.1218901488368425,
+        "first32": [
+          0,
+          0.0010194823844358325,
+          0.002037114230915904,
+          0.003052896587178111,
+          0.00406683050096035,
+          0.0050789183005690575,
+          0.00608915975317359,
+          0.007097557187080383,
+          -0.008104111067950726,
+          -0.009108823724091053,
+          -0.01011169608682394,
+          -0.011112728156149387,
+          -0.012111922726035118,
+          -0.013109280727803707,
+          -0.014104802161455154,
+          -0.015098490752279758,
+          0.01609034463763237,
+          0.017080368474125862,
+          0.01806856133043766,
+          0.019054925069212914,
+          0.020039459690451622,
+          0.021022168919444084,
+          0.02200305089354515,
+          0.02298211120069027,
+          0.023959346115589142,
+          -0.024934761226177216,
+          -0.02590835466980934,
+          -0.026880130171775818,
+          -0.027850087732076645,
+          -0.028818227350711823,
+          -0.02978455275297165,
+          -0.030749063938856125
+        ]
+      },
+      "reward": {
+        "frames": 9923,
+        "peak": 0.13749967515468597,
+        "sumSquares": 37.757019733252456,
+        "first32": [
+          0,
+          0.0015869816998019814,
+          0.003173323580995202,
+          0.004759025759994984,
+          0.006344087887555361,
+          0.007928511127829552,
+          0.009512295015156269,
+          0.011095439083874226,
+          0.012677943333983421,
+          0.014259809628129005,
+          0.015841037034988403,
+          0.017421623691916466,
+          0.01900157332420349,
+          0.02058088406920433,
+          0.022159555926918983,
+          0.02373758889734745,
+          0.02531498298048973,
+          0.026891738176345825,
+          0.028467856347560883,
+          0.030043337494134903,
+          0.03161817789077759,
+          0.033192381262779236,
+          0.03476594761013985,
+          0.03633887693285942,
+          -0.03791116550564766,
+          -0.03948282077908516,
+          -0.041053835302591324,
+          -0.04262421280145645,
+          -0.04419395327568054,
+          -0.045763056725263596,
+          -0.04733152315020561,
+          -0.04889935255050659
+        ]
+      },
+      "level": {
+        "frames": 13230,
+        "peak": 0.13812260329723358,
+        "sumSquares": 50.71666577918739,
+        "first32": [
+          0,
+          0.0015870616771280766,
+          0.003173643257468939,
+          0.004759745206683874,
+          0.0063453675247728825,
+          0.007930509746074677,
+          0.009515172801911831,
+          0.011099355295300484,
+          0.012683059088885784,
+          0.014266283251345158,
+          0.015849027782678604,
+          0.017431292682886124,
+          0.01901307888329029,
+          0.020594384521245956,
+          0.02217521332204342,
+          0.02375555969774723,
+          0.02533542923629284,
+          0.026914820075035095,
+          0.02849373035132885,
+          0.030072161927819252,
+          0.0316501148045063,
+          0.03322758898139,
+          0.034804586321115494,
+          0.03638109937310219,
+          0.03795713931322098,
+          0.039532698690891266,
+          0.04110777750611305,
+          0.042682379484176636,
+          0.044256504625082016,
+          0.045830149203538895,
+          0.04740331694483757,
+          0.048976004123687744
+        ]
+      },
+      "shield": {
+        "frames": 7718,
+        "peak": 0.13535423576831818,
+        "sumSquares": 23.764578801872588,
+        "first32": [
+          0,
+          0.001407977077178657,
+          0.0029584867879748344,
+          0.004534479230642319,
+          0.005225536413490772,
+          0.007443924900144339,
+          0.008321831002831459,
+          0.010992742143571377,
+          0.0118311932310462,
+          0.012602632865309715,
+          -0.014590520411729813,
+          -0.01580071449279785,
+          -0.017239924520254135,
+          -0.020105749368667603,
+          -0.0193985216319561,
+          -0.020607132464647293,
+          -0.023911358788609505,
+          -0.02456493489444256,
+          -0.023699946701526642,
+          -0.025830183178186417,
+          0.026021059602499008,
+          0.02740776725113392,
+          0.030072303488850594,
+          0.029697773978114128,
+          0.0367560014128685,
+          0.03496352210640907,
+          0.036186374723911285,
+          0.03989098221063614,
+          0.041791632771492004,
+          0.04457809776067734,
+          -0.04436830058693886,
+          -0.040458668023347855
+        ]
+      },
+      "boss": {
+        "frames": 17640,
+        "peak": 0.1956796944141388,
+        "sumSquares": 57.47697831841631,
+        "first32": [
+          0,
+          0.0012448064517229795,
+          0.003308212850242853,
+          0.005521425511687994,
+          0.0026790883857756853,
+          0.008573420345783234,
+          0.006806391756981611,
+          0.015298587270081043,
+          0.01331335585564375,
+          0.01094764657318592,
+          0.011633988469839096,
+          0.014196431264281273,
+          0.015443732962012291,
+          0.008518889546394348,
+          0.022046303376555443,
+          0.02460109442472458,
+          0.015148741193115711,
+          0.02087291330099106,
+          0.035294171422719955,
+          0.032551590353250504,
+          0.013380677439272404,
+          0.014579773880541325,
+          0.023108119145035744,
+          0.014217938296496868,
+          0.047950781881809235,
+          0.030936459079384804,
+          0.031216738745570183,
+          0.04573814198374748,
+          0.04991672560572624,
+          0.05918336659669876,
+          0.030095720663666725,
+          0.061958640813827515
+        ]
+      },
+      "blast": {
+        "frames": 8820,
+        "peak": 0.13398638367652893,
+        "sumSquares": 8.311993389926922,
+        "first32": [
+          0,
+          0.0001555897033540532,
+          0.0014572840882465243,
+          0.0029686999041587114,
+          -0.0025944258086383343,
+          0.004068470560014248,
+          0.000011608832210185938,
+          0.010307538323104382,
+          0.005946400109678507,
+          0.0010544882388785481,
+          0.00043207002454437315,
+          0.002433416899293661,
+          0.002595976460725069,
+          -0.008665272034704685,
+          0.008664082735776901,
+          0.010654324665665627,
+          -0.004135014954954386,
+          0.0022855231072753668,
+          0.020856017246842384,
+          0.015445064753293991,
+          -0.012911766767501831,
+          -0.012811727821826935,
+          -0.0024760186206549406,
+          -0.01646459475159645,
+          0.029060091823339462,
+          0.0037302961573004723,
+          0.0025476287119090557,
+          0.021242069080471992,
+          0.02549867518246174,
+          0.03685450553894043,
+          -0.005305073224008083,
+          0.03757587820291519
+        ]
+      },
+      "victory": {
+        "frames": 24256,
+        "peak": 0.17868146300315857,
+        "sumSquares": 155.27764383883448,
+        "first32": [
+          0,
+          0.0020406481344252825,
+          0.0040809595957398415,
+          0.006120934616774321,
+          0.008160573430359364,
+          0.010199874639511108,
+          0.012238840572535992,
+          0.014277469366788864,
+          0.0163157619535923,
+          0.018353719264268875,
+          0.02039133943617344,
+          0.022428622469305992,
+          0.024465570226311684,
+          0.026502180844545364,
+          0.028538454324007034,
+          0.030574394389986992,
+          0.03260999545454979,
+          0.034645263105630875,
+          0.0366801917552948,
+          0.03871478512883186,
+          0.040749043226242065,
+          0.04278296232223511,
+          0.044816549867391586,
+          0.046849798411130905,
+          0.04888271167874336,
+          0.05091528594493866,
+          0.052947528660297394,
+          0.05497943237423897,
+          0.05701100081205368,
+          0.05904223397374153,
+          0.06107313185930252,
+          0.06310369074344635
+        ]
+      },
+      "defeat": {
+        "frames": 19845,
+        "peak": 0.17731676995754242,
+        "sumSquares": 102.99019892747972,
+        "first32": [
+          0,
+          0.001810543006286025,
+          0.0038049740251153708,
+          0.005832816008478403,
+          0.006722806487232447,
+          0.009578346274793148,
+          0.010709675028920174,
+          0.014149214141070843,
+          0.015230834484100342,
+          0.016226517036557198,
+          0.017908677458763123,
+          0.020012713968753815,
+          0.02182050608098507,
+          0.021788962185382843,
+          0.026359640061855316,
+          0.028460780158638954,
+          0.02785947546362877,
+          0.030673258006572723,
+          0.03544405475258827,
+          0.03635183349251747,
+          0.033561982214450836,
+          0.035356178879737854,
+          -0.04183761402964592,
+          -0.045971568673849106,
+          -0.04051205515861511,
+          -0.046473633497953415,
+          -0.048542313277721405,
+          -0.047405220568180084,
+          -0.04859556630253792,
+          -0.04864022880792618,
+          -0.05731738731265068,
+          -0.05227503553032875
+        ]
+      }
+    },
+    "normal": {
+      "frames": 320727,
+      "peak": 0.254121869802475,
+      "sumSquares": 710.2813634476325,
+      "first32": [
+        0,
+        0.000017504955394542776,
+        0.000014964685760787688,
+        0.0008322663488797843,
+        0.00037328540929593146,
+        0.0007103683310560882,
+        0.0014702031621709466,
+        0.002780455630272627,
+        0.002735187066718936,
+        0.003177594393491745,
+        0.005383607931435108,
+        0.004344871733337641,
+        0.004855086095631123,
+        0.007984451949596405,
+        0.008613910526037216,
+        0.011415486223995686,
+        0.011131918989121914,
+        0.012835817411541939,
+        0.015067363157868385,
+        0.0153537942096591,
+        0.0160218458622694,
+        0.01957581751048565,
+        0.015977641567587852,
+        0.018348034471273422,
+        0.016575707122683525,
+        0.022298982366919518,
+        0.01972629316151142,
+        0.02222687005996704,
+        0.022875450551509857,
+        0.026602745056152344,
+        0.025979360565543175,
+        0.029968775808811188
+      ]
+    },
+    "intense": {
+      "frames": 320727,
+      "peak": 0.30287638306617737,
+      "sumSquares": 781.9092769362676,
+      "first32": [
+        0,
+        -0.000030203780625015497,
+        -0.00027191705885343254,
+        0.0015853856457397342,
+        -0.00022130089928396046,
+        0.00000879509298101766,
+        0.0012513480614870787,
+        0.003860164200887084,
+        0.0025970591232180595,
+        0.002534374827519059,
+        0.007184850517660379,
+        0.0027797995135188103,
+        0.0025065296795219183,
+        0.009313046000897884,
+        0.009127196855843067,
+        0.014802580699324608,
+        0.011887543834745884,
+        0.014337806962430477,
+        0.018145160749554634,
+        0.01651601307094097,
+        0.015855595469474792,
+        0.023057637736201286,
+        0.015216749161481857,
+        0.019472692161798477,
+        0.012303242459893227,
+        0.02572133019566536,
+        0.016307853162288666,
+        0.02083602547645569,
+        0.020269343629479408,
+        0.028175346553325653,
+        0.024131424725055695,
+        0.03279547393321991
+      ]
+    }
+  }
+}

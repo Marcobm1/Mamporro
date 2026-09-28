@@ -1,0 +1,59 @@
+{
+  "report": [
+    {
+      "language": "es",
+      "audio": {
+        "peakVoices": 16,
+        "hidden": {
+          "state": "suspended",
+          "voices": 0,
+          "mode": "menu",
+          "tracks": 1
+        },
+        "resumed": {
+          "state": "running",
+          "voices": 0,
+          "mode": "menu",
+          "tracks": 1
+        },
+        "energy": 59.59347048320345
+      },
+      "particles": 64,
+      "loop": {
+        "frameMs": 16.5,
+        "updateMs": 0,
+        "renderMs": 4.300000000046566,
+        "ticks": 0,
+        "drawCalls": 57
+      }
+    },
+    {
+      "language": "en",
+      "audio": {
+        "peakVoices": 16,
+        "hidden": {
+          "state": "suspended",
+          "voices": 0,
+          "mode": "menu",
+          "tracks": 1
+        },
+        "resumed": {
+          "state": "running",
+          "voices": 0,
+          "mode": "menu",
+          "tracks": 1
+        },
+        "energy": 59.59347048320345
+      },
+      "particles": 64,
+      "loop": {
+        "frameMs": 16.699999999999818,
+        "updateMs": 0.10000000009313226,
+        "renderMs": 2.0999999998603016,
+        "ticks": 2,
+        "drawCalls": 57
+      }
+    }
+  ],
+  "errors": []
+}

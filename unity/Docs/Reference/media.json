@@ -1,0 +1,11 @@
+{
+  "baseCommit": "0505b1690656d15188860157612455639820fe1f",
+  "notes": "Capturas originales del QA del hito 6: ES 1280x720 y EN 1600x900. WAV PCM16 mono 22050 Hz: muestras de 2 s generadas en U0. No validación de escucha humana.",
+  "files": {
+    "es-combate-1280.png": "28c9555827bc19aa4954c7b5b57eb00dae2b52f680e504d4a960074cc42d5a11",
+    "en-pausa-1600.png": "312939ffe76e04e2d4b9ba4dcbda7f3bd6240c471c8d1e3dc3e51eec68f94bb0",
+    "report.json": "6c3417a386a77d7f7dcd54775ed5d456d9aed847dd0aab769889778c2db71fbe",
+    "music-normal.wav": "e962db15af17d4383e1ef4c583b9400daab4a29285022e43eb940a8ed2d3aabb",
+    "music-intense.wav": "37287e2fea1d22ce61fad8e98a87596aa61d0effaf4175bc95b2ce598e4a14b2"
+  }
+}
