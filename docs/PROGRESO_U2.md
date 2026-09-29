@@ -10,10 +10,11 @@ Este archivo es además el **checkpoint vivo de continuidad entre Codex CLI y Cl
 
 Actualizar esta sección después de cada paso completado.
 
-- **Último commit publicado:** ver `git log -1 origin/claude/zen-pasteur-674ik0`. Base verificada de U2 = núcleo + integración (paso 2 del plan). Copia del commit original del núcleo en la rama local `respaldo/u2-local-1e66e49`.
+- **Último commit publicado:** ver `git log -1 origin/claude/zen-pasteur-674ik0`. Base verificada de U2 = núcleo + integración + documentación de decisiones (pasos 1–2 del plan). Ramas locales de respaldo: `respaldo/u2-local-1e66e49` (commit original de Codex) y `respaldo/u2-antes-rebase-2` (antes del rebase sobre `dd93c81`).
+- **Antes de cada push:** `git fetch origin`; si el remoto ha cambiado, parar y avisar al autor en lugar de reintentar.
 - **Paso actual:** 3 del plan de cierre (referencia `u2-combat.json`).
-- **Terminado y verificado:** núcleo puro `Assets/Mamporro/Core`, adaptador y escena U2 compilan; Edit Mode 37/37 (26 U2 + 11 U1) y Play Mode 2/2 el 29/09/2026 20:14–20:15 (ver «Pruebas registradas»).
-- **A medias:** subida de nivel y panel QA siguen en IMGUI con teclas Q/E/B y R para reiniciar (se sustituyen en el paso 5). Sin contador de oro en el HUD. La build `unity/Builds/U2` es anterior a esta base y no se ha regenerado.
+- **Terminado y verificado:** núcleo puro `Assets/Mamporro/Core`, adaptador y escena U2 compilan; Edit Mode 37/37 (26 U2 + 11 U1) y Play Mode 2/2, última ejecución el 29/09/2026 20:28–20:29 (ver «Pruebas ejecutadas en esta integración»).
+- **A medias:** subida de nivel y panel QA siguen en IMGUI con teclas Q/E/B y R para reiniciar y F8 para el idioma (se sustituyen en el paso 5: reinicio en F8, idioma en F7). Sin contador de oro en el HUD. La build `unity/Builds/U2` es anterior a esta base y no se ha regenerado.
 - **Sin commit a propósito:** `unity/ProjectSettings/ProjectSettings.asset` (identificador de proyecto en la nube y organización), `PackageManagerSettings.asset` y `URPProjectSettings.asset` (preferencias locales del Editor): no publicar nunca. `ProjectAuditorSettings.asset`: Unity lo reescribe con espacios al abrir; no publicar. Retoques de Codex en `README.md`, `docs/MIGRACION_UNITY.md`, `docs/PROGRESO_U1.md`, `unity/Docs/HOJA_DE_RUTA.md` y `unity/README.md`: se revisan en el commit documental de cierre (paso 8).
 - **Copias de seguridad locales (ignoradas por Git):** `qa-results/u2-audit/` (parche completo `worktree.patch`, lista y `untracked.tar` de no seguidos, estado previo y posterior al rebase) y `qa-results/u2-inherited/` (cambios heredados de U1 con hashes). Stash `codex: cabeceras CLAUDE/ENTORNO`, sustituido por `2b67ea5`, conservado sin aplicar. Copia íntegra del repositorio anterior a la integración en `..\Mamporro-respaldo-u2`.
 - **Siguiente paso exacto:** crear `scripts/unity-reference-u2.mjs` a partir de `scripts/u2-web-fixtures.mjs` y exportar `unity/Docs/Reference/u2-combat.json`.
@@ -33,6 +34,15 @@ scripts\u2.cmd play
 
 Añadir las entradas nuevas **de más antigua a más reciente**. No borrar entradas de otro agente salvo corrección factual explícita.
 
+### 29/09/2026 10:46–12:11 — núcleo, escena U2 y primeras pruebas — Codex (entrada reconstruida por Claude Code a partir de los registros locales)
+
+- Punto de partida/commit: `eb691b5`.
+- Trabajo realizado: núcleo y reglas de combate (commit local original `1e66e49`), adaptador, escena U2 e interfaz IMGUI sin commit. Detalle en «Estado real del trabajo local».
+- Pruebas realmente ejecutadas y resultado: ver «Pruebas registradas (heredadas de la sesión anterior)».
+- Push realizado: no.
+- Estado del árbol al terminar: adaptador U2 sin commit y **sin compilar** (`CombatVisualCheck.cs`, CS1503).
+- Siguiente paso que dejó anotado: Play Mode tras la espera de 0,4 s, build y ensayos gráficos.
+
 ### 29/09/2026 — preparación documental del relevo — ChatGPT
 
 - No se implementó código de U2.
@@ -41,6 +51,22 @@ Añadir las entradas nuevas **de más antigua a más reciente**. No borrar entra
 - Se actualizaron las entradas de Codex/Claude y la documentación compartida para obligar a registrar trabajo, pruebas, cambios locales y siguiente paso antes del relevo.
 - No se ejecutaron pruebas Unity/web porque este cambio es exclusivamente documental.
 - Siguiente paso de implementación: auditar el árbol local e iniciar la base determinista/datos/pruebas de U2 siguiendo el plan autorizado de este checkpoint.
+
+### 29/09/2026 19:50–20:35 — auditoría, integración y base verificada de U2 — Claude Code
+
+- Punto de partida/commit: local `1e66e49` (sin publicar) sobre `eb691b5`; remoto `2b67ea5` y, durante la sesión, `dd93c81`.
+- Trabajo realizado: auditoría del trabajo de Codex; copia de seguridad en `qa-results/u2-audit/`; stash de las cabeceras de Codex en `CLAUDE.md` y `docs/ENTORNO_LOCAL_CODEX.md` (sustituidas por la documentación remota); rebase del núcleo sobre `2b67ea5` y después sobre `dd93c81` (el autor publicó seis commits documentales durante la sesión); restauración de los once ajustes Unity que solo cambiaban espacios, `GraphicsSettings.asset` y `U1_Patio.unity`; corrección de la compilación; commit de la integración; decisiones del autor en `docs/DECISIONES.md` y checkpoints «Cómo retomar» en `docs/INSTRUCCIONES_PROYECTO.md`.
+- Archivos/sistemas principales: `Assets/Mamporro/Core`, `Assets/Mamporro/U2`, `PrototypeSession.cs`, `PrototypeController.cs`, `PlayerMotor.cs`, `U2Project.cs`, `CombatSceneTests.cs`, `scripts/u2.*`, documentación.
+- Decisiones nuevas: las del autor listadas en «Decisiones del autor para U2» y en `docs/DECISIONES.md` (29/09/2026).
+- Pruebas realmente ejecutadas y resultado: `scripts\u2.cmd edit` 37/37 y `scripts\u2.cmd play` 2/2, dos veces (20:14–20:15 y 20:28–20:29).
+- Pruebas pendientes/no ejecutadas: build U2, benchmark, web (sin cambios web).
+- Commits creados: «Porta el núcleo y las reglas de combate de U2» (rebasado), «Integra la escena U2 de combate y corrige su compilación», «Registra las decisiones de U2 y los checkpoints de bloque» y el de este registro.
+- Push realizado: se intenta tras este commit, con `git fetch` previo; el resultado se anota en la siguiente actualización.
+- Estado del árbol al terminar: solo los cambios locales no incluidos (abajo).
+- Cambios locales no incluidos: `ProjectSettings.asset`, `ProjectAuditorSettings.asset`, `PackageManagerSettings.asset`, `URPProjectSettings.asset` (no publicar); retoques de Codex en `README.md`, `docs/MIGRACION_UNITY.md`, `docs/PROGRESO_U1.md`, `unity/Docs/HOJA_DE_RUTA.md`, `unity/README.md` (revisar en el cierre).
+- Errores/limitaciones conocidas: avisos CS0618 por APIs obsoletas en `U2Project.cs` y `CombatSceneTests.cs`; la build `unity/Builds/U2` es antigua.
+- Decisiones pendientes del autor: ninguna.
+- Siguiente paso exacto: paso 3 del plan de cierre.
 
 ### Plantilla para cada sesión posterior
 
@@ -63,6 +89,7 @@ Añadir las entradas nuevas **de más antigua a más reciente**. No borrar entra
 ```
 
 No escribir resultados previstos en el apartado de pruebas. Si no se ejecutó una comprobación, indicar expresamente que no se ejecutó.
+
 ## Decisiones del autor para U2 (29/09/2026)
 
 Confirmadas por el autor tras la auditoría del trabajo local; detalle en `docs/DECISIONES.md`.
@@ -114,6 +141,8 @@ Los comandos exactos de la sesión anterior no quedaron registrados.
 | --- | --- | --- | --- |
 | 29/09/2026 20:14 | `scripts\u2.cmd edit` | 37/37 (26 U2 + 11 U1), sin errores de compilación; avisos CS0618 por APIs obsoletas en `U2Project.cs` y `CombatSceneTests.cs` | `unity/TestResults/U2/edit.xml`, `edit.log` |
 | 29/09/2026 20:15 | `scripts\u2.cmd play` | 2/2 (U1 y U2) | `unity/TestResults/U2/play.xml`, `play.log` |
+| 29/09/2026 20:28 | `scripts\u2.cmd edit` (tras rebase sobre `dd93c81`) | 37/37 | `unity/TestResults/U2/edit.xml`, `edit.log` |
+| 29/09/2026 20:29 | `scripts\u2.cmd play` (tras rebase sobre `dd93c81`) | 2/2 | `unity/TestResults/U2/play.xml`, `play.log` |
 
 Cambios de la integración: `CombatVisualCheck.cs` usa `WaitForSecondsRealtime(.5f)` y guarda sus capturas en `unity/TestResults/U2/Visual` (ignorada por Git). Pendientes: build, ensayo gráfico y web (sin cambios web en esta integración).
 
