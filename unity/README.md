@@ -60,6 +60,32 @@ Izquierda al fondo: rampa suave, meseta y bajada. Derecha: pendiente excesiva.
 Bloques centrales: separación y rodeo local. La cámara evita el suelo; la
 colisión completa contra estructuras sigue pendiente para otro bloque.
 
+## Escena U2: combate controlado
+
+Abre `Assets/Mamporro/U2/U2_Combate.unity` y pulsa Play, o ejecuta la build
+`unity\Builds\U2\Mamporro-U2.exe` (se genera con `scripts\u2.cmd build`). Es una
+escena de pruebas sobre el patio de U1: reposición sencilla de enemigos básicos,
+sin director, mundo, baúles ni guardado (eso es U3–U4). Empieza en pausa: pulsa
+«Entrar al combate».
+
+Controles de U2 (sin conflictos con U1: en esta escena R, 1–4 y F5 de U1 no se usan):
+
+- WASD: moverse; ratón: cámara. Espacio: salto; Mayús o C: deslizamiento.
+- Esc: pausar y continuar (el menú de pausa ofrece continuar, reiniciar y QA).
+  En U2 el clic no reanuda: usa Esc o «Entrar al combate».
+- Subida de nivel (pantalla uGUI, simulación en pausa):
+  - 1–4, teclado numérico 1–4 o clic en la carta: elegir.
+  - R: volver a tirar. X: saltar la subida. B: modo descarte; después 1–4 o
+    clic en la carta que no quieres volver a ver. B o Esc cancelan el descarte.
+  - Durante 0,4 s tras abrirse (y tras elegir o saltar) se ignoran teclas y
+    clics, como en la web. Volver a tirar y descartar no reinician esa espera.
+- F1: resolución interna 240/360/480; F2: dithering; F3: ajuste de vértices;
+  F6: ventana 1080p/1440p.
+- F4: panel QA (armas, tomos, objetos, subir nivel, invulnerabilidad, oro,
+  daño, Rata élite, jefe y demás enemigos). No se abre durante la subida de nivel
+  y se oculta durante el ensayo automático.
+- F7: idioma ES/EN. F8: reiniciar la partida de pruebas.
+
 ## Pruebas y build (CMD desde la raíz)
 
 Con el Editor cerrado:
@@ -80,6 +106,21 @@ La ventana de la build debe ser visible: el lanzamiento oculto no mide render.
 
 `scripts\u1.cmd create` regenera deliberadamente `Generated/` y la escena desde
 el generador. No hace falta para jugar; revisar antes cualquier cambio manual.
+
+U2, también con el Editor cerrado:
+
+```cmd
+scripts\u2.cmd edit
+scripts\u2.cmd play
+scripts\u2.cmd build
+scripts\u2.cmd benchmark
+node scripts\unity-reference-u2.mjs
+```
+
+`scripts\u2.cmd edit` incluye las pruebas de U1. Los resultados quedan en
+`unity/TestResults/U2/`. `node scripts\unity-reference-u2.mjs` comprueba que
+`Docs/Reference/u2-combat.json` sigue coincidiendo con la web aprobada; no la
+reescribe.
 
 ## Ensayo reproducible
 

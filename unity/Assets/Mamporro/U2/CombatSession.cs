@@ -15,12 +15,12 @@ namespace Mamporro.U2
         public PrototypeController View {get;private set;}
         public CombatRenderer Presenter {get;private set;}
         public CombatBenchmark Benchmark {get;private set;}
+        public LevelUpScreen Cards {get;private set;}
         public double LastTickMs {get;private set;}
         public long TickCount {get;private set;}
         public int TargetEnemies=60;
         public bool QaOpen;
-        public bool CanChoose=>Run.Choosing&&UnityEngine.Time.unscaledTimeAsDouble>=choiceOpened+.4;
-        double choiceOpened;long tickStart;
+        long tickStart;
         int character;double spawnClock;Rng spawnRng;
         readonly StringBuilder text=new StringBuilder(1024);
         readonly CombatWorld world=new CombatWorld();
@@ -30,13 +30,14 @@ namespace Mamporro.U2
         {
             View=controller;CombatText.Load();Presenter=gameObject.AddComponent<CombatRenderer>();Presenter.Initialize(this);
             Benchmark=gameObject.AddComponent<CombatBenchmark>();Benchmark.Session=this;
+            Cards=gameObject.AddComponent<LevelUpScreen>();Cards.Session=this;Cards.Build();
             Restart(0);gameObject.AddComponent<CombatMenu>().Session=this;
         }
         void Start(){Benchmark.ReadCommandLine();if(Array.IndexOf(Environment.GetCommandLineArgs(),"-u2-visual-check")>=0)gameObject.AddComponent<CombatVisualCheck>().Session=this;}
         public void Restart(int selected)
         {
             character=selected;Run=new CombatRun(world,Seed,Catalog.Characters[character],4096,this);spawnRng=new Rng(Seed+"/qa-spawn");spawnClock=0;TickCount=0;QaOpen=false;
-            View.ResetTrial(0);View.Motor.SpeedMultiplier=1;View.Motor.CrowdSlow=0;SyncPlayer();Presenter.Clear();
+            View.ResetTrial(0);View.Motor.SpeedMultiplier=1;View.Motor.CrowdSlow=0;SyncPlayer();Presenter.Clear();Cards.Hide();
             for(int i=0;i<TargetEnemies;i++)SpawnControlled(i%4);
             View.SetPaused(true);RefreshHud();
         }
@@ -58,19 +59,27 @@ namespace Mamporro.U2
         public override void UpdateSession()
         {
             var k=Keyboard.current;if(k==null)return;
-            if(k.f8Key.wasPressedThisFrame){CombatText.English=!CombatText.English;RefreshHud();}
+            // F7 idioma y F8 reinicio (R, X y B son de la subida de nivel).
+            if(k.f7Key.wasPressedThisFrame){CombatText.English=!CombatText.English;RefreshHud();if(Cards.Visible)Cards.Paint();}
             if(Measuring)return;
-            if(k.rKey.wasPressedThisFrame){Restart(character);return;}
-            if(k.f4Key.wasPressedThisFrame){QaOpen=!QaOpen;View.SetPaused(true);}
-            if(CanChoose){
-                int selected=k.digit1Key.wasPressedThisFrame?0:k.digit2Key.wasPressedThisFrame?1:k.digit3Key.wasPressedThisFrame?2:k.digit4Key.wasPressedThisFrame?3:-1;
-                if(selected>=0)Choose(selected,k.bKey.isPressed);
-                if(k.qKey.wasPressedThisFrame){Run.Reroll();RefreshHud();}
-                if(k.eKey.wasPressedThisFrame){Run.Skip();AfterChoice();}
-            }
+            if(k.f8Key.wasPressedThisFrame){Restart(character);return;}
+            if(k.f4Key.wasPressedThisFrame&&!Run.Choosing){QaOpen=!QaOpen;View.SetPaused(true);}
         }
-        public void Choose(int index,bool banish=false){if(banish)Run.Banish(index);else Run.Choose(index);AfterChoice();}
-        public void AfterChoice(){if(!Run.Choosing&&!QaOpen)View.SetPaused(false);else if(Run.Choosing)choiceOpened=UnityEngine.Time.unscaledTimeAsDouble;RefreshHud();}
+        // Acciones de la subida de nivel. Elegir y saltar cierran la elección (la siguiente
+        // pendiente se abre como nueva); volver a tirar y descartar solo cambian las cartas.
+        public void Choose(int index){if(Run.Choose(index))AfterAction(true);}
+        public void Skip(){if(Run.Skip())AfterAction(true);}
+        public void Reroll(){if(Run.Reroll())AfterAction(false);}
+        public void Banish(int index){if(Run.Banish(index))AfterAction(false);}
+        void AfterAction(bool closes)
+        {
+            if(Run.Choosing)Cards.Show(closes);
+            else{Cards.Hide();if(!QaOpen)View.SetPaused(false);}
+            RefreshHud();
+        }
+        // Abre la elección pendiente (QA o comprobación visual).
+        public void OpenChoice(){if(Run.OpenChoice()||Run.Choosing){View.SetPaused(true);Cards.Show(true);RefreshHud();}}
+        public void CloseQa(){QaOpen=false;if(!Run.Choosing&&!Run.Dead)View.SetPaused(false);}
         public override void BeforeMovement()
         {
             tickStart=Stopwatch.GetTimestamp();
@@ -86,7 +95,8 @@ namespace Mamporro.U2
             else if(spawnClock>=1){spawnClock=0;for(int k=0;k<3&&Run.Enemies.Count<TargetEnemies;k++)SpawnControlled(k%4);}
             Presenter.Step(1.0/60);TickCount++;LastTickMs=(Stopwatch.GetTimestamp()-tickStart)*1000.0/Stopwatch.Frequency;
             Benchmark.RecordTick(LastTickMs);
-            if(Run.Choosing||Run.Dead){choiceOpened=UnityEngine.Time.unscaledTimeAsDouble;View.SetPaused(true);}
+            if(Run.Choosing&&!Cards.Visible)Cards.Show(true);
+            if(Run.Choosing||Run.Dead)View.SetPaused(true);
         }
         public override void Draw()=>Presenter.Draw();
         public void Emit(CombatEffect effect)=>Presenter.Emit(effect);

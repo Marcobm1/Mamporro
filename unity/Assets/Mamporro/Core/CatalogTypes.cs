@@ -6,7 +6,8 @@ namespace Mamporro.Core
     public enum Stat { damage, attackSpeed, extraProjectiles, area, critChance, critDamage, projectileSpeed, duration, knockback, moveSpeed, maxHp, regen, armor, pickupRadius, xpGain, luck, choices, goldGain }
     public enum WStat { damage, cooldown, count, area, speed, duration, pierce, critChance, critMultiplier, knockback }
     public sealed class Effect { public Stat stat; public double amount; public bool basis, integer; public string display; }
-    public sealed class WeaponDef { public string id, behavior; public double[] values; public WStat[] upgradable; public double hitFlash; }
+    // statLabels: clave de texto propia de cada estadística (null = «stat.<nombre>»).
+    public sealed class WeaponDef { public string id, behavior; public double[] values; public WStat[] upgradable; public double hitFlash; public string[] statLabels; }
     public sealed class TomeDef { public string id; public Effect[] effects; }
     public sealed class ItemDef { public string id,rarity; public Effect[] effects; public int maxStacks; }
     public sealed class CharacterDef { public string id,startingWeapon,passive; public double maxHp,armor,pickupRadius,radius,amount,recharge; }
@@ -18,7 +19,7 @@ namespace Mamporro.Core
     public sealed class RangedDef { public double preferred,range,cooldown,windup,projectileSpeed,projectileDamage,projectileRadius; }
     public sealed class ChargeDef { public double cooldown,range,windup,dashTime,dashSpeed,damageMultiplier,recover; }
     public sealed class RarityDef { public string id; public double weight,luckBonus,power; public int min,max; }
-    public sealed class UpgradeStep { public double amount,max=double.PositiveInfinity; public string mode; public bool integer; }
+    public sealed class UpgradeStep { public double amount,max=double.PositiveInfinity; public string mode,display; public bool integer; }
     public sealed class PlayerStats
     {
         public readonly double[] values=new double[18];

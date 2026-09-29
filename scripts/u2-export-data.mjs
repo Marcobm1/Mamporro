@@ -13,13 +13,13 @@ try {
  const effects=a=>arr('Effect',a.map(v=>obj('Effect',{stat:'Stat.'+v.stat,amount:num(v.amount),basis:String(v.mode==='base'),integer:String(!!v.integer),display:q(v.display)})));
  const numeric=(type,v)=>v?obj(type,Object.fromEntries(Object.entries(v).map(([k,n])=>[k,num(n)]))):'null';
  const groups={
-  Weapons:arr('WeaponDef',w.WEAPON_LIST.map(d=>obj('WeaponDef',{id:q(d.id),behavior:q(d.behavior),values:arr('double',keys.map(k=>num(d.base[k]))),upgradable:arr('WStat',d.upgradable.map(k=>'WStat.'+k)),hitFlash:num(d.hitFlash)}))),
+  Weapons:arr('WeaponDef',w.WEAPON_LIST.map(d=>obj('WeaponDef',{id:q(d.id),behavior:q(d.behavior),values:arr('double',keys.map(k=>num(d.base[k]))),upgradable:arr('WStat',d.upgradable.map(k=>'WStat.'+k)),hitFlash:num(d.hitFlash),statLabels:arr('string',keys.map(k=>d.statLabels?.[k]?q(d.statLabels[k]):'null'))}))),
   Tomes:arr('TomeDef',t.TOME_LIST.map(d=>obj('TomeDef',{id:q(d.id),effects:effects(d.effects)}))),
   Items:arr('ItemDef',i.ITEM_LIST.map(d=>obj('ItemDef',{id:q(d.id),rarity:q(d.rarity),effects:effects(d.effects),maxStacks:num(d.maxStacks??0)}))),
   Characters:arr('CharacterDef',Object.values(c.CHARACTERS).map(d=>obj('CharacterDef',{id:q(d.id),startingWeapon:q(d.startingWeapon),maxHp:num(d.maxHp),armor:num(d.armor),pickupRadius:num(d.pickupRadius),passive:q(d.passive.kind),radius:num(d.passive.radius??0),amount:num(d.passive.amount??0),recharge:num(d.passive.recharge??0)}))),
   Enemies:arr('EnemyDef',e.ENEMY_LIST.map(d=>obj('EnemyDef',{id:q(d.id),behavior:q(d.behavior),...Object.fromEntries(['hp','speed','agility','damage','radius','height','xp','mass'].map(k=>[k,num(d[k])])),goldChance:num(d.gold.chance),goldMin:num(d.gold.min),goldMax:num(d.gold.max),ranged:numeric('RangedDef',d.ranged),charge:numeric('ChargeDef',d.charge)}))),
   Rarities:arr('RarityDef',r.RARITIES.map(d=>obj('RarityDef',{id:q(d.id),weight:num(d.weight),luckBonus:num(d.luckBonus),power:num(d.power),min:num(d.stats[0]),max:num(d.stats[1])}))),
-  Steps:arr('UpgradeStep',keys.map(k=>{const d=u.WEAPON_UPGRADE_STEPS[k];return obj('UpgradeStep',{amount:num(d.amount),mode:q(d.mode),integer:String(!!d.integer),max:d.maxBonus===undefined?'double.PositiveInfinity':num(d.maxBonus)});})),
+  Steps:arr('UpgradeStep',keys.map(k=>{const d=u.WEAPON_UPGRADE_STEPS[k];return obj('UpgradeStep',{amount:num(d.amount),mode:q(d.mode),display:q(d.display),integer:String(!!d.integer),max:d.maxBonus===undefined?'double.PositiveInfinity':num(d.maxBonus)});})),
  };
  const types={Weapons:'WeaponDef',Tomes:'TomeDef',Items:'ItemDef',Characters:'CharacterDef',Enemies:'EnemyDef',Rarities:'RarityDef',Steps:'UpgradeStep'};
  // Constantes de reglas de combate y economía de partida que usa U2.

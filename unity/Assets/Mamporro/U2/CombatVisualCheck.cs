@@ -12,7 +12,7 @@ namespace Mamporro.U2
         {
             string output=Path.Combine(Application.dataPath,"../TestResults/U2/Visual");Directory.CreateDirectory(output);
             yield return new WaitForSecondsRealtime(1);yield return Capture(output,"pause-es");
-            Session.Run.GainXp(12);Session.Run.OpenChoice();Session.AfterChoice();yield return new WaitForSecondsRealtime(.5f);yield return Capture(output,"cards-es");
+            Session.Run.GainXp(12);Session.OpenChoice();yield return new WaitForSecondsRealtime(.5f);yield return Capture(output,"cards-es");
             CombatText.English=true;Session.RefreshHud();yield return Capture(output,"cards-en");
             Session.QaOpen=true;yield return Capture(output,"qa-en");Session.QaOpen=false;
             Session.Restart(1);Session.Run.Hurt(1000);yield return Capture(output,"defeat-en");

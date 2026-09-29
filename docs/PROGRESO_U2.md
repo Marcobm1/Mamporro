@@ -12,12 +12,12 @@ Actualizar esta sección después de cada paso completado.
 
 - **Último commit publicado:** ver `git log -1 origin/claude/zen-pasteur-674ik0`. Base verificada de U2 = núcleo + integración + documentación de decisiones (pasos 1–2 del plan). Ramas locales de respaldo: `respaldo/u2-local-1e66e49` (commit original de Codex) y `respaldo/u2-antes-rebase-2` (antes del rebase sobre `dd93c81`).
 - **Antes de cada push:** `git fetch origin`; si el remoto ha cambiado, parar y avisar al autor en lugar de reintentar.
-- **Paso actual:** 5 del plan de cierre (subida de nivel en uGUI; reinicio en F8 e idioma en F7).
-- **Terminado y verificado:** núcleo, adaptador y escena U2; referencia `u2-combat.json` y prueba del catálogo contra `baseline.catalog`. Edit Mode 88/88 (incluidas las 11 de U1) el 29/09/2026 20:47; Play Mode 2/2 a las 20:45.
-- **A medias:** subida de nivel y panel QA siguen en IMGUI con teclas Q/E/B y R para reiniciar y F8 para el idioma (se sustituyen en el paso 5: reinicio en F8, idioma en F7). Sin contador de oro en el HUD. La build `unity/Builds/U2` es anterior a esta base y no se ha regenerado.
+- **Paso actual:** 6 del plan de cierre (contador de oro en el HUD; panel QA oculto durante el benchmark).
+- **Terminado y verificado:** núcleo, adaptador y escena U2; referencia `u2-combat.json`; prueba del catálogo; subida de nivel en uGUI con las teclas acordadas. Edit Mode 88/88 y Play Mode 9/9 el 29/09/2026 20:53.
+- **A medias:** el panel QA sigue en IMGUI (aprobado). Sin contador de oro en el HUD. La build `unity/Builds/U2` es anterior a esta base y no se ha regenerado; la pantalla uGUI no se ha visto aún en build ni se ha probado con teclado real (las pruebas llaman a los mismos métodos que las teclas).
 - **Sin commit a propósito:** `unity/ProjectSettings/ProjectSettings.asset` (identificador de proyecto en la nube y organización), `PackageManagerSettings.asset` y `URPProjectSettings.asset` (preferencias locales del Editor): no publicar nunca. `ProjectAuditorSettings.asset`: Unity lo reescribe con espacios al abrir; no publicar. Retoques de Codex en `README.md`, `docs/MIGRACION_UNITY.md`, `docs/PROGRESO_U1.md`, `unity/Docs/HOJA_DE_RUTA.md` y `unity/README.md`: se revisan en el commit documental de cierre (paso 8).
 - **Copias de seguridad locales (ignoradas por Git):** `qa-results/u2-audit/` (parche completo `worktree.patch`, lista y `untracked.tar` de no seguidos, estado previo y posterior al rebase) y `qa-results/u2-inherited/` (cambios heredados de U1 con hashes). Stash `codex: cabeceras CLAUDE/ENTORNO`, sustituido por `2b67ea5`, conservado sin aplicar. Copia íntegra del repositorio anterior a la integración en `..\Mamporro-respaldo-u2`.
-- **Siguiente paso exacto:** sustituir la elección de cartas IMGUI de `CombatMenu.cs` por una pantalla uGUI (1–4, teclado numérico, clic, R, X, B, Esc, espera `Tuning.InputGuard`), con textos de `WebText.json`; mover reinicio a F8 e idioma a F7 y documentar los controles en `unity/README.md`.
+- **Siguiente paso exacto:** añadir el oro de la partida al HUD de `CombatSession.RefreshHud` con la clave web `hud.gold` y comprobar que `CombatMenu` no dibuja nada durante el benchmark.
 
 Comprobar el estado desde CMD:
 
@@ -107,7 +107,7 @@ Confirmadas por el autor tras la auditoría del trabajo local; detalle en `docs/
 2. Corregir la compilación; Edit Mode y Play Mode completos; commit y primer push. **Hecho.**
 3. `scripts/unity-reference-u2.mjs` → `unity/Docs/Reference/u2-combat.json`; pruebas C# contra él. **Hecho.**
 4. Prueba del catálogo contra `baseline.catalog`. **Hecho** (`Tests/Core/CatalogReferenceTests.cs`: personajes, armas, tomos, objetos, enemigos y constantes de `Tuning`).
-5. Subida de nivel en uGUI con las teclas acordadas; reinicio en F8.
+5. Subida de nivel en uGUI con las teclas acordadas; reinicio en F8. **Hecho** (`U2/LevelUpScreen.cs`, `U2/CardText.cs`; idioma en F7; controles en `unity/README.md`).
 6. Contador de oro en el HUD; panel QA oculto durante el benchmark.
 7. Benchmark en build con combate real: 300/500/750/1000 × 1080p/1440p.
 8. Documentación de cierre (revisar entonces los retoques de Codex en README, MIGRACION_UNITY, PROGRESO_U1, HOJA_DE_RUTA y unity/README) y entrega para prueba manual.
@@ -149,6 +149,7 @@ Los comandos exactos de la sesión anterior no quedaron registrados.
 | 29/09/2026 20:45 | `scripts\u2.cmd play` | 2/2 | `unity/TestResults/U2/play.xml`, `play.log` |
 | 29/09/2026 20:46 | `node scripts\unity-reference-u2.mjs`, `node scripts\unity-reference.mjs`, `node --test scripts\unity-reference-bytes.test.mjs` | referencia U2 coincide con la web; U0 verificada; 4/4 | consola |
 | 29/09/2026 20:47 | `scripts\u2.cmd edit` (con `CatalogReferenceTests`) | 88/88 | `unity/TestResults/U2/edit.xml`, `edit.log` |
+| 29/09/2026 20:53 | `scripts\u2.cmd edit` y `scripts\u2.cmd play` (pantalla uGUI) | 88/88 y 9/9 (2 anteriores + 7 de `LevelUpScreenTests`) | `unity/TestResults/U2/edit.xml`, `play.xml` |
 
 Cambios de la integración: `CombatVisualCheck.cs` usa `WaitForSecondsRealtime(.5f)` y guarda sus capturas en `unity/TestResults/U2/Visual` (ignorada por Git). Pendientes: build, ensayo gráfico y web (sin cambios web en esta integración).
 
@@ -162,6 +163,14 @@ Cambios de la integración: `CombatVisualCheck.cs` usa `WaitForSecondsRealtime(.
   2. El jefe descartaba pelusas con un límite fijo `|x|,|z| < 46`. Ahora pregunta al mundo (`ICombatWorld.IsInside(x, z, 2)`, como la web). `CombatWorld` usa el límite del patio U1 (±47,5).
 - Apariciones QA (`SpawnScaled`): usan los multiplicadores del minuto actual, como `debugSpawnEnemy` en la web.
 - Carta de relleno de oro: `Rules.FillerGold(0)` con la fórmula web; las constantes llegan a `Tuning` desde `scripts/u2-export-data.mjs` (nuevo bloque del exportador; el resto de `Catalog.cs` no cambia).
+
+### Subida de nivel uGUI (paso 5)
+
+- `U2/LevelUpScreen.cs` construye por código un lienzo uGUI (y un `EventSystem` con `InputSystemUIInputModule` si no existe) con 3–4 cartas y las acciones R/X/B. Reproduce `src/ui/LevelUpScreen.ts`: el título es el nivel que se está eligiendo; la espera de `Tuning.InputGuard` (0,4 s, exportado de la web) se reinicia al abrir y tras elegir o saltar, pero no tras volver a tirar o descartar; en modo descarte, las cartas de relleno no se pueden descartar.
+- `U2/CardText.cs` equivale a `describeCard()` de `src/ui/cards.ts`: etiquetas propias por arma (`statLabels`, ahora exportadas), porcentaje o número según la mejora (`display`, exportado) y números con el separador del idioma. Los textos salen de `WebText.json` (traducciones de la web).
+- `CombatMenu` (IMGUI) ya no dibuja cartas; solo la pausa y el panel QA. F4 no abre el panel durante la subida de nivel. Se retiran de `U2Text.json` las claves de las cartas IMGUI.
+- Teclas: F7 idioma, F8 reinicio. Comprobado contra `PrototypeController`: U1 usa WASD, Espacio, Mayús, C, F1–F3, F6 y, solo sin sesión U2, R, 1–4 y F5; Esc de la pausa no interfiere porque la partida no se reanuda mientras hay elección abierta.
+- Pendiente de ver en build y con teclado y ratón reales (las pruebas llaman a `Press`/`Action`, los mismos métodos que usan las teclas y los botones).
 
 ## Punto de partida
 
