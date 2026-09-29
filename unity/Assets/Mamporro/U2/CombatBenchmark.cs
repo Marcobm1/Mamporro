@@ -15,7 +15,9 @@ namespace Mamporro.U2
         const int Capacity=300000;const double Warmup=10,Duration=30;
         readonly double[] frames=new double[Capacity],ticks=new double[10000],cpu=new double[Capacity],gpu=new double[Capacity];
         readonly int[] loads={300,500,750,1000};readonly FrameTiming[] timing=new FrameTiming[1];
-        ProfilerRecorder gc;long alloc;int gcSamples,n,nt,scenario,routeTick,minEntities,maxEntities;
+        ProfilerRecorder gc;long alloc;int gcSamples,n,nt,scenario,routeTick,minEntities,maxEntities,maxProjectiles,maxEnemyShots,cardsApplied;
+        // Subidas de nivel aplicadas antes de medir (siempre la primera carta; determinista con la semilla).
+        public const int SetupLevels=12;
         double start,previous,first;long rendered;string output;bool captured;
         public void ReadCommandLine()
         {
@@ -28,11 +30,16 @@ namespace Mamporro.U2
         void Next()
         {
             Debug.Log("U2 benchmark: inicio carga "+loads[scenario]);
-            Session.TargetEnemies=loads[scenario];Session.Restart(0);Session.Run.QaWeapons("chancla","naftalina","dentaduras","fregona");Session.Run.Invincible=true;
-            // QA: selección automática desactivada en el ensayo; las gemas y XP sí se procesan.
-            Session.View.SetPaused(false);n=nt=routeTick=gcSamples=0;alloc=0;captured=false;minEntities=int.MaxValue;maxEntities=0;
+            Session.TargetEnemies=loads[scenario];Session.Restart(0);var r=Session.Run;r.QaWeapons("chancla","naftalina","dentaduras","fregona");
+            // Invulnerabilidad QA: con 750-1000 enemigos la partida acabaría antes de medir. Documentada en el informe.
+            r.Invincible=true;cardsApplied=0;
+            for(int k=0;k<SetupLevels;k++){r.GainXp(Mamporro.Core.Rules.XpNeeded(r.Level)-r.Xp);cardsApplied+=ApplyCards();}
+            Session.View.SetPaused(false);n=nt=routeTick=gcSamples=0;alloc=0;captured=false;minEntities=int.MaxValue;maxEntities=0;maxProjectiles=maxEnemyShots=0;
             previous=start=Time.realtimeSinceStartupAsDouble;
         }
+        // Resuelve las subidas pendientes eligiendo la primera carta, sin pantalla ni pausa.
+        public int ApplyCards(){var r=Session.Run;int applied=0;r.OpenChoice();while(r.Choosing&&r.Choose(0))applied++;return applied;}
+        public void CountCards(int applied){cardsApplied+=applied;}
         public MoveIntent ScriptedIntent()
         {int segment=(routeTick++/120)%4;return new MoveIntent{direction=segment==0?Vector2.right:segment==1?Vector2.up:segment==2?Vector2.left:Vector2.down};}
         public void RecordTick(double ms)
@@ -46,6 +53,7 @@ namespace Mamporro.U2
                 uint count=FrameTimingManager.GetLatestTimings(1,timing);cpu[n]=count>0&&timing[0].cpuFrameTime>0?timing[0].cpuFrameTime:-1;gpu[n]=count>0&&timing[0].gpuFrameTime>0?timing[0].gpuFrameTime:-1;
                 if(gc.Valid){alloc+=gc.LastValue;gcSamples++;}n++;
                 minEntities=Math.Min(minEntities,Session.Run.Enemies.Count);maxEntities=Math.Max(maxEntities,Session.Run.Enemies.Count);
+                maxProjectiles=Math.Max(maxProjectiles,Session.Run.Projectiles.Count);maxEnemyShots=Math.Max(maxEnemyShots,Session.Run.EnemyShots.Count);
             }
             previous=now;if(elapsed>=Warmup+Duration){Save(now);Debug.Log("U2 benchmark: fin carga "+loads[scenario]);scenario++;if(scenario<loads.Length)Next();else{Active=false;if(gc.Valid)gc.Dispose();Application.Quit(0);}}
         }
@@ -61,20 +69,27 @@ namespace Mamporro.U2
                 outputWidth=Screen.width,outputHeight=Screen.height,internalWidth=v.worldCamera.targetTexture.width,internalHeight=v.InternalHeight,quality=QualitySettings.names[QualitySettings.GetQualityLevel()],vsync=QualitySettings.vSyncCount,fpsLimit=Application.targetFrameRate,
                 entities=loads[scenario],minEntities=minEntities,maxEntities=maxEntities,frames=n,ticks=nt,seconds=now-first,meanFps=n/(now-first),meanFrameMs=(now-first)*1000/n,p95=Percentile(sorted,.95),p99=Percentile(sorted,.99),max=Percentile(sorted,1),framesOverBudget=over,
                 tickMean=Mean(ticks,nt),tickP95=Percentile(sortedTicks,.95),tickP99=Percentile(sortedTicks,.99),tickMax=Percentile(sortedTicks,1),cpuMean=Mean(cpu,n),gpuMean=Mean(gpu,n,(now-first)*1000),gcBytesPerFrame=gcSamples>0?(double)alloc/gcSamples:-1,memory=memory,reserved=reserved,rendered=v.RenderedFrames-rendered,
-                projectiles=Session.Run.Projectiles.Count,enemyShots=Session.Run.EnemyShots.Count,gems=Session.Run.Gems.Count,coins=Session.Run.Coins.Count,kills=Session.Run.Kills,effectsDropped=Session.Presenter.DroppedEffects};
+                projectiles=Session.Run.Projectiles.Count,enemyShots=Session.Run.EnemyShots.Count,maxProjectiles=maxProjectiles,maxEnemyShots=maxEnemyShots,gems=Session.Run.Gems.Count,coins=Session.Run.Coins.Count,kills=Session.Run.Kills,effectsDropped=Session.Presenter.DroppedEffects,
+                level=Session.Run.Level,cardsApplied=cardsApplied,gold=Session.Run.Gold,build=Build()};
             report.validRender=report.rendered>=n*.9&&n<Capacity&&nt<ticks.Length;
             string stem=$"u2-{Screen.width}x{Screen.height}-{loads[scenario]}-{DateTime.UtcNow:yyyyMMddTHHmmssfff}";
             File.WriteAllText(Path.Combine(output,stem+".json"),JsonUtility.ToJson(report,true));var csv=new StringBuilder("frame,ms,cpu,gpu\n");
             for(int i=0;i<n;i++)csv.Append(i).Append(',').Append(frames[i].ToString("R",CultureInfo.InvariantCulture)).Append(',').Append(cpu[i].ToString("R",CultureInfo.InvariantCulture)).Append(',').Append(gpu[i].ToString("R",CultureInfo.InvariantCulture)).Append('\n');File.WriteAllText(Path.Combine(output,stem+".csv"),csv.ToString());
             csv.Clear().Append("tick,ms\n");for(int i=0;i<nt;i++)csv.Append(i).Append(',').Append(ticks[i].ToString("R",CultureInfo.InvariantCulture)).Append('\n');File.WriteAllText(Path.Combine(output,stem+"-ticks.csv"),csv.ToString());
         }
+        string Build()
+        {
+            var b=new StringBuilder();foreach(var w in Session.Run.Weapons)b.Append(w.Def.id).Append(" Nv").Append(w.Level).Append("; ");
+            foreach(var t in Session.Run.Tomes)b.Append("tomo ").Append(t.Def.id).Append(" Nv").Append(t.Level).Append("; ");return b.ToString();
+        }
         void OnDestroy(){if(gc.Valid)gc.Dispose();}
         void OnApplicationQuit(){Debug.Log("U2 benchmark: cierre, escenario="+scenario+", activo="+Active);}
         [Serializable]sealed class Report
         {
             public string unity,cpu,gpu,graphics,quality;
-            public string backend="Mono",seed=CombatSession.Seed,loadout="chancla + naftalina + dentaduras + fregona, nivel 1; Remedios; sin tomos ni objetos";
-            public string conditions="10 s calentamiento, 30 s medida; QA invulnerable y sin selección de cartas; reposición hasta carga; circuito 8 s, 120 ticks/lado; yaw 0 pitch 20; sin guardado";
+            public string backend="Mono",seed=CombatSession.Seed,loadout="Remedios; chancla + naftalina + dentaduras + fregona; 12 subidas de nivel previas eligiendo siempre la primera carta; sin objetos";
+            public string conditions="10 s calentamiento, 30 s medida; QA invulnerable; subidas de nivel durante la medida resueltas con la primera carta, sin pantalla; reposición hasta carga (pelusa, cucaracha, táper, paloma); circuito 8 s, 120 ticks/lado; yaw 0 pitch 20; sin guardado";
+            public string build;public int level,cardsApplied,maxProjectiles,maxEnemyShots;public double gold;
             public string unavailable="-1: no disponible/anómalo. Memoria Unity al final, no pico/VRAM. GPU se invalida si supera toda la ventana. GC release puede no existir.";
             public bool development,editor,validRender;public int ramMB,outputWidth,outputHeight,internalWidth,internalHeight,vsync,fpsLimit,entities,minEntities,maxEntities,frames,ticks,framesOverBudget,projectiles,enemyShots,gems,coins,kills,effectsDropped;
             public double seconds,meanFps,meanFrameMs,p95,p99,max,tickMean,tickP95,tickP99,tickMax,cpuMean,gpuMean,gcBytesPerFrame;public long memory,reserved,rendered;

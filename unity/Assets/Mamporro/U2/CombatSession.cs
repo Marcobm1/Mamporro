@@ -60,7 +60,7 @@ namespace Mamporro.U2
         {
             var k=Keyboard.current;if(k==null)return;
             // F7 idioma y F8 reinicio (R, X y B son de la subida de nivel).
-            if(k.f7Key.wasPressedThisFrame){CombatText.English=!CombatText.English;RefreshHud();if(Cards.Visible)Cards.Paint();}
+            if(k.f7Key.wasPressedThisFrame)SetEnglish(!CombatText.English);
             if(Measuring)return;
             if(k.f8Key.wasPressedThisFrame){Restart(character);return;}
             if(k.f4Key.wasPressedThisFrame&&!Run.Choosing){QaOpen=!QaOpen;View.SetPaused(true);}
@@ -79,6 +79,7 @@ namespace Mamporro.U2
         }
         // Abre la elección pendiente (QA o comprobación visual).
         public void OpenChoice(){if(Run.OpenChoice()||Run.Choosing){View.SetPaused(true);Cards.Show(true);RefreshHud();}}
+        public void SetEnglish(bool english){CombatText.English=english;RefreshHud();if(Cards.Visible)Cards.Paint();}
         public void CloseQa(){QaOpen=false;if(!Run.Choosing&&!Run.Dead)View.SetPaused(false);}
         public override void BeforeMovement()
         {
@@ -91,7 +92,7 @@ namespace Mamporro.U2
             SyncPlayer();Run.Step(1.0/60);
             View.Motor.Push((float)(Run.Player.X-View.Motor.Position.x),(float)(Run.Player.Z-View.Motor.Position.z));
             spawnClock+=1.0/60;
-            if(Measuring){while(Run.Enemies.Count<TargetEnemies)SpawnControlled(Run.Enemies.Count%4);Run.PendingLevels=0;Run.Offer=null;}
+            if(Measuring){while(Run.Enemies.Count<TargetEnemies)SpawnControlled(Run.Enemies.Count%4);if(Run.Choosing||Run.PendingLevels>0)Benchmark.CountCards(Benchmark.ApplyCards());}
             else if(spawnClock>=1){spawnClock=0;for(int k=0;k<3&&Run.Enemies.Count<TargetEnemies;k++)SpawnControlled(k%4);}
             Presenter.Step(1.0/60);TickCount++;LastTickMs=(Stopwatch.GetTimestamp()-tickStart)*1000.0/Stopwatch.Frequency;
             Benchmark.RecordTick(LastTickMs);

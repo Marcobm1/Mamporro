@@ -19,6 +19,8 @@ namespace Mamporro.U2
         public bool BanishMode {get;private set;}
         public double AcceptFrom {get;private set;}
         public int CardCount {get;private set;}
+        public string CardLabel(int index)=>cardTexts[index].text;
+        public string Title=>title.text;
         GameObject root;Text title,subtitle,pending;
         readonly Image[] cards=new Image[4];readonly Text[] cardTexts=new Text[4];
         readonly Button[] actions=new Button[3];readonly Text[] actionTexts=new Text[3];
@@ -48,7 +50,7 @@ namespace Mamporro.U2
             var canvasObject=new GameObject("Subida de nivel U2",typeof(Canvas),typeof(CanvasScaler),typeof(GraphicRaycaster));canvasObject.transform.SetParent(transform,false);
             var canvas=canvasObject.GetComponent<Canvas>();canvas.renderMode=RenderMode.ScreenSpaceOverlay;canvas.sortingOrder=50;
             var scaler=canvasObject.GetComponent<CanvasScaler>();scaler.uiScaleMode=CanvasScaler.ScaleMode.ScaleWithScreenSize;scaler.referenceResolution=new Vector2(1920,1080);scaler.matchWidthOrHeight=.5f;
-            root=Panel(canvasObject.transform,"Fondo",new Color(.08f,.06f,.14f,.9f),Vector2.zero,Vector2.one,Vector2.zero,Vector2.zero);
+            root=Panel(canvasObject.transform,"Fondo",new Color(.08f,.06f,.14f,.96f),Vector2.zero,Vector2.one,Vector2.zero,Vector2.zero);
             title=Label(root.transform,"Título",56,TextAnchor.MiddleCenter,new Vector2(0,.84f),new Vector2(1,.95f));
             subtitle=Label(root.transform,"Subtítulo",30,TextAnchor.MiddleCenter,new Vector2(0,.78f),new Vector2(1,.84f));
             pending=Label(root.transform,"Pendientes",26,TextAnchor.MiddleCenter,new Vector2(0,.74f),new Vector2(1,.78f));

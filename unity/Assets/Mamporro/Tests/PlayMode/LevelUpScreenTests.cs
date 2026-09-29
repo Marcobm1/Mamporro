@@ -50,6 +50,9 @@ namespace Mamporro.Tests
             Assert.That(screen.Visible,Is.False);
             r.GainXp(Rules.XpNeeded(1)+Rules.XpNeeded(2));s.OpenChoice();
             Assert.That(r.PendingLevels,Is.EqualTo(2));Assert.That(screen.Visible,Is.True);Assert.That(screen.CardCount,Is.EqualTo(3));Assert.That(s.View.Paused,Is.True);
+            // Cambiar el idioma (F7) repinta las cartas abiertas.
+            Assert.That(screen.Title,Is.EqualTo("¡Nivel 2!"));string spanish=screen.CardLabel(0);
+            s.SetEnglish(true);Assert.That(screen.Title,Is.EqualTo("Level 2!"));Assert.That(screen.CardLabel(0),Is.Not.EqualTo(spanish));s.SetEnglish(false);
 
             // Durante los primeros 0,4 s no se acepta nada.
             screen.Press(0);screen.Action(0);Assert.That(r.PendingLevels,Is.EqualTo(2));Assert.That(r.Rerolls,Is.EqualTo(2));
