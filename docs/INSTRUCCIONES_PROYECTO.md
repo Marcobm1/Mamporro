@@ -58,6 +58,17 @@ Al cerrar un bloque:
 
 No afirmar una prueba que no se haya ejecutado. No confundir pruebas de lógica con FPS reales, Play Mode con una build final ni una captura con validación jugable.
 
+## Checkpoints de bloque (complemento a CONTINUIDAD_AGENTES)
+
+Decidido por el autor el 29/09/2026 para U2 y todos los bloques futuros. Este documento es la fuente de las reglas comunes; [`CONTINUIDAD_AGENTES.md`](CONTINUIDAD_AGENTES.md) desarrolla el protocolo de relevo. Además de lo que allí se indica:
+
+- Cada checkpoint de bloque (`docs/PROGRESO_U2.md`, `PROGRESO_U3.md`…, mismo formato) empieza con una sección **«Cómo retomar»**: último commit publicado, paso actual, qué está terminado y verificado, qué está a medias, qué hay sin commit y por qué, siguiente paso exacto y comandos CMD para comprobar el estado. Se actualiza después de cada paso completado, no solo al final.
+- Cada prueba ejecutada se registra con comando exacto, fecha, resultado (p. ej. 37/37) y ruta del XML o log. Lo no ejecutado figura como pendiente, nunca como correcto.
+- Si el código queda sin compilar o con pruebas rotas, el checkpoint lo dice con el error y el archivo.
+- Las decisiones nuevas van a `docs/DECISIONES.md` con fecha y quién las tomó (autor o propuesta aprobada por el autor).
+- `CLAUDE.md` y `AGENTS.md` son equivalentes, apuntan a este documento y no se contradicen.
+- Ni en commits ni en código aparecen nombres de modelos de IA, tampoco líneas `Co-Authored-By` de herramientas.
+
 ## Git y protección de cambios
 
 Antes de trabajar:

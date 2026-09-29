@@ -2,13 +2,15 @@
 
 Corte: **29/09/2026**, después de la aprobación manual de U1, de la autorización de U2 y de establecer el relevo compartido Codex ↔ Claude Code.
 
+> **Actualización 29/09/2026 (tarde):** U2 **en curso**. Núcleo e integración de la escena U2 publicados y verificados (Edit Mode 37/37, Play Mode 2/2). El punto exacto de continuación está en la sección «Cómo retomar» de [PROGRESO_U2](PROGRESO_U2.md), que manda sobre las frases de este documento que digan que U2 no está implementado. Relevo entre herramientas: [CONTINUIDAD_AGENTES](CONTINUIDAD_AGENTES.md) y checkpoints de bloque en [INSTRUCCIONES_PROYECTO](INSTRUCCIONES_PROYECTO.md).
+
 ## Resumen ejecutivo
 
 - Web: hitos 1–6 implementados y aprobados.
 - Base web de referencia: `0505b1690656d15188860157612455639820fe1f`.
 - U0: referencia reproducible preparada y conservada.
 - U1: **implementado, verificado y aprobado por el autor**.
-- U2: **autorizado y todavía no implementado en el momento de este corte documental**.
+- U2: **autorizado y en curso**; estado en `docs/PROGRESO_U2.md`.
 - U3–U6: no autorizados para empezar.
 - Rama de trabajo y por defecto: `claude/zen-pasteur-674ik0`.
 - Implementación U1: `abe0a9b7f0b8c53f478b91c870341999df2ea073`.

@@ -484,3 +484,40 @@ controlados. Incluye ofertas, progresión dentro de partida y QA sin persistenci
 No incluye director/mundo/interactuables/victoria U3 ni meta U4. No rebalancear.
 Los antiguos pendientes de revisión U1 y autorización U2 quedan sustituidos.
 Plan, cambios heredados, pruebas y siguiente paso: [PROGRESO_U2](PROGRESO_U2.md).
+
+## U2: decisiones del autor tras auditar el trabajo local (29/09/2026)
+
+Tomadas por el autor tras revisar la auditoría del trabajo de una sesión anterior de
+Codex que quedó sin terminar. Detalle y estado en [PROGRESO_U2](PROGRESO_U2.md).
+
+- **Referencia complementaria:** `scripts/unity-reference-u2.mjs` exporta
+  `unity/Docs/Reference/u2-combat.json` desde `0505b16`, con guarda contra cambios en
+  `src/`. Cubre rarezas, mejoras, agregación de estadísticas, ofertas con semillas fijas
+  y escenarios deterministas por arma, enemigo y pasiva. Es la única fuente de valores
+  esperados de U2 (sustituye a `WebFixtures.json`). No se tocan `baseline.json` ni
+  `src/`; nunca `--write` sobre la base; no se recalculan esperados con el código C#.
+- **Unity** (Edit/Play/build/benchmark) se ejecuta en la sesión local.
+- **Oro de partida** incluido: caída de oro y contador con los valores actuales. Carta de
+  relleno con la fórmula web `max(fillerMin, round(chestCost(baúlesAbiertos) × 0,5))`,
+  que da 10 sin baúles. Sin baúles en U2.
+- **Subida de nivel técnica en uGUI:** 3–4 cartas, clic, 1–4 y teclado numérico,
+  R volver a tirar, X saltar, B modo descarte, Esc sale del descarte, 0,4 s de espera,
+  textos ES/EN de las traducciones de la referencia; sin acabado final. El reinicio de
+  partida pasa a F8.
+- **Jefe y Rata élite** con todas sus reglas de combate, invocados desde el panel QA.
+  Armario, calendario de élites y enjambre quedan para U3.
+- **Panel QA** activo en la build U2; puede seguir en IMGUI, oculto durante el benchmark.
+- **Benchmark U2** en build con combate real (varias armas, cartas aplicadas,
+  proyectiles): 300/500/750/1000 × 1080p/1440p, mismas condiciones y `validRender` que
+  U1; la invulnerabilidad se documenta si se usa.
+- **Integración:** rebase del commit local del núcleo sobre `2b67ea5` (sin force-push).
+  Se restauran los ajustes de Unity que solo difieren en espacios, `GraphicsSettings.asset`
+  y `U1_Patio.unity`. No se publican nunca `ProjectSettings.asset` (identificador de
+  nube), `PackageManagerSettings.asset` ni `URPProjectSettings.asset`.
+- **Controles U2:** reinicio de partida en F8 e idioma en F7 (aprobado por el autor);
+  todos los controles se documentan en `unity/README.md`.
+- **Relevo:** solo escribe en la rama el agente activo. Antes de cada push, `git fetch`;
+  si el remoto ha cambiado, parar y avisar al autor en lugar de reintentar.
+- **Documentación de relevo:** `INSTRUCCIONES_PROYECTO.md` es la fuente de las reglas
+  comunes y `CONTINUIDAD_AGENTES.md` desarrolla el protocolo de relevo al que remite;
+  la norma de checkpoints «Cómo retomar» está en INSTRUCCIONES sin duplicar CONTINUIDAD.
