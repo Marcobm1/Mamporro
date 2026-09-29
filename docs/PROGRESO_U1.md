@@ -140,18 +140,30 @@ horda, niebla, dither e interfaz legible. La valoración estética/jugable es de
 
 ## Siguiente paso exacto
 
-Obtener del autor nombre/correo Git válidos para este repositorio. Después,
-comprobar rama/remoto/índice, crear commits en español y hacer push directo a
-`claude/zen-pasteur-674ik0`, sin PR ni force-push. Actualizar aquí los hashes y
-estado final. Entregar al autor para revisión manual; no comenzar U2.
+Revisión manual del autor de U1. Abrir el proyecto o la build siguiendo
+`unity/README.md`; registrar incidencias de controles y aspecto antes de dar
+U1 por aprobado. No comenzar U2.
 
 ## Git y revisión humana
 
-Rama autorizada sin cambios ajenos al comenzar. Cambios de U1 preparados en el
-índice, aún sin commit ni push. HEAD sigue en b060862262c45c9cc26b2104b4297ba421679947.
-Falta identidad Git también en el entorno normal; se ha pedido al autor nombre
-y correo para estos commits. No modificar identidad global ni atribuirse otra.
-Pendientes commit/push cuando se resuelva. Los resultados/build/cachés están ignorados.
+Rama: `claude/zen-pasteur-674ik0`. El bloqueo anterior por falta de identidad se
+resolvió cuando el autor indicó su nombre y correo. Identidad configurada solo
+en este repositorio, sin modificar la global.
+
+- Commit de implementación: `abe0a9b7f0b8c53f478b91c870341999df2ea073`,
+  «Implementa U1: movimiento, render retro y horda técnica».
+- Push correcto a `origin/claude/zen-pasteur-674ik0`, desde `b060862` hasta
+  `abe0a9b`, sin PR ni force-push. Este checkpoint se entrega en un commit documental
+  posterior, identificable por «Registra la entrega de U1 y el estado local».
+- Se publicó el índice validado de 102 archivos. Al retomar había modificaciones
+  posteriores de Unity fuera del índice: 14 archivos modificados y dos ajustes
+  nuevos (`PackageManagerSettings.asset` y `URPProjectSettings.asset`). Se
+  conservaron sin sobrescribir ni incluir en el commit de U1. El árbol local
+  no está limpio por esas modificaciones; revisar su intención por separado.
+- Revisión del índice con `git diff --cached --check` correcta antes del commit.
+  No se repitieron pruebas de juego en esta entrega Git; los resultados anteriores
+  corresponden a la implementación preparada, no a los cambios locales posteriores.
+- Los resultados, la build y las cachés siguen ignorados y no se publican.
 
 Pendiente del autor: tacto de controles, cursor/foco, legibilidad, aspecto y
 recorrido por rampas/deslizamiento. No se dará U1 por aprobado visualmente por
