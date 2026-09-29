@@ -12,12 +12,12 @@ Actualizar esta sección después de cada paso completado.
 
 - **Último commit publicado:** ver `git log -1 origin/claude/zen-pasteur-674ik0`. Base verificada de U2 = núcleo + integración + documentación de decisiones (pasos 1–2 del plan). Ramas locales de respaldo: `respaldo/u2-local-1e66e49` (commit original de Codex) y `respaldo/u2-antes-rebase-2` (antes del rebase sobre `dd93c81`).
 - **Antes de cada push:** `git fetch origin`; si el remoto ha cambiado, parar y avisar al autor en lugar de reintentar.
-- **Paso actual:** 4 del plan de cierre (prueba del catálogo contra `baseline.catalog`).
-- **Terminado y verificado:** núcleo, adaptador y escena U2; referencia `unity/Docs/Reference/u2-combat.json` y sus pruebas C#. Edit Mode 83/83 (incluidas las 11 de U1) y Play Mode 2/2 el 29/09/2026 20:45 (ver «Pruebas ejecutadas en esta integración»).
+- **Paso actual:** 5 del plan de cierre (subida de nivel en uGUI; reinicio en F8 e idioma en F7).
+- **Terminado y verificado:** núcleo, adaptador y escena U2; referencia `u2-combat.json` y prueba del catálogo contra `baseline.catalog`. Edit Mode 88/88 (incluidas las 11 de U1) el 29/09/2026 20:47; Play Mode 2/2 a las 20:45.
 - **A medias:** subida de nivel y panel QA siguen en IMGUI con teclas Q/E/B y R para reiniciar y F8 para el idioma (se sustituyen en el paso 5: reinicio en F8, idioma en F7). Sin contador de oro en el HUD. La build `unity/Builds/U2` es anterior a esta base y no se ha regenerado.
 - **Sin commit a propósito:** `unity/ProjectSettings/ProjectSettings.asset` (identificador de proyecto en la nube y organización), `PackageManagerSettings.asset` y `URPProjectSettings.asset` (preferencias locales del Editor): no publicar nunca. `ProjectAuditorSettings.asset`: Unity lo reescribe con espacios al abrir; no publicar. Retoques de Codex en `README.md`, `docs/MIGRACION_UNITY.md`, `docs/PROGRESO_U1.md`, `unity/Docs/HOJA_DE_RUTA.md` y `unity/README.md`: se revisan en el commit documental de cierre (paso 8).
 - **Copias de seguridad locales (ignoradas por Git):** `qa-results/u2-audit/` (parche completo `worktree.patch`, lista y `untracked.tar` de no seguidos, estado previo y posterior al rebase) y `qa-results/u2-inherited/` (cambios heredados de U1 con hashes). Stash `codex: cabeceras CLAUDE/ENTORNO`, sustituido por `2b67ea5`, conservado sin aplicar. Copia íntegra del repositorio anterior a la integración en `..\Mamporro-respaldo-u2`.
-- **Siguiente paso exacto:** añadir a `Tests/Core` una prueba que compare `Catalog` (armas, tomos, objetos, personajes, enemigos, rarezas y pasos de mejora) con `baseline.catalog` de U0.
+- **Siguiente paso exacto:** sustituir la elección de cartas IMGUI de `CombatMenu.cs` por una pantalla uGUI (1–4, teclado numérico, clic, R, X, B, Esc, espera `Tuning.InputGuard`), con textos de `WebText.json`; mover reinicio a F8 e idioma a F7 y documentar los controles en `unity/README.md`.
 
 Comprobar el estado desde CMD:
 
@@ -106,7 +106,7 @@ Confirmadas por el autor tras la auditoría del trabajo local; detalle en `docs/
 1. Integrar `2b67ea5` (rebase del núcleo), restaurar ajustes de Unity que solo cambian espacios, `GraphicsSettings.asset` y `U1_Patio.unity`. **Hecho.**
 2. Corregir la compilación; Edit Mode y Play Mode completos; commit y primer push. **Hecho.**
 3. `scripts/unity-reference-u2.mjs` → `unity/Docs/Reference/u2-combat.json`; pruebas C# contra él. **Hecho.**
-4. Prueba del catálogo contra `baseline.catalog`.
+4. Prueba del catálogo contra `baseline.catalog`. **Hecho** (`Tests/Core/CatalogReferenceTests.cs`: personajes, armas, tomos, objetos, enemigos y constantes de `Tuning`).
 5. Subida de nivel en uGUI con las teclas acordadas; reinicio en F8.
 6. Contador de oro en el HUD; panel QA oculto durante el benchmark.
 7. Benchmark en build con combate real: 300/500/750/1000 × 1080p/1440p.
@@ -148,6 +148,7 @@ Los comandos exactos de la sesión anterior no quedaron registrados.
 | 29/09/2026 20:45 | `scripts\u2.cmd edit` (tras corregir el jefe) | 83/83 | `unity/TestResults/U2/edit.xml`, `edit.log` |
 | 29/09/2026 20:45 | `scripts\u2.cmd play` | 2/2 | `unity/TestResults/U2/play.xml`, `play.log` |
 | 29/09/2026 20:46 | `node scripts\unity-reference-u2.mjs`, `node scripts\unity-reference.mjs`, `node --test scripts\unity-reference-bytes.test.mjs` | referencia U2 coincide con la web; U0 verificada; 4/4 | consola |
+| 29/09/2026 20:47 | `scripts\u2.cmd edit` (con `CatalogReferenceTests`) | 88/88 | `unity/TestResults/U2/edit.xml`, `edit.log` |
 
 Cambios de la integración: `CombatVisualCheck.cs` usa `WaitForSecondsRealtime(.5f)` y guarda sus capturas en `unity/TestResults/U2/Visual` (ignorada por Git). Pendientes: build, ensayo gráfico y web (sin cambios web en esta integración).
 
