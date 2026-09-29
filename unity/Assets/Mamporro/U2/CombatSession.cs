@@ -52,7 +52,7 @@ namespace Mamporro.U2
             for(int attempt=0;attempt<30;attempt++){
                 double angle=spawnRng.Next()*Math.PI*2,radius=spawnRng.Range(15,32),x=Run.Player.X+Math.Cos(angle)*radius,z=Run.Player.Z+Math.Sin(angle)*radius;
                 world.Clamp(ref x,ref z);double y=world.Height(x,z);if(TechnicalWorld.Blocked(new Vector3((float)x,(float)y,(float)z),(float)Catalog.Enemies[type].radius))continue;
-                Run.Spawn(type,x,z);return;
+                Run.SpawnScaled(type,x,z);return;
             }
         }
         public override void UpdateSession()

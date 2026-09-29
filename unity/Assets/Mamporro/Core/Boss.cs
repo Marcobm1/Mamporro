@@ -39,7 +39,7 @@ namespace Mamporro.Core
             else if(Attack=="sneeze"){
                 int n=Enraged?24:16;double a0=rng.Next()*Math.PI*2,radius=e.Radius(i);
                 for(int k=0;k<n;k++){double a=a0+k/(double)n*Math.PI*2,dx=Math.Cos(a),dz=Math.Sin(a),sx=x+dx*radius,sz=z+dz*radius;r.EnemyShots.Spawn(sx,r.World.Height(sx,sz)+1,sz,dx,dz,8,4,.45,damage:10,kind:1);}
-                for(int k=0;k<5;k++){double a=a0+(k+.5)/5*Math.PI*2,sx=x+Math.Cos(a)*(radius+1.2),sz=z+Math.Sin(a)*(radius+1.2);if(Math.Abs(sx)<46&&Math.Abs(sz)<46)r.Spawn(0,sx,sz);}
+                for(int k=0;k<5;k++){double a=a0+(k+.5)/5*Math.PI*2,sx=x+Math.Cos(a)*(radius+1.2),sz=z+Math.Sin(a)*(radius+1.2);r.SpawnMinion(sx,sz);}
             }
             Recover(i,e);
         }

@@ -11,4 +11,20 @@ namespace Mamporro.Core
         public static readonly RarityDef[] Rarities=new RarityDef[]{new RarityDef{id="common",weight=60,luckBonus=0,power=1,min=1,max=2},new RarityDef{id="uncommon",weight=25,luckBonus=1.5,power=1.3,min=1,max=2},new RarityDef{id="rare",weight=10,luckBonus=3,power=1.65,min=2,max=2},new RarityDef{id="epic",weight=4,luckBonus=5,power=2.1,min=2,max=2},new RarityDef{id="legendary",weight=1,luckBonus=8,power=2.7,min=2,max=2}};
         public static readonly UpgradeStep[] Steps=new UpgradeStep[]{new UpgradeStep{amount=0.25,mode="mult",integer=false,max=double.PositiveInfinity},new UpgradeStep{amount=0.12,mode="rate",integer=false,max=3},new UpgradeStep{amount=1,mode="flat",integer=true,max=8},new UpgradeStep{amount=0.15,mode="mult",integer=false,max=2},new UpgradeStep{amount=0.15,mode="mult",integer=false,max=2},new UpgradeStep{amount=0.15,mode="mult",integer=false,max=2},new UpgradeStep{amount=1,mode="flat",integer=true,max=15},new UpgradeStep{amount=0.05,mode="flat",integer=false,max=double.PositiveInfinity},new UpgradeStep{amount=0.25,mode="flat",integer=false,max=double.PositiveInfinity},new UpgradeStep{amount=0.2,mode="mult",integer=false,max=3}};
     }
+    public static class Tuning
+    {
+        public const double ReferenceMinutes=10;
+        public const double SpawnHpGrowth=0.22;
+        public const double SpawnHpCurve=0.02;
+        public const double SpawnXpGrowth=0.12;
+        public const double BossHpGrowth=0.2;
+        public const double BossHpCurve=0.06;
+        public const double FillerMinGold=10;
+        public const double FillerChestFraction=0.5;
+        public const double ChestBaseCost=15;
+        public const double ChestCostStep=12;
+        public const double ChestCostCurve=2.5;
+        public const double FillerHeal=0.3;
+        public const double InputGuard=0.4;
+    }
 }

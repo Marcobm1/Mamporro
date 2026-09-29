@@ -9,6 +9,7 @@ namespace Mamporro.U2
     {
         public double Height(double x,double z,double maxY=double.PositiveInfinity)=>TechnicalWorld.Height((float)x,(float)z);
         public void Clamp(ref double x,ref double z){x=Math.Max(-47.5,Math.Min(47.5,x));z=Math.Max(-47.5,Math.Min(47.5,z));}
+        public bool IsInside(double x,double z,double margin)=>Math.Abs(x)<=47.5-margin&&Math.Abs(z)<=47.5-margin;
         public bool PushOut(ref double x,ref double z,double radius,double y,double step)
         {
             if(y+step>=3||y+1.6<0)return false;bool hit=false;

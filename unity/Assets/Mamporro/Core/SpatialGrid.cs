@@ -54,6 +54,7 @@ namespace Mamporro.Core
         double Height(double x,double z,double maxY=double.PositiveInfinity);
         bool PushOut(ref double x,ref double z,double radius,double y,double step);
         void Clamp(ref double x,ref double z);
+        bool IsInside(double x,double z,double margin);
     }
     public sealed class CombatPlayer { public double X,Y,Z,Vx,Vz,Facing; public bool Grounded=true; public const double Radius=.45; }
 }

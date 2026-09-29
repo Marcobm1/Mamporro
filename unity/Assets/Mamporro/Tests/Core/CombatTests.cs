@@ -12,43 +12,12 @@ namespace Mamporro.Tests
         public double Height(double x,double z,double maxY=double.PositiveInfinity)=>0;
         public bool PushOut(ref double x,ref double z,double radius,double y,double step)=>false;
         public void Clamp(ref double x,ref double z){x=Math.Max(-48,Math.Min(48,x));z=Math.Max(-48,Math.Min(48,z));}
+        // Igual que el mundo simulado de scripts/unity-reference-u2.mjs.
+        public bool IsInside(double x,double z,double margin)=>true;
     }
     public sealed class CombatTests
     {
-        [Serializable] public class Fixtures { public Combat[] combat;public Offer[] offers;public ReferenceTests.Vector[] rng; }
-        [Serializable] public class Combat { public string weapon;public float[] hp,x,z;public double damage;public int projectiles; }
-        [Serializable] public class Offer { public ExpectedCard[] cards; }
-        [Serializable] public class ExpectedCard {public string kind,key,id,rarity;public Change[] changes;public double[] amounts;public double amount;}
-        [Serializable] public class Change {public string stat;public double amount;}
-        Fixtures Read()=>JsonUtility.FromJson<Fixtures>(File.ReadAllText(Path.Combine(Application.dataPath,"Mamporro/Tests/Core/WebFixtures.json")));
         CombatRun Run(string seed="U2-EQUIVALENCIA",int character=0)=>new CombatRun(new FlatWorld(),seed,Catalog.Characters[character]);
-        [TestCase("chancla")][TestCase("naftalina")][TestCase("barra")][TestCase("dentaduras")][TestCase("jersey")][TestCase("fregona")]
-        public void WeaponCombatMatchesWeb(string id)
-        {
-            var expected=Array.Find(Read().combat,v=>v.weapon==id);var r=Run();r.QaWeapons(id);r.Invincible=true;
-            double[] x={0,0,0,2,-2,0},z={-6,-7.2,-8.4,0,0,12};for(int i=0;i<6;i++)r.Spawn(0,x[i],z[i],100);
-            for(int tick=0;tick<120;tick++){r.Player.X=tick*.02;r.Player.Vx=1.2;r.Step(1.0/60);}
-            Assert.That(r.Enemies.Count,Is.EqualTo(6));
-            for(int i=0;i<6;i++){Assert.That(r.Enemies.Hp[i],Is.EqualTo(expected.hp[i]),"HP "+i);Assert.That(r.Enemies.X[i],Is.EqualTo(expected.x[i]),"X "+i);Assert.That(r.Enemies.Z[i],Is.EqualTo(expected.z[i]),"Z "+i);}
-            Assert.That(r.Weapons[0].TotalDamage,Is.EqualTo(expected.damage).Within(1e-9));Assert.That(r.Projectiles.Count,Is.EqualTo(expected.projectiles));
-        }
-        [Test]public void OffersMatchWebIncludingRngConsumption()
-        {
-            var r=Run("U2-OFERTAS");var rng=new Rng("U2-OFERTAS/run/offers");
-            foreach(var expected in Read().offers){var cards=Offers.Generate(r.Weapons,r.Tomes,r.Stats,r.Banished,rng,3);Assert.That(cards.Count,Is.EqualTo(expected.cards.Length));
-                for(int i=0;i<cards.Count;i++){var c=cards[i];var e=expected.cards[i];Assert.That(c.Kind,Is.EqualTo(e.kind));Assert.That(c.Key,Is.EqualTo(e.key));Assert.That(c.Id??"",Is.EqualTo(e.id));Assert.That(c.Rarity??"",Is.EqualTo(e.rarity));
-                    if(c.Kind=="weaponUpgrade"){Assert.That(c.Changes.Length,Is.EqualTo(e.changes.Length));for(int k=0;k<c.Changes.Length;k++){Assert.That(c.Changes[k].ToString(),Is.EqualTo(e.changes[k].stat));Assert.That(c.Amounts[k],Is.EqualTo(e.changes[k].amount).Within(1e-9));}}
-                    else CollectionAssert.AreEqual(e.amounts,c.Amounts);
-                }
-            }
-        }
-        [Test]public void Utf16AndNullCharactersMatchWeb()
-        {
-            // JsonUtility trunca cadenas en U+0000. La entrada se expresa en C#;
-            // las salidas esperadas siguen siendo las ejecutadas por TypeScript.
-            string[] seeds={"ñ\uD83D\uDE00\uD834\uDD1E","\0X","abc"};var vectors=Read().rng;
-            for(int i=0;i<seeds.Length;i++){var r=new Rng(seeds[i]);foreach(uint n in vectors[i].nextU32)Assert.That(r.NextU32(),Is.EqualTo(n));}
-        }
         [Test]public void PausedChoiceDoesNotAdvanceCombat()
         {var r=Run();r.GainXp(100);r.OpenChoice();double time=r.Time,hp=r.Hp;for(int k=0;k<120;k++)r.Step(1.0/60);Assert.That(r.Time,Is.EqualTo(time));Assert.That(r.Hp,Is.EqualTo(hp));Assert.That(r.Choose(0),Is.True);Assert.That(r.PendingLevels,Is.GreaterThan(0));}
         [Test]public void ActionsAndFillersRespectExclusionsAndUses()

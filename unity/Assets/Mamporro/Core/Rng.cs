@@ -45,6 +45,9 @@ namespace Mamporro.Core
     {
         public static double Round(double x) => Math.Floor(x+.5);
         public static double Hypot(double x,double z) => Math.Sqrt(x*x+z*z);
+        public static double ChestCost(int opened) {double n=Math.Max(0,opened);return Round(Tuning.ChestBaseCost+Tuning.ChestCostStep*n+Tuning.ChestCostCurve*n*n);}
+        // Carta de relleno de oro: fracción del precio del siguiente baúl (U2 no abre baúles).
+        public static double FillerGold(int chestsOpened) => Math.Max(Tuning.FillerMinGold,Round(ChestCost(chestsOpened)*Tuning.FillerChestFraction));
         public static double Nonzero(double x) => x==0?1:x;
         public static int XpNeeded(int level) => (int)Round(5+4*level+.9*Math.Pow(level,1.6));
         public static int AddExperience(ref int level,ref double xp,double amount)

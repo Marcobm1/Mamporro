@@ -12,12 +12,12 @@ Actualizar esta sección después de cada paso completado.
 
 - **Último commit publicado:** ver `git log -1 origin/claude/zen-pasteur-674ik0`. Base verificada de U2 = núcleo + integración + documentación de decisiones (pasos 1–2 del plan). Ramas locales de respaldo: `respaldo/u2-local-1e66e49` (commit original de Codex) y `respaldo/u2-antes-rebase-2` (antes del rebase sobre `dd93c81`).
 - **Antes de cada push:** `git fetch origin`; si el remoto ha cambiado, parar y avisar al autor en lugar de reintentar.
-- **Paso actual:** 3 del plan de cierre (referencia `u2-combat.json`).
-- **Terminado y verificado:** núcleo puro `Assets/Mamporro/Core`, adaptador y escena U2 compilan; Edit Mode 37/37 (26 U2 + 11 U1) y Play Mode 2/2, última ejecución el 29/09/2026 20:28–20:29 (ver «Pruebas ejecutadas en esta integración»).
+- **Paso actual:** 4 del plan de cierre (prueba del catálogo contra `baseline.catalog`).
+- **Terminado y verificado:** núcleo, adaptador y escena U2; referencia `unity/Docs/Reference/u2-combat.json` y sus pruebas C#. Edit Mode 83/83 (incluidas las 11 de U1) y Play Mode 2/2 el 29/09/2026 20:45 (ver «Pruebas ejecutadas en esta integración»).
 - **A medias:** subida de nivel y panel QA siguen en IMGUI con teclas Q/E/B y R para reiniciar y F8 para el idioma (se sustituyen en el paso 5: reinicio en F8, idioma en F7). Sin contador de oro en el HUD. La build `unity/Builds/U2` es anterior a esta base y no se ha regenerado.
 - **Sin commit a propósito:** `unity/ProjectSettings/ProjectSettings.asset` (identificador de proyecto en la nube y organización), `PackageManagerSettings.asset` y `URPProjectSettings.asset` (preferencias locales del Editor): no publicar nunca. `ProjectAuditorSettings.asset`: Unity lo reescribe con espacios al abrir; no publicar. Retoques de Codex en `README.md`, `docs/MIGRACION_UNITY.md`, `docs/PROGRESO_U1.md`, `unity/Docs/HOJA_DE_RUTA.md` y `unity/README.md`: se revisan en el commit documental de cierre (paso 8).
 - **Copias de seguridad locales (ignoradas por Git):** `qa-results/u2-audit/` (parche completo `worktree.patch`, lista y `untracked.tar` de no seguidos, estado previo y posterior al rebase) y `qa-results/u2-inherited/` (cambios heredados de U1 con hashes). Stash `codex: cabeceras CLAUDE/ENTORNO`, sustituido por `2b67ea5`, conservado sin aplicar. Copia íntegra del repositorio anterior a la integración en `..\Mamporro-respaldo-u2`.
-- **Siguiente paso exacto:** crear `scripts/unity-reference-u2.mjs` a partir de `scripts/u2-web-fixtures.mjs` y exportar `unity/Docs/Reference/u2-combat.json`.
+- **Siguiente paso exacto:** añadir a `Tests/Core` una prueba que compare `Catalog` (armas, tomos, objetos, personajes, enemigos, rarezas y pasos de mejora) con `baseline.catalog` de U0.
 
 Comprobar el estado desde CMD:
 
@@ -105,7 +105,7 @@ Confirmadas por el autor tras la auditoría del trabajo local; detalle en `docs/
 
 1. Integrar `2b67ea5` (rebase del núcleo), restaurar ajustes de Unity que solo cambian espacios, `GraphicsSettings.asset` y `U1_Patio.unity`. **Hecho.**
 2. Corregir la compilación; Edit Mode y Play Mode completos; commit y primer push. **Hecho.**
-3. `scripts/unity-reference-u2.mjs` → `unity/Docs/Reference/u2-combat.json`; pruebas C# contra él.
+3. `scripts/unity-reference-u2.mjs` → `unity/Docs/Reference/u2-combat.json`; pruebas C# contra él. **Hecho.**
 4. Prueba del catálogo contra `baseline.catalog`.
 5. Subida de nivel en uGUI con las teclas acordadas; reinicio en F8.
 6. Contador de oro en el HUD; panel QA oculto durante el benchmark.
@@ -144,7 +144,23 @@ Los comandos exactos de la sesión anterior no quedaron registrados.
 | 29/09/2026 20:28 | `scripts\u2.cmd edit` (tras rebase sobre `dd93c81`) | 37/37 | `unity/TestResults/U2/edit.xml`, `edit.log` |
 | 29/09/2026 20:29 | `scripts\u2.cmd play` (tras rebase sobre `dd93c81`) | 2/2 | `unity/TestResults/U2/play.xml`, `play.log` |
 
+| 29/09/2026 20:41 | `scripts\u2.cmd edit` (primera comparación con `u2-combat.json`) | 81/83: fallan `EnemyBehaviourMatchesWeb` del jefe normal (vida de pelusa hija 14 frente a 14,378) y enfurecido (2 enemigos frente a 6) | `unity/TestResults/U2/edit.xml` (sobrescrito después) |
+| 29/09/2026 20:45 | `scripts\u2.cmd edit` (tras corregir el jefe) | 83/83 | `unity/TestResults/U2/edit.xml`, `edit.log` |
+| 29/09/2026 20:45 | `scripts\u2.cmd play` | 2/2 | `unity/TestResults/U2/play.xml`, `play.log` |
+| 29/09/2026 20:46 | `node scripts\unity-reference-u2.mjs`, `node scripts\unity-reference.mjs`, `node --test scripts\unity-reference-bytes.test.mjs` | referencia U2 coincide con la web; U0 verificada; 4/4 | consola |
+
 Cambios de la integración: `CombatVisualCheck.cs` usa `WaitForSecondsRealtime(.5f)` y guarda sus capturas en `unity/TestResults/U2/Visual` (ignorada por Git). Pendientes: build, ensayo gráfico y web (sin cambios web en esta integración).
+
+### Referencia U2 y correcciones (paso 3)
+
+- `scripts/unity-reference-u2.mjs` sustituye a `u2-web-fixtures.mjs`, y `unity/Docs/Reference/u2-combat.json` sustituye a `WebFixtures.json`. Guarda: `src/` idéntico a `0505b16` y sin cambios locales. `--export-once` solo crea el archivo si no existe; sin argumentos, comprueba. El archivo se regeneró dos veces **antes** de que lo usara ninguna prueba C#: una para añadir el jefe enfurecido y otra para evitar listas anidadas, que JsonUtility no lee. Desde la primera comparación con C# no se ha regenerado.
+- Contenido: RNG, pesos y 40 tiradas de rareza con siete suertes, escalado de mejoras y tomos, tiradas de mejora por arma y rareza (a cero y cerca del tope), 29 casos de agregación de estadísticas, cinco secuencias de subida de nivel (elegir, volver a tirar, saltar, descartar, relleno de curación y oro), veinte ofertas seguidas, seis armas, seis enemigos más el jefe enfurecido, las dos pasivas y dos combates integrados de 900 ticks (objetos, subidas de nivel, oro, bata).
+- Pruebas: `Tests/Core/U2ReferenceTests.cs`. Enteros, textos y Float32, exactos; double, 1e-9. `Offers` expone `RarityWeight`, `RollUpgrade` y `TomeAmounts` sin cambiar su comportamiento.
+- Divergencias encontradas y corregidas en el port (no en la referencia):
+  1. Las pelusas hijas del jefe y el propio jefe no aplicaban los multiplicadores del minuto de dificultad. Ahora `CombatRun` calcula `SpawnHp/SpawnXp/SpawnGold` (ritmo 1, duración de referencia) y la vida del jefe `1 + 0,2·m + 0,06·m²`; `SpawnBoss` ajusta la posición al mundo, como `clampInside`.
+  2. El jefe descartaba pelusas con un límite fijo `|x|,|z| < 46`. Ahora pregunta al mundo (`ICombatWorld.IsInside(x, z, 2)`, como la web). `CombatWorld` usa el límite del patio U1 (±47,5).
+- Apariciones QA (`SpawnScaled`): usan los multiplicadores del minuto actual, como `debugSpawnEnemy` en la web.
+- Carta de relleno de oro: `Rules.FillerGold(0)` con la fórmula web; las constantes llegan a `Tuning` desde `scripts/u2-export-data.mjs` (nuevo bloque del exportador; el resto de `Catalog.cs` no cambia).
 
 ## Punto de partida
 

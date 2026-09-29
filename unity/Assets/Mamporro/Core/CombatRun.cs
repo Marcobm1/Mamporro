@@ -26,6 +26,11 @@ namespace Mamporro.Core
         public bool Dead=>Hp<=0;
         public bool Choosing=>Offer!=null;
         public Boss Boss {get;private set;}
+        // Multiplicadores de aparición según el minuto de dificultad (director web sin su calendario, que es U3).
+        // U2 usa la duración de referencia: ritmo 1.
+        const double Pace=1;
+        public double SpawnHp=1,SpawnXp=1,SpawnGold=1;
+        public double Minutes=>Math.Max(0,Time)/60*Pace;
         readonly Rng combatRng,offerRng;
         readonly ICombatEffects fx;
         readonly int[] nearby=new int[256];
@@ -43,7 +48,7 @@ namespace Mamporro.Core
         public void Step(double dt)
         {
             if(Paused||Choosing||Dead)return;
-            Time+=dt;
+            Time+=dt;RefreshSpawnParams();
             if(Character.passive=="shield")ShieldCharge=Math.Min(Character.recharge,ShieldCharge+dt);
             else for(int i=0;i<Enemies.Count;i++){double dx=Enemies.X[i]-Player.X,dz=Enemies.Z[i]-Player.Z;if(dx*dx+dz*dz<=Character.radius*Character.radius&&Math.Abs(Enemies.Y[i]-Player.Y)<2)Enemies.ApplySlow(i,Character.amount,dt*2);}
             if(Boss!=null&&!Boss.Step(dt,this))Boss=null;
@@ -62,12 +67,22 @@ namespace Mamporro.Core
             // La web abre elección en Game tras Run.update. Aquí se impide el siguiente tick.
             OpenChoice();
         }
+        public void RefreshSpawnParams()
+        {double m=Minutes;SpawnHp=1+Tuning.SpawnHpGrowth*m+Tuning.SpawnHpCurve*m*m;SpawnXp=(1+Tuning.SpawnXpGrowth*m)*Pace;SpawnGold=Pace;}
         public int Spawn(int type,double x,double z,double hp=1)
         {int i=Enemies.Spawn(type,x,World.Height(x,z),z,hp,1);Enemies.Rebuild();return i;}
+        // Como debugSpawnEnemy de la web: con los multiplicadores del minuto actual.
+        public int SpawnScaled(int type,double x,double z)
+        {RefreshSpawnParams();int i=Enemies.Spawn(type,x,World.Height(x,z),z,SpawnHp,SpawnXp,SpawnGold);Enemies.Rebuild();return i;}
+        // Pelusa hija del estornudo del jefe; la rejilla se reconstruye al final del paso, como en la web.
+        public void SpawnMinion(double x,double z)
+        {if(World.IsInside(x,z,2))Enemies.Spawn(0,x,World.Height(x,z),z,SpawnHp,SpawnXp,SpawnGold);}
         public bool SpawnBoss(double x,double z)
         {
             if(Boss!=null)return false;if(Enemies.Count>=Enemies.Capacity)Enemies.Remove(Enemies.Count-1);
-            int i=Spawn(5,x,z);Boss=new Boss(Enemies.Id[i],combatRng.Derive("boss-"+Time.ToString("F2",System.Globalization.CultureInfo.InvariantCulture)));return true;
+            RefreshSpawnParams();double m=Minutes,hp=1+Tuning.BossHpGrowth*m+Tuning.BossHpCurve*m*m;World.Clamp(ref x,ref z);
+            int i=Enemies.Spawn(5,x,World.Height(x,z),z,hp,SpawnXp,SpawnGold);if(i<0)return false;Enemies.Xp[i]=0;Enemies.Rebuild();
+            Boss=new Boss(Enemies.Id[i],combatRng.Derive("boss-"+Time.ToString("F2",System.Globalization.CultureInfo.InvariantCulture)));return true;
         }
         public void Shoot(int i,double dx,double dz)
         {

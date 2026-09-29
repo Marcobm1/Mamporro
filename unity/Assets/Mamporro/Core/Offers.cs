@@ -14,23 +14,40 @@ namespace Mamporro.Core
     public static class Offers
     {
         struct Candidate { public string Kind,Key,Id; public double Weight; public Weapon Weapon; public TomeDef Tome; }
+        public static double RarityWeight(RarityDef r,double luck) => r.weight*(1+Math.Max(0,luck)/100*r.luckBonus);
         public static RarityDef RollRarity(double luck,Rng rng)
         {
-            double total=0,l=Math.Max(0,luck)/100;
-            foreach(var r in Catalog.Rarities) total+=r.weight*(1+l*r.luckBonus);
+            double total=0;
+            foreach(var r in Catalog.Rarities) total+=RarityWeight(r,luck);
             double roll=rng.Next()*total;
-            foreach(var r in Catalog.Rarities) { roll-=r.weight*(1+l*r.luckBonus); if(roll<0) return r; }
+            foreach(var r in Catalog.Rarities) { roll-=RarityWeight(r,luck); if(roll<0) return r; }
             return Catalog.Rarities[4];
         }
-        public static List<WStat> Upgradable(Weapon w)
+        public static List<WStat> Upgradable(Weapon w) => Upgradable(w.Def,w.Bonus);
+        public static List<WStat> Upgradable(WeaponDef def,double[] bonus)
         {
             var result=new List<WStat>();
-            foreach(var stat in w.Def.upgradable) if(w.Bonus[(int)stat]<Catalog.Steps[(int)stat].max-1e-9) result.Add(stat);
+            foreach(var stat in def.upgradable) if(bonus[(int)stat]<Catalog.Steps[(int)stat].max-1e-9) result.Add(stat);
             return result;
+        }
+        // Equivale a rollWeaponUpgrade de la web: baraja, sortea cuántas y recorta al tope.
+        public static void RollUpgrade(WeaponDef def,double[] bonus,RarityDef rarity,Rng rng,out WStat[] changes,out double[] amounts)
+        {
+            var pool=Upgradable(def,bonus); rng.Shuffle(pool);
+            int n=Math.Min(pool.Count,rng.Int(rarity.min,rarity.max));
+            changes=pool.GetRange(0,n).ToArray(); amounts=new double[n];
+            for(int k=0;k<n;k++) {int s=(int)changes[k]; var step=Catalog.Steps[s]; amounts[k]=Math.Min(Rules.Scaled(step.amount,rarity.power,step.integer),step.max-bonus[s]);}
+        }
+        public static double[] TomeAmounts(TomeDef def,RarityDef rarity)
+        {
+            var amounts=new double[def.effects.Length];
+            for(int k=0;k<amounts.Length;k++) amounts[k]=Rules.Scaled(def.effects[k].amount,rarity.power,def.effects[k].integer);
+            return amounts;
         }
         public static bool Useful(Effect[] effects,PlayerStats stats)
         { foreach(var e in effects) if(!stats.Capped(e.stat)) return true; return false; }
-        public static Card Heal() => new Card{Kind="heal",Amount=.3};
+        public static Card Heal() => new Card{Kind="heal",Amount=Tuning.FillerHeal};
+        public static Card Gold() => new Card{Kind="gold",Amount=Rules.FillerGold(0)};
         public static List<Card> Generate(List<Weapon> weapons,List<Tome> tomes,PlayerStats stats,HashSet<string> banished,Rng rng,int count,HashSet<string> exclude=null,HashSet<string> allowed=null)
         {
             var pool=new List<Candidate>();
@@ -56,21 +73,13 @@ namespace Mamporro.Core
                 var card=new Card{Kind=picked.Kind,Key=picked.Key,Id=picked.Id};
                 if(picked.Kind!="newWeapon") {
                     var rarity=RollRarity(stats[Stat.luck],rng); card.Rarity=rarity.id;
-                    if(picked.Kind=="weaponUpgrade") {
-                        var statsPool=Upgradable(picked.Weapon); rng.Shuffle(statsPool);
-                        int n=Math.Min(statsPool.Count,rng.Int(rarity.min,rarity.max));
-                        card.Changes=statsPool.GetRange(0,n).ToArray(); card.Amounts=new double[n];
-                        for(int k=0;k<n;k++) {int s=(int)card.Changes[k]; var step=Catalog.Steps[s]; card.Amounts[k]=Math.Min(Rules.Scaled(step.amount,rarity.power,step.integer),step.max-picked.Weapon.Bonus[s]);}
-                    } else {
-                        var effects=picked.Tome.effects; card.Amounts=new double[effects.Length];
-                        for(int k=0;k<effects.Length;k++) card.Amounts[k]=Rules.Scaled(effects[k].amount,rarity.power,effects[k].integer);
-                    }
+                    if(picked.Kind=="weaponUpgrade") RollUpgrade(picked.Weapon.Def,picked.Weapon.Bonus,rarity,rng,out card.Changes,out card.Amounts);
+                    else card.Amounts=TomeAmounts(picked.Tome,rarity);
                 }
                 cards.Add(card);
             }
             if(cards.Count<count) cards.Add(Heal());
-            // U2 no abre cofres: chestCost(0)=15, relleno max(10,round(15*.5))=10.
-            if(cards.Count<count) cards.Add(new Card{Kind="gold",Amount=10});
+            if(cards.Count<count) cards.Add(Gold());
             return cards;
         }
         public static Card Replace(List<Weapon> weapons,List<Tome> tomes,PlayerStats stats,HashSet<string> banished,Rng rng,List<Card> rest)
@@ -79,7 +88,7 @@ namespace Mamporro.Core
             var card=Generate(weapons,tomes,stats,banished,rng,1,exclude)[0];
             if(card.Key!=null) return card;
             if(!rest.Exists(c=>c.Kind=="heal")) return Heal();
-            if(!rest.Exists(c=>c.Kind=="gold")) return new Card{Kind="gold",Amount=10};
+            if(!rest.Exists(c=>c.Kind=="gold")) return Gold();
             return null;
         }
         public static bool ItemAvailable(ItemDef d,int owned,PlayerStats stats) => (d.maxStacks==0||owned<d.maxStacks)&&(d.effects.Length==0||Useful(d.effects,stats));

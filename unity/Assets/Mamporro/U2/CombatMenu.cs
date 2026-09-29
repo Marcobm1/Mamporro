@@ -69,7 +69,7 @@ namespace Mamporro.U2
             if(Button("u2.replace",new Rect(col,530,col-15,80)))Session.ChangeCharacter();
             if(Button("u2.clearEnemies",new Rect(col,630,col-15,80))){Session.Run.Enemies.Clear();Session.TargetEnemies=0;}
             GUI.Label(new Rect(0,820,width-100,45),T("u2.spawn"),label);
-            for(int i=0;i<6;i++)if(Button("enemy."+Catalog.Enemies[i].id,new Rect((i%3)*col,875+(i/3)*65,col-15,55))){Session.TargetEnemies=0;double x=Session.Run.Player.X,z=Session.Run.Player.Z+10;if(i==5)Session.Run.SpawnBoss(x,z);else Session.Run.Spawn(i,x,z);}
+            for(int i=0;i<6;i++)if(Button("enemy."+Catalog.Enemies[i].id,new Rect((i%3)*col,875+(i/3)*65,col-15,55))){Session.TargetEnemies=0;double x=Session.Run.Player.X,z=Session.Run.Player.Z+10;if(i==5)Session.Run.SpawnBoss(x,z);else Session.Run.SpawnScaled(i,x,z);}
             if(!string.IsNullOrEmpty(notice))GUI.Label(new Rect(0,1030,width-100,60),notice,label);
             GUI.EndScrollView();
         }
