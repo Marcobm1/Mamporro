@@ -2,17 +2,20 @@
 
 MAMPORRO es un roguelike 3D de supervivencia contra hordas con humor propio y estética PS1. La versión web aprobada usa Three.js + TypeScript estricto + Vite; la versión principal futura se está portando a Unity para Windows.
 
+Claude Code y Codex CLI trabajan **por turnos** sobre la misma rama. No trabajan a la vez. El repositorio y la documentación son la memoria compartida entre ambos: no dependas del historial privado de una conversación para continuar trabajo previo ni para dejar contexto al siguiente agente.
+
 ## Fuente de verdad y orden de lectura
 
 Antes de modificar código o documentación, lee:
 
 1. [`docs/INSTRUCCIONES_PROYECTO.md`](docs/INSTRUCCIONES_PROYECTO.md).
 2. [`docs/ESTADO_ACTUAL.md`](docs/ESTADO_ACTUAL.md).
-3. [`docs/PROGRESO_U2.md`](docs/PROGRESO_U2.md).
-4. [`docs/DECISIONES.md`](docs/DECISIONES.md) y [`docs/ESPECIFICACION.md`](docs/ESPECIFICACION.md).
-5. [`docs/MIGRACION_UNITY.md`](docs/MIGRACION_UNITY.md).
-6. [`README.md`](README.md) y [`unity/README.md`](unity/README.md).
-7. Para la referencia y mejoras futuras: [`unity/Docs/U0_REFERENCIA.md`](unity/Docs/U0_REFERENCIA.md) y [`unity/Docs/HOJA_DE_RUTA.md`](unity/Docs/HOJA_DE_RUTA.md).
+3. [`docs/CONTINUIDAD_AGENTES.md`](docs/CONTINUIDAD_AGENTES.md).
+4. [`docs/PROGRESO_U2.md`](docs/PROGRESO_U2.md).
+5. [`docs/DECISIONES.md`](docs/DECISIONES.md) y [`docs/ESPECIFICACION.md`](docs/ESPECIFICACION.md).
+6. [`docs/MIGRACION_UNITY.md`](docs/MIGRACION_UNITY.md).
+7. [`README.md`](README.md) y [`unity/README.md`](unity/README.md).
+8. Para la referencia y mejoras futuras: [`unity/Docs/U0_REFERENCIA.md`](unity/Docs/U0_REFERENCIA.md) y [`unity/Docs/HOJA_DE_RUTA.md`](unity/Docs/HOJA_DE_RUTA.md).
 
 Las decisiones posteriores concretan o sustituyen la especificación original. Los apartados antiguos que digan «U1 no iniciado», «U2 no autorizado» o «Codex pendiente de instalar» son históricos: manda `docs/ESTADO_ACTUAL.md`.
 
@@ -26,6 +29,7 @@ Las decisiones posteriores concretan o sustituyen la especificación original. L
 - U1: implementado en `abe0a9b7f0b8c53f478b91c870341999df2ea073`, checkpoint `eb691b595eb247118075368430d34ed0a95735d1`; build y pruebas automáticas correctas y **aprobación manual del autor posterior al checkpoint**.
 - **U2 está expresamente autorizado. U3 no está autorizado.**
 - Codex CLI ya está instalado/verificado; no repetir la instalación.
+- Codex y Claude Code pueden ejecutar U2 por turnos. El último checkpoint publicado manda sobre recuerdos de sesiones anteriores.
 
 ## U2: único bloque autorizado
 
@@ -39,14 +43,32 @@ Criterios completos y exclusiones: `docs/PROGRESO_U2.md`.
 
 ## Forma de trabajar
 
-1. Antes de editar, comprueba rama, `git status --short --branch`, remoto y cambios locales. Conserva cambios del autor y los que Unity haya generado; no uses `reset --hard`, `git clean`, checkout destructivo ni reclonado para «arreglar» un árbol sucio.
-2. El bloque U2 ya está autorizado: no vuelvas a pedir autorización general. Antes de programar, presenta un plan breve y agrupa únicamente dudas de diseño/materiales que no estén resueltas. Si no hay una decisión importante abierta, continúa dentro del alcance autorizado.
-3. Mantén la base web y `unity/Docs/Reference/` como referencia. Nunca uses `--write` o cambies valores esperados para hacer pasar un port incorrecto.
-4. Implementa por piezas verificables. Código en inglés; comentarios, documentación y commits en español. No nombres modelos de IA en código ni commits.
-5. Verifica lo que realmente ejecutes. Distingue pruebas unitarias, Edit Mode, Play Mode, build y benchmark; un benchmark de lógica no equivale a FPS reales.
-6. Actualiza `README.md`, `docs/DECISIONES.md` o su continuación vigente, `docs/ESTADO_ACTUAL.md` y `docs/PROGRESO_U2.md` cuando cambie el estado.
-7. Commits pequeños que compilen y pasen sus pruebas por separado; push directo a la rama. Sin PR.
-8. Al cerrar U2, resume qué cambió, cómo probarlo, decisiones técnicas, límites de verificación y siguiente bloque; después detente para que el autor lo pruebe. No empieces U3 automáticamente.
+1. Antes de editar, comprueba rama, `git status --short --branch`, últimos commits, remoto y cambios locales. Haz `git fetch origin`; si el árbol está limpio y solo falta avanzar, usa `git pull --ff-only`. Conserva cambios del autor, de Unity y del agente anterior; no uses `reset --hard`, `git clean`, checkout destructivo ni reclonado para «arreglar» un árbol sucio.
+2. Lee el último apartado de relevo en `docs/PROGRESO_U2.md`. No asumas que Codex terminó todo lo planeado ni repitas trabajo sin comprobar commits y estado.
+3. El bloque U2 ya está autorizado: no vuelvas a pedir autorización general. Antes de programar, presenta un plan breve y agrupa únicamente dudas de diseño/materiales que no estén resueltas. Si no hay una decisión importante abierta, continúa dentro del alcance autorizado.
+4. Mantén la base web y `unity/Docs/Reference/` como referencia. Nunca uses `--write` o cambies valores esperados para hacer pasar un port incorrecto.
+5. Implementa por piezas verificables. Código en inglés; comentarios, documentación y commits en español. No nombres modelos de IA en código ni commits.
+6. Verifica lo que realmente ejecutes. Distingue pruebas unitarias, Edit Mode, Play Mode, build y benchmark; un benchmark de lógica no equivale a FPS reales.
+7. Actualiza `docs/PROGRESO_U2.md` cuando cambie el punto de continuación y siempre antes de ceder el turno a Codex. Actualiza `README.md`, `docs/DECISIONES.md`, `docs/ESTADO_ACTUAL.md` y demás documentación cuando cambie el estado global o haya decisiones permanentes.
+8. Commits pequeños que compilen y pasen sus pruebas por separado; push directo a la rama. Sin PR.
+9. Si la sesión/tokens se acercan al límite, no empieces una pieza nueva: deja lo terminado verificado, commit/push cuando sea seguro, documenta cualquier cambio local no publicado y escribe un `Siguiente paso exacto` para Codex o para la siguiente sesión.
+10. Al cerrar U2, resume qué cambió, cómo probarlo, decisiones técnicas, límites de verificación y siguiente bloque; después detente para que el autor lo pruebe. No empieces U3 automáticamente.
+
+## Relevo a Codex
+
+Antes de terminar una sesión con trabajo relevante, `docs/PROGRESO_U2.md` debe indicar:
+
+- que la sesión fue realizada con Claude Code;
+- objetivo concreto abordado;
+- archivos/sistemas modificados;
+- pruebas realmente ejecutadas y sus resultados;
+- commits y push realizados;
+- errores/limitaciones y pruebas pendientes;
+- cambios locales que sigan sin commit;
+- decisión del autor pendiente, si existe;
+- siguiente paso exacto y seguro.
+
+No crear un commit roto solo para transferir contexto. Si un trabajo incompleto no puede publicarse de forma coherente, conservarlo localmente y documentarlo de forma explícita para que Codex no lo sobrescriba.
 
 ## Convenciones que se conservan del juego web
 
