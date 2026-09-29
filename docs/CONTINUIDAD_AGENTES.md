@@ -20,7 +20,7 @@ El repositorio es la memoria compartida. Una decisión, prueba, limitación o si
 2. `docs/INSTRUCCIONES_PROYECTO.md`.
 3. `docs/ESTADO_ACTUAL.md`.
 4. Este archivo, `docs/CONTINUIDAD_AGENTES.md`.
-5. El checkpoint del bloque vigente, actualmente `docs/PROGRESO_U2.md`.
+5. El checkpoint del bloque vigente, actualmente `docs/PROGRESO_U3.md`.
 6. `docs/DECISIONES.md` y el resto de documentación indicada por el checkpoint.
 
 Después comprobar desde CMD:
@@ -131,7 +131,7 @@ Ningún agente debe:
 A fecha 29/09/2026:
 
 - U1 está cerrado y aprobado.
-- U2 está autorizado y es el único bloque activo.
-- U3 no está autorizado.
-- Codex CLI y Claude Code son herramientas válidas para trabajar U2 por turnos.
-- El próximo agente que empiece U2 debe leer `docs/PROGRESO_U2.md`, auditar el árbol local y continuar desde el último checkpoint publicado, no desde recuerdos de otro chat.
+- U2 está aprobado y cerrado.
+- U3 está autorizado y es el único bloque activo. U4 no está autorizado.
+- Codex CLI y Claude Code son herramientas válidas para trabajar U3 por turnos.
+- El próximo agente que continúe U3 debe leer `docs/PROGRESO_U3.md`, auditar el árbol local y continuar desde el último checkpoint publicado, no desde recuerdos de otro chat.

@@ -11,7 +11,7 @@ Antes de modificar código o documentación, lee:
 1. [`docs/INSTRUCCIONES_PROYECTO.md`](docs/INSTRUCCIONES_PROYECTO.md).
 2. [`docs/ESTADO_ACTUAL.md`](docs/ESTADO_ACTUAL.md).
 3. [`docs/CONTINUIDAD_AGENTES.md`](docs/CONTINUIDAD_AGENTES.md).
-4. [`docs/PROGRESO_U2.md`](docs/PROGRESO_U2.md).
+4. [`docs/PROGRESO_U3.md`](docs/PROGRESO_U3.md) (bloque vigente; U2 cerrado en [`docs/PROGRESO_U2.md`](docs/PROGRESO_U2.md)).
 5. [`docs/DECISIONES.md`](docs/DECISIONES.md) y [`docs/ESPECIFICACION.md`](docs/ESPECIFICACION.md).
 6. [`docs/MIGRACION_UNITY.md`](docs/MIGRACION_UNITY.md).
 7. [`README.md`](README.md) y [`unity/README.md`](unity/README.md).
@@ -27,36 +27,37 @@ Las decisiones posteriores concretan o sustituyen la especificación original. L
 - U0: referencia de catálogo, RNG, fórmulas, guardados, mundo, i18n y medios preparada.
 - Unity: proyecto real en `unity/`, Unity 6.6 `6000.6.3f1`, Windows x64 Mono, URP 17.6.0, Input System 1.20.0, uGUI 2.6.0, Test Framework 1.8.0.
 - U1: implementado en `abe0a9b7f0b8c53f478b91c870341999df2ea073`, checkpoint `eb691b595eb247118075368430d34ed0a95735d1`; build y pruebas automáticas correctas y **aprobación manual del autor posterior al checkpoint**.
-- **U2 está expresamente autorizado. U3 no está autorizado.**
+- U2: aprobado por el autor el 29/09/2026 (`docs/PROGRESO_U2.md`).
+- **U3 está expresamente autorizado. U4 no está autorizado.**
 - Codex CLI ya está instalado/verificado; no repetir la instalación.
-- Codex y Claude Code pueden ejecutar U2 por turnos. El último checkpoint publicado manda sobre recuerdos de sesiones anteriores.
+- Codex y Claude Code pueden ejecutar U3 por turnos. El último checkpoint publicado manda sobre recuerdos de sesiones anteriores.
 
-## U2: único bloque autorizado
+## U3: único bloque autorizado
 
-Objetivo: portar a Unity el núcleo y el combate equivalentes de la web, apoyándose en la arquitectura técnica validada en U1 y en los valores esperados de U0.
+Objetivo: mundo y partida completa equivalentes a la web aprobada (`0505b16`), sobre el núcleo y el combate de U2.
 
-Incluye: RNG determinista y derivaciones; estadísticas y fórmulas; daño, críticos/supercríticos y armadura; experiencia y subida de nivel; ofertas/rareza y acciones de progresión necesarias para probar combate; rejilla y colisiones de combate; proyectiles; una partida mínima funcional con derrota/reinicio; los 2 personajes y sus pasivas; las 6 armas; los 8 tomos; los 12 objetos; los 6 enemigos definidos en la referencia, incluido élite y jefe en cuanto a reglas de combate necesarias; pruebas de equivalencia y una escena QA controlada.
+Incluye: mundo procedural (heightfield con bancales, sites con props y colisionadores, decoración, cobertura del suelo y fauna decorativa); colisiones del jugador y de la horda sobre el mundo real; física del jugador de la web; director completo (tabla y curva de aparición, oleadas especiales, élites, enjambre, duraciones 5/10/15 y temporizador); baúles, mesas camilla, tótems y armario → jefe → victoria; minimapa, avisos, telegrafiado y pausa; pantallas técnicas de inicio y resultados; depuración equivalente a F3 que marca `run.cheated`.
 
-No incluye U3–U5: mapa procedural completo, estructuras, interactuables, oleadas/partida completa, meta/tienda/misiones, importación de guardados, audio final, pulido global, servicios Steam ni las mejoras posteriores de mundo/escalada/economía/arte/contenido. No aproveches el port para rebalancear.
+No incluye U4–U5: menús finales, Calderilla, tienda, misiones y guardado (U4); audio y pulido (U5); ni las mejoras posmigración (mundo mayor, escalada, nueva curva de hordas/oro, arte nuevo, cámara contra estructuras). No rebalancear.
 
-Criterios completos y exclusiones: `docs/PROGRESO_U2.md`.
+Decisiones, plan y criterios: `docs/PROGRESO_U3.md`.
 
 ## Forma de trabajar
 
 1. Antes de editar, comprueba rama, `git status --short --branch`, últimos commits, remoto y cambios locales. Haz `git fetch origin`; si el árbol está limpio y solo falta avanzar, usa `git pull --ff-only`. Conserva cambios del autor, de Unity y del agente anterior; no uses `reset --hard`, `git clean`, checkout destructivo ni reclonado para «arreglar» un árbol sucio.
-2. Lee el último apartado de relevo en `docs/PROGRESO_U2.md`. No asumas que Codex terminó todo lo planeado ni repitas trabajo sin comprobar commits y estado.
-3. El bloque U2 ya está autorizado: no vuelvas a pedir autorización general. Antes de programar, presenta un plan breve y agrupa únicamente dudas de diseño/materiales que no estén resueltas. Si no hay una decisión importante abierta, continúa dentro del alcance autorizado.
+2. Lee el último apartado de relevo en `docs/PROGRESO_U3.md`. No asumas que Codex terminó todo lo planeado ni repitas trabajo sin comprobar commits y estado.
+3. El bloque U3 ya está autorizado: no vuelvas a pedir autorización general. Antes de programar, presenta un plan breve y agrupa únicamente dudas de diseño/materiales que no estén resueltas. Si no hay una decisión importante abierta, continúa dentro del alcance autorizado.
 4. Mantén la base web y `unity/Docs/Reference/` como referencia. Nunca uses `--write` o cambies valores esperados para hacer pasar un port incorrecto.
 5. Implementa por piezas verificables. Código en inglés; comentarios, documentación y commits en español. No nombres modelos de IA en código ni commits.
 6. Verifica lo que realmente ejecutes. Distingue pruebas unitarias, Edit Mode, Play Mode, build y benchmark; un benchmark de lógica no equivale a FPS reales.
-7. Actualiza `docs/PROGRESO_U2.md` cuando cambie el punto de continuación y siempre antes de ceder el turno a Codex. Actualiza `README.md`, `docs/DECISIONES.md`, `docs/ESTADO_ACTUAL.md` y demás documentación cuando cambie el estado global o haya decisiones permanentes.
+7. Actualiza `docs/PROGRESO_U3.md` cuando cambie el punto de continuación y siempre antes de ceder el turno a Codex. Actualiza `README.md`, `docs/DECISIONES.md`, `docs/ESTADO_ACTUAL.md` y demás documentación cuando cambie el estado global o haya decisiones permanentes.
 8. Commits pequeños que compilen y pasen sus pruebas por separado; push directo a la rama. Sin PR.
 9. Si la sesión/tokens se acercan al límite, no empieces una pieza nueva: deja lo terminado verificado, commit/push cuando sea seguro, documenta cualquier cambio local no publicado y escribe un `Siguiente paso exacto` para Codex o para la siguiente sesión.
-10. Al cerrar U2, resume qué cambió, cómo probarlo, decisiones técnicas, límites de verificación y siguiente bloque; después detente para que el autor lo pruebe. No empieces U3 automáticamente.
+10. Al cerrar U3, resume qué cambió, cómo probarlo, decisiones técnicas, límites de verificación y siguiente bloque; después detente para que el autor lo pruebe. No empieces U4 automáticamente.
 
 ## Relevo a Codex
 
-Antes de terminar una sesión con trabajo relevante, `docs/PROGRESO_U2.md` debe indicar:
+Antes de terminar una sesión con trabajo relevante, `docs/PROGRESO_U3.md` debe indicar:
 
 - que la sesión fue realizada con Claude Code;
 - objetivo concreto abordado;
@@ -115,7 +116,7 @@ scripts\u1.cmd benchmark
 node scripts\u1-report.mjs
 ```
 
-Para U2, crea o amplía automatización propia solo cuando sea útil y documenta los comandos reales; no inventes que una prueba se ha ejecutado. PowerShell puede interceptar `npm.ps1` en este equipo, por eso desde CMD se prefiere `npm.cmd`.
+Para U2 y U3, crea o amplía automatización propia solo cuando sea útil y documenta los comandos reales; no inventes que una prueba se ha ejecutado. PowerShell puede interceptar `npm.ps1` en este equipo, por eso desde CMD se prefiere `npm.cmd`.
 
 ## Rendimiento y referencia U1
 

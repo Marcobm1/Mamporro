@@ -555,3 +555,28 @@ apariciones QA, con ritmo 1; ensayo con invulnerabilidad QA y resolviendo las
 subidas de nivel con la primera carta; y regeneración de `u2-combat.json` antes de su
 primer uso por C#. U3 sigue sin autorizar. Cierre y resultados en
 [PROGRESO_U2](PROGRESO_U2.md).
+
+## U3 autorizado (29/09/2026)
+
+El autor autoriza U3: mundo y partida completa equivalentes a la web aprobada
+`0505b16`. U4 no está autorizado. Alcance, exclusiones y plan en
+[PROGRESO_U3](PROGRESO_U3.md). Decisiones del autor:
+
+1. **Referencia complementaria** `scripts/unity-reference-u3.mjs` →
+   `unity/Docs/Reference/u3-world.json`, con el mismo modelo que U2: solo desde la
+   web aprobada, con guarda contra `src/`; no toca `baseline.json` ni
+   `u2-combat.json`; nunca se recalculan esperados con C#. Una vez usada por una
+   prueba C#, no se regenera.
+2. **Tolerancias:** mundo portado en double; igualdad exacta en lo discreto; 1e-6 m
+   en alturas y posiciones; cronología de la partida integrada exacta en los primeros
+   60–120 s y después por totales con margen documentado. Port fiel de
+   `simplex-noise` alimentado por el RNG propio.
+3. **Movimiento:** port de la física del jugador de la web con sus casos de prueba,
+   conservando la entrada y la cámara de U1; las pruebas de U1 y U2 siguen pasando.
+4. **Pantallas técnicas uGUI** de inicio (ambos personajes, duración 5/10/15 y
+   semilla opcional) y de resultados (tiempo, bajas, daño por arma y nivel; sin
+   Calderilla).
+5. **Teclas:** F3 abre la depuración y 1–8 ejecutan sus acciones, como la web; en
+   U3 el ajuste de vértices pasa a F9 (U1 y U2 no cambian); E interactúa.
+6. **Catálogo:** todo desbloqueado (6 armas y 12 objetos), como la web sin filtros
+   de meta; los filtros se conectarán en U4 con el guardado.
