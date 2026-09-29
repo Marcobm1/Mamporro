@@ -105,6 +105,8 @@ namespace Mamporro.U2
             if(Run==null)return;text.Clear();text.AppendLine(CombatText.Get("u2.title"));
             text.Append(CombatText.Get("character."+Run.Character.id)).Append(" · ").Append(CombatText.Get("u2.health")).Append(' ').Append(Run.Hp.ToString("F0")).Append('/').Append(Run.Stats[Stat.maxHp].ToString("F0"));
             text.Append(" · ").Append(CombatText.Get("u2.level")).Append(' ').Append(Run.Level).Append(" · XP ").Append(Run.Xp.ToString("F0")).Append('/').Append(Rules.XpNeeded(Run.Level));
+            // Oro de la partida, como el HUD web (hud.gold con el valor redondeado hacia abajo).
+            text.Append(" · ").Append(CombatText.Format("hud.gold","n",Math.Floor(Run.Gold)));
             text.Append(" · ").Append(CombatText.Get("u2.kills")).Append(' ').Append(Run.Kills).Append(" · ").Append(CombatText.Get("u2.enemies")).Append(' ').Append(Run.Enemies.Count).AppendLine();
             foreach(var w in Run.Weapons)text.Append(CombatText.Get("weapon."+w.Def.id)).Append(" Lv").Append(w.Level).Append(" · ");text.AppendLine();
             foreach(var t in Run.Tomes)text.Append(CombatText.Get("tome."+t.Def.id)).Append(" Lv").Append(t.Level).Append(" · ");text.AppendLine();
