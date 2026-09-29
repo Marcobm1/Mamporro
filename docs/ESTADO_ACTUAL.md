@@ -2,7 +2,7 @@
 
 Corte: **29/09/2026**, después de la aprobación manual de U1, de la autorización de U2 y de establecer el relevo compartido Codex ↔ Claude Code.
 
-> **Actualización 29/09/2026 (tarde):** U2 **en curso**. Núcleo e integración de la escena U2 publicados y verificados (Edit Mode 37/37, Play Mode 2/2). El punto exacto de continuación está en la sección «Cómo retomar» de [PROGRESO_U2](PROGRESO_U2.md), que manda sobre las frases de este documento que digan que U2 no está implementado. Relevo entre herramientas: [CONTINUIDAD_AGENTES](CONTINUIDAD_AGENTES.md) y checkpoints de bloque en [INSTRUCCIONES_PROYECTO](INSTRUCCIONES_PROYECTO.md).
+> **Actualización 29/09/2026 (noche):** U2 **implementado y verificado en local; pendiente de la prueba manual y la aprobación del autor**. Edit Mode 88/88, Play Mode 10/10, build Windows x64 Mono y ensayo con combate real (8 condiciones válidas). Detalle, instrucciones de prueba y punto de continuación en la sección «Cómo retomar» de [PROGRESO_U2](PROGRESO_U2.md), que manda sobre las frases de este documento que digan que U2 no está implementado. No iniciar U3 sin autorización. Relevo entre herramientas: [CONTINUIDAD_AGENTES](CONTINUIDAD_AGENTES.md) y checkpoints de bloque en [INSTRUCCIONES_PROYECTO](INSTRUCCIONES_PROYECTO.md).
 
 ## Resumen ejecutivo
 
@@ -10,7 +10,7 @@ Corte: **29/09/2026**, después de la aprobación manual de U1, de la autorizaci
 - Base web de referencia: `0505b1690656d15188860157612455639820fe1f`.
 - U0: referencia reproducible preparada y conservada.
 - U1: **implementado, verificado y aprobado por el autor**.
-- U2: **autorizado y en curso**; estado en `docs/PROGRESO_U2.md`.
+- U2: **implementado y verificado en local; pendiente de la prueba manual del autor**; estado en `docs/PROGRESO_U2.md`.
 - U3–U6: no autorizados para empezar.
 - Rama de trabajo y por defecto: `claude/zen-pasteur-674ik0`.
 - Implementación U1: `abe0a9b7f0b8c53f478b91c870341999df2ea073`.
@@ -92,9 +92,9 @@ Ensayo U1: 300/500/750/1000 entidades en 1080p y 1440p, interna 360, VSync 0, re
 
 El autor probó U1 después del checkpoint `eb691b5` y lo aprobó. Esa aprobación manual es posterior al texto original de `docs/PROGRESO_U1.md` que todavía pedía revisión.
 
-## U2 autorizado
+## U2 autorizado (implementado; pendiente de aprobación)
 
-Único objetivo vigente: **núcleo y combate equivalentes a la web**.
+Único objetivo vigente: **núcleo y combate equivalentes a la web**. Implementado el 29/09/2026; resultados y pendientes en `docs/PROGRESO_U2.md`.
 
 Portar RNG, estadísticas, fórmulas y reglas de combate; construir el bucle mínimo; completar los dos personajes, seis armas, ocho tomos, doce objetos y seis definiciones de enemigos; comparar contra la referencia U0; crear/usar una escena QA controlada; ejecutar pruebas Unity y web que correspondan; generar y probar build Windows Mono; volver a medir 300 y usar 500/750/1000 como cargas de margen/estrés sin tratarlas como balance ni límites de diseño.
 

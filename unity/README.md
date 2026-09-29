@@ -1,5 +1,9 @@
 # MAMPORRO en Unity
 
+> Estado vigente en [ESTADO_ACTUAL](../docs/ESTADO_ACTUAL.md): U1 aceptado; U2 implementado y pendiente de la prueba manual del autor ([PROGRESO_U2](../docs/PROGRESO_U2.md)). No comenzar U3.
+
+## Referencia U1 (aceptada por el autor)
+
 **U1 aprobado el 29/09/2026.** Proyecto técnico de movimiento, presentación retro
 y horda. `Assets/`, `Packages/` y `ProjectSettings/` ya existen; la referencia U0
 se conserva íntegra. Sin combate completo, progresión ni guardado.
@@ -32,7 +36,7 @@ node scripts\unity-reference.mjs
 El comando compara los datos actuales con la referencia aprobada. Ejecutarlo con
 Unity cerrado evita el bloqueo del fichero temporal UnityLockfile por el watcher
 de Vite. No regenerar referencias. Estado real de pruebas y Git en
-[PROGRESO_U1](../docs/PROGRESO_U1.md).
+[PROGRESO_U2](../docs/PROGRESO_U2.md).
 
 ## Abrir y jugar
 
@@ -122,6 +126,15 @@ node scripts\unity-reference-u2.mjs
 `Docs/Reference/u2-combat.json` sigue coincidiendo con la web aprobada; no la
 reescribe.
 
+`scripts\u2.cmd benchmark` ejecuta la build U2 visible y en pantalla completa a
+1920×1080 y 2560×1440 con 300/500/750/1000 enemigos (unos seis minutos), con las
+condiciones de U1: interna 360, VSync 0, FPS sin límite, 10 s de calentamiento
+y 30 s de medida. El combate es real: cuatro armas, 12 subidas de nivel previas y
+las de la medida resueltas con la primera carta, proyectiles propios y de paloma.
+El jugador es invulnerable (QA) para que la partida no termine antes de medir.
+Los JSON/CSV y capturas quedan en `unity/TestResults/U2/`; resultados del
+29/09/2026 en [PROGRESO_U2](../docs/PROGRESO_U2.md).
+
 ## Ensayo reproducible
 
 Semilla 6741, circuito de 8 s (120 ticks por lado a 60 Hz), cámara yaw 0/pitch 20.
@@ -154,5 +167,5 @@ la horda provisional no garantiza el coste del futuro combate completo.
 - `Tests/`: comportamiento Edit Mode e integración Play Mode.
 - `Generated/`: escena, malla, datos y materiales originales con sus `.meta`.
 
-La web y `Docs/Reference/` permanecen intactos. No iniciar U2 sin revisión del
-autor y una nueva autorización.
+La web y `Docs/Reference/` permanecen intactos. U1 ya ha recibido revisión favorable del
+autor; U2 está autorizado. No iniciar U3 sin una nueva autorización.

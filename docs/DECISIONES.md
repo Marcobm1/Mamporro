@@ -521,3 +521,28 @@ Codex que quedó sin terminar. Detalle y estado en [PROGRESO_U2](PROGRESO_U2.md)
 - **Documentación de relevo:** `INSTRUCCIONES_PROYECTO.md` es la fuente de las reglas
   comunes y `CONTINUIDAD_AGENTES.md` desarrolla el protocolo de relevo al que remite;
   la norma de checkpoints «Cómo retomar» está en INSTRUCCIONES sin duplicar CONTINUIDAD.
+
+## U2: decisiones técnicas de implementación (29/09/2026, Claude Code; pendientes de confirmar por el autor)
+
+Tomadas dentro del alcance autorizado, sin cambiar reglas ni balance de la web.
+
+- **Multiplicadores del minuto de dificultad.** La web aplica a las pelusas hijas
+  del jefe, a la vida del jefe y a las apariciones de depuración los multiplicadores
+  del director según el tiempo de partida. U2 porta solo esa parte, con ritmo 1
+  (duración de referencia de 10 min). El calendario de oleadas, élites y enjambre
+  sigue siendo de U3.
+- **Límites del mundo.** El jefe pregunta al mundo si una pelusa cabe
+  (`IsInside`, como la web). En la escena U2, el mundo es el patio de U1 (±47,5 m).
+- **Constantes exportadas.** `scripts/u2-export-data.mjs` exporta además `Tuning`
+  (curvas, jefe, oro, baúles, relleno y espera de 0,4 s), las etiquetas de
+  estadística de cada arma y cómo se muestra cada mejora. `CatalogReferenceTests`
+  las contrasta con `baseline.catalog`.
+- **Pantalla de subida de nivel** construida por código en uGUI, con su propio
+  `EventSystem` si la escena no lo tiene. F4 (QA) no se abre durante la subida de
+  nivel.
+- **Ensayo U2**: combate real con 12 subidas de nivel previas y las de la medida
+  resueltas con la primera carta. El jugador es invulnerable (QA) para poder medir
+  1000 enemigos.
+- **Referencia `u2-combat.json`**: regenerada dos veces antes de su primer uso por
+  C# (añadir el jefe enfurecido; quitar listas anidadas que JsonUtility no lee).
+  Desde la primera comparación con C#, no se ha tocado.

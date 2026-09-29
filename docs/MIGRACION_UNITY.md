@@ -1,5 +1,9 @@
 # Migración propuesta a Unity
 
+> Estado vigente en [ESTADO_ACTUAL](ESTADO_ACTUAL.md): U1 aceptado; U2 implementado y pendiente de la prueba manual del autor ([PROGRESO_U2](PROGRESO_U2.md)). No comenzar U3.
+
+## Historial de preparación (sustituido por el checkpoint U2)
+
 **Actualización 29/09/2026:** U1 aprobado expresamente, en implementación.
 [Checkpoint vigente](PROGRESO_U1.md). Se autorizan Windows x64 Mono, URP 17.6.0
 e Input System 1.20.0 tras comprobarlos en el Editor instalado. Las menciones
@@ -101,7 +105,7 @@ una duración total sin medir el coste real del port.
 
 **Salida:** referencia reproducible, lista de equivalencia y plan aprobado.
 
-### U1. Prototipo técnico de movimiento, imagen y horda
+### U1. Prototipo técnico de movimiento, imagen y horda — aceptado
 
 - Crear proyecto mínimo y build Windows arrancable.
 - Terreno pequeño con pendientes y obstáculos, un personaje, cámara y controles.
@@ -114,7 +118,12 @@ fuera del Editor en su equipo. Si el prototipo no cumple, ajustar arquitectura
 antes de portar el contenido. DOTS/ECS no es requisito inicial: evaluarlo solo
 si el perfilador demuestra que hace falta.
 
-### U2. Núcleo y combate equivalentes
+### U2. Núcleo y combate equivalentes — implementado, pendiente de aprobación
+
+Alcance operativo en [PROGRESO_U2](PROGRESO_U2.md). Los seis comportamientos
+enemigos se prueban en escenas controladas, incluidos élite y jefe. Director,
+portal, oleadas, enjambre, mundo, interactuables y victoria integrada quedan
+para U3. Los objetos se conceden mediante QA sin persistencia.
 
 - Portar RNG, estadísticas, daño/críticos, progresión, colisiones y rejilla espacial.
 - Conectar una partida completa mínima: una arma, un enemigo, experiencia, subida

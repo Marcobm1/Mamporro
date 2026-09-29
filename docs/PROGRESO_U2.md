@@ -1,6 +1,6 @@
 # Checkpoint U2 — núcleo y combate equivalentes
 
-Estado: **AUTORIZADO por el autor el 29/09/2026; EN CURSO.** Núcleo portado; integración, UI y verificación pendientes.
+Estado: **IMPLEMENTADO Y VERIFICADO EN LOCAL el 29/09/2026; pendiente de la prueba manual y la aprobación del autor.** No empezar U3.
 
 U1 fue probado y aprobado manualmente. U2 es el único bloque autorizado. **No empezar U3.**
 
@@ -12,12 +12,12 @@ Actualizar esta sección después de cada paso completado.
 
 - **Último commit publicado:** ver `git log -1 origin/claude/zen-pasteur-674ik0`. Base verificada de U2 = núcleo + integración + documentación de decisiones (pasos 1–2 del plan). Ramas locales de respaldo: `respaldo/u2-local-1e66e49` (commit original de Codex) y `respaldo/u2-antes-rebase-2` (antes del rebase sobre `dd93c81`).
 - **Antes de cada push:** `git fetch origin`; si el remoto ha cambiado, parar y avisar al autor en lugar de reintentar.
-- **Paso actual:** 7 del plan de cierre (benchmark en build con combate real).
-- **Terminado y verificado:** núcleo, adaptador y escena U2; referencia `u2-combat.json`; prueba del catálogo; subida de nivel en uGUI; oro de la partida en el HUD. Edit Mode 88/88 y Play Mode 10/10 el 29/09/2026 20:55.
-- **A medias:** la build `unity/Builds/U2` es anterior a esta base y no se ha regenerado; la pantalla uGUI no se ha visto aún en build ni se ha probado con teclado y ratón reales.
+- **Paso actual:** U2 cerrado a la espera del autor (plan de cierre completo, pasos 1–8).
+- **Terminado y verificado:** todo el alcance de U2 (ver «Cierre de U2»). Edit Mode 88/88, Play Mode 10/10, build Windows x64 Mono, comprobación visual en build y ensayo de 8 condiciones válidas; web 202/202, typecheck y build; referencias U0 y U2 íntegras.
+- **A medias:** nada del alcance U2. Falta la prueba manual del autor con teclado y ratón reales.
 - **Sin commit a propósito:** `unity/ProjectSettings/ProjectSettings.asset` (identificador de proyecto en la nube y organización), `PackageManagerSettings.asset` y `URPProjectSettings.asset` (preferencias locales del Editor): no publicar nunca. `ProjectAuditorSettings.asset`: Unity lo reescribe con espacios al abrir; no publicar. Retoques de Codex en `README.md`, `docs/MIGRACION_UNITY.md`, `docs/PROGRESO_U1.md`, `unity/Docs/HOJA_DE_RUTA.md` y `unity/README.md`: se revisan en el commit documental de cierre (paso 8).
 - **Copias de seguridad locales (ignoradas por Git):** `qa-results/u2-audit/` (parche completo `worktree.patch`, lista y `untracked.tar` de no seguidos, estado previo y posterior al rebase) y `qa-results/u2-inherited/` (cambios heredados de U1 con hashes). Stash `codex: cabeceras CLAUDE/ENTORNO`, sustituido por `2b67ea5`, conservado sin aplicar. Copia íntegra del repositorio anterior a la integración en `..\Mamporro-respaldo-u2`.
-- **Siguiente paso exacto:** revisar `U2/CombatBenchmark.cs` para medir combate real (varias armas, cartas aplicadas, proyectiles) con 300/500/750/1000 × 1080p/1440p, generar la build (`scripts\u2.cmd build`) y ejecutar `scripts\u2.cmd benchmark`.
+- **Siguiente paso exacto:** esperar la prueba y la aprobación del autor. Si pide cambios, hacerlos dentro de U2. U3 necesita autorización expresa.
 
 Comprobar el estado desde CMD:
 
@@ -68,6 +68,22 @@ Añadir las entradas nuevas **de más antigua a más reciente**. No borrar entra
 - Decisiones pendientes del autor: ninguna.
 - Siguiente paso exacto: paso 3 del plan de cierre.
 
+### 29/09/2026 20:30–21:10 — referencia U2, subida de nivel uGUI, oro, ensayo y cierre — Claude Code
+
+- Punto de partida/commit: `e50c4b1` (publicado; el push de la entrada anterior se hizo sin incidencias).
+- Trabajo realizado: pasos 3–8 del plan de cierre (ver las secciones «Referencia U2 y correcciones», «Subida de nivel uGUI», «Ensayo U2» y «Cierre de U2»).
+- Archivos/sistemas principales: `scripts/unity-reference-u2.mjs`, `unity/Docs/Reference/u2-combat.json`, `Tests/Core/U2ReferenceTests.cs`, `Tests/Core/CatalogReferenceTests.cs`, `Core/CombatRun.cs`, `Core/Boss.cs`, `Core/Offers.cs`, `scripts/u2-export-data.mjs`, `U2/LevelUpScreen.cs`, `U2/CardText.cs`, `U2/CombatSession.cs`, `U2/CombatMenu.cs`, `U2/CombatBenchmark.cs`, `Tests/PlayMode/LevelUpScreenTests.cs`, `Tests/PlayMode/HudTests.cs`, documentación.
+- Decisiones nuevas: técnicas, en `docs/DECISIONES.md` («U2: decisiones técnicas de implementación»), pendientes de confirmar.
+- Pruebas realmente ejecutadas y resultado: ver «Pruebas ejecutadas en esta integración».
+- Pruebas pendientes/no ejecutadas: prueba manual con teclado y ratón reales; ensayo sin invulnerabilidad; medidas de GPU y GC (no disponibles en la build normal, como en U1).
+- Commits creados: `eb9180d`, `82d2a5d`, `fc1868f`, `6774d0c`, `7948883`, `c0a47ba` y el commit de cierre documental.
+- Push realizado: sí, después de `git fetch` y de comprobar que el remoto no había cambiado.
+- Estado del árbol al terminar: solo los cambios locales no incluidos.
+- Cambios locales no incluidos: `unity/ProjectSettings/ProjectSettings.asset`, `ProjectAuditorSettings.asset`, `PackageManagerSettings.asset`, `URPProjectSettings.asset` (no publicar).
+- Errores/limitaciones conocidas: ver «Cierre de U2».
+- Decisiones pendientes del autor: aprobar U2 y confirmar las decisiones técnicas.
+- Siguiente paso exacto: prueba manual del autor.
+
 ### Plantilla para cada sesión posterior
 
 ```text
@@ -109,8 +125,8 @@ Confirmadas por el autor tras la auditoría del trabajo local; detalle en `docs/
 4. Prueba del catálogo contra `baseline.catalog`. **Hecho** (`Tests/Core/CatalogReferenceTests.cs`: personajes, armas, tomos, objetos, enemigos y constantes de `Tuning`).
 5. Subida de nivel en uGUI con las teclas acordadas; reinicio en F8. **Hecho** (`U2/LevelUpScreen.cs`, `U2/CardText.cs`; idioma en F7; controles en `unity/README.md`).
 6. Contador de oro en el HUD; panel QA oculto durante el benchmark. **Hecho** (`hud.gold` de la web con el oro redondeado hacia abajo, como `Hud.ts`; `CombatMenu` y `LevelUpScreen` no dibujan ni leen teclas mientras `Measuring`).
-7. Benchmark en build con combate real: 300/500/750/1000 × 1080p/1440p.
-8. Documentación de cierre (revisar entonces los retoques de Codex en README, MIGRACION_UNITY, PROGRESO_U1, HOJA_DE_RUTA y unity/README) y entrega para prueba manual.
+7. Benchmark en build con combate real: 300/500/750/1000 × 1080p/1440p. **Hecho** (ver «Ensayo U2»).
+8. Documentación de cierre (revisar entonces los retoques de Codex en README, MIGRACION_UNITY, PROGRESO_U1, HOJA_DE_RUTA y unity/README) y entrega para prueba manual. **Hecho**: los retoques se incorporan reducidos a una línea que remite a `ESTADO_ACTUAL.md` y con el estado de cierre.
 
 ## Estado real del trabajo local (auditoría del 29/09/2026)
 
@@ -151,6 +167,11 @@ Los comandos exactos de la sesión anterior no quedaron registrados.
 | 29/09/2026 20:47 | `scripts\u2.cmd edit` (con `CatalogReferenceTests`) | 88/88 | `unity/TestResults/U2/edit.xml`, `edit.log` |
 | 29/09/2026 20:53 | `scripts\u2.cmd edit` y `scripts\u2.cmd play` (pantalla uGUI) | 88/88 y 9/9 (2 anteriores + 7 de `LevelUpScreenTests`) | `unity/TestResults/U2/edit.xml`, `play.xml` |
 | 29/09/2026 20:55 | `scripts\u2.cmd edit` y `scripts\u2.cmd play` (oro en el HUD) | 88/88 y 10/10 (+ `HudTests`) | `unity/TestResults/U2/edit.xml`, `play.xml` |
+| 29/09/2026 20:57 | `scripts\u2.cmd edit`, `play`, `build` (ensayo con cartas) | 88/88, 10/10, build correcta | `unity/TestResults/U2/edit.xml`, `play.xml`, `build.log` |
+| 29/09/2026 20:58 | `unity\Builds\U2\Mamporro-U2.exe -screen-fullscreen 0 -screen-width 1920 -screen-height 1080 -u2-visual-check` | capturas correctas salvo `cards-en` (cartas en español): corregido | `unity/Builds/U2/TestResults/U2/Visual/` |
+| 29/09/2026 20:59 | `scripts\u2.cmd edit`, `play`, `build` y comprobación visual repetida | 88/88, 10/10 (con prueba del repintado de idioma), build correcta; cartas ES/EN, QA, pausa y derrota correctas | mismos registros; `unity/TestResults/U2/visual.log` |
+| 29/09/2026 21:00–21:05 | `scripts\u2.cmd benchmark` | 8/8 condiciones con `validRender` | `unity/TestResults/U2/u2-*-2026092919*.json`, `.csv`, `.png` |
+| 29/09/2026 21:06 | `npm.cmd run typecheck`, `npm.cmd test`, `npm.cmd run build` | correcto; 202/202 en 27 archivos; build correcta; sin cambios en `src/` | consola |
 
 Cambios de la integración: `CombatVisualCheck.cs` usa `WaitForSecondsRealtime(.5f)` y guarda sus capturas en `unity/TestResults/U2/Visual` (ignorada por Git). Pendientes: build, ensayo gráfico y web (sin cambios web en esta integración).
 
@@ -172,6 +193,59 @@ Cambios de la integración: `CombatVisualCheck.cs` usa `WaitForSecondsRealtime(.
 - `CombatMenu` (IMGUI) ya no dibuja cartas; solo la pausa y el panel QA. F4 no abre el panel durante la subida de nivel. Se retiran de `U2Text.json` las claves de las cartas IMGUI.
 - Teclas: F7 idioma, F8 reinicio. Comprobado contra `PrototypeController`: U1 usa WASD, Espacio, Mayús, C, F1–F3, F6 y, solo sin sesión U2, R, 1–4 y F5; Esc de la pausa no interfiere porque la partida no se reanuda mientras hay elección abierta.
 - Pendiente de ver en build y con teclado y ratón reales (las pruebas llaman a `Press`/`Action`, los mismos métodos que usan las teclas y los botones).
+
+### Ensayo U2 (paso 7)
+
+Build Windows x64 Mono normal, D3D11, interna 640×360, VSync 0, FPS sin límite; 10 s de calentamiento y 30 s de medida por condición; una repetición. Equipo: Ryzen 7 7700X, RTX 4070 Ti SUPER, 31 913 MB de RAM. Combate real: Remedios con chancla, naftalina, dentaduras y fregona; 12 subidas de nivel previas y las de la medida resueltas con la primera carta; reposición de pelusa, cucaracha, táper y paloma hasta la carga; jugador invulnerable (QA). GPU y GC «N/D»: la build normal no los da o los da inválidos, igual que en U1; no se suponen ceros.
+
+| Salida | Enemigos | FPS medios | Frame ms | P95 | P99 | Máx ms | >16,67 ms | Tick medio ms | Tick P99 | Tick máx | Memoria MiB | Nivel final | Cartas | Proyectiles máx | Disparos enemigos máx |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| 1920×1080 | 300 | 1976 | 0,506 | 0,623 | 0,718 | 8,83 | 0 % | 0,134 | 0,210 | 0,402 | 208,0 | 25 | 24 | 6 | 82 |
+| 1920×1080 | 500 | 1614 | 0,619 | 0,788 | 0,898 | 1,32 | 0 % | 0,233 | 0,400 | 0,520 | 208,1 | 32 | 31 | 9 | 108 |
+| 1920×1080 | 750 | 1437 | 0,696 | 0,924 | 1,086 | 5,96 | 0 % | 0,371 | 0,683 | 0,919 | 208,1 | 36 | 35 | 9 | 117 |
+| 1920×1080 | 1000 | 1169 | 0,855 | 1,282 | 1,499 | 6,64 | 0 % | 0,538 | 1,025 | 1,223 | 208,1 | 42 | 41 | 9 | 193 |
+| 2560×1440 | 300 | 1967 | 0,508 | 0,622 | 0,711 | 3,19 | 0 % | 0,128 | 0,199 | 0,385 | 208,7 | 25 | 24 | 6 | 82 |
+| 2560×1440 | 500 | 1590 | 0,629 | 0,794 | 0,894 | 9,54 | 0 % | 0,221 | 0,383 | 0,523 | 212,7 | 32 | 31 | 9 | 108 |
+| 2560×1440 | 750 | 1419 | 0,705 | 0,929 | 1,092 | 3,18 | 0 % | 0,369 | 0,684 | 0,975 | 212,7 | 36 | 35 | 9 | 117 |
+| 2560×1440 | 1000 | 1167 | 0,857 | 1,254 | 1,452 | 4,65 | 0 % | 0,517 | 1,007 | 1,309 | 212,8 | 42 | 41 | 9 | 193 |
+
+- El objetivo de 60 FPS con 300 enemigos en combate se cumple con mucho margen en este equipo; 500/750/1000 son cargas de margen y estrés, no requisitos de diseño. Ninguna condición tuvo fotogramas por encima de 16,67 ms. No se debe extrapolar a equipos modestos.
+- La lógica es determinista: niveles, cartas, bajas y construcción final coinciden exactamente entre las dos resoluciones.
+- El coste por tick crece con la carga (0,13 → 0,54 ms de media) y queda muy por debajo del presupuesto de 16,67 ms.
+
+## Cierre de U2 (29/09/2026, pendiente de aprobación)
+
+**Commits publicados** sobre `dd93c81`: `b34823e` núcleo (commit de Codex rebasado), `a78fb8b` integración de la escena, `bc699b1` decisiones y checkpoints, `e50c4b1` registro de sesión, `eb9180d` referencia `u2-combat` y correcciones del jefe, `82d2a5d` prueba del catálogo, `fc1868f` checkpoint, `6774d0c` subida de nivel uGUI, `7948883` oro en el HUD, `c0a47ba` repintado de idioma y ensayo con cartas, más el commit de cierre documental.
+
+**Sistemas portados:** RNG y derivaciones; estadísticas, daño, críticos, armadura, XP y topes; rarezas, mejoras, ofertas y acciones (elegir, volver a tirar, saltar y descartar, con relleno de curación y oro); rejilla, colisiones de combate y proyectiles propios y enemigos; 2 personajes con sus pasivas, 6 armas, 8 tomos, 12 objetos y 6 enemigos (Rata élite y Pelusa Madre con todos sus ataques, enfurecimiento y pelusas hijas); caída y contador de oro; derrota, resurrección con bata y reinicio; escena QA y panel QA; pantalla de subida de nivel uGUI.
+
+**Equivalencia:** `u2-combat.json` (web aprobada) y `baseline.json` (U0) coinciden con el port en todas las pruebas; las dos divergencias encontradas se corrigieron en el port, no en la referencia.
+
+**Límites conocidos:**
+- La prueba con teclado y ratón reales no la he hecho: las pruebas llaman a los mismos métodos que las teclas y los botones, y la comprobación visual se hizo en build.
+- El ensayo usa invulnerabilidad QA y una sola repetición; GPU y GC no están disponibles en la build normal.
+- La escena usa el patio de U1: sin director, mundo procedural, baúles ni victoria (U3).
+- La pausa y el panel QA siguen en IMGUI (aprobado).
+- Unity reescribe `ProjectAuditorSettings.asset` con espacios al abrir el proyecto; no se publica.
+- El stash `codex: cabeceras CLAUDE/ENTORNO` se conserva sin aplicar; se puede borrar cuando el autor lo confirme.
+
+**Instrucciones de prueba manual (CMD):**
+
+```cmd
+cd /d "C:\Users\bymar\Desktop\Varios\Proyectos\Mamporro-git"
+git status --short --branch
+unity\Builds\U2\Mamporro-U2.exe
+```
+
+La build de las 20:59 ya está generada en este equipo. Para regenerarla, con el Editor cerrado: `scripts\u2.cmd build`. También se puede abrir `Assets/Mamporro/U2/U2_Combate.unity` en el Editor y pulsar Play. Qué comprobar:
+
+1. «Entrar al combate» (o Esc): moverse, saltar y deslizarse; las armas atacan solas y el HUD muestra vida, nivel, XP, oro y bajas.
+2. Al subir de nivel: durante 0,4 s no responde nada; después 1–4, el teclado numérico o un clic eligen; R vuelve a tirar; X salta; B y después 1–4 o clic descartan; Esc o B cancelan el descarte.
+3. F7 cambia ES/EN, también con las cartas abiertas. F8 reinicia.
+4. Esc y después QA, o F4: añadir armas, tomos y objetos (bata, perlas, olla, monedero…), subir nivel, oro, daño, invulnerabilidad; invocar la Rata élite y la Pelusa Madre (bájale la vida para verla enfurecida).
+5. Morir: derrota; con la bata, resurrección con media vida. F8 reinicia sin restos.
+
+**Siguiente paso propuesto:** U3 (mundo, estructuras, interactuables, director y partida completa), **sin empezarlo** hasta que el autor apruebe U2 y autorice U3.
 
 ## Punto de partida
 

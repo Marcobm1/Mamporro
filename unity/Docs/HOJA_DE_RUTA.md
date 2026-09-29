@@ -1,6 +1,8 @@
 # Mejoras de MAMPORRO en Unity
 
-**U1 autorizado el 29/09/2026:** prototipo técnico de movimiento, imagen y horda;
+> Estado vigente en [ESTADO_ACTUAL](../../docs/ESTADO_ACTUAL.md): U1 aceptado; U2 implementado y pendiente de la prueba manual del autor ([PROGRESO_U2](../../docs/PROGRESO_U2.md)). No comenzar U3.
+
+**Historial — U1 autorizado el 29/09/2026 y posteriormente aceptado:** prototipo técnico de movimiento, imagen y horda;
 seguimiento en [PROGRESO_U1](../../docs/PROGRESO_U1.md). La escalada libre, mundo
 ampliado, economía y contenido de esta hoja permanecen para bloques posteriores.
 300/500/750/1000 son cargas de ensayo, no límites del juego ni balance aprobado.
@@ -75,7 +77,8 @@ Fuentes oficiales consultadas el 28/09/2026:
 - **U1:** prototipo técnico de movimiento, render y 300+ enemigos. Diseñarlo para
   poder evaluar después las rampas/escalada; cualquier variante de movimiento
   requiere su plan concreto y aceptación, conservando una escena de referencia.
-- **U2–U6:** trasladar y validar los sistemas existentes. Las diferencias
+- **U2 implementado, pendiente de aprobación del autor:** núcleo y combate equivalentes en escenario controlado.
+- **U3–U6, todavía no autorizados:** trasladar y validar los sistemas restantes. Las diferencias
   intencionadas se documentarán en vez de hacer pasar un cambio de diseño por
   un fallo del port. No ampliar el catálogo durante la migración.
 - **Después de la base Unity aprobada:** bloques P0, luego P1 y lotes pequeños P2.
