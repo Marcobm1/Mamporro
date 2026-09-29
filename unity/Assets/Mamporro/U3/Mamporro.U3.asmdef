@@ -1,0 +1,4 @@
+{
+  "name": "Mamporro.U3",
+  "references": ["Mamporro.Core", "Mamporro.Runtime", "Mamporro.U2", "Unity.InputSystem", "Unity.ugui", "Unity.RenderPipelines.Core.Runtime", "Unity.RenderPipelines.Universal.Runtime"]
+}

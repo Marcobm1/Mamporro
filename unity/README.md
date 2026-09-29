@@ -1,6 +1,6 @@
 # MAMPORRO en Unity
 
-> Estado vigente en [ESTADO_ACTUAL](../docs/ESTADO_ACTUAL.md): U1 aceptado; U2 aprobado por el autor ([PROGRESO_U2](../docs/PROGRESO_U2.md)). No comenzar U3.
+> Estado vigente en [ESTADO_ACTUAL](../docs/ESTADO_ACTUAL.md): U1 y U2 aprobados; U3 autorizado y en curso ([PROGRESO_U3](../docs/PROGRESO_U3.md)). U4 no autorizado.
 
 ## Referencia U1 (aceptada por el autor)
 
@@ -90,6 +90,31 @@ Controles de U2 (sin conflictos con U1: en esta escena R, 1–4 y F5 de U1 no se
   y se oculta durante el ensayo automático.
 - F7: idioma ES/EN. F8: reiniciar la partida de pruebas.
 
+## Escena U3: mundo procedural
+
+Abre `Assets/Mamporro/U3/U3_Partida.unity`, o ejecuta
+`unity\Builds\U3\Mamporro-U3.exe`. El paso 4 permite recorrer el mundo con la
+física portada de la web: WASD, ratón, Espacio, Mayús/C; Esc pausa y clic continúa.
+F1 cambia 240/360/480, F2 dithering, F9 ajuste de vértices y F6 tamaño de ventana.
+El combate y la partida completa se conectan en los siguientes pasos de U3.
+
+Con el Editor cerrado, desde la raíz en CMD:
+
+```cmd
+scripts\u3.cmd edit
+scripts\u3.cmd play
+scripts\u3.cmd build
+scripts\u3.cmd visual
+```
+
+`visual` ejecuta la build con `-u3-visual-check -u3-output` y genera seis capturas
+en `unity/TestResults/U3/Visual/`: inicio, vista alta, casa, templo, granja y pozo.
+Comprueba que sean nuevas y contengan imagen; abre una ventana visible durante
+unos segundos. Es una comprobación visual, no una medida de rendimiento.
+XML y logs quedan en `unity/TestResults/U3/`; builds y capturas no se publican.
+`scripts\u3.cmd create` regenera deliberadamente solo la escena U3; no hace
+falta para jugar. No existe aún el ensayo de rendimiento del paso 11.
+
 ## Pruebas y build (CMD desde la raíz)
 
 Con el Editor cerrado:
@@ -168,4 +193,4 @@ la horda provisional no garantiza el coste del futuro combate completo.
 - `Generated/`: escena, malla, datos y materiales originales con sus `.meta`.
 
 La web y `Docs/Reference/` permanecen intactos. U1 ya ha recibido revisión favorable del
-autor; U2 está autorizado. No iniciar U3 sin una nueva autorización.
+autor; U2 está aprobado y U3 está autorizado. No iniciar U4.

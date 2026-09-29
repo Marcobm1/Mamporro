@@ -6,12 +6,12 @@ Este archivo es el **checkpoint vivo de continuidad entre Codex CLI y Claude Cod
 
 ## Cómo retomar
 
-- **Último commit publicado:** ver `git log -1 origin/claude/zen-pasteur-674ik0`. U2 cerrado y aprobado en `176423d`.
-- **Paso actual:** 4 del plan (render del mundo en una escena nueva `U3_Partida`).
-- **Terminado y verificado:** pasos 1–3 y la física del jugador del paso 5 (portada ya porque la colisión del mundo la necesita). Edit Mode 118/118 y Play Mode 10/10 el 29/09/2026 22:00. **`u3-world.json` está congelada**: la usan las pruebas C# desde las 21:59; no regenerarla.
-- **A medias:** nada.
+- **Último punto verificado:** paso 4, commit «Añade la escena y el render del mundo de U3» (consultar `git log -1 origin/claude/zen-pasteur-674ik0` para confirmar su publicación). Base recibida y remoto auditado: `522d8de17ed2844647f234b920ead2ee6d082c3f`.
+- **Paso actual:** 5 del plan: conectar combate y horda al mundo real.
+- **Terminado y verificado:** pasos 1–4 y física del jugador del paso 5. Edit Mode 118/118, Play Mode 11/11, build Windows x64 Mono y seis capturas de la build final el 29/09/2026 (registro abajo). **`u3-world.json` está congelada**: la usan las pruebas C# desde las 21:59; no regenerarla.
+- **A medias:** nada del paso 4; los pasos 5–12 siguen pendientes.
 - **Sin commit a propósito:** `unity/ProjectSettings/ProjectSettings.asset` (identificador de nube), `ProjectAuditorSettings.asset`, `PackageManagerSettings.asset` y `URPProjectSettings.asset`: no publicar nunca. Unity reescribe con espacios algunos ajustes al abrir el proyecto (`RetroPipeline.asset`, `UniversalRenderPipelineGlobalSettings.asset`, `GraphicsSettings.asset`, `ProjectAuditorSettings.asset`): si solo cambian espacios o finales de línea, restaurarlos antes de hacer commit.
-- **Siguiente paso exacto:** crear `Assets/Mamporro/U3/` (ensamblado `Mamporro.U3`) con un renderizador del mundo que construya por código el terreno (colores por altura/pendiente como `src/world/TerrainMesh.ts`), las piezas de props (`Part`: box/cylinder/cone/ico/dodeca con el orden de giro YXZ), la decoración, la cobertura del suelo y los interactuables, con el material retro de U1, y una escena `Assets/Mamporro/U3/U3_Partida.unity` generada por un `U3Project.cs` al estilo de `U2Project.cs`, sin tocar las escenas de U1 y U2.
+- **Siguiente paso exacto:** conectar `CombatRun` y la horda a `PlayerPhysics` y `WorldCollision` en U3, con la conversión de Z únicamente en render y rejilla espacial para los 320 m del mundo. Probar presión/frenado, empuje del jefe, obstáculos, pendientes y reinicio. No reimplementar el mundo ni regenerar referencias.
 
 Comprobar el estado desde CMD:
 
@@ -20,8 +20,10 @@ cd /d "C:\Users\bymar\Desktop\Varios\Proyectos\Mamporro-git"
 git fetch origin
 git status --short --branch
 git log --oneline -8
-scripts\u2.cmd edit
-scripts\u2.cmd play
+scripts\u3.cmd edit
+scripts\u3.cmd play
+scripts\u3.cmd build
+scripts\u3.cmd visual
 ```
 
 ## Registro de sesiones y relevos de U3
@@ -106,7 +108,7 @@ Commits pequeños que compilen y pasen sus pruebas; actualizar este checkpoint t
 1. Este checkpoint y las entradas de documentación. **Hecho.**
 2. Referencia `u3-world.json`. **Hecho.**
 3. **Hecho.** Núcleo del mundo en C# puro (`Assets/Mamporro/Core`, sin UnityEngine): port de simplex-noise, heightfield, sites, props y colisionadores, decoración, cobertura del suelo, interactuables y colisión del mundo; pruebas contra `u3-world.json` y `baseline.worlds`.
-4. Render del mundo con el material retro de U1 en una escena nueva `Assets/Mamporro/U3/U3_Partida.unity`; U1 y U2 conservan sus escenas y builds.
+4. **Hecho.** Render del mundo con variante del material retro de U1 en una escena nueva `Assets/Mamporro/U3/U3_Partida.unity`; U1 y U2 conservan sus escenas y builds.
 5. Física del jugador y colisiones de la horda sobre el mundo real. (Física portada y probada en el paso 3; falta conectarla a la escena y a la horda.)
 6. Director completo.
 7. Interactuables, armario, jefe y victoria.
@@ -125,6 +127,28 @@ Commits pequeños que compilen y pasen sus pruebas; actualizar este checkpoint t
 | 29/09/2026 21:55 | Prueba temporal `TmpMathProbe` (Edit Mode, filtro) contra 200 000 valores de V8 en base64 | ver «Matemáticas de V8 frente a Mono» | `unity/TestResults/U3/probe.log` (prueba borrada después) |
 | 29/09/2026 21:59 | `scripts\u2.cmd edit` | 118/118 (88 anteriores + 30 de `WorldReferenceTests`); alturas de los 4 mundos idénticas bit a bit | `unity/TestResults/U2/edit.xml` |
 | 29/09/2026 22:00 | `scripts\u2.cmd play` | 10/10 | `unity/TestResults/U2/play.xml` |
+
+### 29/09/2026 — cierre del paso 4 local de Claude Code — Codex
+
+- Auditado antes de editar: documentación, `git fetch origin`, status completo con archivos sin seguimiento, log, remoto, diff y archivos nuevos. HEAD/remoto coincidían en `522d8de`; no se hizo pull, stash, reset ni clean.
+- Conservada la implementación local de Claude Code: ensamblado `Mamporro.U3`, `MeshBuilder`/`WebSpace`, texturas, `WorldRenderer`, `U3Game`, `U3VisualCheck`, escena `U3_Partida`, generador `Editor/U3Project`, shaders `RetroWorld`/`RetroSky`, launcher y `U3SceneTests`, referencias de ensamblados y entrada de Build Settings. Todos los assets nuevos tienen `.meta` y la escena referencia sus shaders/controlador.
+- Render: terreno coloreado por altura/pendiente, props YXZ, casas/templos/granjas/pozos, árboles/rocas/arbustos, hierba/flores con viento, modelos estáticos de interactuables, cielo con sol, niebla/dither/snap, 240/360/480, cámara y física portada. Cámara solo contra terreno; F9 para snap.
+- Ajustes de auditoría: controles visibles, destrucción del material del avatar, intención de prueba no serializable explícita, cielo situado al plano lejano como la web. Launcher `visual` con `-u3-visual-check` y `-u3-output`, seis capturas nuevas/no uniformes y error si falta un site. Eliminada la acción `benchmark` copiada de U2 porque no estaba implementada; llegará en el paso 11. README Unity actualizado.
+- Pruebas finales realmente ejecutadas (hora Europe/Madrid):
+
+| Fecha/hora | Comando CMD | Resultado | Registro local |
+| --- | --- | --- | --- |
+| 29/09/2026 22:52 | `scripts\u3.cmd edit` | 118/118, exit 0 | `unity/TestResults/U3/edit.xml`, `edit.log` |
+| 29/09/2026 22:53 | `scripts\u3.cmd play` | 11/11, exit 0; incluye U1/U2 | `unity/TestResults/U3/play.xml`, `play.log` |
+| 29/09/2026 22:54 | `scripts\u3.cmd build` | Success, Windows x64 Mono, exit 0 | `unity/TestResults/U3/build.log` |
+| 29/09/2026 22:54 | `scripts\u3.cmd visual` | exit 0; seis PNG nuevos revisados | `unity/TestResults/U3/visual.log`, `Visual/inicio.png`, `vista-alta.png`, `sitio-house.png`, `sitio-temple.png`, `sitio-farm.png`, `sitio-well.png` |
+| 29/09/2026 22:54 | `git diff --exit-code -- src unity/Docs/Reference unity/Assets/Mamporro/U2 unity/Assets/Mamporro/Generated/U1_Patio.unity` | sin diferencias | consola |
+
+- Incidencias resueltas: primer intento Edit dentro del sandbox no conectó al servicio de licencia; se detuvo solo ese batch y se repitió fuera. Primer visual con ventana oculta produjo seis imágenes negras; no se considera válido. El launcher usa ventana visible y rechaza capturas uniformes. Sonda temporal de cielo aislado retirada del código; su PNG queda solo en el directorio de resultados ignorado.
+- Límites observados: niebla densa en la panorámica y silueta marcada de las montañas del borde; degradado del cielo continuo al aislarlo. Avatar provisional, interactuables todavía estáticos, sin fauna ni combate conectado. Las capturas no prueban rendimiento ni equivalencia visual píxel a píxel. El contador instantáneo de FPS no es un benchmark.
+- Estado antes del commit: solo archivos del paso 4 y documentación seleccionados. Restaurados explícitamente los cuatro ajustes con diferencias exclusivamente de espacios/EOL (`RetroPipeline`, `UniversalRenderPipelineGlobalSettings`, `GraphicsSettings`, `ProjectAuditorSettings`). Se conservan fuera del commit `ProjectSettings.asset`, `PackageManagerSettings.asset` y `URPProjectSettings.asset`; no se publican Builds, TestResults ni capturas.
+- Commit de esta pieza: «Añade la escena y el render del mundo de U3»; push normal tras fetch y comprobación del remoto. El resultado del push se registra al continuar el checkpoint, sin incluir un hash propio circular.
+- Siguiente paso exacto: paso 5 descrito en «Cómo retomar». Sin decisiones pendientes del autor; U4 no autorizado.
 
 ## Checkpoint al terminar U3
 

@@ -11,4 +11,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Mamporro/Generated/U1_Patio.unity
     guid: 0f5a69d86093d2f4bb9a8200673c2a38
+  - enabled: 1
+    path: Assets/Mamporro/U3/U3_Partida.unity
+    guid: ae7f13c7a089ed642892b07bd84543ce
   m_configObjects: {}
