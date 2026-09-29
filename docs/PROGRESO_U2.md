@@ -1,19 +1,33 @@
 # Checkpoint U2 — núcleo y combate equivalentes
 
-Estado: **AUTORIZADO por el autor el 29/09/2026; no implementado aún en el corte de este documento.**
+Estado: **AUTORIZADO por el autor el 29/09/2026; EN CURSO.** Núcleo portado; integración, UI y verificación pendientes.
 
 U1 fue probado y aprobado manualmente. U2 es el único bloque autorizado. **No empezar U3.**
 
 Este archivo es además el **checkpoint vivo de continuidad entre Codex CLI y Claude Code** mientras U2 siga activo. Debe actualizarse después de avances relevantes y siempre antes de un relevo de herramienta. Protocolo: [`CONTINUIDAD_AGENTES.md`](CONTINUIDAD_AGENTES.md).
 
-## Estado del relevo actual
+## Cómo retomar
 
-- Herramientas autorizadas para ejecutar U2: **Codex CLI** y **Claude Code**, por turnos, nunca simultáneamente.
-- Último estado funcional publicado antes del trabajo U2: U1 aprobado.
-- U2 aún no tiene implementación registrada en este checkpoint.
-- Próximo agente: cualquiera de los dos, después de comprobar Git y el árbol local.
-- Primer paso obligatorio: auditar `git status --short --branch`, últimos commits y posibles cambios generados por Unity que quedaron fuera del checkpoint U1.
-- No existe ninguna decisión nueva de diseño de U2 que deba inferirse de una conversación privada: el alcance de este documento es el autorizado.
+Actualizar esta sección después de cada paso completado.
+
+- **Último commit publicado:** `2b67ea5` (documental). El commit del núcleo U2 existe solo en local, rebasado sobre `2b67ea5`; copia del original en la rama local `respaldo/u2-local-1e66e49`.
+- **Paso actual:** 1 del plan de cierre (ver «Plan de cierre acordado»): integración de `2b67ea5` y limpieza de ajustes de Unity.
+- **Terminado y verificado:** núcleo puro `Assets/Mamporro/Core` y sus pruebas (Edit Mode 37/37 el 29/09/2026 11:59, ver «Pruebas registradas»).
+- **A medias:** adaptador, escena y UI U2 (`Assets/Mamporro/U2/`, `PrototypeSession.cs`, `U2Project.cs`, `CombatSceneTests.cs`, `scripts/u2.*`, cambios en `PlayerMotor.cs` y `PrototypeController.cs`). **Sin commit y sin compilar**: `Assets/Mamporro/U2/CombatVisualCheck.cs` líneas 15 y 22, `error CS1503: cannot convert from 'double' to 'float'` (`WaitForSecondsRealtime(.5)`); registro en `unity/TestResults/U2/build.log` (12:11).
+- **Sin commit a propósito:** `unity/ProjectSettings/ProjectSettings.asset` (identificador de proyecto en la nube y organización), `PackageManagerSettings.asset` y `URPProjectSettings.asset` (preferencias locales del Editor). No publicar nunca.
+- **Copias de seguridad locales (ignoradas por Git):** `qa-results/u2-audit/` (parche completo `worktree.patch`, lista y `untracked.tar` de no seguidos, estado previo) y `qa-results/u2-inherited/` (cambios heredados de U1 con hashes). Stash `codex: cabeceras CLAUDE/ENTORNO`, sustituido por `2b67ea5`, conservado sin aplicar. Copia íntegra del repositorio en `..\Mamporro-respaldo-u2`.
+- **Siguiente paso exacto:** corregir `CombatVisualCheck.cs`, ejecutar Edit Mode y Play Mode completos (incluidas las 11 pruebas U1) y, si pasan, commit de la integración y primer push.
+
+Comprobar el estado desde CMD:
+
+```cmd
+cd /d "C:\Users\bymar\Desktop\Varios\Proyectos\Mamporro-git"
+git status --short --branch
+git log --oneline --graph -8
+git stash list
+scripts\u2.cmd edit
+scripts\u2.cmd play
+```
 
 ## Registro de sesiones y relevos de U2
 
@@ -49,6 +63,50 @@ Añadir las entradas nuevas **de más antigua a más reciente**. No borrar entra
 ```
 
 No escribir resultados previstos en el apartado de pruebas. Si no se ejecutó una comprobación, indicar expresamente que no se ejecutó.
+## Decisiones del autor para U2 (29/09/2026)
+
+Confirmadas por el autor tras la auditoría del trabajo local; detalle en `docs/DECISIONES.md`.
+
+1. Referencia complementaria: `scripts/unity-reference-u2.mjs` exporta `unity/Docs/Reference/u2-combat.json` desde `0505b16` con guarda contra `src/`. Cubre rarezas, mejoras, agregación de estadísticas, ofertas con semillas fijas y escenarios deterministas por arma, enemigo y pasiva. Sustituye a `WebFixtures.json` como única fuente de esperados. No tocar `baseline.json` ni `src/`; nunca `--write` sobre la base.
+2. Unity (Edit/Play/build/benchmark) se ejecuta en la sesión local.
+3. Oro de partida incluido: caída de oro y contador con los valores actuales. Carta de relleno: fórmula web `max(fillerMin, round(chestCost(baúlesAbiertos) × 0,5))`, que da 10 sin baúles. Sin baúles.
+4. Subida de nivel técnica en uGUI: 3–4 cartas, clic, 1–4 y teclado numérico, R volver a tirar, X saltar, B modo descarte, Esc sale del descarte, 0,4 s de espera, textos ES/EN de la referencia; sin acabado final. El reinicio de partida pasa a F8.
+5. Jefe y Rata élite con todas sus reglas de combate, invocados desde el panel QA. Armario, calendario de élites y enjambre quedan para U3.
+6. Panel QA activo en la build U2; puede seguir en IMGUI, oculto durante el benchmark.
+
+## Plan de cierre acordado
+
+1. Integrar `2b67ea5` (rebase del núcleo), restaurar ajustes de Unity que solo cambian espacios, `GraphicsSettings.asset` y `U1_Patio.unity`. **En curso.**
+2. Corregir la compilación; Edit Mode y Play Mode completos; commit y primer push.
+3. `scripts/unity-reference-u2.mjs` → `unity/Docs/Reference/u2-combat.json`; pruebas C# contra él.
+4. Prueba del catálogo contra `baseline.catalog`.
+5. Subida de nivel en uGUI con las teclas acordadas; reinicio en F8.
+6. Contador de oro en el HUD; panel QA oculto durante el benchmark.
+7. Benchmark en build con combate real: 300/500/750/1000 × 1080p/1440p.
+8. Documentación de cierre (revisar entonces los retoques de Codex en README, MIGRACION_UNITY, PROGRESO_U1, HOJA_DE_RUTA y unity/README) y entrega para prueba manual.
+
+## Estado real del trabajo local (auditoría del 29/09/2026)
+
+Una sesión anterior de Codex terminó sin cerrar. Lo que queda:
+
+- Commit local «Porta el núcleo y las reglas de combate de U2» (original `1e66e49`): núcleo sin UnityEngine en `Assets/Mamporro/Core` (RNG, rejilla, catálogo exportado de `src/data`, seis armas, enemigos, jefe, proyectiles, recogidas, ofertas y `CombatRun`), pruebas `CombatTests` y `ReferenceTests`, `WebFixtures.json` y los scripts `u2-export-data.mjs` y `u2-web-fixtures.mjs`.
+- Sin commit: el adaptador y la escena descritos en «Cómo retomar», con la carta de subida de nivel y el panel QA en IMGUI y teclas Q/E/B distintas de la web (R reiniciaba).
+- Build `unity/Builds/U2` generada a las 12:03 con el código anterior a los últimos cambios; no corresponde al árbol actual.
+- Cambios heredados de U1: once ajustes que solo difieren en espacios, `U1_Patio.unity` regenerada (proporción 1,333 → 2,043), `GraphicsSettings.asset` con iluminación lineal y los tres ajustes locales citados arriba.
+
+### Pruebas registradas (heredadas de la sesión anterior)
+
+| Fecha y hora | Prueba | Resultado | Registro |
+| --- | --- | --- | --- |
+| 29/09/2026 10:53 | Edit Mode núcleo | 17/17 | `unity/TestResults/u2-core-edit.xml` |
+| 29/09/2026 11:05 | Edit Mode combate | 30/31 (fallo JsonUtility con U+0000, corregido en la entrada de prueba) | `unity/TestResults/u2-combat-edit.xml` |
+| 29/09/2026 11:59 | Edit Mode completo (26 U2 + 11 U1) | 37/37 | `unity/TestResults/U2/edit.xml` |
+| 29/09/2026 12:02 | Play Mode (U1 y U2) | 2/2 | `unity/TestResults/U2/play.xml` |
+| 29/09/2026 12:03 | Build Windows x64 Mono | generada | `unity/Builds/U2` |
+| 29/09/2026 12:08 | Ensayo 1080p, 300 enemigos, 4 armas, invulnerable, sin cartas | 1974 FPS medios, 0,17 ms/tick; GPU y GC no disponibles | `unity/TestResults/U2/u2-1920x1080-300-*.json` |
+| 29/09/2026 12:11 | Compilación tras cambios en cuatro archivos U2 | **FALLIDA** (CS1503) | `unity/TestResults/U2/build.log` |
+
+Pendiente: repetir todo lo anterior sobre el código actual. Los comandos exactos usados por la sesión anterior no quedaron registrados; los nuevos se anotarán aquí.
 
 ## Punto de partida
 

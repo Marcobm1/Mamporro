@@ -474,3 +474,13 @@ oficial consultada: https://unity.com/releases/unity-6/support .
   bloques posteriores. No se implementan importador, Steam, mando ni compras.
 - Resultados efectivos y límites, incidencias de ejecución y siguiente paso en
   [PROGRESO_U1.md](PROGRESO_U1.md); medidas detalladas locales, no telemetría.
+
+## U1 aceptado y U2 autorizado (29/09/2026)
+
+El autor confirma funcionamiento de U1 en build y Editor y acepta el control básico.
+Autoriza U2 completo: núcleo y combate equivalentes a TypeScript, seis armas, ocho
+tomos, doce objetos, dos personajes y seis comportamientos enemigos en escenarios
+controlados. Incluye ofertas, progresión dentro de partida y QA sin persistencia.
+No incluye director/mundo/interactuables/victoria U3 ni meta U4. No rebalancear.
+Los antiguos pendientes de revisión U1 y autorización U2 quedan sustituidos.
+Plan, cambios heredados, pruebas y siguiente paso: [PROGRESO_U2](PROGRESO_U2.md).

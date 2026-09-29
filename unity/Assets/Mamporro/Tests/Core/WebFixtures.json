@@ -1,0 +1,1008 @@
+{
+  "source": "0505b1690656d15188860157612455639820fe1f",
+  "combat": [
+    {
+      "weapon": "chancla",
+      "hp": [
+        1400,
+        1400,
+        1400,
+        1380,
+        1400,
+        1400
+      ],
+      "x": [
+        1.4395959377288818,
+        1.5858978033065796,
+        1.5331599712371826,
+        3.3299999237060547,
+        1.559358835220337,
+        0.9427080750465393
+      ],
+      "z": [
+        -0.13468562066555023,
+        -0.5214419960975647,
+        -1.0808287858963013,
+        0,
+        0.4785896837711334,
+        4.18280553817749
+      ],
+      "damage": 20,
+      "projectiles": 2
+    },
+    {
+      "weapon": "naftalina",
+      "hp": [
+        1382,
+        1388,
+        1388,
+        1376,
+        1376,
+        1400
+      ],
+      "x": [
+        1.4682070016860962,
+        1.3988783359527588,
+        1.4409863948822021,
+        3.3299999237060547,
+        1.520139455795288,
+        0.9427080750465393
+      ],
+      "z": [
+        -0.2667086720466614,
+        -0.6273990869522095,
+        -1.2753852605819702,
+        0,
+        0.40390580892562866,
+        4.18280553817749
+      ],
+      "damage": 90,
+      "projectiles": 0
+    },
+    {
+      "weapon": "barra",
+      "hp": [
+        1384,
+        1384,
+        1384,
+        1400,
+        1400,
+        1400
+      ],
+      "x": [
+        1.547776460647583,
+        1.1374503374099731,
+        1.184452772140503,
+        3.3299999237060547,
+        1.489749789237976,
+        0.9427080750465393
+      ],
+      "z": [
+        -0.45815274119377136,
+        -0.9872465133666992,
+        -1.8335384130477905,
+        0,
+        0.3315940499305725,
+        4.18280553817749
+      ],
+      "damage": 48,
+      "projectiles": 0
+    },
+    {
+      "weapon": "dentaduras",
+      "hp": [
+        1400,
+        1392,
+        1392,
+        1400,
+        1392,
+        1400
+      ],
+      "x": [
+        1.4884458780288696,
+        1.3764960765838623,
+        1.4099419116973877,
+        3.3299999237060547,
+        1.5369415283203125,
+        0.9427080750465393
+      ],
+      "z": [
+        -0.3280718922615051,
+        -0.6386908888816833,
+        -1.3447492122650146,
+        0,
+        0.4378955066204071,
+        4.18280553817749
+      ],
+      "damage": 24,
+      "projectiles": 0
+    },
+    {
+      "weapon": "jersey",
+      "hp": [
+        1374,
+        1374,
+        1387,
+        1387,
+        1374,
+        1400
+      ],
+      "x": [
+        1.4538334608078003,
+        1.5792704820632935,
+        1.5223388671875,
+        3.3299999237060547,
+        1.5438108444213867,
+        0.9427080750465393
+      ],
+      "z": [
+        -0.21146030724048615,
+        -0.5719738602638245,
+        -1.1524453163146973,
+        0,
+        0.45087435841560364,
+        4.18280553817749
+      ],
+      "damage": 104,
+      "projectiles": 0
+    },
+    {
+      "weapon": "fregona",
+      "hp": [
+        1390,
+        1395,
+        1395,
+        1395,
+        1385,
+        1400
+      ],
+      "x": [
+        1.4442049264907837,
+        1.58741295337677,
+        1.532768726348877,
+        3.3299999237060547,
+        1.5422773361206055,
+        0.9427080750465393
+      ],
+      "z": [
+        -0.16366921365261078,
+        -0.5237420797348022,
+        -1.0835444927215576,
+        0,
+        0.4480186402797699,
+        4.18280553817749
+      ],
+      "damage": 40,
+      "projectiles": 0
+    }
+  ],
+  "offers": [
+    {
+      "cards": [
+        {
+          "kind": "newWeapon",
+          "key": "weapon:barra",
+          "id": "barra",
+          "rarity": "",
+          "changes": [],
+          "amounts": [],
+          "amount": 0
+        },
+        {
+          "kind": "tome",
+          "key": "tome:damage",
+          "id": "damage",
+          "rarity": "uncommon",
+          "changes": [],
+          "amounts": [
+            0.156
+          ],
+          "amount": 0
+        },
+        {
+          "kind": "tome",
+          "key": "tome:vitality",
+          "id": "vitality",
+          "rarity": "epic",
+          "changes": [],
+          "amounts": [
+            42,
+            0.84
+          ],
+          "amount": 0
+        }
+      ]
+    },
+    {
+      "cards": [
+        {
+          "kind": "newWeapon",
+          "key": "weapon:dentaduras",
+          "id": "dentaduras",
+          "rarity": "",
+          "changes": [],
+          "amounts": [],
+          "amount": 0
+        },
+        {
+          "kind": "tome",
+          "key": "tome:attackSpeed",
+          "id": "attackSpeed",
+          "rarity": "common",
+          "changes": [],
+          "amounts": [
+            0.1
+          ],
+          "amount": 0
+        },
+        {
+          "kind": "newWeapon",
+          "key": "weapon:barra",
+          "id": "barra",
+          "rarity": "",
+          "changes": [],
+          "amounts": [],
+          "amount": 0
+        }
+      ]
+    },
+    {
+      "cards": [
+        {
+          "kind": "tome",
+          "key": "tome:projectiles",
+          "id": "projectiles",
+          "rarity": "uncommon",
+          "changes": [],
+          "amounts": [
+            1
+          ],
+          "amount": 0
+        },
+        {
+          "kind": "weaponUpgrade",
+          "key": "weapon:chancla",
+          "id": "chancla",
+          "rarity": "uncommon",
+          "changes": [
+            {
+              "stat": "critChance",
+              "amount": 0.065
+            }
+          ],
+          "amounts": [],
+          "amount": 0
+        },
+        {
+          "kind": "tome",
+          "key": "tome:area",
+          "id": "area",
+          "rarity": "common",
+          "changes": [],
+          "amounts": [
+            0.12
+          ],
+          "amount": 0
+        }
+      ]
+    },
+    {
+      "cards": [
+        {
+          "kind": "tome",
+          "key": "tome:vitality",
+          "id": "vitality",
+          "rarity": "common",
+          "changes": [],
+          "amounts": [
+            20,
+            0.4
+          ],
+          "amount": 0
+        },
+        {
+          "kind": "tome",
+          "key": "tome:damage",
+          "id": "damage",
+          "rarity": "common",
+          "changes": [],
+          "amounts": [
+            0.12
+          ],
+          "amount": 0
+        },
+        {
+          "kind": "weaponUpgrade",
+          "key": "weapon:chancla",
+          "id": "chancla",
+          "rarity": "common",
+          "changes": [
+            {
+              "stat": "pierce",
+              "amount": 1
+            }
+          ],
+          "amounts": [],
+          "amount": 0
+        }
+      ]
+    },
+    {
+      "cards": [
+        {
+          "kind": "tome",
+          "key": "tome:luck",
+          "id": "luck",
+          "rarity": "uncommon",
+          "changes": [],
+          "amounts": [
+            13
+          ],
+          "amount": 0
+        },
+        {
+          "kind": "weaponUpgrade",
+          "key": "weapon:chancla",
+          "id": "chancla",
+          "rarity": "common",
+          "changes": [
+            {
+              "stat": "area",
+              "amount": 0.15
+            },
+            {
+              "stat": "speed",
+              "amount": 0.15
+            }
+          ],
+          "amounts": [],
+          "amount": 0
+        },
+        {
+          "kind": "newWeapon",
+          "key": "weapon:dentaduras",
+          "id": "dentaduras",
+          "rarity": "",
+          "changes": [],
+          "amounts": [],
+          "amount": 0
+        }
+      ]
+    },
+    {
+      "cards": [
+        {
+          "kind": "tome",
+          "key": "tome:moveSpeed",
+          "id": "moveSpeed",
+          "rarity": "uncommon",
+          "changes": [],
+          "amounts": [
+            0.104
+          ],
+          "amount": 0
+        },
+        {
+          "kind": "weaponUpgrade",
+          "key": "weapon:chancla",
+          "id": "chancla",
+          "rarity": "rare",
+          "changes": [
+            {
+              "stat": "damage",
+              "amount": 0.413
+            },
+            {
+              "stat": "speed",
+              "amount": 0.247
+            }
+          ],
+          "amounts": [],
+          "amount": 0
+        },
+        {
+          "kind": "tome",
+          "key": "tome:attackSpeed",
+          "id": "attackSpeed",
+          "rarity": "common",
+          "changes": [],
+          "amounts": [
+            0.1
+          ],
+          "amount": 0
+        }
+      ]
+    },
+    {
+      "cards": [
+        {
+          "kind": "tome",
+          "key": "tome:moveSpeed",
+          "id": "moveSpeed",
+          "rarity": "common",
+          "changes": [],
+          "amounts": [
+            0.08
+          ],
+          "amount": 0
+        },
+        {
+          "kind": "tome",
+          "key": "tome:projectiles",
+          "id": "projectiles",
+          "rarity": "uncommon",
+          "changes": [],
+          "amounts": [
+            1
+          ],
+          "amount": 0
+        },
+        {
+          "kind": "newWeapon",
+          "key": "weapon:fregona",
+          "id": "fregona",
+          "rarity": "",
+          "changes": [],
+          "amounts": [],
+          "amount": 0
+        }
+      ]
+    },
+    {
+      "cards": [
+        {
+          "kind": "newWeapon",
+          "key": "weapon:naftalina",
+          "id": "naftalina",
+          "rarity": "",
+          "changes": [],
+          "amounts": [],
+          "amount": 0
+        },
+        {
+          "kind": "tome",
+          "key": "tome:damage",
+          "id": "damage",
+          "rarity": "uncommon",
+          "changes": [],
+          "amounts": [
+            0.156
+          ],
+          "amount": 0
+        },
+        {
+          "kind": "tome",
+          "key": "tome:moveSpeed",
+          "id": "moveSpeed",
+          "rarity": "uncommon",
+          "changes": [],
+          "amounts": [
+            0.104
+          ],
+          "amount": 0
+        }
+      ]
+    },
+    {
+      "cards": [
+        {
+          "kind": "newWeapon",
+          "key": "weapon:dentaduras",
+          "id": "dentaduras",
+          "rarity": "",
+          "changes": [],
+          "amounts": [],
+          "amount": 0
+        },
+        {
+          "kind": "tome",
+          "key": "tome:attackSpeed",
+          "id": "attackSpeed",
+          "rarity": "common",
+          "changes": [],
+          "amounts": [
+            0.1
+          ],
+          "amount": 0
+        },
+        {
+          "kind": "tome",
+          "key": "tome:magnet",
+          "id": "magnet",
+          "rarity": "uncommon",
+          "changes": [],
+          "amounts": [
+            0.325,
+            0.104
+          ],
+          "amount": 0
+        }
+      ]
+    },
+    {
+      "cards": [
+        {
+          "kind": "tome",
+          "key": "tome:luck",
+          "id": "luck",
+          "rarity": "uncommon",
+          "changes": [],
+          "amounts": [
+            13
+          ],
+          "amount": 0
+        },
+        {
+          "kind": "tome",
+          "key": "tome:area",
+          "id": "area",
+          "rarity": "common",
+          "changes": [],
+          "amounts": [
+            0.12
+          ],
+          "amount": 0
+        },
+        {
+          "kind": "tome",
+          "key": "tome:magnet",
+          "id": "magnet",
+          "rarity": "common",
+          "changes": [],
+          "amounts": [
+            0.25,
+            0.08
+          ],
+          "amount": 0
+        }
+      ]
+    },
+    {
+      "cards": [
+        {
+          "kind": "tome",
+          "key": "tome:area",
+          "id": "area",
+          "rarity": "uncommon",
+          "changes": [],
+          "amounts": [
+            0.156
+          ],
+          "amount": 0
+        },
+        {
+          "kind": "newWeapon",
+          "key": "weapon:dentaduras",
+          "id": "dentaduras",
+          "rarity": "",
+          "changes": [],
+          "amounts": [],
+          "amount": 0
+        },
+        {
+          "kind": "tome",
+          "key": "tome:damage",
+          "id": "damage",
+          "rarity": "rare",
+          "changes": [],
+          "amounts": [
+            0.198
+          ],
+          "amount": 0
+        }
+      ]
+    },
+    {
+      "cards": [
+        {
+          "kind": "newWeapon",
+          "key": "weapon:fregona",
+          "id": "fregona",
+          "rarity": "",
+          "changes": [],
+          "amounts": [],
+          "amount": 0
+        },
+        {
+          "kind": "weaponUpgrade",
+          "key": "weapon:chancla",
+          "id": "chancla",
+          "rarity": "common",
+          "changes": [
+            {
+              "stat": "count",
+              "amount": 1
+            },
+            {
+              "stat": "pierce",
+              "amount": 1
+            }
+          ],
+          "amounts": [],
+          "amount": 0
+        },
+        {
+          "kind": "tome",
+          "key": "tome:magnet",
+          "id": "magnet",
+          "rarity": "common",
+          "changes": [],
+          "amounts": [
+            0.25,
+            0.08
+          ],
+          "amount": 0
+        }
+      ]
+    },
+    {
+      "cards": [
+        {
+          "kind": "tome",
+          "key": "tome:attackSpeed",
+          "id": "attackSpeed",
+          "rarity": "common",
+          "changes": [],
+          "amounts": [
+            0.1
+          ],
+          "amount": 0
+        },
+        {
+          "kind": "tome",
+          "key": "tome:moveSpeed",
+          "id": "moveSpeed",
+          "rarity": "epic",
+          "changes": [],
+          "amounts": [
+            0.168
+          ],
+          "amount": 0
+        },
+        {
+          "kind": "tome",
+          "key": "tome:damage",
+          "id": "damage",
+          "rarity": "common",
+          "changes": [],
+          "amounts": [
+            0.12
+          ],
+          "amount": 0
+        }
+      ]
+    },
+    {
+      "cards": [
+        {
+          "kind": "newWeapon",
+          "key": "weapon:barra",
+          "id": "barra",
+          "rarity": "",
+          "changes": [],
+          "amounts": [],
+          "amount": 0
+        },
+        {
+          "kind": "tome",
+          "key": "tome:magnet",
+          "id": "magnet",
+          "rarity": "rare",
+          "changes": [],
+          "amounts": [
+            0.413,
+            0.132
+          ],
+          "amount": 0
+        },
+        {
+          "kind": "tome",
+          "key": "tome:area",
+          "id": "area",
+          "rarity": "common",
+          "changes": [],
+          "amounts": [
+            0.12
+          ],
+          "amount": 0
+        }
+      ]
+    },
+    {
+      "cards": [
+        {
+          "kind": "tome",
+          "key": "tome:luck",
+          "id": "luck",
+          "rarity": "uncommon",
+          "changes": [],
+          "amounts": [
+            13
+          ],
+          "amount": 0
+        },
+        {
+          "kind": "tome",
+          "key": "tome:attackSpeed",
+          "id": "attackSpeed",
+          "rarity": "common",
+          "changes": [],
+          "amounts": [
+            0.1
+          ],
+          "amount": 0
+        },
+        {
+          "kind": "tome",
+          "key": "tome:damage",
+          "id": "damage",
+          "rarity": "common",
+          "changes": [],
+          "amounts": [
+            0.12
+          ],
+          "amount": 0
+        }
+      ]
+    },
+    {
+      "cards": [
+        {
+          "kind": "newWeapon",
+          "key": "weapon:dentaduras",
+          "id": "dentaduras",
+          "rarity": "",
+          "changes": [],
+          "amounts": [],
+          "amount": 0
+        },
+        {
+          "kind": "newWeapon",
+          "key": "weapon:jersey",
+          "id": "jersey",
+          "rarity": "",
+          "changes": [],
+          "amounts": [],
+          "amount": 0
+        },
+        {
+          "kind": "weaponUpgrade",
+          "key": "weapon:chancla",
+          "id": "chancla",
+          "rarity": "common",
+          "changes": [
+            {
+              "stat": "pierce",
+              "amount": 1
+            },
+            {
+              "stat": "speed",
+              "amount": 0.15
+            }
+          ],
+          "amounts": [],
+          "amount": 0
+        }
+      ]
+    },
+    {
+      "cards": [
+        {
+          "kind": "tome",
+          "key": "tome:luck",
+          "id": "luck",
+          "rarity": "uncommon",
+          "changes": [],
+          "amounts": [
+            13
+          ],
+          "amount": 0
+        },
+        {
+          "kind": "tome",
+          "key": "tome:vitality",
+          "id": "vitality",
+          "rarity": "common",
+          "changes": [],
+          "amounts": [
+            20,
+            0.4
+          ],
+          "amount": 0
+        },
+        {
+          "kind": "tome",
+          "key": "tome:moveSpeed",
+          "id": "moveSpeed",
+          "rarity": "rare",
+          "changes": [],
+          "amounts": [
+            0.132
+          ],
+          "amount": 0
+        }
+      ]
+    },
+    {
+      "cards": [
+        {
+          "kind": "tome",
+          "key": "tome:attackSpeed",
+          "id": "attackSpeed",
+          "rarity": "rare",
+          "changes": [],
+          "amounts": [
+            0.165
+          ],
+          "amount": 0
+        },
+        {
+          "kind": "tome",
+          "key": "tome:luck",
+          "id": "luck",
+          "rarity": "common",
+          "changes": [],
+          "amounts": [
+            10
+          ],
+          "amount": 0
+        },
+        {
+          "kind": "weaponUpgrade",
+          "key": "weapon:chancla",
+          "id": "chancla",
+          "rarity": "legendary",
+          "changes": [
+            {
+              "stat": "critChance",
+              "amount": 0.135
+            },
+            {
+              "stat": "speed",
+              "amount": 0.405
+            }
+          ],
+          "amounts": [],
+          "amount": 0
+        }
+      ]
+    },
+    {
+      "cards": [
+        {
+          "kind": "tome",
+          "key": "tome:vitality",
+          "id": "vitality",
+          "rarity": "rare",
+          "changes": [],
+          "amounts": [
+            33,
+            0.66
+          ],
+          "amount": 0
+        },
+        {
+          "kind": "newWeapon",
+          "key": "weapon:jersey",
+          "id": "jersey",
+          "rarity": "",
+          "changes": [],
+          "amounts": [],
+          "amount": 0
+        },
+        {
+          "kind": "newWeapon",
+          "key": "weapon:dentaduras",
+          "id": "dentaduras",
+          "rarity": "",
+          "changes": [],
+          "amounts": [],
+          "amount": 0
+        }
+      ]
+    },
+    {
+      "cards": [
+        {
+          "kind": "tome",
+          "key": "tome:area",
+          "id": "area",
+          "rarity": "common",
+          "changes": [],
+          "amounts": [
+            0.12
+          ],
+          "amount": 0
+        },
+        {
+          "kind": "tome",
+          "key": "tome:vitality",
+          "id": "vitality",
+          "rarity": "common",
+          "changes": [],
+          "amounts": [
+            20,
+            0.4
+          ],
+          "amount": 0
+        },
+        {
+          "kind": "tome",
+          "key": "tome:moveSpeed",
+          "id": "moveSpeed",
+          "rarity": "epic",
+          "changes": [],
+          "amounts": [
+            0.168
+          ],
+          "amount": 0
+        }
+      ]
+    }
+  ],
+  "rng": [
+    {
+      "seed": "ñ😀𝄞",
+      "nextU32": [
+        1135378451,
+        1509769309,
+        2736549164,
+        1170227435,
+        4085010520,
+        2748682295,
+        642217311,
+        3383873629,
+        488261558,
+        1513768431,
+        346370510,
+        3991973075,
+        701134077,
+        1136990137,
+        950676876,
+        357601540
+      ]
+    },
+    {
+      "seed": "\u0000X",
+      "nextU32": [
+        2411244,
+        415561620,
+        4235994595,
+        3053375597,
+        4226337858,
+        2027326027,
+        230239206,
+        1475346345,
+        2533428383,
+        674803581,
+        4160057169,
+        3462592487,
+        1770752614,
+        3937104379,
+        2830250425,
+        3723068443
+      ]
+    },
+    {
+      "seed": "abc",
+      "nextU32": [
+        287804030,
+        234779228,
+        574189896,
+        3135866217,
+        1265128672,
+        4157716740,
+        2838986967,
+        783168305,
+        4151089116,
+        3706539262,
+        4081773119,
+        1577880983,
+        2858481591,
+        3456345264,
+        1652629943,
+        2217392646
+      ]
+    }
+  ]
+}

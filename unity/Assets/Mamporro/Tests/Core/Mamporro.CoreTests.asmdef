@@ -1,0 +1,6 @@
+{
+  "name": "Mamporro.CoreTests",
+  "references": ["Mamporro.Core"],
+  "includePlatforms": ["Editor"],
+  "optionalUnityReferences": ["TestAssemblies"]
+}
