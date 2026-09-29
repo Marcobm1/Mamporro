@@ -12,17 +12,30 @@ Rama de trabajo y por defecto: `claude/zen-pasteur-674ik0`.
 
 El autor autoriza trabajar y hacer push directamente a esa rama. No abrir Pull Requests salvo petición explícita. No hacer force-push. No borrar, resetear ni sobrescribir cambios locales o ajenos sin consultarlo.
 
+## Herramientas de trabajo y continuidad
+
+El proyecto puede ser trabajado por **Codex CLI** o por **Claude Code**, pero no simultáneamente. Cuando termine la sesión/tokens de uno, el otro continuará sobre la misma rama.
+
+El repositorio y sus Markdown son la memoria compartida entre herramientas. Ningún agente debe depender del historial privado de su propia conversación para que el siguiente pueda continuar.
+
+El protocolo completo de relevo está en [`CONTINUIDAD_AGENTES.md`](CONTINUIDAD_AGENTES.md). Es obligatorio leerlo al comenzar una sesión y respetarlo al ceder el trabajo.
+
+Cada sesión que produzca cambios relevantes debe dejar documentado, como mínimo, qué se hizo, qué archivos/sistemas cambiaron, qué pruebas se ejecutaron realmente, qué queda pendiente, qué commits se publicaron, qué cambios locales quedan fuera y cuál es el siguiente paso exacto.
+
+Solo un agente escribe en la rama a la vez. No crear trabajo paralelo para Codex y Claude Code salvo autorización expresa del autor.
+
 ## Fuentes de verdad
 
 Al iniciar una sesión, leer en este orden:
 
 1. `docs/ESTADO_ACTUAL.md`.
-2. El checkpoint del bloque vigente (`docs/PROGRESO_U2.md` mientras U2 sea el bloque actual).
-3. `docs/DECISIONES.md` y cualquier continuación posterior indicada por el estado actual.
-4. `docs/ESPECIFICACION.md` como especificación histórica de partida.
-5. `docs/MIGRACION_UNITY.md`.
-6. `README.md`, `unity/README.md`, `unity/Docs/U0_REFERENCIA.md` y `unity/Docs/HOJA_DE_RUTA.md` cuando se trabaje en Unity.
-7. `AGENTS.md` o `CLAUDE.md` como entrada específica de la herramienta.
+2. `docs/CONTINUIDAD_AGENTES.md`.
+3. El checkpoint del bloque vigente (`docs/PROGRESO_U2.md` mientras U2 sea el bloque actual).
+4. `docs/DECISIONES.md` y cualquier continuación posterior indicada por el estado actual.
+5. `docs/ESPECIFICACION.md` como especificación histórica de partida.
+6. `docs/MIGRACION_UNITY.md`.
+7. `README.md`, `unity/README.md`, `unity/Docs/U0_REFERENCIA.md` y `unity/Docs/HOJA_DE_RUTA.md` cuando se trabaje en Unity.
+8. `AGENTS.md` o `CLAUDE.md` como entrada específica de la herramienta.
 
 Las decisiones posteriores concretan o sustituyen la especificación original. Una instrucción explícita nueva del autor puede cambiar el alcance. Si dos documentos se contradicen en el estado temporal, manda `docs/ESTADO_ACTUAL.md` y después el checkpoint más reciente del bloque.
 
@@ -31,6 +44,8 @@ Las decisiones posteriores concretan o sustituyen la especificación original. U
 Trabajar un hito o bloque cada vez. Antes de programar, presentar un plan breve y reunir en una sola tanda las dudas importantes que realmente sigan abiertas. No volver a preguntar decisiones ya confirmadas. Una autorización previa del bloque no necesita repetirse.
 
 Durante trabajos largos, comunicar avances y dejar checkpoints Markdown para poder continuar desde otro chat o herramienta. No depender exclusivamente del historial de conversación.
+
+En bloques largos, actualizar el checkpoint también en puntos intermedios cuando cambie de forma útil el punto de continuación. Si se prevé un relevo Codex ↔ Claude Code, priorizar dejar un estado recuperable antes de iniciar una pieza nueva.
 
 Al cerrar un bloque:
 
@@ -53,7 +68,11 @@ git log -5 --oneline
 git remote -v
 ```
 
+Cuando una sesión empiece después de un relevo, comprobar además el remoto antes de editar. Si el árbol está limpio, actualizar solo mediante avance seguro (`git pull --ff-only`) cuando corresponda.
+
 Preservar el árbol local. No usar `git reset --hard`, `git clean -fd`, force-push ni reclonar para eliminar diferencias. Si Unity ha escrito ajustes locales, revisar su intención y separarlos del bloque si no pertenecen a él.
+
+Si hay cambios locales al recibir el relevo, no asumir que son basura: pueden pertenecer al autor, a Unity o a la sesión anterior. Consultar el checkpoint y describir cualquier discrepancia antes de sobrescribir archivos.
 
 ## Windows y herramientas
 
