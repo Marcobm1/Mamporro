@@ -1,5 +1,5 @@
 {
   "name": "Mamporro.PlayTests",
-  "references": ["Mamporro.Runtime", "Unity.ugui"],
+  "references": ["Mamporro.Runtime", "Mamporro.Core", "Mamporro.U2", "Unity.ugui"],
   "optionalUnityReferences": ["TestAssemblies"]
 }

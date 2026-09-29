@@ -15,6 +15,9 @@ namespace Mamporro.U1
         public RawImage display;
         public Text status;
         public Text help;
+        public PrototypeSession session;
+        public bool Measuring => session ? session.Measuring : Benchmark && Benchmark.Active;
+        public void SetScriptedIntent(MoveIntent value) { intent=value; }
         public PlayerMotor Motor { get; private set; }
         public HordeSimulation Horde { get; private set; }
         public int InternalHeight { get; private set; }
@@ -38,53 +41,58 @@ namespace Mamporro.U1
             QualitySettings.vSyncCount=0; Application.targetFrameRate=-1;
             Time.fixedDeltaTime=1f/60; Time.maximumDeltaTime=.1f;
             Motor=new PlayerMotor(settings);
-            Horde=new HordeSimulation(4096); Horde.Reset(settings.initialEnemies,settings.seed);
+            if(!session) { Horde=new HordeSimulation(4096); Horde.Reset(settings.initialEnemies,settings.seed); }
             InternalHeight=settings.internalHeight;
-            Benchmark=gameObject.AddComponent<LocalBenchmark>(); Benchmark.controller=this;
+            if(!session) { Benchmark=gameObject.AddComponent<LocalBenchmark>(); Benchmark.controller=this; }
             previousPosition=Motor.Position;
             help.text=TechnicalText.Controls;
             SetPaused(true);
+            if(session) session.Initialize(this);
         }
-        void Start() { Benchmark.ReadCommandLine(); }
+        void Start() { if(Benchmark) Benchmark.ReadCommandLine(); }
         void OnEnable() { RenderPipelineManager.endCameraRendering+=OnCameraRendered; }
         void OnCameraRendered(ScriptableRenderContext context, Camera camera) { if(camera==worldCamera) RenderedFrames++; }
         public void ResetTrial(int count)
         {
-            Motor.Reset(); Horde.Reset(count,settings.seed); previousPosition=Motor.Position;
+            Motor.Reset(); if(Horde!=null) Horde.Reset(count,settings.seed); previousPosition=Motor.Position;
             yaw=0; pitch=20; intent=default;
         }
         public void SetPaused(bool paused)
         {
+            if(!paused && session && !session.AllowResume) return;
             Paused=paused; intent=default;
-            Cursor.lockState=paused || (Benchmark && Benchmark.Active) ? CursorLockMode.None : CursorLockMode.Locked;
+            Cursor.lockState=paused || Measuring ? CursorLockMode.None : CursorLockMode.Locked;
             Cursor.visible=Cursor.lockState!=CursorLockMode.Locked;
         }
-        void OnApplicationFocus(bool focus) { if (!focus && !(Benchmark && Benchmark.Active)) SetPaused(true); }
+        void OnApplicationFocus(bool focus) { if (!focus && !Measuring) SetPaused(true); }
         void OnDisable() { RenderPipelineManager.endCameraRendering-=OnCameraRendered; Cursor.lockState=CursorLockMode.None; Cursor.visible=true; }
         void Update()
         {
             if (target==null || previousWidth!=Screen.width || previousHeight!=Screen.height) Resize();
             var k=Keyboard.current; var mouse=Mouse.current;
+            if(session) session.UpdateSession();
             if (k!=null && k.escapeKey.wasPressedThisFrame)
             {
-                if(Benchmark.Active) Benchmark.Cancel();
+                if(Benchmark && Benchmark.Active) Benchmark.Cancel();
                 else SetPaused(!Paused);
             }
-            if (!Benchmark.Active && k!=null)
+            if (!Measuring && k!=null)
             {
                 if(k.f1Key.wasPressedThisFrame) ConfigurePresentation(InternalHeight==240 ? 360 : InternalHeight==360 ? 480 : 240,Dither,Snap);
                 if(k.f2Key.wasPressedThisFrame) Dither=!Dither;
                 if(k.f3Key.wasPressedThisFrame) Snap=!Snap;
                 if(k.f6Key.wasPressedThisFrame) Screen.SetResolution(Screen.width<2200 ? 2560 : 1920,Screen.width<2200 ? 1440 : 1080,FullScreenMode.Windowed);
+                if(!session) {
                 if(k.rKey.wasPressedThisFrame) ResetTrial(Horde.Count);
                 if(k.digit1Key.wasPressedThisFrame) ResetTrial(300);
                 if(k.digit2Key.wasPressedThisFrame) ResetTrial(500);
                 if(k.digit3Key.wasPressedThisFrame) ResetTrial(750);
                 if(k.digit4Key.wasPressedThisFrame) ResetTrial(1000);
                 if(k.f5Key.wasPressedThisFrame) Benchmark.Begin(false);
+                }
             }
-            if(Paused && mouse!=null && mouse.leftButton.wasPressedThisFrame && !Benchmark.Active) SetPaused(false);
-            if(!Paused && !Benchmark.Active && k!=null)
+            if(Paused && mouse!=null && mouse.leftButton.wasPressedThisFrame && !Measuring && !session) SetPaused(false);
+            if(!Paused && !Measuring && k!=null)
             {
                 var axis=new Vector2((k.dKey.isPressed?1:0)-(k.aKey.isPressed?1:0),(k.wKey.isPressed?1:0)-(k.sKey.isPressed?1:0));
                 var move=Quaternion.Euler(0,yaw,0)*new Vector3(axis.x,0,axis.y);
@@ -100,6 +108,7 @@ namespace Mamporro.U1
             if(textTimer<=0)
             {
                 textTimer=.25f;
+                if(session) { session.RefreshHud(); return; }
                 status.text=$"{TechnicalText.Title}\n{(Benchmark.Active?TechnicalText.Measuring:Paused?TechnicalText.Paused:TechnicalText.Running)}\n{Screen.width}×{Screen.height} → {target.width}×{target.height} · {Horde.Count} entidades · {(1/Mathf.Max(Time.unscaledDeltaTime,.00001f)):F0} FPS\nDither {(Dither?"ON":"OFF")} · Snap {(Snap?"ON":"OFF")} · Mono · VSync 0";
             }
         }
@@ -107,10 +116,12 @@ namespace Mamporro.U1
         {
             if(Paused) return;
             previousPosition=Motor.Position;
-            if(Benchmark.Active) intent=Benchmark.ScriptedIntent();
+            if(Benchmark && Benchmark.Active) intent=Benchmark.ScriptedIntent();
+            if(session) session.BeforeMovement();
             Motor.Step(intent,Time.fixedDeltaTime);
             intent.jumpPressed=intent.slidePressed=false;
-            Horde.Step(Motor.Position,settings.enemySpeed,Time.fixedDeltaTime);
+            if(session) session.AfterMovement();
+            else Horde.Step(Motor.Position,settings.enemySpeed,Time.fixedDeltaTime);
         }
         void LateUpdate()
         {
@@ -124,6 +135,7 @@ namespace Mamporro.U1
             var cameraPos=pivot-rotation*Vector3.forward*6.2f;
             cameraPos.y=Mathf.Max(cameraPos.y,TechnicalWorld.Height(cameraPos.x,cameraPos.z)+.35f);
             worldCamera.transform.SetPositionAndRotation(cameraPos,Quaternion.LookRotation(pivot-cameraPos));
+            if(session) { session.Draw(); return; }
             for(int offset=0;offset<Horde.Count;offset+=matrices.Length)
             {
                 int count=Mathf.Min(matrices.Length,Horde.Count-offset);

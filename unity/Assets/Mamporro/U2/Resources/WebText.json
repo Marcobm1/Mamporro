@@ -1,0 +1,1579 @@
+{
+  "entries": [
+    {
+      "key": "mission.first",
+      "es": "Termina una partida",
+      "en": "Finish a run"
+    },
+    {
+      "key": "mission.kills",
+      "es": "Acumula 1000 bajas",
+      "en": "Defeat 1000 enemies in total"
+    },
+    {
+      "key": "mission.chests",
+      "es": "Abre 10 baúles en total",
+      "en": "Open 10 chests in total"
+    },
+    {
+      "key": "mission.shrines",
+      "es": "Completa 3 mesas camilla",
+      "en": "Complete 3 shrines"
+    },
+    {
+      "key": "mission.challenge",
+      "es": "Supera un tótem de cacerolas",
+      "en": "Complete a cooking-pot challenge"
+    },
+    {
+      "key": "mission.level",
+      "es": "Alcanza el nivel 20 en una partida",
+      "en": "Reach level 20 in one run"
+    },
+    {
+      "key": "mission.victory",
+      "es": "Derrota a la Pelusa Madre",
+      "en": "Defeat Mother Dustball"
+    },
+    {
+      "key": "mission.noLife",
+      "es": "Gana sin adquirir el Recetario del Caldito",
+      "en": "Win without taking the Broth Recipe Book"
+    },
+    {
+      "key": "character.baguette",
+      "es": "Sir Baguette, Paladín del Pan Duro",
+      "en": "Sir Baguette, Paladin of Stale Bread"
+    },
+    {
+      "key": "character.remedios.passive",
+      "es": "Mirada de desaprobación: ralentiza un 20 % a los enemigos a 3 m. Prevalece la ralentización más fuerte.",
+      "en": "Disapproving stare: slows enemies within 3 m by 20%. The strongest slow takes priority."
+    },
+    {
+      "key": "character.baguette.passive",
+      "es": "Corteza defensiva: tras 8 s sin recibir daño, bloquea el siguiente golpe y vuelve a cargar.",
+      "en": "Defensive crust: after 8 s without taking damage, blocks the next hit and recharges."
+    },
+    {
+      "key": "notice.shield",
+      "es": "¡La corteza bloquea el golpe!",
+      "en": "Your crust blocks the hit!"
+    },
+    {
+      "key": "menu.characters",
+      "es": "Personajes",
+      "en": "Characters"
+    },
+    {
+      "key": "menu.shop",
+      "es": "Tienda / Desbloqueos",
+      "en": "Shop / Unlocks"
+    },
+    {
+      "key": "menu.missions",
+      "es": "Misiones",
+      "en": "Missions"
+    },
+    {
+      "key": "menu.back",
+      "es": "Volver",
+      "en": "Back"
+    },
+    {
+      "key": "meta.currency",
+      "es": "Calderilla del Caos",
+      "en": "Chaos Change"
+    },
+    {
+      "key": "meta.balance",
+      "es": "Calderilla del Caos: {n}",
+      "en": "Chaos Change: {n}"
+    },
+    {
+      "key": "meta.selected",
+      "es": "Seleccionado",
+      "en": "Selected"
+    },
+    {
+      "key": "meta.select",
+      "es": "Seleccionar",
+      "en": "Select"
+    },
+    {
+      "key": "meta.locked",
+      "es": "Bloqueado",
+      "en": "Locked"
+    },
+    {
+      "key": "meta.owned",
+      "es": "Desbloqueado",
+      "en": "Unlocked"
+    },
+    {
+      "key": "meta.buy",
+      "es": "Comprar · {n}",
+      "en": "Buy · {n}"
+    },
+    {
+      "key": "meta.need",
+      "es": "Faltan {n}",
+      "en": "Need {n} more"
+    },
+    {
+      "key": "meta.weapon",
+      "es": "Arma inicial: {name}",
+      "en": "Starting weapon: {name}"
+    },
+    {
+      "key": "meta.shopHint",
+      "es": "Compras permanentes. Las armas y objetos desbloqueados podrán aparecer en próximas partidas.",
+      "en": "Permanent purchases. Unlocked weapons and items can appear in future runs."
+    },
+    {
+      "key": "meta.missionHint",
+      "es": "Recompensas automáticas al morir o ganar. Los abandonos y partidas con trucos no cuentan.",
+      "en": "Rewards are granted on defeat or victory. Abandoned runs and cheated runs do not count."
+    },
+    {
+      "key": "meta.reward",
+      "es": "Recompensa: {n} de calderilla",
+      "en": "Reward: {n} change"
+    },
+    {
+      "key": "meta.unlock",
+      "es": "Desbloquea: {name}",
+      "en": "Unlocks: {name}"
+    },
+    {
+      "key": "meta.done",
+      "es": "Completada",
+      "en": "Completed"
+    },
+    {
+      "key": "meta.progress",
+      "es": "{n} / {target}",
+      "en": "{n} / {target}"
+    },
+    {
+      "key": "meta.extras",
+      "es": "Más oportunidades por partida",
+      "en": "More chances each run"
+    },
+    {
+      "key": "meta.extrasHint",
+      "es": "Cada compra añade un uso a todas las partidas. Máximo: 5 de cada acción.",
+      "en": "Each purchase adds one use to every run. Maximum: 5 of each action."
+    },
+    {
+      "key": "meta.rerolls",
+      "es": "Reroll",
+      "en": "Reroll"
+    },
+    {
+      "key": "meta.skips",
+      "es": "Saltar",
+      "en": "Skip"
+    },
+    {
+      "key": "meta.banishes",
+      "es": "Descartar",
+      "en": "Banish"
+    },
+    {
+      "key": "meta.uses",
+      "es": "{n} usos por partida",
+      "en": "{n} uses per run"
+    },
+    {
+      "key": "meta.max",
+      "es": "Máximo alcanzado",
+      "en": "Maximum reached"
+    },
+    {
+      "key": "meta.results",
+      "es": "Calderilla ganada: {n}",
+      "en": "Change earned: {n}"
+    },
+    {
+      "key": "meta.breakdown",
+      "es": "Bajas: {kills} · Supervivencia: {survival} · Victoria: {victory} · Misiones: {missions}",
+      "en": "Kills: {kills} · Survival: {survival} · Victory: {victory} · Missions: {missions}"
+    },
+    {
+      "key": "meta.newMission",
+      "es": "¡Completada! {name}",
+      "en": "Completed! {name}"
+    },
+    {
+      "key": "meta.cheated",
+      "es": "Partida con trucos: sin calderilla ni progreso de misiones.",
+      "en": "Cheated run: no change or mission progress."
+    },
+    {
+      "key": "meta.abandon",
+      "es": "¿Abandonar? No recibirás calderilla ni progreso de misiones.",
+      "en": "Abandon this run? You will receive no change or mission progress."
+    },
+    {
+      "key": "meta.cancel",
+      "es": "Seguir aquí",
+      "en": "Stay here"
+    },
+    {
+      "key": "meta.confirm",
+      "es": "Abandonar partida",
+      "en": "Abandon run"
+    },
+    {
+      "key": "meta.saveWarning",
+      "es": "No se puede guardar en este navegador. El progreso solo se conservará durante esta sesión.",
+      "en": "Saving is unavailable in this browser. Progress will last only for this session."
+    },
+    {
+      "key": "options.musicVolume",
+      "es": "Volumen de música",
+      "en": "Music volume"
+    },
+    {
+      "key": "options.effectsVolume",
+      "es": "Volumen de efectos",
+      "en": "Effects volume"
+    },
+    {
+      "key": "options.muted",
+      "es": "Silenciar audio",
+      "en": "Mute audio"
+    },
+    {
+      "key": "options.reducedParticles",
+      "es": "Reducir partículas",
+      "en": "Reduce particles"
+    },
+    {
+      "key": "options.cameraShake",
+      "es": "Sacudidas de cámara",
+      "en": "Camera shake"
+    },
+    {
+      "key": "options.flashes",
+      "es": "Destellos de daño",
+      "en": "Damage flashes"
+    },
+    {
+      "key": "options.audioHelp",
+      "es": "Audio original generado por código. Pulsa una tecla o haz clic para activarlo.",
+      "en": "Original audio generated by code. Press a key or click to enable it."
+    },
+    {
+      "key": "meta.hero",
+      "es": "La horda no se barre sola.",
+      "en": "This horde will not sweep itself."
+    },
+    {
+      "key": "meta.heroText",
+      "es": "Elige a tu héroe, prepara la chancla y vuelve con algo de calderilla.",
+      "en": "Pick your hero, ready your slipper and bring home some change."
+    },
+    {
+      "key": "meta.current",
+      "es": "Tu personaje: {name}",
+      "en": "Your character: {name}"
+    },
+    {
+      "key": "meta.sourceShop",
+      "es": "Disponible en la tienda",
+      "en": "Available in the shop"
+    },
+    {
+      "key": "meta.sourceMission",
+      "es": "Misión: {name}",
+      "en": "Mission: {name}"
+    },
+    {
+      "key": "passive.shieldReady",
+      "es": "Corteza: lista",
+      "en": "Crust: ready"
+    },
+    {
+      "key": "passive.shieldCharge",
+      "es": "Corteza: {n} s",
+      "en": "Crust: {n} s"
+    },
+    {
+      "key": "app.title",
+      "es": "MAMPORRO",
+      "en": "MAMPORRO"
+    },
+    {
+      "key": "app.tagline",
+      "es": "Supervivencia a chanclazo limpio",
+      "en": "Survival, one flying slipper at a time"
+    },
+    {
+      "key": "app.loading",
+      "es": "Calentando la chancla...",
+      "en": "Warming up the slipper..."
+    },
+    {
+      "key": "app.prototype",
+      "es": "Hito 5 · Meta y personajes",
+      "en": "Milestone 5 · Meta and characters"
+    },
+    {
+      "key": "error.webgl",
+      "es": "Tu navegador no puede ejecutar WebGL2. Prueba con Chrome, Edge o Firefox actualizados.",
+      "en": "Your browser cannot run WebGL2. Try an up-to-date Chrome, Edge or Firefox."
+    },
+    {
+      "key": "error.pointerLock",
+      "es": "No se pudo capturar el ratón. Espera un segundo y vuelve a hacer clic.",
+      "en": "Could not capture the mouse. Wait a second and click again."
+    },
+    {
+      "key": "title.play",
+      "es": "Jugar",
+      "en": "Play"
+    },
+    {
+      "key": "title.clickHint",
+      "es": "Al jugar se captura el ratón. Pulsa Esc para soltarlo.",
+      "en": "Playing captures the mouse. Press Esc to release it."
+    },
+    {
+      "key": "title.seedLabel",
+      "es": "Semilla",
+      "en": "Seed"
+    },
+    {
+      "key": "title.seedPlaceholder",
+      "es": "Aleatoria",
+      "en": "Random"
+    },
+    {
+      "key": "title.newMap",
+      "es": "Nuevo mapa",
+      "en": "New map"
+    },
+    {
+      "key": "title.currentSeed",
+      "es": "Mapa actual: {seed}",
+      "en": "Current map: {seed}"
+    },
+    {
+      "key": "title.duration",
+      "es": "Duración",
+      "en": "Length"
+    },
+    {
+      "key": "title.minutes",
+      "es": "{n} min",
+      "en": "{n} min"
+    },
+    {
+      "key": "controls.title",
+      "es": "Controles",
+      "en": "Controls"
+    },
+    {
+      "key": "controls.move",
+      "es": "Moverse",
+      "en": "Move"
+    },
+    {
+      "key": "controls.look",
+      "es": "Mirar",
+      "en": "Look"
+    },
+    {
+      "key": "controls.jump",
+      "es": "Saltar",
+      "en": "Jump"
+    },
+    {
+      "key": "controls.slide",
+      "es": "Deslizarse",
+      "en": "Slide"
+    },
+    {
+      "key": "controls.interact",
+      "es": "Usar",
+      "en": "Use"
+    },
+    {
+      "key": "controls.pause",
+      "es": "Pausa",
+      "en": "Pause"
+    },
+    {
+      "key": "controls.debug",
+      "es": "Panel de debug",
+      "en": "Debug panel"
+    },
+    {
+      "key": "controls.keys.move",
+      "es": "W A S D",
+      "en": "W A S D"
+    },
+    {
+      "key": "controls.keys.look",
+      "es": "Ratón",
+      "en": "Mouse"
+    },
+    {
+      "key": "controls.keys.jump",
+      "es": "Espacio",
+      "en": "Space"
+    },
+    {
+      "key": "controls.keys.slide",
+      "es": "Shift / C",
+      "en": "Shift / C"
+    },
+    {
+      "key": "controls.keys.slideCtrl",
+      "es": "Shift / C / Ctrl",
+      "en": "Shift / C / Ctrl"
+    },
+    {
+      "key": "controls.keys.interact",
+      "es": "E",
+      "en": "E"
+    },
+    {
+      "key": "controls.keys.pause",
+      "es": "Esc",
+      "en": "Esc"
+    },
+    {
+      "key": "controls.keys.debug",
+      "es": "F3",
+      "en": "F3"
+    },
+    {
+      "key": "pause.title",
+      "es": "Pausa",
+      "en": "Paused"
+    },
+    {
+      "key": "pause.resume",
+      "es": "Continuar",
+      "en": "Resume"
+    },
+    {
+      "key": "pause.seed",
+      "es": "Semilla: {seed}",
+      "en": "Seed: {seed}"
+    },
+    {
+      "key": "pause.backToTitle",
+      "es": "Volver al inicio",
+      "en": "Back to title"
+    },
+    {
+      "key": "pause.stats",
+      "es": "Estadísticas",
+      "en": "Stats"
+    },
+    {
+      "key": "pause.items",
+      "es": "Objetos",
+      "en": "Items"
+    },
+    {
+      "key": "pause.noItems",
+      "es": "Aún no llevas objetos",
+      "en": "No items yet"
+    },
+    {
+      "key": "options.title",
+      "es": "Opciones",
+      "en": "Options"
+    },
+    {
+      "key": "options.language",
+      "es": "Idioma",
+      "en": "Language"
+    },
+    {
+      "key": "options.sensitivity",
+      "es": "Sensibilidad del ratón",
+      "en": "Mouse sensitivity"
+    },
+    {
+      "key": "options.resolution",
+      "es": "Resolución interna",
+      "en": "Internal resolution"
+    },
+    {
+      "key": "options.resolutionValue",
+      "es": "{h} px",
+      "en": "{h} px"
+    },
+    {
+      "key": "options.vertexSnap",
+      "es": "Temblor de vértices (PS1)",
+      "en": "Vertex jitter (PS1)"
+    },
+    {
+      "key": "options.dithering",
+      "es": "Tramado de color (dithering)",
+      "en": "Color dithering"
+    },
+    {
+      "key": "options.showFps",
+      "es": "Mostrar FPS",
+      "en": "Show FPS"
+    },
+    {
+      "key": "options.slideCtrl",
+      "es": "Usar Ctrl para deslizarse",
+      "en": "Use Ctrl to slide"
+    },
+    {
+      "key": "options.slideCtrlWarning",
+      "es": "¡Cuidado! En Chrome y Edge, Ctrl+W cierra la pestaña y el juego no puede evitarlo.",
+      "en": "Careful! In Chrome and Edge, Ctrl+W closes the tab and the game cannot prevent it."
+    },
+    {
+      "key": "lang.es",
+      "es": "Español",
+      "en": "Español"
+    },
+    {
+      "key": "lang.en",
+      "es": "English",
+      "en": "English"
+    },
+    {
+      "key": "hud.fps",
+      "es": "{fps} FPS",
+      "en": "{fps} FPS"
+    },
+    {
+      "key": "hud.level",
+      "es": "Nv {n}",
+      "en": "Lv {n}"
+    },
+    {
+      "key": "hud.kills",
+      "es": "Bajas: {n}",
+      "en": "Kills: {n}"
+    },
+    {
+      "key": "hud.weaponLevel",
+      "es": "{name} · Nv {n}",
+      "en": "{name} · Lv {n}"
+    },
+    {
+      "key": "hud.gold",
+      "es": "Oro {n}",
+      "en": "Gold {n}"
+    },
+    {
+      "key": "hud.swarm",
+      "es": "ENJAMBRE",
+      "en": "SWARM"
+    },
+    {
+      "key": "hud.challenge",
+      "es": "Desafío: {time}",
+      "en": "Challenge: {time}"
+    },
+    {
+      "key": "hud.shrine",
+      "es": "Mesa camilla: {n} %",
+      "en": "Brazier table: {n}%"
+    },
+    {
+      "key": "hud.itemCount",
+      "es": "{name} ×{n}",
+      "en": "{name} ×{n}"
+    },
+    {
+      "key": "prompt.chest",
+      "es": "[E] Abrir el baúl · {cost} de oro",
+      "en": "[E] Open the trunk · {cost} gold"
+    },
+    {
+      "key": "prompt.totem",
+      "es": "[E] Tocar el tótem · desafío de {s} s",
+      "en": "[E] Touch the totem · {s}s challenge"
+    },
+    {
+      "key": "prompt.portal",
+      "es": "[E] Abrir el armario · invoca al jefe",
+      "en": "[E] Open the wardrobe · summons the boss"
+    },
+    {
+      "key": "notice.elite",
+      "es": "¡Élite a la vista: {name}!",
+      "en": "Elite incoming: {name}!"
+    },
+    {
+      "key": "notice.swarm",
+      "es": "¡ENJAMBRE FINAL!",
+      "en": "FINAL SWARM!"
+    },
+    {
+      "key": "notice.portalFound",
+      "es": "¡Has encontrado el portal del jefe!",
+      "en": "You found the boss portal!"
+    },
+    {
+      "key": "notice.portalRevealed",
+      "es": "El portal del jefe aparece en el mapa",
+      "en": "The boss portal shows up on the map"
+    },
+    {
+      "key": "notice.boss",
+      "es": "¡{name} ha despertado!",
+      "en": "{name} has awoken!"
+    },
+    {
+      "key": "notice.noGold",
+      "es": "No te llega: faltan {n} de oro",
+      "en": "Not enough: {n} gold short"
+    },
+    {
+      "key": "notice.challengeStart",
+      "es": "¡Desafío aceptado! Más bichos, mejor botín",
+      "en": "Challenge accepted! More critters, better loot"
+    },
+    {
+      "key": "notice.challengeDone",
+      "es": "¡Desafío superado!",
+      "en": "Challenge complete!"
+    },
+    {
+      "key": "notice.shrineCharged",
+      "es": "¡Mesa camilla a tope!",
+      "en": "Brazier table fully charged!"
+    },
+    {
+      "key": "notice.revive",
+      "es": "¡La bata de guatiné te ha salvado!",
+      "en": "The quilted housecoat saved you!"
+    },
+    {
+      "key": "wave.stampede",
+      "es": "¡Estampida de cucarachas!",
+      "en": "Cockroach stampede!"
+    },
+    {
+      "key": "wave.tupperware",
+      "es": "¡Rebelión de los tápers!",
+      "en": "Tupperware uprising!"
+    },
+    {
+      "key": "wave.pigeons",
+      "es": "¡Bandada de palomas okupas!",
+      "en": "A flock of squatter pigeons!"
+    },
+    {
+      "key": "wave.dust",
+      "es": "¡Tormenta de pelusas!",
+      "en": "Dust bunny storm!"
+    },
+    {
+      "key": "character.remedios",
+      "es": "Doña Remedios",
+      "en": "Doña Remedios"
+    },
+    {
+      "key": "enemy.pelusa",
+      "es": "Pelusa Rebelde",
+      "en": "Rebel Dust Bunny"
+    },
+    {
+      "key": "enemy.cucaracha",
+      "es": "Cucaracha Turbo",
+      "en": "Turbo Cockroach"
+    },
+    {
+      "key": "enemy.taper",
+      "es": "Táper Caducado",
+      "en": "Expired Tupperware"
+    },
+    {
+      "key": "enemy.paloma",
+      "es": "Paloma Okupa",
+      "en": "Squatter Pigeon"
+    },
+    {
+      "key": "enemy.rata",
+      "es": "Rata de Gimnasio",
+      "en": "Gym Rat"
+    },
+    {
+      "key": "enemy.pelusaMadre",
+      "es": "La Pelusa Madre",
+      "en": "The Mother Dust Bunny"
+    },
+    {
+      "key": "weapon.chancla",
+      "es": "Chancla Teledirigida",
+      "en": "Homing Slipper"
+    },
+    {
+      "key": "weapon.chancla.desc",
+      "es": "Busca al enemigo más cercano. Nunca falla. Casi nunca.",
+      "en": "Seeks the nearest enemy. Never misses. Almost never."
+    },
+    {
+      "key": "weapon.naftalina",
+      "es": "Eau de Naftalina",
+      "en": "Eau de Mothball"
+    },
+    {
+      "key": "weapon.naftalina.desc",
+      "es": "Nube de olor a armario de abuela que daña a todo el que se acerque.",
+      "en": "A cloud of grandma's-wardrobe smell that hurts anyone who gets close."
+    },
+    {
+      "key": "weapon.barra",
+      "es": "Barra de Pan Duro",
+      "en": "Stale Baguette"
+    },
+    {
+      "key": "weapon.barra.desc",
+      "es": "Barrazo en arco delante de ti. Lleva tres días en la panera y ya es un arma.",
+      "en": "A sweeping swing in front of you. Three days in the bread bin made it a weapon."
+    },
+    {
+      "key": "weapon.dentaduras",
+      "es": "Dentaduras Orbitales",
+      "en": "Orbital Dentures"
+    },
+    {
+      "key": "weapon.dentaduras.desc",
+      "es": "Dientes postizos que dan vueltas a tu alrededor y muerden lo que pillan.",
+      "en": "False teeth that circle around you and bite whatever they catch."
+    },
+    {
+      "key": "weapon.jersey",
+      "es": "Jersey Estático",
+      "en": "Static Sweater"
+    },
+    {
+      "key": "weapon.jersey.desc",
+      "es": "De tanto frotar la lana, el calambre salta de bicho en bicho.",
+      "en": "So much wool rubbing that the zap jumps from critter to critter."
+    },
+    {
+      "key": "weapon.fregona",
+      "es": "Suelo Recién Fregado",
+      "en": "Freshly Mopped Floor"
+    },
+    {
+      "key": "weapon.fregona.desc",
+      "es": "Dejas un rastro recién fregado. Quien lo pisa, resbala y se lleva lo suyo.",
+      "en": "You leave a freshly mopped trail. Whoever steps on it slips and gets what's coming."
+    },
+    {
+      "key": "tome.damage",
+      "es": "Manual del Mamporro",
+      "en": "The Wallop Manual"
+    },
+    {
+      "key": "tome.damage.short",
+      "es": "Daño",
+      "en": "Damage"
+    },
+    {
+      "key": "tome.damage.desc",
+      "es": "Todas tus armas pegan más fuerte.",
+      "en": "All your weapons hit harder."
+    },
+    {
+      "key": "tome.attackSpeed",
+      "es": "Tomo del Café Cargado",
+      "en": "Strong Coffee Tome"
+    },
+    {
+      "key": "tome.attackSpeed.short",
+      "es": "Cadencia",
+      "en": "Attack speed"
+    },
+    {
+      "key": "tome.attackSpeed.desc",
+      "es": "Todas tus armas atacan más a menudo.",
+      "en": "All your weapons attack more often."
+    },
+    {
+      "key": "tome.projectiles",
+      "es": "Tablas de Multiplicar",
+      "en": "Times Tables"
+    },
+    {
+      "key": "tome.projectiles.short",
+      "es": "Cantidad",
+      "en": "Amount"
+    },
+    {
+      "key": "tome.projectiles.desc",
+      "es": "Más chanclas, más dentaduras, más de todo.",
+      "en": "More slippers, more dentures, more of everything."
+    },
+    {
+      "key": "tome.area",
+      "es": "Catálogo de Tallas Grandes",
+      "en": "Big Sizes Catalogue"
+    },
+    {
+      "key": "tome.area.short",
+      "es": "Área",
+      "en": "Area"
+    },
+    {
+      "key": "tome.area.desc",
+      "es": "Todo lo que haces ocupa más.",
+      "en": "Everything you do takes up more room."
+    },
+    {
+      "key": "tome.moveSpeed",
+      "es": "Manual de Marcha Nórdica",
+      "en": "Nordic Walking Manual"
+    },
+    {
+      "key": "tome.moveSpeed.short",
+      "es": "Velocidad",
+      "en": "Speed"
+    },
+    {
+      "key": "tome.moveSpeed.desc",
+      "es": "Caminas más rápido. Sin bastones.",
+      "en": "You walk faster. No poles needed."
+    },
+    {
+      "key": "tome.vitality",
+      "es": "Recetario del Caldito",
+      "en": "Chicken Soup Cookbook"
+    },
+    {
+      "key": "tome.vitality.short",
+      "es": "Vida",
+      "en": "Health"
+    },
+    {
+      "key": "tome.vitality.desc",
+      "es": "Más vida máxima, y la vas recuperando poco a poco.",
+      "en": "More max health, and it slowly comes back."
+    },
+    {
+      "key": "tome.luck",
+      "es": "Horóscopo del Periódico",
+      "en": "Newspaper Horoscope"
+    },
+    {
+      "key": "tome.luck.short",
+      "es": "Suerte",
+      "en": "Luck"
+    },
+    {
+      "key": "tome.luck.desc",
+      "es": "Salen cartas más raras. Lo dicen los astros.",
+      "en": "Rarer cards show up. The stars say so."
+    },
+    {
+      "key": "tome.magnet",
+      "es": "Colección de Imanes de Nevera",
+      "en": "Fridge Magnet Collection"
+    },
+    {
+      "key": "tome.magnet.short",
+      "es": "Imán",
+      "en": "Magnet"
+    },
+    {
+      "key": "tome.magnet.desc",
+      "es": "Atraes la experiencia desde más lejos y ganas más.",
+      "en": "You pull experience from farther away and earn more of it."
+    },
+    {
+      "key": "item.gafas",
+      "es": "Gafas de Culo de Vaso",
+      "en": "Bottle-Bottom Glasses"
+    },
+    {
+      "key": "item.gafas.desc",
+      "es": "Ahora ves los puntos débiles. Y la pelusa de debajo del sofá.",
+      "en": "Now you can see weak spots. And the dust under the sofa."
+    },
+    {
+      "key": "item.zapatillas",
+      "es": "Zapatillas de Velcro",
+      "en": "Velcro Sneakers"
+    },
+    {
+      "key": "item.zapatillas.desc",
+      "es": "Sin cordones que atar: más tiempo para correr.",
+      "en": "No laces to tie: more time to run."
+    },
+    {
+      "key": "item.termo",
+      "es": "Termo de Café de Puchero",
+      "en": "Flask of Stewed Coffee"
+    },
+    {
+      "key": "item.termo.desc",
+      "es": "Café de los de antes. Te deja un temblorcillo muy útil.",
+      "en": "Old-school coffee. It leaves you with a very useful jitter."
+    },
+    {
+      "key": "item.cojin",
+      "es": "Cojín de Ganchillo",
+      "en": "Crochet Cushion"
+    },
+    {
+      "key": "item.cojin.desc",
+      "es": "Acolchado estratégico: los golpes duelen menos.",
+      "en": "Strategic padding: hits hurt less."
+    },
+    {
+      "key": "item.lupa",
+      "es": "Lupa de Leer Prospectos",
+      "en": "Leaflet Magnifier"
+    },
+    {
+      "key": "item.lupa.desc",
+      "es": "Tus críticos, en letra grande y más gordos.",
+      "en": "Your crits, in large print and bigger."
+    },
+    {
+      "key": "item.loteria",
+      "es": "Décimo de Lotería",
+      "en": "Lottery Ticket"
+    },
+    {
+      "key": "item.loteria.desc",
+      "es": "Esta vez sí que toca: recoges más oro.",
+      "en": "This time you win for sure: you pick up more gold."
+    },
+    {
+      "key": "item.rulos",
+      "es": "Rulos de la Suerte",
+      "en": "Lucky Curlers"
+    },
+    {
+      "key": "item.rulos.desc",
+      "es": "Un peinado así atrae a la fortuna.",
+      "en": "A hairdo like this attracts good fortune."
+    },
+    {
+      "key": "item.perlas",
+      "es": "Collar de Perlas",
+      "en": "Pearl Necklace"
+    },
+    {
+      "key": "item.perlas.desc",
+      "es": "Cada crítico tiene un {n} % de hacer saltar una perla al enemigo más cercano ({dmg} % del golpe).",
+      "en": "Each crit has a {n}% chance to bounce a pearl to the nearest enemy ({dmg}% of the hit)."
+    },
+    {
+      "key": "item.monedero",
+      "es": "Monedero Bien Lleno",
+      "en": "Bulging Coin Purse"
+    },
+    {
+      "key": "item.monedero.desc",
+      "es": "+{n} % de daño por cada 100 de oro que lleves encima (hasta +{max} %).",
+      "en": "+{n}% damage for every 100 gold you carry (up to +{max}%)."
+    },
+    {
+      "key": "item.baraja",
+      "es": "Baraja del Tute",
+      "en": "Deck of Cards"
+    },
+    {
+      "key": "item.baraja.desc",
+      "es": "Una carta más para elegir al subir de nivel.",
+      "en": "One more card to choose from when you level up."
+    },
+    {
+      "key": "item.olla",
+      "es": "Olla Exprés",
+      "en": "Pressure Cooker"
+    },
+    {
+      "key": "item.olla.desc",
+      "es": "Los enemigos tienen un {n} % de explotar al morir y dañar a los de alrededor.",
+      "en": "Enemies have a {n}% chance to explode on death and hurt those nearby."
+    },
+    {
+      "key": "item.bata",
+      "es": "Bata de Guatiné",
+      "en": "Quilted Housecoat"
+    },
+    {
+      "key": "item.bata.desc",
+      "es": "Si caes, te levantas con el {n} % de la vida y apartas a todos. Se gasta al usarla.",
+      "en": "If you fall, you get back up with {n}% health and push everyone away. Used up on use."
+    },
+    {
+      "key": "boost.damage",
+      "es": "Mala Leche",
+      "en": "Bad Temper"
+    },
+    {
+      "key": "boost.attackSpeed",
+      "es": "Prisas de Mercado",
+      "en": "Market Rush"
+    },
+    {
+      "key": "boost.area",
+      "es": "Bata Ancha",
+      "en": "Roomy Housecoat"
+    },
+    {
+      "key": "boost.maxHp",
+      "es": "Cocido Completo",
+      "en": "Hearty Stew"
+    },
+    {
+      "key": "boost.regen",
+      "es": "Siesta Reparadora",
+      "en": "Restorative Nap"
+    },
+    {
+      "key": "boost.moveSpeed",
+      "es": "Paso Ligero",
+      "en": "Brisk Pace"
+    },
+    {
+      "key": "boost.critChance",
+      "es": "Ojo de Portera",
+      "en": "Nosy Neighbor Eye"
+    },
+    {
+      "key": "boost.critDamage",
+      "es": "Zapatillazo Certero",
+      "en": "Well-Aimed Slipper"
+    },
+    {
+      "key": "boost.armor",
+      "es": "Faja Reforzada",
+      "en": "Reinforced Girdle"
+    },
+    {
+      "key": "boost.luck",
+      "es": "Estampita de la Suerte",
+      "en": "Lucky Prayer Card"
+    },
+    {
+      "key": "boost.xpGain",
+      "es": "Crucigrama Resuelto",
+      "en": "Solved Crossword"
+    },
+    {
+      "key": "boost.goldGain",
+      "es": "Hucha de Cerdito",
+      "en": "Piggy Bank"
+    },
+    {
+      "key": "rarity.common",
+      "es": "Común",
+      "en": "Common"
+    },
+    {
+      "key": "rarity.uncommon",
+      "es": "Poco común",
+      "en": "Uncommon"
+    },
+    {
+      "key": "rarity.rare",
+      "es": "Rara",
+      "en": "Rare"
+    },
+    {
+      "key": "rarity.epic",
+      "es": "Épica",
+      "en": "Epic"
+    },
+    {
+      "key": "rarity.legendary",
+      "es": "Legendaria",
+      "en": "Legendary"
+    },
+    {
+      "key": "stat.damage",
+      "es": "daño",
+      "en": "damage"
+    },
+    {
+      "key": "stat.cooldown",
+      "es": "velocidad de ataque",
+      "en": "attack speed"
+    },
+    {
+      "key": "stat.count",
+      "es": "cantidad",
+      "en": "amount"
+    },
+    {
+      "key": "stat.area",
+      "es": "área",
+      "en": "area"
+    },
+    {
+      "key": "stat.speed",
+      "es": "velocidad del proyectil",
+      "en": "projectile speed"
+    },
+    {
+      "key": "stat.duration",
+      "es": "duración",
+      "en": "duration"
+    },
+    {
+      "key": "stat.pierce",
+      "es": "perforación",
+      "en": "pierce"
+    },
+    {
+      "key": "stat.critChance",
+      "es": "prob. de crítico",
+      "en": "crit chance"
+    },
+    {
+      "key": "stat.critMultiplier",
+      "es": "daño crítico",
+      "en": "crit damage"
+    },
+    {
+      "key": "stat.knockback",
+      "es": "empuje",
+      "en": "knockback"
+    },
+    {
+      "key": "stat.count.swings",
+      "es": "barrazos",
+      "en": "swings"
+    },
+    {
+      "key": "stat.count.dentures",
+      "es": "dentaduras",
+      "en": "dentures"
+    },
+    {
+      "key": "stat.count.chains",
+      "es": "cadenas",
+      "en": "chains"
+    },
+    {
+      "key": "stat.count.puddles",
+      "es": "charcos",
+      "en": "puddles"
+    },
+    {
+      "key": "stat.speed.spin",
+      "es": "velocidad de giro",
+      "en": "spin speed"
+    },
+    {
+      "key": "stat.pierce.jumps",
+      "es": "saltos",
+      "en": "jumps"
+    },
+    {
+      "key": "stat.extraProjectiles",
+      "es": "cantidad",
+      "en": "amount"
+    },
+    {
+      "key": "stat.moveSpeed",
+      "es": "velocidad",
+      "en": "move speed"
+    },
+    {
+      "key": "stat.maxHp",
+      "es": "vida máxima",
+      "en": "max health"
+    },
+    {
+      "key": "stat.regen",
+      "es": "vida por segundo",
+      "en": "health per second"
+    },
+    {
+      "key": "stat.luck",
+      "es": "suerte",
+      "en": "luck"
+    },
+    {
+      "key": "stat.pickupRadius",
+      "es": "radio de recogida",
+      "en": "pickup radius"
+    },
+    {
+      "key": "stat.xpGain",
+      "es": "experiencia",
+      "en": "experience"
+    },
+    {
+      "key": "stat.armor",
+      "es": "armadura",
+      "en": "armor"
+    },
+    {
+      "key": "stat.health",
+      "es": "vida",
+      "en": "health"
+    },
+    {
+      "key": "stat.goldGain",
+      "es": "oro",
+      "en": "gold"
+    },
+    {
+      "key": "stat.choices",
+      "es": "opciones al subir de nivel",
+      "en": "level-up choices"
+    },
+    {
+      "key": "upgrade.percent",
+      "es": "{stat} +{value} %",
+      "en": "{stat} +{value}%"
+    },
+    {
+      "key": "upgrade.number",
+      "es": "{stat} +{value}",
+      "en": "{stat} +{value}"
+    },
+    {
+      "key": "format.percent",
+      "es": "{value} %",
+      "en": "{value}%"
+    },
+    {
+      "key": "levelup.title",
+      "es": "¡Nivel {n}!",
+      "en": "Level {n}!"
+    },
+    {
+      "key": "levelup.subtitle",
+      "es": "Elige una mejora",
+      "en": "Choose an upgrade"
+    },
+    {
+      "key": "levelup.pending",
+      "es": "Quedan {n} más",
+      "en": "{n} more to go"
+    },
+    {
+      "key": "levelup.newWeapon",
+      "es": "Arma nueva",
+      "en": "New weapon"
+    },
+    {
+      "key": "levelup.newTome",
+      "es": "Tomo nuevo",
+      "en": "New tome"
+    },
+    {
+      "key": "levelup.level",
+      "es": "Nv {from} → {to}",
+      "en": "Lv {from} → {to}"
+    },
+    {
+      "key": "levelup.reroll",
+      "es": "Reroll ({n})",
+      "en": "Reroll ({n})"
+    },
+    {
+      "key": "levelup.skip",
+      "es": "Saltar ({n})",
+      "en": "Skip ({n})"
+    },
+    {
+      "key": "levelup.banish",
+      "es": "Descartar ({n})",
+      "en": "Banish ({n})"
+    },
+    {
+      "key": "levelup.banishHint",
+      "es": "Elige la carta que no quieres volver a ver en esta partida",
+      "en": "Pick the card you don't want to see again this run"
+    },
+    {
+      "key": "levelup.cancel",
+      "es": "Cancelar",
+      "en": "Cancel"
+    },
+    {
+      "key": "levelup.filler",
+      "es": "Tila Reparadora",
+      "en": "Soothing Linden Tea"
+    },
+    {
+      "key": "levelup.filler.desc",
+      "es": "No queda nada más que ofrecerte. Recuperas un {n} % de la vida.",
+      "en": "Nothing left to offer you. You recover {n}% of your health."
+    },
+    {
+      "key": "levelup.fillerGold",
+      "es": "Calderilla del Sofá",
+      "en": "Sofa Change"
+    },
+    {
+      "key": "levelup.fillerGold.desc",
+      "es": "Rebuscando entre los cojines aparecen {n} de oro.",
+      "en": "Digging between the cushions turns up {n} gold."
+    },
+    {
+      "key": "shrine.title",
+      "es": "¡Mesa camilla cargada!",
+      "en": "Brazier table charged!"
+    },
+    {
+      "key": "shrine.subtitle",
+      "es": "Elige una bendición calentita",
+      "en": "Pick a toasty blessing"
+    },
+    {
+      "key": "gameover.title",
+      "es": "¡A la cama sin cenar!",
+      "en": "Straight to bed, no dinner!"
+    },
+    {
+      "key": "gameover.subtitle",
+      "es": "Has caído (pero volverás)",
+      "en": "You have fallen (but you will be back)"
+    },
+    {
+      "key": "gameover.time",
+      "es": "Tiempo",
+      "en": "Time"
+    },
+    {
+      "key": "gameover.kills",
+      "es": "Bajas",
+      "en": "Kills"
+    },
+    {
+      "key": "gameover.level",
+      "es": "Nivel",
+      "en": "Level"
+    },
+    {
+      "key": "gameover.damage",
+      "es": "Daño por arma",
+      "en": "Damage by weapon"
+    },
+    {
+      "key": "gameover.seed",
+      "es": "Semilla: {seed}",
+      "en": "Seed: {seed}"
+    },
+    {
+      "key": "gameover.cheated",
+      "es": "Partida con trucos de debug",
+      "en": "Run with debug cheats"
+    },
+    {
+      "key": "gameover.retry",
+      "es": "Reintentar",
+      "en": "Retry"
+    },
+    {
+      "key": "gameover.newMap",
+      "es": "Nuevo mapa",
+      "en": "New map"
+    },
+    {
+      "key": "gameover.backToTitle",
+      "es": "Volver al inicio",
+      "en": "Back to title"
+    },
+    {
+      "key": "results.victory",
+      "es": "¡Victoria!",
+      "en": "Victory!"
+    },
+    {
+      "key": "results.victorySubtitle",
+      "es": "La Pelusa Madre ha mordido el polvo (literalmente)",
+      "en": "The Mother Dust Bunny bit the dust (literally)"
+    },
+    {
+      "key": "results.gold",
+      "es": "Oro conseguido",
+      "en": "Gold earned"
+    },
+    {
+      "key": "results.chests",
+      "es": "Baúles abiertos",
+      "en": "Trunks opened"
+    },
+    {
+      "key": "results.items",
+      "es": "Objetos",
+      "en": "Items"
+    },
+    {
+      "key": "results.noItems",
+      "es": "Ninguno",
+      "en": "None"
+    },
+    {
+      "key": "debug.title",
+      "es": "DEBUG · F3",
+      "en": "DEBUG · F3"
+    },
+    {
+      "key": "debug.fps",
+      "es": "FPS",
+      "en": "FPS"
+    },
+    {
+      "key": "debug.frame",
+      "es": "Frame",
+      "en": "Frame"
+    },
+    {
+      "key": "debug.logic",
+      "es": "Lógica",
+      "en": "Logic"
+    },
+    {
+      "key": "debug.render",
+      "es": "Render",
+      "en": "Render"
+    },
+    {
+      "key": "debug.drawCalls",
+      "es": "Draw calls",
+      "en": "Draw calls"
+    },
+    {
+      "key": "debug.triangles",
+      "es": "Triángulos",
+      "en": "Triangles"
+    },
+    {
+      "key": "debug.resolution",
+      "es": "Resolución",
+      "en": "Resolution"
+    },
+    {
+      "key": "debug.position",
+      "es": "Posición",
+      "en": "Position"
+    },
+    {
+      "key": "debug.speed",
+      "es": "Velocidad",
+      "en": "Speed"
+    },
+    {
+      "key": "debug.state",
+      "es": "Estado",
+      "en": "State"
+    },
+    {
+      "key": "debug.slope",
+      "es": "Pendiente",
+      "en": "Slope"
+    },
+    {
+      "key": "debug.seed",
+      "es": "Semilla",
+      "en": "Seed"
+    },
+    {
+      "key": "debug.state.grounded",
+      "es": "suelo",
+      "en": "ground"
+    },
+    {
+      "key": "debug.state.airborne",
+      "es": "aire",
+      "en": "air"
+    },
+    {
+      "key": "debug.state.sliding",
+      "es": "deslizando",
+      "en": "sliding"
+    },
+    {
+      "key": "debug.state.steep",
+      "es": "resbalando",
+      "en": "slipping"
+    },
+    {
+      "key": "debug.entities",
+      "es": "Enemigos: {enemies} · Proyectiles: {projectiles} · Gemas: {gems} · Partículas: {particles}",
+      "en": "Enemies: {enemies} · Projectiles: {projectiles} · Gems: {gems} · Particles: {particles}"
+    },
+    {
+      "key": "debug.run",
+      "es": "Tiempo: {time} · Vida: {hp} · XP: {xp}/{next} · Frenado: {slow} %",
+      "en": "Time: {time} · HP: {hp} · XP: {xp}/{next} · Slowdown: {slow}%"
+    },
+    {
+      "key": "debug.director",
+      "es": "Dificultad: min {minutes} · Ritmo: {rate}/s · Máx.: {max} · Oro: {gold}",
+      "en": "Difficulty: min {minutes} · Rate: {rate}/s · Max: {max} · Gold: {gold}"
+    },
+    {
+      "key": "debug.keys",
+      "es": "[1] Invencible [2] +Nivel [3] +1 min [4] +100 enemigos [5] Matar todo",
+      "en": "[1] Invincible [2] +Level [3] +1 min [4] +100 enemies [5] Kill all"
+    },
+    {
+      "key": "debug.keys2",
+      "es": "[6] Invocar jefe [7] +100 de oro [8] Revelar mapa",
+      "en": "[6] Summon boss [7] +100 gold [8] Reveal map"
+    },
+    {
+      "key": "debug.invincibleOn",
+      "es": "Invencible: SÍ",
+      "en": "Invincible: ON"
+    },
+    {
+      "key": "debug.invincibleOff",
+      "es": "Invencible: NO",
+      "en": "Invincible: OFF"
+    },
+    {
+      "key": "debug.levelUp",
+      "es": "+1 nivel",
+      "en": "+1 level"
+    },
+    {
+      "key": "debug.skipTime",
+      "es": "+1 minuto",
+      "en": "+1 minute"
+    },
+    {
+      "key": "debug.spawn",
+      "es": "+100 enemigos",
+      "en": "+100 enemies"
+    },
+    {
+      "key": "debug.killAll",
+      "es": "Todos eliminados",
+      "en": "All enemies removed"
+    },
+    {
+      "key": "debug.boss",
+      "es": "Jefe invocado",
+      "en": "Boss summoned"
+    },
+    {
+      "key": "debug.bossBusy",
+      "es": "El jefe ya está en juego",
+      "en": "The boss is already here"
+    },
+    {
+      "key": "debug.gold",
+      "es": "+100 de oro",
+      "en": "+100 gold"
+    },
+    {
+      "key": "debug.reveal",
+      "es": "Mapa revelado",
+      "en": "Map revealed"
+    }
+  ]
+}

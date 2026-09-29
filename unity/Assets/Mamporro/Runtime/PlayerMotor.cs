@@ -15,6 +15,8 @@ namespace Mamporro.U1
         public Vector3 Velocity { get; private set; }
         public bool Grounded { get; private set; }
         public bool Sliding { get; private set; }
+        public float SpeedMultiplier=1, CrowdSlow;
+        public void Push(float x,float z) { Position+=new Vector3(x,0,z); }
         float coyote, buffer, cooldown;
         readonly PrototypeSettings settings;
         public PlayerMotor(PrototypeSettings settings) { this.settings = settings; Reset(); }
@@ -23,6 +25,7 @@ namespace Mamporro.U1
         public void Step(MoveIntent intent, float dt)
         {
             var s = settings;
+            float moveSpeed=s.moveSpeed*SpeedMultiplier*(1-CrowdSlow);
             var horizontal = new Vector3(Velocity.x,0,Velocity.z);
             var desired = new Vector3(intent.direction.x,0,intent.direction.y);
             desired = Vector3.ClampMagnitude(desired,1);
@@ -34,7 +37,7 @@ namespace Mamporro.U1
             if (intent.slidePressed && Grounded && cooldown <= 0)
             {
                 var direction = horizontal.sqrMagnitude > .1f ? horizontal.normalized : desired;
-                horizontal = direction * Mathf.Min(s.moveSpeed*1.8f,Mathf.Max(s.moveSpeed*1.45f,horizontal.magnitude+3.5f));
+                horizontal = direction * Mathf.Min(moveSpeed*1.8f,Mathf.Max(moveSpeed*1.45f,horizontal.magnitude+3.5f));
                 Sliding = true; cooldown = .6f;
             }
             Sliding &= intent.slideHeld && Grounded && horizontal.magnitude > 3.2f;
@@ -50,18 +53,20 @@ namespace Mamporro.U1
             else
             {
                 float accel = Grounded ? (desired.sqrMagnitude > 0 ? s.groundAcceleration : s.deceleration) : s.airAcceleration;
-                if (horizontal.magnitude > s.moveSpeed) accel = 9;
-                horizontal = Vector3.MoveTowards(horizontal,desired*s.moveSpeed,accel*dt);
+                if (horizontal.magnitude > moveSpeed) accel = 9;
+                horizontal = Vector3.MoveTowards(horizontal,desired*moveSpeed,accel*dt);
             }
             float vy = Velocity.y;
             if (buffer > 0 && coyote > 0)
             {
                 vy = s.jumpSpeed; Grounded = false; buffer = coyote = 0;
-                if (Sliding) horizontal = horizontal.normalized*Mathf.Min(horizontal.magnitude+1.5f,s.moveSpeed*1.8f);
+                if (Sliding) horizontal = horizontal.normalized*Mathf.Min(horizontal.magnitude+1.5f,moveSpeed*1.8f);
                 Sliding = false;
             }
             if (!Grounded) vy = Mathf.Max(-42,vy-s.gravity*(vy < 0 ? 1.55f : intent.jumpHeld ? 1 : 2.3f)*dt);
             if (steep && Grounded) horizontal += new Vector3(normal.x,0,normal.z)*s.gravity*dt;
+            if(CrowdSlow>0 && horizontal.magnitude>moveSpeed)
+                horizontal=Vector3.MoveTowards(horizontal,horizontal.normalized*moveSpeed,45*(CrowdSlow/.4f)*dt);
             var delta = horizontal*dt;
             // Impide subir pendientes excesivas, manteniendo movimiento lateral y descenso.
             if (TechnicalWorld.Height(Position.x+delta.x,Position.z+delta.z) > Position.y && steep)
