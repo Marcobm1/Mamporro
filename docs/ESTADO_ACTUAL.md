@@ -1,6 +1,6 @@
 # MAMPORRO — estado actual y punto de continuación
 
-Corte: **29/09/2026**, después de la aprobación manual de U1 y de la autorización de U2.
+Corte: **29/09/2026**, después de la aprobación manual de U1, de la autorización de U2 y de establecer el relevo compartido Codex ↔ Claude Code.
 
 ## Resumen ejecutivo
 
@@ -11,8 +11,22 @@ Corte: **29/09/2026**, después de la aprobación manual de U1 y de la autorizac
 - U2: **autorizado y todavía no implementado en el momento de este corte documental**.
 - U3–U6: no autorizados para empezar.
 - Rama de trabajo y por defecto: `claude/zen-pasteur-674ik0`.
-- Cabeza remota anterior a esta actualización documental: `eb691b595eb247118075368430d34ed0a95735d1`.
 - Implementación U1: `abe0a9b7f0b8c53f478b91c870341999df2ea073`.
+- Checkpoint U1: `eb691b595eb247118075368430d34ed0a95735d1`.
+- Contexto compartido para U2: `2b67ea53a54c2e0e07659562e334d423006d89f7` y documentación posterior de continuidad.
+- **Codex CLI y Claude Code son herramientas de trabajo válidas por turnos sobre la misma rama. No deben trabajar simultáneamente.**
+
+## Continuidad entre agentes
+
+El proyecto ya no debe depender del historial de una sola conversación o herramienta.
+
+Codex CLI y Claude Code se alternarán cuando termine la sesión/tokens de uno. El repositorio es la memoria compartida y cada agente debe dejar un relevo suficiente para que el otro continúe sin reconstruir contexto manualmente.
+
+Norma canónica: [`CONTINUIDAD_AGENTES.md`](CONTINUIDAD_AGENTES.md).
+
+El checkpoint vivo del bloque actual es [`PROGRESO_U2.md`](PROGRESO_U2.md). Durante U2 debe actualizarse no solo al final del hito, sino también cuando una sesión cambie de forma útil el punto de continuación o antes de ceder el turno entre agentes.
+
+Cada relevo debe registrar trabajo realmente realizado, pruebas ejecutadas, commits/push, limitaciones, cambios locales sin publicar y siguiente paso exacto. No registrar planes como si fueran resultados.
 
 ## Qué cambió desde los documentos de traspaso inicial
 
@@ -30,7 +44,9 @@ Rama: `claude/zen-pasteur-674ik0`. Push directo permitido; sin PR salvo petició
 
 Al final del checkpoint U1 se observó que Unity había producido modificaciones locales posteriores al índice publicado: **14 archivos modificados y 2 ajustes nuevos** (`PackageManagerSettings.asset` y `URPProjectSettings.asset`). No se incluyeron en los commits de U1 porque aparecieron después del índice validado. No se sabe desde GitHub si siguen presentes en el PC del autor.
 
-Antes de U2, ejecutar `git status --short --branch` y conservarlos. No usar reset/clean/reclonado para hacer desaparecer el estado local. Si esos cambios resultan ser ajustes legítimos generados por el Editor, decidir su inclusión de forma separada y documentada.
+Antes de U2 o de cualquier relevo, ejecutar `git status --short --branch` y conservarlos. No usar reset/clean/reclonado para hacer desaparecer el estado local. Si esos cambios resultan ser ajustes legítimos generados por el Editor, decidir su inclusión de forma separada y documentada.
+
+Al cambiar de Codex a Claude Code o viceversa, comprobar también los últimos commits y el remoto. Si el árbol está limpio y solo falta avanzar, usar `git pull --ff-only`. Si está sucio, leer el último checkpoint antes de tocar archivos.
 
 ## Entorno local confirmado
 
@@ -97,11 +113,21 @@ Desde CMD:
 ```cmd
 cd /d "C:\Users\bymar\Desktop\Varios\Proyectos\Mamporro-git"
 git status --short --branch
-git log -5 --oneline
+git log -8 --oneline
+git remote -v
+git fetch origin
+```
+
+Si el árbol está limpio y la rama local solo necesita avanzar:
+
+```cmd
+git pull --ff-only
 ```
 
 Codex CLI: iniciar `codex` en la raíz y pedir que lea `AGENTS.md`.
 
 Claude Code: iniciarlo en la raíz; `CLAUDE.md` contiene la entrada equivalente.
 
-Ambos deben leer este documento y `docs/PROGRESO_U2.md` antes de cambiar archivos. No volver a pedir aprobación general de U2, pero sí detenerse ante una decisión de diseño importante que no esté cubierta.
+Ambos deben leer `docs/CONTINUIDAD_AGENTES.md`, este documento y `docs/PROGRESO_U2.md` antes de cambiar archivos. No volver a pedir aprobación general de U2, pero sí detenerse ante una decisión de diseño importante que no esté cubierta.
+
+Al terminar una sesión con cambios relevantes, el agente saliente debe actualizar `docs/PROGRESO_U2.md` antes de entregar el turno.
