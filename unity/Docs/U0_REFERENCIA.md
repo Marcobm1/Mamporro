@@ -1,5 +1,9 @@
 # U0: referencia para la migración
 
+**Continuidad 29/09/2026:** U1 aprobado e iniciado; Editor localizado, licencia e
+importación comprobadas. Estado vigente en [PROGRESO_U1](../../docs/PROGRESO_U1.md).
+Los pendientes siguientes se conservan como historial de U0. Referencias intactas.
+
 Estado: **referencia preparada; versión del Editor confirmada por captura; comprobación local pendiente**.
 Hito 6 probado y aprobado por el autor el 28/09/2026.
 

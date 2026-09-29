@@ -1,5 +1,12 @@
 # Migración propuesta a Unity
 
+**Actualización 29/09/2026:** U1 aprobado expresamente, en implementación.
+[Checkpoint vigente](PROGRESO_U1.md). Se autorizan Windows x64 Mono, URP 17.6.0
+e Input System 1.20.0 tras comprobarlos en el Editor instalado. Las menciones
+inferiores a aprobación pendiente corresponden al plan histórico de U0.
+U1 incluye cargas de 300/500/750/1000, salida 1080p/1440p e interna 240/360/480;
+no modifica balance, progreso compatible ni el alcance posterior de U2–U6.
+
 Estado: **U0 autorizado y en preparación** (28/09/2026). Hito 6 aprobado por el
 autor. Windows de escritorio confirmado, con objetivo Steam/plataformas similares;
 conservar el progreso compatible. Unity 6.6 (6000.6.3f1) está confirmado por

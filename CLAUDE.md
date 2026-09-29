@@ -15,6 +15,13 @@ genera por código (no hay assets externos).
 
 ## Estado
 
+**Actualización 29/09/2026:** U1 aprobado expresamente y en implementación local.
+Estado operativo, pruebas nuevas y pendientes en [docs/PROGRESO_U1.md](docs/PROGRESO_U1.md).
+Este estado sustituye los pendientes de aprobación/localización del Editor que
+aparecen debajo como historial de U0. Unity 6000.6.3f1, Windows x64 Mono.
+No empezar U2; entregar U1 para revisión manual. No repetir navegador si no se
+modifica la web. No cambiar referencias para hacer pasar pruebas.
+
 - **Hechos y aprobados por el autor:** hitos 1–6. Base web aprobada:
   `0505b1690656d15188860157612455639820fe1f`.
 - **En curso:** U0 de migración a Unity. Referencia y mejoras en `unity/Docs/`;

@@ -1,0 +1,5 @@
+{
+  "name": "Mamporro.Editor",
+  "references": ["Mamporro.Runtime", "Unity.ugui", "Unity.RenderPipelines.Universal.Runtime", "Unity.RenderPipelines.Core.Runtime"],
+  "includePlatforms": ["Editor"]
+}

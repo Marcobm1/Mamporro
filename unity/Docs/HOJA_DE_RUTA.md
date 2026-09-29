@@ -1,5 +1,10 @@
 # Mejoras de MAMPORRO en Unity
 
+**U1 autorizado el 29/09/2026:** prototipo técnico de movimiento, imagen y horda;
+seguimiento en [PROGRESO_U1](../../docs/PROGRESO_U1.md). La escalada libre, mundo
+ampliado, economía y contenido de esta hoja permanecen para bloques posteriores.
+300/500/750/1000 son cargas de ensayo, no límites del juego ni balance aprobado.
+
 Registradas el 28/09/2026 a petición del autor. **Son objetivos del proyecto, no
 funciones ya implementadas.** Este documento acompañará al proyecto Unity y debe
 actualizarse al aprobar cada bloque. Las propuestas del asistente se distinguen

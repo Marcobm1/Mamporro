@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1de65de9db70e7449a4c52bba2c2d13f, type: 3}
+  m_Name: PrototypeSettings
+  m_EditorClassIdentifier: Mamporro.Runtime::Mamporro.U1.PrototypeSettings
+  moveSpeed: 9.5
+  groundAcceleration: 75
+  airAcceleration: 30
+  deceleration: 55
+  gravity: 27
+  jumpSpeed: 9.8
+  coyoteSeconds: 0.1
+  jumpBufferSeconds: 0.13
+  radius: 0.4
+  stepHeight: 0.45
+  slopeLimit: 48
+  enemySpeed: 4.2
+  seed: 6741
+  initialEnemies: 300
+  internalHeight: 360

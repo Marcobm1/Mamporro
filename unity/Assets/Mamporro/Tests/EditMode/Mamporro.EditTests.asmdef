@@ -1,0 +1,6 @@
+{
+  "name": "Mamporro.EditTests",
+  "references": ["Mamporro.Runtime"],
+  "includePlatforms": ["Editor"],
+  "optionalUnityReferences": ["TestAssemblies"]
+}

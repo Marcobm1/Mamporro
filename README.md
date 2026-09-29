@@ -670,12 +670,16 @@ npm run preview
 
 ## Migración a Unity y futuro del juego
 
-El autor aprobó los seis hitos y el arranque de U0. Destino inicial: **Windows de
-escritorio**, con futura publicación en Steam y plataformas similares; conservar
-el progreso compatible. Unity 6.6 (6000.6.3f1) está confirmado por captura y
-metadatos locales del ejecutable. Arranque, licencia operativa y builds pendientes;
-U1 no ha comenzado. Comprobaciones y cómo retomar en el
-[checkpoint del entorno local](docs/ENTORNO_LOCAL_CODEX.md).
+**Estado vigente (29/09/2026): U1 aprobado y en implementación.** Proyecto en
+`unity/`, Editor 6000.6.3f1, Windows x64 Mono, URP 17.6.0 e Input System 1.20.0.
+La licencia, importación, compilación, escena en Play Mode y generación de build
+ya se han probado. [Instrucciones Unity](unity/README.md) y
+[checkpoint actual](docs/PROGRESO_U1.md). El historial de U0 se conserva en
+los documentos de decisiones y referencia.
+
+Los seis hitos web están aprobados. Destino inicial Unity: **Windows de
+escritorio**, con futura publicación en Steam y plataformas similares. El
+progreso compatible se conservará mediante el importador de un bloque posterior.
 
 - [Plan U0–U6](docs/MIGRACION_UNITY.md).
 - [Estado de la preparación y referencia](unity/Docs/U0_REFERENCIA.md).
@@ -683,8 +687,8 @@ U1 no ha comenzado. Comprobaciones y cómo retomar en el
   mayores, terreno más marcado y rampas, escalada, hordas progresivas, más monedas,
   arte e iconos propios y más contenido.
 
-`unity/` contiene documentación y referencias; todavía no puede abrirse como
-proyecto en Hub. La base web se conserva en el commit `0505b16`. Para comprobar
+`unity/` contiene el proyecto abrible en Hub y conserva documentación y referencias.
+La base web se conserva en el commit `0505b16`. Para comprobar
 catálogo, RNG, fórmulas, guardados y medios de referencia desde CMD:
 
 ```cmd

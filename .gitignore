@@ -5,3 +5,15 @@ coverage/
 .DS_Store
 .vite/
 qa-results/
+unity/[Ll]ibrary/
+unity/[Tt]emp/
+unity/[Oo]bj/
+unity/[Ll]ogs/
+unity/[Uu]ser[Ss]ettings/
+unity/[Bb]uilds/
+unity/[Tt]est[Rr]esults/
+unity/[Mm]emoryCaptures/
+unity/*.csproj
+unity/*.sln*
+unity/.vs/
+unity/.idea/

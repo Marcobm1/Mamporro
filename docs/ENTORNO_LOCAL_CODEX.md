@@ -1,5 +1,10 @@
 # Checkpoint del entorno local de MAMPORRO
 
+**Estado vigente desde la aprobación de U1 (29/09/2026):** continuar en
+[PROGRESO_U1.md](PROGRESO_U1.md). U1 está autorizado; el Editor ha arrancado con
+licencia operativa y resuelto paquetes. Lo siguiente es el historial de preparación
+U0 y no una restricción actual contra crear el proyecto. No iniciar U2.
+
 Fecha: **29/09/2026**. Preparación del entorno dentro de U0. **U1 no ha
 comenzado ni está aprobado**. No hay proyecto Unity abrible: no se han creado
 `Assets/`, `Packages/` ni `ProjectSettings/`.

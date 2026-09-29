@@ -1,5 +1,9 @@
 # Decisiones acordadas
 
+**Estado actual:** U1 aprobado el 29/09/2026; véase la entrada al final y
+[PROGRESO_U1](PROGRESO_U1.md). Las menciones anteriores a aprobación pendiente
+son históricas y quedan sustituidas por esa autorización.
+
 Registro de lo que se ha decidido durante el desarrollo, además de la
 [especificación original](ESPECIFICACION.md). Cuando esto la concreta o la
 cambia, manda esto. Los números exactos viven en `src/data/` (lo de aquí es un
@@ -436,3 +440,37 @@ oficial consultada: https://unity.com/releases/unity-6/support .
   El fallo inicial queda resuelto y permite la entrega autorizada tras revisión
   del diff y del remoto. No se atribuyen nuevas pruebas de navegador o Unity;
   U1 continúa sin empezar.
+
+## 29/09/2026 — autorización e implementación exclusiva de U1
+
+- El autor aprueba expresamente U1 y continuar tras un plan breve sin volver a
+  pedir permiso por el alcance. Sustituye las menciones históricas de aprobación
+  pendiente. Rama actual, commits y push directos, sin PR; U2 no autorizado.
+- Proyecto en `unity/`, conservando documentación y referencias. Windows x64,
+  Mono, Editor 6000.6.3f1. Catálogo local e importación confirman URP 17.6.0 e
+  Input System 1.20.0. uGUI 2.6.0 y Test Framework 1.8.0 efectivos del Editor.
+- Prototipo original: patio con rampas, pendientes y obstáculos, personaje
+  provisional, tercera persona, teclado/ratón, salto y deslizamiento con valores
+  de referencia web. Escalada libre y cámara con colisión completa quedan fuera.
+- Motor de movimiento separado del adaptador de entrada/presentación; datos en
+  ScriptableObject. Colisiones analíticas sobre la misma malla triangular del
+  patio. No se afirma equivalencia completa del controlador web.
+- Horda: arrays reutilizables, actualización central a 60 Hz, rejilla espacial,
+  persecución/separación y rodeo local. Render instanciado; sin Rigidbody/Update
+  por enemigo. Capacidad técnica de almacenamiento ampliable, no límite de diseño.
+  Burst/Collections aparecen como dependencias transitivas de URP; no se usa DOTS/ECS.
+- Presentación: RenderTexture puntual, relación de aspecto de salida, UI uGUI a
+  resolución de pantalla; interna 360 con 240/480. Niebla e iluminación sencillas,
+  shader propio con dither y ajuste de vértices conmutables. Sin assets de terceros.
+- Ensayos aprobados: 300 habitual con objetivo 60 FPS en el equipo de referencia;
+  500/750 margen; 1000 estrés sin promesa. Salidas 1920×1080 y 2560×1440. No son
+  balance, máximos del juego ni requisitos comerciales. Semilla/recorrido fijos,
+  calentamiento 10 s y medición 30 s por carga, solo archivos locales.
+- Hardware consultado sin números de serie: Ryzen 7 7700X, RTX 4070 Ti SUPER,
+  AMD integrada, aproximadamente 32 GB. Sustituye las denominaciones iniciales
+  «Ryzen 3600k» y «4070 Ti». No extrapolar a equipos modestos.
+- La base web y los medios permanecen intactos. Progreso compatible, escalada,
+  mundo ampliado, ritmo, oro e iconos originales conservan sus acuerdos para los
+  bloques posteriores. No se implementan importador, Steam, mando ni compras.
+- Resultados efectivos y límites, incidencias de ejecución y siguiente paso en
+  [PROGRESO_U1.md](PROGRESO_U1.md); medidas detalladas locales, no telemetría.

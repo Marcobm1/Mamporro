@@ -10,5 +10,6 @@ Antes de trabajar, lee los documentos canónicos:
 - [Checkpoint del entorno local](docs/ENTORNO_LOCAL_CODEX.md): comprobaciones y cómo retomar.
 
 Las decisiones posteriores prevalecen sobre la especificación y los textos
-anteriores. Trabaja por bloques, con su plan y aprobación; U1 no ha comenzado
-y requiere aprobación expresa antes de crear el proyecto Unity o implementarlo.
+anteriores. U1 aprobado expresamente el 29/09/2026: trabajar exclusivamente ese
+bloque. Estado y siguiente paso en [PROGRESO_U1](docs/PROGRESO_U1.md).
+U2 requiere nueva aprobación. Conservar el historial de U0 y la referencia web.
