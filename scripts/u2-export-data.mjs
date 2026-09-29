@@ -8,7 +8,7 @@ const q=JSON.stringify, num=x=>String(x), arr=(type,a)=>`new ${type}[]{${a.join(
 const obj=(type,fields)=>`new ${type}{${Object.entries(fields).map(([k,v])=>`${k}=${v}`).join(',')}}`;
 try {
  const load=p=>server.ssrLoadModule(`/src/${p}.ts`);
- const [w,t,i,e,c,r,u,es,en,waves,run]=await Promise.all(['data/weapons','data/tomes','data/items','data/enemies','data/characters','data/rarities','data/upgrades','i18n/es','i18n/en','data/waves','data/run'].map(load));
+ const [w,t,i,e,c,r,u,es,en,waves,run,config,pal]=await Promise.all(['data/weapons','data/tomes','data/items','data/enemies','data/characters','data/rarities','data/upgrades','i18n/es','i18n/en','data/waves','data/run','data/config','render/palette'].map(load));
  const keys=['damage','cooldown','count','area','speed','duration','pierce','critChance','critMultiplier','knockback'];
  const effects=a=>arr('Effect',a.map(v=>obj('Effect',{stat:'Stat.'+v.stat,amount:num(v.amount),basis:String(v.mode==='base'),integer:String(!!v.integer),display:q(v.display)})));
  const numeric=(type,v)=>v?obj(type,Object.fromEntries(Object.entries(v).map(([k,n])=>[k,num(n)]))):'null';
@@ -27,7 +27,22 @@ try {
  const tuning={ReferenceMinutes:waves.REFERENCE_MINUTES,SpawnHpGrowth:S.hpGrowth,SpawnHpCurve:S.hpCurve,SpawnXpGrowth:S.xpGrowth,BossHpGrowth:B.hpGrowth,BossHpCurve:B.hpCurve,
   FillerMinGold:G.fillerMin,FillerChestFraction:G.fillerChestFraction,ChestBaseCost:C.baseCost,ChestCostStep:C.costStep,ChestCostCurve:C.costCurve,
   FillerHeal:L.fillerHeal,InputGuard:L.inputGuard};
- const text='// Generado desde src/data aprobado mediante scripts/u2-export-data.mjs.\nnamespace Mamporro.Core\n{\n    public static class Catalog\n    {\n'+Object.entries(groups).map(([k,v])=>`        public static readonly ${types[k]}[] ${k}=${v};`).join('\n')+'\n    }\n    public static class Tuning\n    {\n'+Object.entries(tuning).map(([k,v])=>`        public const double ${k}=${num(v)};`).join('\n')+'\n    }\n}\n';
+ // U3: constantes del mundo, del jugador, del director y de los interactuables, aplanadas con prefijo.
+ const flatten=(prefix,o)=>{for(const [k,v] of Object.entries(o)){const name=prefix+k.charAt(0).toUpperCase()+k.slice(1);if(typeof v==='number')tuning[name]=v;else if(v&&typeof v==='object'&&!Array.isArray(v))flatten(name,v);}};
+ flatten('Terrain',config.TERRAIN_CONFIG);flatten('World',{playableRadius:config.WORLD_CONFIG.playableRadius,clearSpawnRadius:config.WORLD_CONFIG.clearSpawnRadius,siteSpawnClear:config.WORLD_CONFIG.siteSpawnClear});
+ flatten('Player',config.PLAYER_TUNING);flatten('PlayerBase',config.PLAYER_BASE_STATS);flatten('Crowd',config.CROWD_CONFIG);flatten('Camera',config.CAMERA_CONFIG);flatten('Render',config.RENDER_CONFIG);
+ flatten('SpawnCurve',S);flatten('Elite',{first:waves.ELITE_SCHEDULE.first,every:waves.ELITE_SCHEDULE.every});flatten('Swarm',waves.SWARM_CONFIG);
+ flatten('Gold',G);flatten('Chest',C);flatten('Shrine',run.SHRINE_CONFIG);flatten('Totem',run.TOTEM_CONFIG);flatten('Portal',run.PORTAL_CONFIG);flatten('Discovery',run.DISCOVERY_CONFIG);
+ const arrays=[
+  ['SiteRequest','SiteRequests',config.WORLD_CONFIG.sites.map(s=>obj('SiteRequest',{kind:q(s.kind),count:num(s.count),radius:num(s.radius)}))],
+  ['InteractablePlacement','InteractablePlacements',run.INTERACTABLE_PLACEMENT.map(p=>obj('InteractablePlacement',{kind:q(p.kind),count:num(p.count),minSpawnDistance:num(p.minSpawnDistance),spacing:num(p.spacing),clearRadius:num(p.clearRadius)}))],
+  ['SpawnEntry','SpawnTable',waves.SPAWN_TABLE.map(s=>obj('SpawnEntry',{enemy:q(s.enemy),fromMinute:num(s.fromMinute),weight:num(s.weight)}))],
+  ['SpecialWave','SpecialWaves',waves.SPECIAL_WAVES.map(s=>obj('SpecialWave',{at:num(s.at),enemy:q(s.enemy),count:num(s.count),formation:q(s.formation),noticeKey:q(s.noticeKey)}))],
+  ['ShrineBoost','ShrineBoosts',run.SHRINE_BOOSTS.map(b=>obj('ShrineBoost',{id:q(b.id),nameKey:q(b.nameKey),effect:obj('Effect',{stat:'Stat.'+b.effect.stat,amount:num(b.effect.amount),basis:String(b.effect.mode==='base'),integer:String(!!b.effect.integer),display:q(b.effect.display)})}))],
+  ['int','RunDurations',waves.RUN_DURATIONS.map(num)],
+ ];
+ const palette=Object.entries(pal.PALETTE).map(([k,v])=>`        public const uint ${k.charAt(0).toUpperCase()+k.slice(1)}=0x${v.toString(16).padStart(6,'0')};`).join('\n');
+ const text='// Generado desde src/data aprobado mediante scripts/u2-export-data.mjs.\nnamespace Mamporro.Core\n{\n    public static class Catalog\n    {\n'+Object.entries(groups).map(([k,v])=>`        public static readonly ${types[k]}[] ${k}=${v};`).join('\n')+'\n'+arrays.map(([t,k,v])=>`        public static readonly ${t}[] ${k}=${arr(t,v)};`).join('\n')+'\n    }\n    public static class Tuning\n    {\n'+Object.entries(tuning).map(([k,v])=>`        public const double ${k}=${num(v)};`).join('\n')+'\n    }\n    public static class Palette\n    {\n'+palette+'\n    }\n}\n';
  await fs.writeFile('unity/Assets/Mamporro/Core/Catalog.cs',text);
  await fs.mkdir('unity/Assets/Mamporro/U2/Resources',{recursive:true});
  await fs.writeFile('unity/Assets/Mamporro/U2/Resources/WebText.json',JSON.stringify({entries:Object.keys(es.es).map(key=>({key,es:es.es[key],en:en.en[key]}))},null,2)+'\n');

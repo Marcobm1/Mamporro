@@ -18,6 +18,12 @@ namespace Mamporro.Core
     }
     public sealed class RangedDef { public double preferred,range,cooldown,windup,projectileSpeed,projectileDamage,projectileRadius; }
     public sealed class ChargeDef { public double cooldown,range,windup,dashTime,dashSpeed,damageMultiplier,recover; }
+    // U3: tablas del mundo, del director y de los interactuables (exportadas de la web).
+    public sealed class SiteRequest { public string kind; public int count; public double radius; }
+    public sealed class InteractablePlacement { public string kind; public int count; public double minSpawnDistance,spacing,clearRadius; }
+    public sealed class SpawnEntry { public string enemy; public double fromMinute,weight; }
+    public sealed class SpecialWave { public double at; public string enemy; public int count; public string formation,noticeKey; }
+    public sealed class ShrineBoost { public string id,nameKey; public Effect effect; }
     public sealed class RarityDef { public string id; public double weight,luckBonus,power; public int min,max; }
     public sealed class UpgradeStep { public double amount,max=double.PositiveInfinity; public string mode,display; public bool integer; }
     public sealed class PlayerStats

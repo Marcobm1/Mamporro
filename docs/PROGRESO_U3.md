@@ -7,11 +7,11 @@ Este archivo es el **checkpoint vivo de continuidad entre Codex CLI y Claude Cod
 ## Cómo retomar
 
 - **Último commit publicado:** ver `git log -1 origin/claude/zen-pasteur-674ik0`. U2 cerrado y aprobado en `176423d`.
-- **Paso actual:** 3 del plan (núcleo del mundo en C# puro).
-- **Terminado y verificado:** pasos 1 y 2. `unity/Docs/Reference/u3-world.json` creada y comprobada contra la web (ver «Referencia u3-world»). **Aún no la usa ninguna prueba C#**: la primera prueba que la lea la congela.
+- **Paso actual:** 4 del plan (render del mundo en una escena nueva `U3_Partida`).
+- **Terminado y verificado:** pasos 1–3 y la física del jugador del paso 5 (portada ya porque la colisión del mundo la necesita). Edit Mode 118/118 y Play Mode 10/10 el 29/09/2026 22:00. **`u3-world.json` está congelada**: la usan las pruebas C# desde las 21:59; no regenerarla.
 - **A medias:** nada.
 - **Sin commit a propósito:** `unity/ProjectSettings/ProjectSettings.asset` (identificador de nube), `ProjectAuditorSettings.asset`, `PackageManagerSettings.asset` y `URPProjectSettings.asset`: no publicar nunca. Unity reescribe con espacios algunos ajustes al abrir el proyecto (`RetroPipeline.asset`, `UniversalRenderPipelineGlobalSettings.asset`, `GraphicsSettings.asset`, `ProjectAuditorSettings.asset`): si solo cambian espacios o finales de línea, restaurarlos antes de hacer commit.
-- **Siguiente paso exacto:** portar a `Assets/Mamporro/Core/World/` (C# sin UnityEngine) `simplex-noise` 4.0.3 (con su aviso MIT), `Heightfield` (`generateHeightfield`, `heightAt`, `normalAt`, `squircle`), `sites`, `props`, `colliders`, `decorations`, `groundCover`, `interactables` (colocación) y `WorldCollision`, y probarlos contra las secciones `simplex` y `worlds` de `u3-world.json` y `baseline.worlds`.
+- **Siguiente paso exacto:** crear `Assets/Mamporro/U3/` (ensamblado `Mamporro.U3`) con un renderizador del mundo que construya por código el terreno (colores por altura/pendiente como `src/world/TerrainMesh.ts`), las piezas de props (`Part`: box/cylinder/cone/ico/dodeca con el orden de giro YXZ), la decoración, la cobertura del suelo y los interactuables, con el material retro de U1, y una escena `Assets/Mamporro/U3/U3_Partida.unity` generada por un `U3Project.cs` al estilo de `U2Project.cs`, sin tocar las escenas de U1 y U2.
 
 Comprobar el estado desde CMD:
 
@@ -56,6 +56,23 @@ Contenido (todas las cifras salen de la web aprobada):
   - `baguette-15min-derrota` (`U3-MUNDO`, vulnerable, empieza por un tótem): derrota a los 31 s.
   - `armario-jefe-victoria` (`HITO6QA`, invencible, armario revelado): jefe a los 12 s, victoria a los 299 s.
 
+## Núcleo del mundo (paso 3)
+
+Código en `unity/Assets/Mamporro/Core/World/` (ensamblado `Mamporro.Core`, sin UnityEngine):
+
+- `SimplexNoise.cs`: port de `createNoise2D` de simplex-noise 4.0.3, con el aviso MIT de Jonas Wagner.
+- `JsMath.cs`: `Math.hypot` de V8 (escalado por el máximo y suma de Kahan); comprobado en Node con 2 millones de pares, 0 diferencias (con `sqrt(x²+z²)` difiere el 35 %).
+- `Heightfield.cs` (+ `WorldMath`), `Sites.cs`, `Colliders.cs` (colisionadores y rejilla), `Props.cs` (casas, templos, granjas, pozos y objetos sueltos; mismo orden de consumo del RNG que la web), `Vegetation.cs` (decoración y cobertura del suelo), `WorldCollision.cs` (colocación de interactuables, colisión del mundo y `WorldData.Generate(seed)`), `PlayerPhysics.cs` (física del jugador y frenado por la horda).
+- `WorldCollision` implementa `ICombatWorld` (U2) e `IPhysicsWorld`. En `ICombatWorld.Height`, `maxY` infinito significa «solo terreno» (la web usa `heightfield.heightAt` para apariciones, proyectiles y disparos) y un `maxY` finito equivale a `groundHeight`.
+- `scripts/u2-export-data.mjs` exporta también las constantes del mundo, del jugador, del director y de los interactuables (clase `Tuning`, con prefijos como `Terrain`, `Player`, `PlayerSlide`, `SpawnCurve`, `Shrine`…), las tablas (`SiteRequests`, `InteractablePlacements`, `SpawnTable`, `SpecialWaves`, `ShrineBoosts`, `RunDurations`) y la paleta (`Palette`).
+- `Rng.Pick` añadido (equivale a `rng.pick`).
+
+Pruebas (`Tests/Core/WorldReferenceTests.cs`): ruido, terreno sin aplanar, alturas finales, sitios, consultas de colisión, empujones, piezas, colisionadores, interactuables, decoración, cobertura, `baseline.worlds` y las 5 trayectorias de física. Todo pasa a la primera y las alturas coinciden bit a bit.
+
+### Matemáticas de V8 frente a Mono (medido el 29/09/2026)
+
+Sonda temporal con 200 000 entradas exactas (base64). Diferencias de Mono 6.13 (runtime del Editor) frente a V8: `atan2` 19,5 %, `exp` 9,5 %, `sin`/`cos` ~2 %, `pow` ~0,2 %, `Hypot` portada 0 %. Además, **JsonUtility lee mal el 9,4 % de los double** (un bit). Decisión técnica: no portar las funciones de V8 mientras las pruebas pasen, porque las diferencias son de un bit y quedan dentro de 1e-6 m. Si la cronología de la partida integrada (paso 10) diverge, lo primero que hay que revisar son `atan2` y `exp`.
+
 ## Alcance autorizado
 
 Mundo y partida completa equivalentes a la web aprobada `0505b1690656d15188860157612455639820fe1f`:
@@ -88,9 +105,9 @@ Commits pequeños que compilen y pasen sus pruebas; actualizar este checkpoint t
 
 1. Este checkpoint y las entradas de documentación. **Hecho.**
 2. Referencia `u3-world.json`. **Hecho.**
-3. Núcleo del mundo en C# puro (`Assets/Mamporro/Core`, sin UnityEngine): port de simplex-noise, heightfield, sites, props y colisionadores, decoración, cobertura del suelo, interactuables y colisión del mundo; pruebas contra `u3-world.json` y `baseline.worlds`.
+3. **Hecho.** Núcleo del mundo en C# puro (`Assets/Mamporro/Core`, sin UnityEngine): port de simplex-noise, heightfield, sites, props y colisionadores, decoración, cobertura del suelo, interactuables y colisión del mundo; pruebas contra `u3-world.json` y `baseline.worlds`.
 4. Render del mundo con el material retro de U1 en una escena nueva `Assets/Mamporro/U3/U3_Partida.unity`; U1 y U2 conservan sus escenas y builds.
-5. Física del jugador y colisiones de la horda sobre el mundo real.
+5. Física del jugador y colisiones de la horda sobre el mundo real. (Física portada y probada en el paso 3; falta conectarla a la escena y a la horda.)
 6. Director completo.
 7. Interactuables, armario, jefe y victoria.
 8. HUD, minimapa, avisos, telegrafiado y pausa.
@@ -105,6 +122,9 @@ Commits pequeños que compilen y pasen sus pruebas; actualizar este checkpoint t
 | --- | --- | --- | --- |
 | 29/09/2026 21:47 | `node scripts\unity-reference-u3.mjs --export-once` y `node scripts\unity-reference-u3.mjs` | creada (7,8 MB) y coincide con la web | `unity/Docs/Reference/u3-world.json` |
 | 29/09/2026 21:48 | `node scripts\unity-reference.mjs`, `node scripts\unity-reference-u2.mjs`; `git diff --exit-code` de `src/`, `baseline.json` y `u2-combat.json` | U0 y U2 coinciden; sin cambios | consola |
+| 29/09/2026 21:55 | Prueba temporal `TmpMathProbe` (Edit Mode, filtro) contra 200 000 valores de V8 en base64 | ver «Matemáticas de V8 frente a Mono» | `unity/TestResults/U3/probe.log` (prueba borrada después) |
+| 29/09/2026 21:59 | `scripts\u2.cmd edit` | 118/118 (88 anteriores + 30 de `WorldReferenceTests`); alturas de los 4 mundos idénticas bit a bit | `unity/TestResults/U2/edit.xml` |
+| 29/09/2026 22:00 | `scripts\u2.cmd play` | 10/10 | `unity/TestResults/U2/play.xml` |
 
 ## Checkpoint al terminar U3
 

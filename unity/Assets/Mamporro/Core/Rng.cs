@@ -37,6 +37,7 @@ namespace Mamporro.Core
         public double Range(double min,double max) => min+(max-min)*Next();
         public int Int(int min,int max) => min+(int)Math.Floor(Next()*(max-min+1));
         public bool Chance(double probability) => Next()<probability;
+        public T Pick<T>(IList<T> items) => items[(int)Math.Floor(Next()*items.Count)];
         public Rng Derive(string label) => new Rng(Seed+"/"+label);
         public void Shuffle<T>(IList<T> values)
         { for(int i=values.Count-1;i>0;i--) { int j=Int(0,i); T t=values[i]; values[i]=values[j]; values[j]=t; } }
