@@ -1,6 +1,6 @@
 # Migración propuesta a Unity
 
-> Estado vigente en [ESTADO_ACTUAL](ESTADO_ACTUAL.md): U1 aceptado; U2 implementado y pendiente de la prueba manual del autor ([PROGRESO_U2](PROGRESO_U2.md)). No comenzar U3.
+> Estado vigente en [ESTADO_ACTUAL](ESTADO_ACTUAL.md): U1 aceptado; U2 aprobado por el autor ([PROGRESO_U2](PROGRESO_U2.md)). No comenzar U3.
 
 ## Historial de preparación (sustituido por el checkpoint U2)
 
@@ -118,7 +118,7 @@ fuera del Editor en su equipo. Si el prototipo no cumple, ajustar arquitectura
 antes de portar el contenido. DOTS/ECS no es requisito inicial: evaluarlo solo
 si el perfilador demuestra que hace falta.
 
-### U2. Núcleo y combate equivalentes — implementado, pendiente de aprobación
+### U2. Núcleo y combate equivalentes — aprobado
 
 Alcance operativo en [PROGRESO_U2](PROGRESO_U2.md). Los seis comportamientos
 enemigos se prueban en escenas controladas, incluidos élite y jefe. Director,

@@ -1,6 +1,6 @@
 # Checkpoint U2 — núcleo y combate equivalentes
 
-Estado: **IMPLEMENTADO Y VERIFICADO EN LOCAL el 29/09/2026; pendiente de la prueba manual y la aprobación del autor.** No empezar U3.
+Estado: **APROBADO por el autor el 29/09/2026 tras su prueba manual.** U2 cerrado. U3 no está autorizado: no empezarlo.
 
 U1 fue probado y aprobado manualmente. U2 es el único bloque autorizado. **No empezar U3.**
 
@@ -12,12 +12,12 @@ Actualizar esta sección después de cada paso completado.
 
 - **Último commit publicado:** ver `git log -1 origin/claude/zen-pasteur-674ik0`. Base verificada de U2 = núcleo + integración + documentación de decisiones (pasos 1–2 del plan). Ramas locales de respaldo: `respaldo/u2-local-1e66e49` (commit original de Codex) y `respaldo/u2-antes-rebase-2` (antes del rebase sobre `dd93c81`).
 - **Antes de cada push:** `git fetch origin`; si el remoto ha cambiado, parar y avisar al autor en lugar de reintentar.
-- **Paso actual:** U2 cerrado a la espera del autor (plan de cierre completo, pasos 1–8).
+- **Paso actual:** ninguno. U2 aprobado y cerrado; a la espera de que el autor autorice (o no) U3.
 - **Terminado y verificado:** todo el alcance de U2 (ver «Cierre de U2»). Edit Mode 88/88, Play Mode 10/10, build Windows x64 Mono, comprobación visual en build y ensayo de 8 condiciones válidas; web 202/202, typecheck y build; referencias U0 y U2 íntegras.
-- **A medias:** nada del alcance U2. Falta la prueba manual del autor con teclado y ratón reales.
+- **A medias:** nada.
 - **Sin commit a propósito:** `unity/ProjectSettings/ProjectSettings.asset` (identificador de proyecto en la nube y organización), `PackageManagerSettings.asset` y `URPProjectSettings.asset` (preferencias locales del Editor): no publicar nunca. `ProjectAuditorSettings.asset`: Unity lo reescribe con espacios al abrir; no publicar. Retoques de Codex en `README.md`, `docs/MIGRACION_UNITY.md`, `docs/PROGRESO_U1.md`, `unity/Docs/HOJA_DE_RUTA.md` y `unity/README.md`: se revisan en el commit documental de cierre (paso 8).
 - **Copias de seguridad locales (ignoradas por Git):** `qa-results/u2-audit/` (parche completo `worktree.patch`, lista y `untracked.tar` de no seguidos, estado previo y posterior al rebase) y `qa-results/u2-inherited/` (cambios heredados de U1 con hashes). Stash `codex: cabeceras CLAUDE/ENTORNO`, sustituido por `2b67ea5`, conservado sin aplicar. Copia íntegra del repositorio anterior a la integración en `..\Mamporro-respaldo-u2`.
-- **Siguiente paso exacto:** esperar la prueba y la aprobación del autor. Si pide cambios, hacerlos dentro de U2. U3 necesita autorización expresa.
+- **Siguiente paso exacto:** no hacer nada de U3 hasta que el autor lo autorice expresamente. Cuando lo haga, crear `docs/PROGRESO_U3.md` con el mismo formato y apuntar a él desde `ESTADO_ACTUAL.md`, `CLAUDE.md` y `AGENTS.md`.
 
 Comprobar el estado desde CMD:
 
@@ -83,6 +83,16 @@ Añadir las entradas nuevas **de más antigua a más reciente**. No borrar entra
 - Errores/limitaciones conocidas: ver «Cierre de U2».
 - Decisiones pendientes del autor: aprobar U2 y confirmar las decisiones técnicas.
 - Siguiente paso exacto: prueba manual del autor.
+
+### 29/09/2026 — aprobación de U2 — Claude Code (registro)
+
+- Punto de partida/commit: `5ae9b7a`.
+- Trabajo realizado: el autor probó U2, lo aprobó y confirmó las tres decisiones técnicas (multiplicadores del minuto de dificultad con ritmo 1; ensayo con invulnerabilidad QA y primera carta; regeneración de `u2-combat.json` antes de su primer uso). Se registra en este checkpoint, en `ESTADO_ACTUAL.md` y en `DECISIONES.md`.
+- Pruebas realmente ejecutadas y resultado: ninguna nueva (cambio solo documental).
+- Push realizado: sí, tras `git fetch`.
+- Cambios locales no incluidos: los mismos ajustes locales de Unity (no publicar).
+- Decisiones pendientes del autor: autorizar o no U3.
+- Siguiente paso exacto: esperar al autor; no empezar U3.
 
 ### Plantilla para cada sesión posterior
 
@@ -213,7 +223,7 @@ Build Windows x64 Mono normal, D3D11, interna 640×360, VSync 0, FPS sin límite
 - La lógica es determinista: niveles, cartas, bajas y construcción final coinciden exactamente entre las dos resoluciones.
 - El coste por tick crece con la carga (0,13 → 0,54 ms de media) y queda muy por debajo del presupuesto de 16,67 ms.
 
-## Cierre de U2 (29/09/2026, pendiente de aprobación)
+## Cierre de U2 (29/09/2026; aprobado por el autor el mismo día)
 
 **Commits publicados** sobre `dd93c81`: `b34823e` núcleo (commit de Codex rebasado), `a78fb8b` integración de la escena, `bc699b1` decisiones y checkpoints, `e50c4b1` registro de sesión, `eb9180d` referencia `u2-combat` y correcciones del jefe, `82d2a5d` prueba del catálogo, `fc1868f` checkpoint, `6774d0c` subida de nivel uGUI, `7948883` oro en el HUD, `c0a47ba` repintado de idioma y ensayo con cartas, más el commit de cierre documental.
 
@@ -245,7 +255,9 @@ La build de las 20:59 ya está generada en este equipo. Para regenerarla, con el
 4. Esc y después QA, o F4: añadir armas, tomos y objetos (bata, perlas, olla, monedero…), subir nivel, oro, daño, invulnerabilidad; invocar la Rata élite y la Pelusa Madre (bájale la vida para verla enfurecida).
 5. Morir: derrota; con la bata, resurrección con media vida. F8 reinicia sin restos.
 
-**Siguiente paso propuesto:** U3 (mundo, estructuras, interactuables, director y partida completa), **sin empezarlo** hasta que el autor apruebe U2 y autorice U3.
+**Aprobación:** el autor aprobó U2 el 29/09/2026 tras su prueba manual y confirmó las decisiones técnicas registradas en `docs/DECISIONES.md`.
+
+**Siguiente paso propuesto:** U3 (mundo, estructuras, interactuables, director y partida completa), **sin empezarlo** hasta que el autor lo autorice expresamente.
 
 ## Punto de partida
 

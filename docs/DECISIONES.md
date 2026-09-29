@@ -522,7 +522,7 @@ Codex que quedó sin terminar. Detalle y estado en [PROGRESO_U2](PROGRESO_U2.md)
   comunes y `CONTINUIDAD_AGENTES.md` desarrolla el protocolo de relevo al que remite;
   la norma de checkpoints «Cómo retomar» está en INSTRUCCIONES sin duplicar CONTINUIDAD.
 
-## U2: decisiones técnicas de implementación (29/09/2026, Claude Code; pendientes de confirmar por el autor)
+## U2: decisiones técnicas de implementación (29/09/2026, propuestas por Claude Code y confirmadas por el autor)
 
 Tomadas dentro del alcance autorizado, sin cambiar reglas ni balance de la web.
 
@@ -546,3 +546,12 @@ Tomadas dentro del alcance autorizado, sin cambiar reglas ni balance de la web.
 - **Referencia `u2-combat.json`**: regenerada dos veces antes de su primer uso por
   C# (añadir el jefe enfurecido; quitar listas anidadas que JsonUtility no lee).
   Desde la primera comparación con C#, no se ha tocado.
+
+## U2 aprobado (29/09/2026)
+
+El autor probó U2 y lo aprobó. Confirmó las tres decisiones técnicas que había
+presentado: multiplicadores del minuto de dificultad solo para el jefe y las
+apariciones QA, con ritmo 1; ensayo con invulnerabilidad QA y resolviendo las
+subidas de nivel con la primera carta; y regeneración de `u2-combat.json` antes de su
+primer uso por C#. U3 sigue sin autorizar. Cierre y resultados en
+[PROGRESO_U2](PROGRESO_U2.md).

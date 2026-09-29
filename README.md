@@ -1,12 +1,12 @@
 # MAMPORRO
 
-> Estado vigente en [ESTADO_ACTUAL](docs/ESTADO_ACTUAL.md): U1 aceptado; U2 implementado y pendiente de la prueba manual del autor ([PROGRESO_U2](docs/PROGRESO_U2.md)). No comenzar U3.
+> Estado vigente en [ESTADO_ACTUAL](docs/ESTADO_ACTUAL.md): U1 aceptado; U2 aprobado por el autor ([PROGRESO_U2](docs/PROGRESO_U2.md)). No comenzar U3.
 
 Roguelike 3D de supervivencia contra hordas ("bullet heaven") con estética retro
 tipo PS1, hecho con Three.js + TypeScript + Vite. Todo el contenido (geometría,
 texturas, fuente, textos y audio) se genera por código: no hay archivos externos.
 
-> **Estado: los 6 hitos web aprobados; U1 Unity aceptado y U2 implementado (pendiente de aprobación).** Doña Remedios y Sir Baguette recorren un mapa procedural con colinas,
+> **Estado: los 6 hitos web aprobados; U1 y U2 Unity aprobados.** Doña Remedios y Sir Baguette recorren un mapa procedural con colinas,
 > acantilados, casas derruidas, templetes en ruinas, granjas y pozos, y se
 > enfrentan a hordas de 4 tipos de enemigos, élites y un jefe. Al subir de nivel
 > eliges entre cartas con rareza (6 armas, 8 tomos, Reroll, Saltar y
@@ -672,7 +672,7 @@ npm run preview
 
 ## Migración a Unity y futuro del juego
 
-**Estado vigente (29/09/2026): U1 aceptado; U2 núcleo y combate implementado, pendiente de la prueba manual del autor.** Proyecto en
+**Estado vigente (29/09/2026): U1 aceptado; U2 núcleo y combate aprobado; U3 no autorizado.** Proyecto en
 `unity/`, Editor 6000.6.3f1, Windows x64 Mono, URP 17.6.0 e Input System 1.20.0.
 La licencia, importación, compilación, escena en Play Mode y generación de build
 ya se han probado. [Instrucciones Unity](unity/README.md) y

@@ -1,6 +1,6 @@
 # MAMPORRO en Unity
 
-> Estado vigente en [ESTADO_ACTUAL](../docs/ESTADO_ACTUAL.md): U1 aceptado; U2 implementado y pendiente de la prueba manual del autor ([PROGRESO_U2](../docs/PROGRESO_U2.md)). No comenzar U3.
+> Estado vigente en [ESTADO_ACTUAL](../docs/ESTADO_ACTUAL.md): U1 aceptado; U2 aprobado por el autor ([PROGRESO_U2](../docs/PROGRESO_U2.md)). No comenzar U3.
 
 ## Referencia U1 (aceptada por el autor)
 

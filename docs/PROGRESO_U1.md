@@ -1,6 +1,6 @@
 # Checkpoint U1
 
-> Estado vigente en [ESTADO_ACTUAL](ESTADO_ACTUAL.md): U1 aceptado; U2 implementado y pendiente de la prueba manual del autor ([PROGRESO_U2](PROGRESO_U2.md)). No comenzar U3.
+> Estado vigente en [ESTADO_ACTUAL](ESTADO_ACTUAL.md): U1 aceptado; U2 aprobado por el autor ([PROGRESO_U2](PROGRESO_U2.md)). No comenzar U3.
 
 ## Autorización y alcance — 29/09/2026
 
