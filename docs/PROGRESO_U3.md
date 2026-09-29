@@ -7,11 +7,11 @@ Este archivo es el **checkpoint vivo de continuidad entre Codex CLI y Claude Cod
 ## Cómo retomar
 
 - **Último commit publicado:** ver `git log -1 origin/claude/zen-pasteur-674ik0`. U2 cerrado y aprobado en `176423d`.
-- **Paso actual:** 2 del plan (referencia `u3-world.json`).
-- **Terminado y verificado:** paso 1 (este checkpoint y las entradas de documentación apuntando a U3). No hay código U3 todavía.
+- **Paso actual:** 3 del plan (núcleo del mundo en C# puro).
+- **Terminado y verificado:** pasos 1 y 2. `unity/Docs/Reference/u3-world.json` creada y comprobada contra la web (ver «Referencia u3-world»). **Aún no la usa ninguna prueba C#**: la primera prueba que la lea la congela.
 - **A medias:** nada.
 - **Sin commit a propósito:** `unity/ProjectSettings/ProjectSettings.asset` (identificador de nube), `ProjectAuditorSettings.asset`, `PackageManagerSettings.asset` y `URPProjectSettings.asset`: no publicar nunca. Unity reescribe con espacios algunos ajustes al abrir el proyecto (`RetroPipeline.asset`, `UniversalRenderPipelineGlobalSettings.asset`, `GraphicsSettings.asset`, `ProjectAuditorSettings.asset`): si solo cambian espacios o finales de línea, restaurarlos antes de hacer commit.
-- **Siguiente paso exacto:** crear `scripts/unity-reference-u3.mjs` con el mismo modelo que `scripts/unity-reference-u2.mjs` (guarda contra `src/` en `0505b16`, `--export-once` solo crea el archivo si no existe, sin argumentos comprueba) y exportar `unity/Docs/Reference/u3-world.json` con el contenido de la decisión 1.
+- **Siguiente paso exacto:** portar a `Assets/Mamporro/Core/World/` (C# sin UnityEngine) `simplex-noise` 4.0.3 (con su aviso MIT), `Heightfield` (`generateHeightfield`, `heightAt`, `normalAt`, `squircle`), `sites`, `props`, `colliders`, `decorations`, `groundCover`, `interactables` (colocación) y `WorldCollision`, y probarlos contra las secciones `simplex` y `worlds` de `u3-world.json` y `baseline.worlds`.
 
 Comprobar el estado desde CMD:
 
@@ -37,6 +37,24 @@ Añadir las entradas nuevas **de más antigua a más reciente** con la plantilla
 - Cambios locales no incluidos: los ajustes locales de Unity citados en «Cómo retomar».
 - Decisiones pendientes del autor: ninguna.
 - Siguiente paso exacto: paso 2 del plan.
+
+## Referencia u3-world (paso 2)
+
+`scripts/unity-reference-u3.mjs` (mismo modelo que U2: guarda contra `src/`, `--export-once` solo crea, sin argumentos comprueba; `--dry-run <ruta>` genera en otra ruta para inspeccionar). Antes de crearla se hicieron pasadas de prueba en archivos temporales para ajustar tamaño y escenarios; el archivo definitivo se creó una sola vez.
+
+Contenido (todas las cifras salen de la web aprobada):
+
+- `simplex`: 240 valores de `createNoise2D` alimentado por `Rng('U3-SIMPLEX')`.
+- `worlds`: semillas `HITO6QA`, `PULIDO-REFERENCIA`, `MAMPORRO` (las tres de `baseline.worlds`) y `U3-MUNDO`. Alturas finales en base64 de Float32; terreno sin aplanar (`rawHeights`) solo en `MAMPORRO` y `U3-MUNDO`. 300 muestras por mundo (`heightAt`, `normalAt`, `squircle`, `isInside`, `groundHeight`, `groundNormal`), 150 empujones cerca de colisionadores (`pushOutCircle`, `resolveObstacles`, `clampInside`), sites, piezas de props, colisionadores (decoración + props + interactuables, en su orden), interactuables y decoración completos; hierba y flores completas en `MAMPORRO` y `U3-MUNDO` y, en las otras dos, recuento más las 50 primeras.
+- `physics`: 5 trayectorias con `stepPlayerInCrowd` sobre `U3-MUNDO` (caminar, saltos, deslizamiento cuesta abajo, hacia un sitio y subida a la montaña del borde), una muestra cada 5 ticks.
+- `director`: parámetros de aparición cada 5 s y cronología de oleadas, élites y enjambre para 5, 10 y 15 minutos.
+- `spawns`: 3600 ticks de `SpawnSystem` en `MAMPORRO` con vista en movimiento, más las tres formaciones.
+- `chestCosts` (0–19) e `interactables`: descubrimiento, carga y descarga de un santuario y avisos de interacción siguiendo una ruta fija.
+- `runs`: cuatro partidas completas con la lógica de `Game.ts` (física → interactuar → `run.update` → derrota, victoria con 1,6 s o elegir la primera carta). Ruta: interactuables por vecino más cercano; se pulsa interactuar al llegar (< 1,5 m); en santuarios se espera a cargarlo o 700 ticks; 1800 ticks máximo por punto; giro de cámara = dirección de marcha.
+  - `remedios-5min-invencible` (`MAMPORRO`): 5 min + 40 s de enjambre; detalle cada 10 ticks los primeros 120 s y totales cada segundo.
+  - `remedios-10min-sin-totems` (`U3-MUNDO`, vulnerable): derrota a los 87 s; detalle completo.
+  - `baguette-15min-derrota` (`U3-MUNDO`, vulnerable, empieza por un tótem): derrota a los 31 s.
+  - `armario-jefe-victoria` (`HITO6QA`, invencible, armario revelado): jefe a los 12 s, victoria a los 299 s.
 
 ## Alcance autorizado
 
@@ -69,7 +87,7 @@ Detalle en `docs/DECISIONES.md`.
 Commits pequeños que compilen y pasen sus pruebas; actualizar este checkpoint tras cada paso; `git fetch` antes de cada push (si el remoto cambió, parar y avisar al autor).
 
 1. Este checkpoint y las entradas de documentación. **Hecho.**
-2. Referencia `u3-world.json`.
+2. Referencia `u3-world.json`. **Hecho.**
 3. Núcleo del mundo en C# puro (`Assets/Mamporro/Core`, sin UnityEngine): port de simplex-noise, heightfield, sites, props y colisionadores, decoración, cobertura del suelo, interactuables y colisión del mundo; pruebas contra `u3-world.json` y `baseline.worlds`.
 4. Render del mundo con el material retro de U1 en una escena nueva `Assets/Mamporro/U3/U3_Partida.unity`; U1 y U2 conservan sus escenas y builds.
 5. Física del jugador y colisiones de la horda sobre el mundo real.
@@ -85,7 +103,8 @@ Commits pequeños que compilen y pasen sus pruebas; actualizar este checkpoint t
 
 | Fecha y hora | Comando (CMD, raíz del repo) | Resultado | Registro |
 | --- | --- | --- | --- |
-| — | — | Ninguna todavía | — |
+| 29/09/2026 21:47 | `node scripts\unity-reference-u3.mjs --export-once` y `node scripts\unity-reference-u3.mjs` | creada (7,8 MB) y coincide con la web | `unity/Docs/Reference/u3-world.json` |
+| 29/09/2026 21:48 | `node scripts\unity-reference.mjs`, `node scripts\unity-reference-u2.mjs`; `git diff --exit-code` de `src/`, `baseline.json` y `u2-combat.json` | U0 y U2 coinciden; sin cambios | consola |
 
 ## Checkpoint al terminar U3
 
