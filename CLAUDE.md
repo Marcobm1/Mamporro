@@ -1,178 +1,106 @@
-# MAMPORRO: guía para trabajar en el proyecto
+# MAMPORRO — guía para Claude Code
 
-Roguelike 3D de supervivencia contra hordas con estética PS1, hecho con
-Three.js + TypeScript estricto + Vite. Todo el contenido es original y se
-genera por código (no hay assets externos).
+MAMPORRO es un roguelike 3D de supervivencia contra hordas con humor propio y estética PS1. La versión web aprobada usa Three.js + TypeScript estricto + Vite; la versión principal futura se está portando a Unity para Windows.
 
-## Documentos que hay que leer antes de tocar nada
+## Fuente de verdad y orden de lectura
 
-- [`docs/ESPECIFICACION.md`](docs/ESPECIFICACION.md): la especificación original
-  del autor (requisitos, contenido mínimo, hitos).
-- [`docs/DECISIONES.md`](docs/DECISIONES.md): todo lo acordado después. Manda
-  sobre la especificación cuando la concreta o la cambia.
-- [`README.md`](README.md): cómo ejecutarlo, controles, contenido del juego,
-  estructura del código, detalles técnicos y cómo añadir contenido.
+Antes de modificar código o documentación, lee:
 
-## Estado
+1. [`docs/INSTRUCCIONES_PROYECTO.md`](docs/INSTRUCCIONES_PROYECTO.md).
+2. [`docs/ESTADO_ACTUAL.md`](docs/ESTADO_ACTUAL.md).
+3. [`docs/PROGRESO_U2.md`](docs/PROGRESO_U2.md).
+4. [`docs/DECISIONES.md`](docs/DECISIONES.md) y [`docs/ESPECIFICACION.md`](docs/ESPECIFICACION.md).
+5. [`docs/MIGRACION_UNITY.md`](docs/MIGRACION_UNITY.md).
+6. [`README.md`](README.md) y [`unity/README.md`](unity/README.md).
+7. Para la referencia y mejoras futuras: [`unity/Docs/U0_REFERENCIA.md`](unity/Docs/U0_REFERENCIA.md) y [`unity/Docs/HOJA_DE_RUTA.md`](unity/Docs/HOJA_DE_RUTA.md).
 
-**Actualización 29/09/2026:** U1 aprobado expresamente y en implementación local.
-Estado operativo, pruebas nuevas y pendientes en [docs/PROGRESO_U1.md](docs/PROGRESO_U1.md).
-Este estado sustituye los pendientes de aprobación/localización del Editor que
-aparecen debajo como historial de U0. Unity 6000.6.3f1, Windows x64 Mono.
-No empezar U2; entregar U1 para revisión manual. No repetir navegador si no se
-modifica la web. No cambiar referencias para hacer pasar pruebas.
+Las decisiones posteriores concretan o sustituyen la especificación original. Los apartados antiguos que digan «U1 no iniciado», «U2 no autorizado» o «Codex pendiente de instalar» son históricos: manda `docs/ESTADO_ACTUAL.md`.
 
-- **Hechos y aprobados por el autor:** hitos 1–6. Base web aprobada:
-  `0505b1690656d15188860157612455639820fe1f`.
-- **En curso:** U0 de migración a Unity. Referencia y mejoras en `unity/Docs/`;
-  leer `unity/Docs/U0_REFERENCIA.md` y `unity/Docs/HOJA_DE_RUTA.md` al retomar.
-- Destino confirmado: Windows, futura publicación en Steam/plataformas similares.
-  Captura del autor: Unity 6.6 (6000.6.3f1); falta verificar módulos y entorno local.
-- Conservar progreso compatible. No se ha creado aún un proyecto abrible con Hub.
-- Próximo: cerrar U0 y proponer U1. Seguir un bloque cada vez, con aprobación.
-  El autor ha pedido mejoras de mundo, movilidad, ritmo, arte y contenido para
-  Unity; están registradas, no implementadas ni con todos sus detalles decididos.
+## Estado vigente — 29/09/2026
 
-## Proceso de cada hito
+- Repositorio: `https://github.com/Marcobm1/Mamporro`.
+- Rama por defecto y de trabajo: `claude/zen-pasteur-674ik0`. Push directo permitido; sin PR salvo petición. Nunca force-push.
+- Web: hitos 1–6 implementados y aprobados. Base de comparación: `0505b1690656d15188860157612455639820fe1f`.
+- U0: referencia de catálogo, RNG, fórmulas, guardados, mundo, i18n y medios preparada.
+- Unity: proyecto real en `unity/`, Unity 6.6 `6000.6.3f1`, Windows x64 Mono, URP 17.6.0, Input System 1.20.0, uGUI 2.6.0, Test Framework 1.8.0.
+- U1: implementado en `abe0a9b7f0b8c53f478b91c870341999df2ea073`, checkpoint `eb691b595eb247118075368430d34ed0a95735d1`; build y pruebas automáticas correctas y **aprobación manual del autor posterior al checkpoint**.
+- **U2 está expresamente autorizado. U3 no está autorizado.**
+- Codex CLI ya está instalado/verificado; no repetir la instalación.
 
-1. Lee los tres documentos de arriba y el código afectado.
-2. **Antes de programar**, propón un plan breve del hito. Si hay decisiones de
-   diseño importantes que no cubren la especificación ni `DECISIONES.md`,
-   pregúntalas todas juntas en una sola tanda y espera respuesta. Lo menor,
-   decídelo tú y apúntalo.
-3. Implementa respetando las convenciones de abajo.
-4. **Verifica:**
-   - `npm run typecheck`, `npm test` y `npm run build` sin errores.
-   - Tests nuevos para la lógica nueva (junto al código, `*.test.ts`).
-   - Prueba en navegador (ver "Verificación en navegador"): sin errores de
-     consola, capturas en español e inglés, a 1280×720 y otra resolución.
-   - Si hay algo que afecte al rendimiento, mídelo: el objetivo es 60 FPS con
-     300+ enemigos, así que la lógica debe quedarse en pocos ms por tick (hay
-     benchmarks en `src/systems/combat.test.ts`).
-5. Actualiza el `README.md` y apunta en `docs/DECISIONES.md` lo decidido.
-6. **Commits** pequeños y descriptivos, en español. Cada commit debe compilar y
-   pasar los tests por sí solo (se puede comprobar el árbol preparado con
-   `git write-tree` + `git archive` en una carpeta aparte). No incluir nombres
-   de modelos de IA en commits ni en el código.
-7. Push a la rama de trabajo. No abrir Pull Request salvo que el autor lo pida.
-8. **Resumen final para el autor:** qué has hecho, cómo probarlo, qué has
-   decidido por tu cuenta (para que lo confirme), qué no has podido comprobar y
-   qué queda. Después **párate y espera** a que lo pruebe.
+## U2: único bloque autorizado
 
-## Preferencias del autor
+Objetivo: portar a Unity el núcleo y el combate equivalentes de la web, apoyándose en la arquitectura técnica validada en U1 y en los valores esperados de U0.
 
-- Si tienes dudas, pregunta antes de hacer.
-- Comprueba los hechos en fuentes fiables y no supongas; si algo no se puede
-  comprobar, dilo.
-- Escríbele en español, claro y sin jerga innecesaria. Usa Windows: los
-  comandos que le des, que funcionen en CMD.
+Incluye: RNG determinista y derivaciones; estadísticas y fórmulas; daño, críticos/supercríticos y armadura; experiencia y subida de nivel; ofertas/rareza y acciones de progresión necesarias para probar combate; rejilla y colisiones de combate; proyectiles; una partida mínima funcional con derrota/reinicio; los 2 personajes y sus pasivas; las 6 armas; los 8 tomos; los 12 objetos; los 6 enemigos definidos en la referencia, incluido élite y jefe en cuanto a reglas de combate necesarias; pruebas de equivalencia y una escena QA controlada.
 
-## Convenciones del código
+No incluye U3–U5: mapa procedural completo, estructuras, interactuables, oleadas/partida completa, meta/tienda/misiones, importación de guardados, audio final, pulido global, servicios Steam ni las mejoras posteriores de mundo/escalada/economía/arte/contenido. No aproveches el port para rebalancear.
 
-- TypeScript estricto, sin `any`. El código se escribe en inglés; comentarios,
-  README y commits, en español.
-- **Data-driven:** armas, tomos, objetos, enemigos, personajes, oleadas y
-  ajustes en `src/data/*.ts`. Añadir contenido debe ser añadir una entrada de
-  datos y, si hace falta, un comportamiento.
-- **Textos:** ningún texto visible en el código. Van en `src/i18n/es.ts` (el de
-  referencia) y `src/i18n/en.ts` (mismas claves: lo comprueban el compilador y un
-  test). La fuente pixelada (`src/ui/font/glyphs.ts`) debe tener todos los
-  caracteres usados (hay un test que lo comprueba).
-- **Assets:** la base web es procedural. Para Unity, el autor autoriza imágenes
-  e iconos originales en archivos (28/09/2026); no usar contenido de terceros
-  sin acordarlo. Mantener la identidad original de MAMPORRO.
-- **Capas:** la lógica de la partida es pura, sin Three.js (`src/core/Run.ts`,
-  `src/systems/`), y se prueba con Vitest. El dibujo va en `src/render/` y en las
-  mallas de `src/world/`; la interfaz HTML/CSS, en `src/ui/`. `src/core/Game.ts`
-  lo une todo.
-- **Rendimiento:** entidades en arrays planos (sin crear objetos por tick en
-  los bucles calientes), `InstancedMesh`, rejilla espacial.
-- **Determinismo:** todo lo aleatorio de la partida sale del RNG con semilla
-  (`src/core/rng.ts`), con un generador derivado por subsistema
-  (`rng.derive('etiqueta')`).
-- **Guardado:** `src/save/schema.ts`, con `SAVE_VERSION` y migraciones; los datos
-  leídos siempre se validan. Al cambiar el esquema, sube la versión y añade la
-  migración con su test.
-- **Debug (F3):** acciones con las teclas numéricas; las partidas con trucos
-  quedan marcadas (`run.cheated`) y no deben dar moneda meta ni contar para
-  misiones.
+Criterios completos y exclusiones: `docs/PROGRESO_U2.md`.
 
-## Comandos
+## Forma de trabajar
 
-```bash
-npm install         # dependencias (Node 22.12 o superior; ver .nvmrc)
-npm run dev         # servidor de desarrollo en http://localhost:5173
-npm test            # tests (Vitest)
-npm run typecheck   # tipos
-npm run build       # tipos + build en dist/
-npm run preview     # sirve dist/ en http://localhost:4173
+1. Antes de editar, comprueba rama, `git status --short --branch`, remoto y cambios locales. Conserva cambios del autor y los que Unity haya generado; no uses `reset --hard`, `git clean`, checkout destructivo ni reclonado para «arreglar» un árbol sucio.
+2. El bloque U2 ya está autorizado: no vuelvas a pedir autorización general. Antes de programar, presenta un plan breve y agrupa únicamente dudas de diseño/materiales que no estén resueltas. Si no hay una decisión importante abierta, continúa dentro del alcance autorizado.
+3. Mantén la base web y `unity/Docs/Reference/` como referencia. Nunca uses `--write` o cambies valores esperados para hacer pasar un port incorrecto.
+4. Implementa por piezas verificables. Código en inglés; comentarios, documentación y commits en español. No nombres modelos de IA en código ni commits.
+5. Verifica lo que realmente ejecutes. Distingue pruebas unitarias, Edit Mode, Play Mode, build y benchmark; un benchmark de lógica no equivale a FPS reales.
+6. Actualiza `README.md`, `docs/DECISIONES.md` o su continuación vigente, `docs/ESTADO_ACTUAL.md` y `docs/PROGRESO_U2.md` cuando cambie el estado.
+7. Commits pequeños que compilen y pasen sus pruebas por separado; push directo a la rama. Sin PR.
+8. Al cerrar U2, resume qué cambió, cómo probarlo, decisiones técnicas, límites de verificación y siguiente bloque; después detente para que el autor lo pruebe. No empieces U3 automáticamente.
+
+## Convenciones que se conservan del juego web
+
+- IDs persistentes y reglas de la referencia no se cambian sin decisión explícita.
+- RNG propio y determinista; no sustituirlo por `UnityEngine.Random` para reglas que deban coincidir.
+- Datos separados de lógica/presentación. No guardar progreso del jugador en ScriptableObjects.
+- Evitar un `Update` o `Rigidbody` por enemigo por defecto; U1 validó una horda centralizada con arrays/pool/rejilla e instanciación.
+- No introducir DOTS/ECS solo porque Burst/Collections existan como dependencias transitivas.
+- La web sigue intacta durante el port. Si se modifica, hay que justificarlo y volver a ejecutar sus verificaciones correspondientes.
+- Todo contenido debe ser original. En Unity están permitidos iconos e ilustraciones originales en archivos; no implica autorización automática para packs de terceros o compras.
+- Guardado compatible será U4: moneda meta, desbloqueos, misiones, usos extra, selección y opciones equivalentes; no se trasladan partidas activas.
+
+## Entorno confirmado
+
+Raíz usada en Windows: `C:\Users\bymar\Desktop\Varios\Proyectos\Mamporro-git`.
+
+- Git `2.54.0.windows.1`.
+- Node `24.21.0`.
+- npm `11.19.0`.
+- Codex CLI `0.158.0`.
+- Editor: `C:\Program Files\Unity\Hub\Editor\6000.6.3f1\Editor\Unity.exe`.
+- Soporte Windows Mono presente. Windows IL2CPP no estaba instalado en U1; no hace falta cambiarlo para U2 salvo una necesidad justificada.
+- Hardware de referencia U1: Ryzen 7 7700X, RTX 4070 Ti SUPER, ~32 GB RAM; 1080p principal y 1440p secundario. No representa requisitos mínimos comerciales.
+
+## Comandos de referencia — CMD
+
+Web, solo cuando corresponda:
+
+```cmd
+npm.cmd run typecheck
+npm.cmd test
+npm.cmd run build
+node scripts\unity-reference.mjs
+node --test scripts\unity-reference-bytes.test.mjs
 ```
 
-## Verificación en navegador
+U1 ya dispone de lanzadores reproducibles:
 
-- Con `?test` en la URL (`http://localhost:5173/?test`, o la de `preview`) el
-  juego no captura el ratón y expone `window.__MAMPORRO__`: empezar partida,
-  acciones de debug, teletransportar, cámara, hacer aparecer enemigos, apagar
-  armas, dar objetos, usar interactuables, manejar la subida de nivel, leer el
-  estado... La lista está en `TestHooks`, en `src/core/Game.ts`.
-- En el entorno en la nube hay Playwright global y Chromium preinstalado. Para
-  WebGL sin GPU, lanza Chromium con
-  `--use-angle=swiftshader --enable-unsafe-swiftshader --ignore-gpu-blocklist`.
-  Va lento (unos pocos FPS): úsalo para comprobar que todo se ve y funciona, no
-  para medir FPS.
-- No se puede probar automáticamente la captura real del ratón (Pointer Lock)
-  ni los FPS reales en el equipo del autor: díselo para que lo compruebe él.
+```cmd
+scripts\u1.cmd edit
+scripts\u1.cmd play
+scripts\u1.cmd build
+scripts\u1.cmd benchmark
+node scripts\u1-report.mjs
+```
 
-## Hito 5: meta y UI (probado y aprobado por el autor)
+Para U2, crea o amplía automatización propia solo cuando sea útil y documenta los comandos reales; no inventes que una prueba se ha ejecutado. PowerShell puede interceptar `npm.ps1` en este equipo, por eso desde CMD se prefiere `npm.cmd`.
 
-- Menú principal, preparación de partida, personajes, tienda, misiones y opciones ES/EN.
-- Doña Remedios: Chancla y ralentización del 20 % a 3 m. Sir Baguette: Barra,
-  modelo propio y escudo que se carga tras 8 s sin daño; bloquea un golpe.
-- Calderilla del Caos: bajas, supervivencia, victoria y ocho misiones. Tienda de
-  desbloqueos y ampliaciones permanentes de Reroll/Saltar/Descartar (2 a 5 usos).
-- Catálogo inicial: 1 personaje, 4 armas y 8 objetos. Los filtros afectan a cartas,
-  rerolls, descartes, baúles y tótems. Tomos disponibles desde el inicio.
-- Guardado v2: migra opciones v1, guarda progreso, compras y selección. No guarda
-  partidas en curso. Aviso si no se puede persistir. Recompensas una sola vez.
-- Abandonos y partidas con trucos no conceden moneda ni progreso de misiones.
-  También marcan trucos los ganchos de pruebas que dañan, teletransportan o
-  desactivan las armas. Cambiar cámara o consultar estado no marca trucos.
-- Volúmenes de música/efectos y silencio guardados; audio incorporado en hito 6.
-- Datos: `src/data/meta.ts`; lógica pura: `src/systems/meta.ts`; pantallas:
-  `src/ui/MetaScreens.ts`. Números, reparto y verificación en `docs/DECISIONES.md`.
+## Rendimiento y referencia U1
 
-## Hito 6: pulido (probado y aprobado por el autor)
+U1 validó una escena técnica con 300/500/750/1000 entidades, salida 1920×1080 y 2560×1440, interna 360 (240/480 opcionales), D3D11, build Windows Mono. El objetivo de 60 FPS con 300 tuvo margen en ese equipo; también las cargas superiores, con picos aislados. No extrapolar esos datos al combate U2 ni a equipos modestos. GPU fue no fiable en varias condiciones y GC no estuvo disponible en la build normal; conservar esas limitaciones.
 
-- Efectos de sonido con WebAudio, con un límite para que cientos de golpes no
-  saturen; música chiptune por código con volumen separado y silencio.
-- Partículas y feedback, balance básico y tests completos.
-- Guía en el README para añadir un arma, un tomo, un objeto o un enemigo.
+## Mejoras confirmadas para después de validar la migración
 
-- Implementado: audio PCM original/WebAudio, música normal/intensa, presupuestos
-  de voces/partículas y opciones para reducir efectos; migración de guardado a v3.
-- Verificado: 202 tests/27 ficheros, typecheck y build. Navegador `?test` ES/EN,
-  1280×720 y 1600×900, sin errores. Script: `scripts/verify-browser.cjs`.
-- No se modifican valores de balance: matriz inicial documentada y limitada;
-  hace falta valoración humana de partidas completas, mezcla de audio y FPS.
-- Migración: `docs/MIGRACION_UNITY.md`, fases U0–U6. U0 autorizado; versión 6000.6.3f1 confirmada por captura;
-  entorno local y plan de U1 pendientes. Las mejoras posteriores están en `unity/Docs/HOJA_DE_RUTA.md`.
+Mundo/estructuras mayores; mesetas y rampas más marcadas; escalada libre por paredes sin imponer trepada breve ni resistencia sin consultarlo; inicio con menos enemigos y crecimiento progresivo; más oro **de partida** de enemigos según tiempo/dificultad; acabado retro más profesional; iconos/ilustraciones originales; más enemigos, armas, tomos y personajes. No introducir estas mejoras dentro de U2 salvo un prototipo aislado aprobado expresamente.
 
-## Preparación Unity
-
-- `node scripts/unity-reference.mjs` comprueba la referencia contra la base web
-  aprobada; no actualizar los valores esperados para hacer pasar un port incorrecto.
-- `unity/` contiene documentación y referencia de U0, aún sin Assets/Packages/
-  ProjectSettings. No inventar revisiones del Editor ni dar por probado C# sin Unity.
-- Aquí no se encontró Editor Unity; las escenas/builds se verificarán con el autor
-  en Windows hasta disponer de un entorno de Unity ejecutable.
-- Las recomendaciones adicionales de la hoja de ruta requieren aceptación; Steam
-  es el destino deseado, no autorización para publicar o gastar dinero.
-
-## Próxima conversación
-
-Preparar Codex CLI en el Windows del autor, desde el repositorio, para trabajar
-junto al Editor Unity. El contexto del Proyecto de ChatGPT no sustituye los
-Markdown versionados del repositorio. U1 no ha comenzado. Captura recibida el 29/09/2026: Unity 6.6 (6000.6.3f1).
-Falta comprobar módulos, ruta del Editor y ejecución local.
-Confirmado para Unity: escalada libre; más oro de enemigos que aumenta con
-el tiempo/dificultad; imágenes originales en archivos. Ver DECISIONES y hoja de ruta.
+Cámara contra estructuras, mando/remapeo, métricas locales adicionales y servicios Steam siguen siendo propuestas/etapas futuras, no funciones ya terminadas.
