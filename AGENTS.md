@@ -1,17 +1,20 @@
 # Entrada para agentes — MAMPORRO
 
-Este archivo es la puerta de entrada para Codex CLI y otros agentes que respeten `AGENTS.md`.
+Este archivo es la puerta de entrada para **Codex CLI** y otros agentes que respeten `AGENTS.md`.
 No uses el historial de una conversación como fuente principal: el estado vigente está versionado en el repositorio.
+
+Codex y Claude Code trabajan por turnos sobre la misma rama. **No trabajan a la vez.** Cuando Claude Code ceda el trabajo, Codex debe poder continuar solo con Git y la documentación. Cuando Codex ceda el trabajo, debe dejar el mismo nivel de contexto para Claude Code.
 
 ## Lectura obligatoria antes de tocar archivos
 
 1. [`docs/INSTRUCCIONES_PROYECTO.md`](docs/INSTRUCCIONES_PROYECTO.md) — reglas compartidas de trabajo.
 2. [`docs/ESTADO_ACTUAL.md`](docs/ESTADO_ACTUAL.md) — punto real de continuación.
-3. [`docs/PROGRESO_U2.md`](docs/PROGRESO_U2.md) — bloque actualmente autorizado.
-4. [`docs/DECISIONES.md`](docs/DECISIONES.md) — decisiones históricas; las posteriores prevalecen.
-5. [`docs/MIGRACION_UNITY.md`](docs/MIGRACION_UNITY.md) — plan U0–U6.
-6. [`README.md`](README.md) y [`unity/README.md`](unity/README.md) — uso de la web y del proyecto Unity.
-7. Para referencia: [`docs/ESPECIFICACION.md`](docs/ESPECIFICACION.md), [`unity/Docs/U0_REFERENCIA.md`](unity/Docs/U0_REFERENCIA.md) y [`unity/Docs/HOJA_DE_RUTA.md`](unity/Docs/HOJA_DE_RUTA.md).
+3. [`docs/CONTINUIDAD_AGENTES.md`](docs/CONTINUIDAD_AGENTES.md) — protocolo obligatorio de relevo Codex ↔ Claude Code.
+4. [`docs/PROGRESO_U2.md`](docs/PROGRESO_U2.md) — bloque actualmente autorizado y checkpoint vivo.
+5. [`docs/DECISIONES.md`](docs/DECISIONES.md) — decisiones históricas; las posteriores prevalecen.
+6. [`docs/MIGRACION_UNITY.md`](docs/MIGRACION_UNITY.md) — plan U0–U6.
+7. [`README.md`](README.md) y [`unity/README.md`](unity/README.md) — uso de la web y del proyecto Unity.
+8. Para referencia: [`docs/ESPECIFICACION.md`](docs/ESPECIFICACION.md), [`unity/Docs/U0_REFERENCIA.md`](unity/Docs/U0_REFERENCIA.md) y [`unity/Docs/HOJA_DE_RUTA.md`](unity/Docs/HOJA_DE_RUTA.md).
 
 ## Estado que manda
 
@@ -25,6 +28,25 @@ No uses el historial de una conversación como fuente principal: el estado vigen
 
 ## Antes de modificar nada
 
-Ejecuta o comprueba primero `git status --short --branch` y conserva cualquier cambio local. El cierre de U1 registró cambios posteriores generados por Unity fuera de los commits publicados; **no uses `reset --hard`, `clean`, force-push ni reclonado para ocultarlos**. Si hay conflicto real con el trabajo de U2, informa y resuélvelo sin borrar trabajo del autor.
+Ejecuta o comprueba primero:
+
+```cmd
+git status --short --branch
+git log -8 --oneline
+git remote -v
+git fetch origin
+```
+
+Si el árbol está limpio y el remoto va por delante, actualiza solo con `git pull --ff-only`.
+
+Conserva cualquier cambio local. El cierre de U1 registró cambios posteriores generados por Unity fuera de los commits publicados; **no uses `reset --hard`, `clean`, force-push ni reclonado para ocultarlos**. Si hay conflicto real con el trabajo de U2, informa y resuélvelo sin borrar trabajo del autor o de Claude Code.
+
+Comprueba en `docs/PROGRESO_U2.md` el último relevo antes de editar. No supongas que el agente anterior completó todo lo que tenía previsto.
+
+## Al terminar o ceder el turno
+
+Antes de que termine la sesión de Codex, actualiza `docs/PROGRESO_U2.md` con lo realmente hecho, pruebas ejecutadas, commits/push, cambios locales pendientes, limitaciones y el **siguiente paso exacto** para Claude Code o para la siguiente sesión de Codex.
+
+Si una pieza está completa y verificable, haz commit pequeño y push antes del relevo. No crees un commit roto solo para transferir contexto. Si queda trabajo local no publicable, descríbelo con precisión y no lo borres.
 
 Trabaja un bloque cada vez. No abras Pull Request salvo petición expresa. Los commits van en español, pequeños y verificables. No empieces U3, las mejoras posmigración ni servicios Steam dentro de U2.
