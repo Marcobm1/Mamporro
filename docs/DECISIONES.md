@@ -381,3 +381,58 @@ oficial consultada: https://unity.com/releases/unity-6/support .
 - Captura del autor leída: **Unity 6.6 (6000.6.3f1)**; Hub muestra Compatible y Descarga completa.
 - Sustituye el pendiente anterior de recibir la versión exacta. Quedan ruta, módulos, compatibilidad de paquetes y ejecución local.
 - No acredita una build ni un proyecto Unity abierto. U1 sigue sin iniciar; el siguiente bloque es preparar Codex CLI en Windows.
+
+## 29/09/2026 — entorno local comprobado y checkpoint de preparación
+
+- Codex CLI 0.158.0 ha arrancado en Windows y leído los documentos del repositorio.
+  Git 2.54.0.windows.1, Node 24.21.0 y npm 11.19.0 responden a sus consultas de versión.
+- Editor localizado en
+  `C:\Program Files\Unity\Hub\Editor\6000.6.3f1\Editor\Unity.exe`, sin arrancarlo.
+  Sus metadatos confirman `6000.6.3f1_45d8eee7de74`, coherente con la captura.
+- Archivos de soporte Windows Mono detectados para x86, x64 y ARM64.
+  Windows IL2CPP ausente entre las variantes instaladas; su entrada en el catálogo
+  de módulos y las herramientas IL2CPP generales no acreditan ese soporte.
+- Herramientas C++ y Windows SDK no detectados en PATH, rutas habituales y
+  registros consultados. No se descartan instalaciones personalizadas sin registrar.
+- Pendientes: arranque del Editor, licencia operativa, importación de paquetes,
+  escenas, compilación C# y build. No se han ejecutado pruebas Unity ni navegador
+  en este bloque; las evidencias anteriores conservan su fecha y alcance.
+- Se añade `AGENTS.md` como entrada breve y
+  [ENTORNO_LOCAL_CODEX.md](ENTORNO_LOCAL_CODEX.md) con rutas, versiones, límites,
+  fuentes oficiales y pasos para retomar desde CMD. Sustituye los pendientes
+  históricos de revisión del Editor, localización y arranque de Codex.
+- **Propuesta de U1 no aprobada:** Windows x64 Mono, URP 17.6 e Input System 1.20.0.
+  No se fija una revisión de URP sin comprobarla. U1 no ha comenzado; no se crean
+  `Assets/`, `Packages/` ni `ProjectSettings/`. Se mantiene la aprobación por bloques.
+- Comprobaciones locales de este bloque: typecheck, 202 tests/27 ficheros y build
+  web correctos. `node scripts\unity-reference.mjs` falla con salida 1 y
+  `AssertionError [ERR_ASSERTION]: La referencia difiere: no regenerar para ocultar una regresión.`
+  La salida muestra diferencias CRLF/LF y de hashes, aún sin diagnóstico completo.
+  No se modifica la referencia ni se usa `--write`; commit y push detenidos por
+  instrucción del autor hasta resolver el fallo. Detalle en el checkpoint.
+
+## 29/09/2026 — corrección del verificador de U0 en Windows
+
+- Diagnóstico confirmado: `core.autocrlf=true` convertía los textos locales a
+  CRLF. Coincidían 0/127 hashes fuente sin transformar y 127/127 tras normalizar
+  solo CRLF a LF, idénticos también a los blobs de la base aprobada.
+- La referencia calculada en memoria tenía únicamente esas 127 diferencias de
+  hashes: catálogo, traducciones, RNG, fórmulas, guardados, mundos y audio sin
+  diferencias, tampoco numéricas. El texto de baseline contenía 5022 CRLF.
+- Las cuatro huellas binarias del manifiesto coincidían. La de `report.json`
+  coincidía tras la misma normalización de finales de línea.
+- Corrección autorizada en U0: normalizar solo CRLF a LF en fuentes `.ts`/`.css`
+  bajo `src/`, `package-lock.json`, el texto de baseline y la huella de report,
+  con rutas explícitas para los JSON. Los demás archivos permanecen byte a byte.
+  Se conservan el control contra el commit base y los hashes de archivos locales.
+- Sin reformatear JSON, quitar espacios, introducir tolerancias, cambiar Git,
+  regenerar referencias o alterar medios. No se usa `--write`.
+- Cuatro pruebas aisladas con buffers sintéticos pasan: equivalencia LF/CRLF,
+  cambios reales detectados, conservación de otros bytes/formato y detección de
+  alteraciones binarias. Ejecución: `node --test scripts\unity-reference-bytes.test.mjs`.
+- Verificaciones posteriores correctas, todas con salida 0: typecheck, 202 tests
+  de 27 ficheros, build web, referencia U0 (datos y medios coinciden) y
+  `git diff --check` (solo avisos de conversión LF/CRLF). Sin reinstalar dependencias.
+  El fallo inicial queda resuelto y permite la entrega autorizada tras revisión
+  del diff y del remoto. No se atribuyen nuevas pruebas de navegador o Unity;
+  U1 continúa sin empezar.

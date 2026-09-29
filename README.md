@@ -672,7 +672,10 @@ npm run preview
 
 El autor aprobó los seis hitos y el arranque de U0. Destino inicial: **Windows de
 escritorio**, con futura publicación en Steam y plataformas similares; conservar
-el progreso compatible. Tiene Unity 6.6: falta la revisión exacta del Editor.
+el progreso compatible. Unity 6.6 (6000.6.3f1) está confirmado por captura y
+metadatos locales del ejecutable. Arranque, licencia operativa y builds pendientes;
+U1 no ha comenzado. Comprobaciones y cómo retomar en el
+[checkpoint del entorno local](docs/ENTORNO_LOCAL_CODEX.md).
 
 - [Plan U0–U6](docs/MIGRACION_UNITY.md).
 - [Estado de la preparación y referencia](unity/Docs/U0_REFERENCIA.md).

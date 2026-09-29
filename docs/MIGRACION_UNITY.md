@@ -2,9 +2,11 @@
 
 Estado: **U0 autorizado y en preparación** (28/09/2026). Hito 6 aprobado por el
 autor. Windows de escritorio confirmado, con objetivo Steam/plataformas similares;
-conservar el progreso compatible. El autor dispone de Unity 6.6, pendiente de
-revisión exacta. Aún no se ha creado el proyecto de Editor ni una build Unity.
+conservar el progreso compatible. Unity 6.6 (6000.6.3f1) está confirmado por
+captura y metadatos locales (29/09/2026). Aún no se ha creado el proyecto de
+Editor ni una build Unity; U1 sigue pendiente de aprobación.
 La versión Three.js seguirá siendo la referencia hasta aprobar la sustitución.
+Diagnóstico local y pendientes en [ENTORNO_LOCAL_CODEX.md](ENTORNO_LOCAL_CODEX.md).
 
 ## Objetivo y alcance
 
@@ -31,10 +33,10 @@ por el autor y recomendaciones en
 
 - **Plataforma confirmada:** Windows de escritorio, con futuro lanzamiento en
   Steam/plataformas similares. La edición web no es el primer objetivo Unity.
-- **Editor indicado por el autor:** Unity 6.6. Pedir revisión completa de Hub y
-  comprobar canal/soporte antes de fijar `ProjectVersion.txt` y paquetes. La
-  recomendación inicial de LTS se revisa con esta información: una Update final
-  no se descarta por no ser LTS; tampoco se asume que cualquier 6.6 sea final.
+- **Editor confirmado:** Unity 6.6 (6000.6.3f1), por captura y metadatos locales.
+  No volver a pedir la revisión. Quedan arranque, licencia operativa e importación
+  de paquetes; no fijar una revisión de URP sin comprobarla. La propuesta de U1
+  (Windows x64 Mono, URP 17.6 e Input System 1.20.0) aún no está aprobada.
 - **Render:** probar URP con una escena representativa antes de comprometer toda
   la migración. Mantener 240/360/480 píxeles de altura interna, filtrado puntual,
   paleta, niebla, geometría sencilla, dither y cuantización de vértices.

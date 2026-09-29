@@ -6,6 +6,7 @@ import { createHash } from 'node:crypto';
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { createServer } from 'vite';
+import { referenceBytes } from './unity-reference-bytes.mjs';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const target = new URL('../unity/Docs/Reference/baseline.json', import.meta.url);
@@ -56,7 +57,7 @@ try {
   assert.deepEqual(Object.keys(es.es).sort(), Object.keys(en.en).sort());
   const files = execFileSync('git', ['ls-tree', '-r', '--name-only', baseCommit, '--', 'src', 'package-lock.json'], { cwd: root, encoding: 'utf8' }).trim().split('\n');
   const sourceHashes = {};
-  for (const file of files) sourceHashes[file] = createHash('sha256').update(await readFile(new URL(`../${file}`, import.meta.url))).digest('hex');
+  for (const file of files) sourceHashes[file] = createHash('sha256').update(referenceBytes(file, await readFile(new URL(`../${file}`, import.meta.url)))).digest('hex');
   const worldSamples = seeds.slice(0, 3).map(seed => {
     const data = world.generateWorldData(seed);
     return { seed, sites: data.sites, interactables: data.interactables,
@@ -109,11 +110,11 @@ try {
     }
     console.log('Referencia U0 exportada desde el código aprobado.');
   } else {
-    assert.equal(await readFile(target, 'utf8'), json, 'La referencia difiere: no regenerar para ocultar una regresión.');
+    assert.equal(referenceBytes('unity/Docs/Reference/baseline.json', await readFile(target)).toString('utf8'), json, 'La referencia difiere: no regenerar para ocultar una regresión.');
     const manifest = JSON.parse(await readFile(new URL('../unity/Docs/Reference/media.json', import.meta.url), 'utf8'));
     for (const [name, sha] of Object.entries(manifest.files)) {
       const bytes = await readFile(new URL(`../unity/Docs/Reference/${name}`, import.meta.url));
-      assert.equal(createHash('sha256').update(bytes).digest('hex'), sha, `Medio alterado: ${name}`);
+      assert.equal(createHash('sha256').update(referenceBytes(`unity/Docs/Reference/${name}`, bytes)).digest('hex'), sha, `Medio alterado: ${name}`);
     }
     console.log('Referencia U0 verificada: datos y medios coinciden.');
   }
