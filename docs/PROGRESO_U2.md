@@ -4,6 +4,52 @@ Estado: **AUTORIZADO por el autor el 29/09/2026; no implementado aún en el cort
 
 U1 fue probado y aprobado manualmente. U2 es el único bloque autorizado. **No empezar U3.**
 
+Este archivo es además el **checkpoint vivo de continuidad entre Codex CLI y Claude Code** mientras U2 siga activo. Debe actualizarse después de avances relevantes y siempre antes de un relevo de herramienta. Protocolo: [`CONTINUIDAD_AGENTES.md`](CONTINUIDAD_AGENTES.md).
+
+## Estado del relevo actual
+
+- Herramientas autorizadas para ejecutar U2: **Codex CLI** y **Claude Code**, por turnos, nunca simultáneamente.
+- Último estado funcional publicado antes del trabajo U2: U1 aprobado.
+- U2 aún no tiene implementación registrada en este checkpoint.
+- Próximo agente: cualquiera de los dos, después de comprobar Git y el árbol local.
+- Primer paso obligatorio: auditar `git status --short --branch`, últimos commits y posibles cambios generados por Unity que quedaron fuera del checkpoint U1.
+- No existe ninguna decisión nueva de diseño de U2 que deba inferirse de una conversación privada: el alcance de este documento es el autorizado.
+
+## Registro de sesiones y relevos de U2
+
+Añadir las entradas nuevas **de más antigua a más reciente**. No borrar entradas de otro agente salvo corrección factual explícita.
+
+### 29/09/2026 — preparación documental del relevo — ChatGPT
+
+- No se implementó código de U2.
+- Se estableció que Codex CLI y Claude Code trabajarán alternándose sobre la misma rama y no en paralelo.
+- Se creó `docs/CONTINUIDAD_AGENTES.md` como protocolo de handoff.
+- Se actualizaron las entradas de Codex/Claude y la documentación compartida para obligar a registrar trabajo, pruebas, cambios locales y siguiente paso antes del relevo.
+- No se ejecutaron pruebas Unity/web porque este cambio es exclusivamente documental.
+- Siguiente paso de implementación: auditar el árbol local e iniciar la base determinista/datos/pruebas de U2 siguiendo el plan autorizado de este checkpoint.
+
+### Plantilla para cada sesión posterior
+
+```text
+### AAAA-MM-DD — <objetivo breve> — <Codex|Claude Code>
+
+- Punto de partida/commit:
+- Trabajo realizado:
+- Archivos/sistemas principales:
+- Decisiones nuevas:
+- Pruebas realmente ejecutadas y resultado:
+- Pruebas pendientes/no ejecutadas:
+- Commits creados:
+- Push realizado: sí/no
+- Estado del árbol al terminar:
+- Cambios locales no incluidos:
+- Errores/limitaciones conocidas:
+- Decisiones pendientes del autor:
+- Siguiente paso exacto:
+```
+
+No escribir resultados previstos en el apartado de pruebas. Si no se ejecutó una comprobación, indicar expresamente que no se ejecutó.
+
 ## Punto de partida
 
 - Rama: `claude/zen-pasteur-674ik0`.
@@ -15,6 +61,8 @@ U1 fue probado y aprobado manualmente. U2 es el único bloque autorizado. **No e
 - `unity/Docs/Reference/` y `scripts/unity-reference.mjs` conservan los valores esperados de U0.
 
 Antes de editar, comprobar `git status --short --branch`. El cierre de U1 dejó constancia de posibles cambios locales posteriores generados por Unity (14 modificados y dos ajustes nuevos). Preservarlos; no resetear ni limpiar el árbol para iniciar U2.
+
+Al recibir un relevo, revisar también `git log -8 --oneline`, `git fetch origin` y la entrada más reciente de este registro antes de modificar archivos. Si el árbol está limpio y solo falta avanzar, usar `git pull --ff-only`.
 
 ## Objetivo de U2
 
@@ -122,3 +170,5 @@ Registrar aquí:
 - instrucciones de prueba manual;
 - aprobación del autor o pendientes;
 - siguiente paso propuesto (U3), sin empezarlo automáticamente.
+
+Al cerrar U2, trasladar las decisiones permanentes a `docs/DECISIONES.md`, actualizar `docs/ESTADO_ACTUAL.md` y las referencias de entrada para que Codex y Claude Code apunten al checkpoint del siguiente bloque autorizado.
