@@ -20,7 +20,7 @@ El repositorio es la memoria compartida. Una decisión, prueba, limitación o si
 2. `docs/INSTRUCCIONES_PROYECTO.md`.
 3. `docs/ESTADO_ACTUAL.md`.
 4. Este archivo, `docs/CONTINUIDAD_AGENTES.md`.
-5. El checkpoint del bloque vigente, actualmente `docs/PROGRESO_U3.md`.
+5. El checkpoint del bloque vigente, actualmente `docs/PROGRESO_U4.md` (solo planificación autorizada).
 6. `docs/DECISIONES.md` y el resto de documentación indicada por el checkpoint.
 
 Después comprobar desde CMD:
@@ -128,10 +128,10 @@ Ningún agente debe:
 
 ## Estado actual del relevo
 
-A fecha 29/09/2026:
+A fecha 04/10/2026:
 
 - U1 está cerrado y aprobado.
 - U2 está aprobado y cerrado.
-- U3 está autorizado y es el único bloque activo. U4 no está autorizado.
-- Codex CLI y Claude Code son herramientas válidas para trabajar U3 por turnos.
-- El próximo agente que continúe U3 debe leer `docs/PROGRESO_U3.md`, auditar el árbol local y continuar desde el último checkpoint publicado, no desde recuerdos de otro chat.
+- U3 aprobada manualmente el 04/10/2026; último cierre técnico previo: `83246ebfd873b0c5d23611a1d557f83096180217`.
+- U4 autorizado solo para planificación. No implementar hasta la siguiente respuesta del autor.
+- Codex CLI y Claude Code trabajan por turnos. Leer `docs/PROGRESO_U4.md` y el cierre de U3, auditar el árbol y continuar desde el checkpoint; conservar los siete ajustes locales Unity excluidos.

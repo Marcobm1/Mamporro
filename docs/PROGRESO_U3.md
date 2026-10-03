@@ -1,18 +1,18 @@
 # Checkpoint U3 — mundo y partida completa equivalentes
 
-Estado: **IMPLEMENTADO Y VERIFICADO el 03/10/2026; a la espera de la prueba manual y la aprobación del autor.** U4 no está autorizado.
+Estado: **IMPLEMENTADO, VERIFICADO Y APROBADO MANUALMENTE por el autor el 04/10/2026 como base funcional de la migración.** U4 autorizado solo para planificación; implementación pendiente de la siguiente respuesta del autor. Continuidad en [PROGRESO_U4](PROGRESO_U4.md).
 
 Este archivo es el **checkpoint vivo de continuidad entre Codex CLI y Claude Code** mientras U3 siga activo. Debe actualizarse después de cada paso completado y siempre antes de un relevo de herramienta. Protocolo: [`CONTINUIDAD_AGENTES.md`](CONTINUIDAD_AGENTES.md); reglas comunes: [`INSTRUCCIONES_PROYECTO.md`](INSTRUCCIONES_PROYECTO.md).
 
 ## Cómo retomar
 
-- **Último cierre publicado y verificado:** `121b0c26b30f94a5e2008cb02bc34072c1514ecd`, «Completa el cierre documental de U3» (04/10/2026, paso 12). Este checkpoint añade el diagnóstico acotado del minuto 5; localizar su commit «Documenta el diagnóstico de los picos de U3» con `git log`. Última implementación: `d09b5d0` (paso 11); paso 10: `19562c2`; paso 9: `443645d`; paso 8: `16543c8`; núcleo del paso 10: `db490f5`; paso 7: `59a5f7f`; paso 6: `c42e22d`.
-- **Paso actual:** ninguno. U3 cerrado (pasos 1–12) y **detenido para la prueba manual del autor** (instrucciones en «Checkpoint al terminar U3»).
+- **Último cierre técnico previo a la aprobación:** `83246ebfd873b0c5d23611a1d557f83096180217`, «Documenta el diagnóstico de los picos de U3». Cierre documental: `121b0c2`; última implementación: `d09b5d0`. Aprobación manual del autor recibida el 04/10/2026.
+- **Paso actual:** ninguno. U3 cerrado (pasos 1–12) y aprobado manualmente el 04/10/2026. Las instrucciones manuales se conservan para regresión.
 - **Terminado y verificado:** pasos 1–12 (ensayo de partida real en la build: ver «Ensayo de rendimiento U3»). Las cuatro partidas de `runs` coinciden con la web de principio a fin (`IntegratedRunTests`) y en escena se juegan 2 personajes × 3 duraciones hasta resultados (`U3RunFlowTests`). El 03/10/2026 (paso 11): Edit Mode **167/167**, Play Mode **17/17**, build Windows x64 Mono y ensayo 8/8 puntos con `validRender`. **`u3-world.json` sigue congelada**, sin regeneración.
-- **A medias:** nada. Pendiente: prueba manual y aprobación del autor, y confirmación de las decisiones técnicas propuestas en `DECISIONES.md`. U4 no autorizado.
+- **A medias:** nada. Las seis propuestas técnicas en `DECISIONES.md` no han recibido confirmación individual; su clasificación para U4 está en `PROGRESO_U4.md`.
 - **Revalidación del relevo, 04/10/2026:** Edit Mode 167/167, Play Mode 17/17 y verificadores U0/U2/U3 correctos, sin cambios de código. Cierre publicado; diagnóstico de CSV completado sin atribuir causa a los picos ni aplicar una corrección especulativa.
 - **Sin commit a propósito:** `unity/ProjectSettings/ProjectSettings.asset` (configuración local de nube), `ProjectAuditorSettings.asset`, `PackageManagerSettings.asset` y `URPProjectSettings.asset`: no publicar. También se conservan fuera del índice los cambios de espacios/EOL de `RetroPipeline.asset`, `UniversalRenderPipelineGlobalSettings.asset` y `GraphicsSettings.asset` (el autor confirmó el 03/10/2026 que se tratan igual). No limpiar ni restaurar estos archivos automáticamente.
-- **Siguiente paso exacto:** esperar al autor. Si informa de fallos, corregirlos dentro de U3. No empezar U4 sin su autorización expresa.
+- **Siguiente paso exacto:** revisar el plan y la única duda de importación de `PROGRESO_U4.md`; esperar la siguiente respuesta del autor antes de implementar U4.
 
 Comprobar el estado desde CMD:
 
@@ -424,9 +424,22 @@ Pruebas ejecutadas el **03/10/2026**, horas Europe/Madrid; los XML/logs finales 
 - **Entrega:** documentación de este diagnóstico en commit «Documenta el diagnóstico de los picos de U3», tras revisar el índice; fetch antes del push normal y comprobación del remoto. Solo se versiona este Markdown; artefactos del diagnóstico y siete ajustes Unity permanecen locales. El hash propio se consulta en Git para evitar un registro circular.
 - **Siguiente paso exacto:** detenerse y esperar la prueba manual/aprobación del autor y su confirmación de las seis propuestas técnicas. Ninguna pieza de código queda a medias.
 
+### 04/10/2026 — aprobación manual y apertura de planificación U4 — Codex
+
+- **Punto de partida:** local y remoto `83246ebfd873b0c5d23611a1d557f83096180217`, ahead 0 / behind 0; solo siete ajustes Unity excluidos, sin WIP ni commits inéditos.
+- **Aprobación del autor:** U3 está bien por ahora y queda aprobada como base funcional de la migración. No implica confirmar individualmente las seis propuestas técnicas.
+- **Trabajo:** cierre formal en documentación y apertura de `PROGRESO_U4.md` solo para planificación. Revisados save v3, migraciones v1/v2, meta, tienda, misiones, opciones, i18n, selección y componentes Unity reutilizables.
+- **Archivos:** checkpoints, estado, decisiones, migración, hoja de ruta, README y guías de entrada/continuidad. Sin cambios de runtime.
+- **Pruebas:** ninguna suite nueva; auditoría Git y revisión documental. Las pruebas detalladas en el cierre técnico son históricas, no repetidas en esta sesión.
+- **Limitaciones:** mejoras visuales/de diseño aplazadas después de la migración, no fallos bloqueantes de U3. Picos aislados del minuto 5 aún sin causa aislada; se conserva el diagnóstico y no bloquea avanzar.
+- **Decisiones:** U4 solo planificación; excepción futura a `src/` limitada al exportador validado. Seis propuestas clasificadas, sin atribuir confirmación individual.
+- **Commit/push:** unidad «Registra la aprobación de U3 y prepara el plan de U4»; hash consultable con `git log -1 --format="%H %s" -- docs/PROGRESO_U4.md`. Publicación normal tras fetch y verificación del remoto.
+- **Árbol/exclusiones:** conservar sin publicar/restaurar los siete ajustes Unity de «Cómo retomar».
+- **Siguiente paso exacto:** esperar la respuesta del autor al plan U4 y a la única duda sobre importación parcialmente inválida. No implementar todavía.
+
 ## Checkpoint al terminar U3
 
-Cierre documental recuperado del borrador de Claude Code del 03/10/2026 y completado por Codex el 04/10/2026. **Implementado y verificado; pendiente de la prueba manual y la aprobación del autor.**
+Cierre documental recuperado del borrador de Claude Code del 03/10/2026 y completado por Codex el 04/10/2026. **Implementado y verificado; aprobado manualmente por el autor el 04/10/2026.**
 
 - **Commits publicados de U3 al recibir el relevo:** `4bce54d` (apertura), `525fb1e` (referencia), `522d8de` (núcleo del mundo), `272ce95` (escena y render), `4de718d` (combate en el mundo), `b21160c` (checkpoint del paso 5), `c42e22d` (director), `59a5f7f` (interactuables, armario y victoria), `db490f5` (partidas integradas), `16543c8` (HUD, minimapa, avisos y pausa), `443645d` (inicio, resultados y F3), `19562c2` (partidas aceleradas en escena), `d09b5d0` (ensayo de rendimiento). Publicación del cierre: entrada del 04/10.
 - **Sistemas portados:** mundo procedural, física del jugador, combate sobre el mundo, director completo (tabla, curva, oleadas, élites, enjambre, 5/10/15), interactuables (baúles, mesas camilla, tótems, armario → Pelusa Madre → victoria), HUD, minimapa, avisos, telegrafiado, pausa, inicio, resultados y depuración F3.
@@ -466,7 +479,7 @@ Opcional: `scripts\u3.cmd edit`, `scripts\u3.cmd play`, `scripts\u3.cmd visual` 
 13. **Reinicio fuerte:** tras acumular enemigos, disparos, daño, objetos y niveles, prueba Reintentar desde resultados: mismo personaje/duración/semilla, vida y nivel iniciales, oro/bajas a cero, sin jefe ni efectos anteriores; el director empieza de nuevo (pueden aparecer enemigos nuevos enseguida). Repite tras victoria y derrota, prueba Nuevo mapa y Volver al inicio; F8 vuelve al inicio con el mapa actual. No debe arrastrarse invencibilidad, carta, desafío, avisos ni objetos de la sesión anterior.
 14. **Presentación técnica:** F1 interna 240/360/480, F2 dithering, F9 ajuste de vértices, F6 ventana 1080p/1440p; comprueba legibilidad de cartas/HUD y que se dibujan enemigos, armas y proyectiles. Los FPS instantáneos de F3 no sustituyen el ensayo registrado.
 
-Dime qué falla o qué no se parece a la web. Si todo está bien, la aprobación de U3 y la confirmación de las decisiones técnicas propuestas quedan registradas aquí y en `DECISIONES.md`.
+La prueba manual del autor aprueba U3 como base funcional. No equivale a confirmar individualmente las seis propuestas técnicas.
 
-- **Aprobación del autor:** pendiente.
-- **Siguiente bloque propuesto:** U4 (menús finales, Calderilla, tienda, misiones, guardado compatible y filtros de desbloqueo), **sin empezar** hasta que el autor lo autorice.
+- **Aprobación del autor:** recibida el 04/10/2026.
+- **Siguiente bloque:** U4 (meta, UI, opciones y traslado de guardados), autorizado solo para planificación. Implementación pendiente de la siguiente respuesta del autor; véase `PROGRESO_U4.md`.

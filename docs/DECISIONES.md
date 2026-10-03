@@ -1,8 +1,6 @@
 # Decisiones acordadas
 
-**Estado actual:** U1 aprobado el 29/09/2026; véase la entrada al final y
-[PROGRESO_U1](PROGRESO_U1.md). Las menciones anteriores a aprobación pendiente
-son históricas y quedan sustituidas por esa autorización.
+**Estado actual:** U1–U3 aprobados; U3 aprobada manualmente el 04/10/2026. U4 autorizado solo para planificación; véase la última entrada y [PROGRESO_U4](PROGRESO_U4.md). Las autorizaciones anteriores son históricas.
 
 Registro de lo que se ha decidido durante el desarrollo, además de la
 [especificación original](ESPECIFICACION.md). Cuando esto la concreta o la
@@ -591,3 +589,16 @@ Tomadas dentro del alcance autorizado, sin cambiar reglas ni balance de la web. 
 - **Pausa sin opciones**: las opciones de la pausa web (idioma, volumen, etc.) dependen del guardado y quedan para U4.
 - **Ensayo U3**: partida real con director que avanza sin medir hasta cada punto (minutos 2, 5, 9 y enjambre) y mide allí 10 s + 30 s; invulnerable de ensayo y primera carta, como en U2.
 - **Presentación técnica**: telegrafiado, tapas de baúl, anillos de las mesas y brillos con el render instanciado de combate; el efecto de abrir baúl es un anillo (la web usa partículas) y el texto usa la fuente integrada de Unity. Pulido en U5.
+
+
+## Aprobación funcional de U3 y planificación U4 (04/10/2026)
+
+El autor ha realizado la prueba manual y aprueba U3 como base funcional de la migración. Último cierre técnico previo: `83246ebfd873b0c5d23611a1d557f83096180217`. Las limitaciones visuales/de diseño son mejoras futuras; los picos aislados documentados siguen sin causa aislada y no bloquean el avance.
+
+U4 queda autorizado **solo para planificación**. No implementar hasta la siguiente respuesta del autor. Plan, revisión del save real, pasos y pruebas en [PROGRESO_U4](PROGRESO_U4.md). U4 conserva IDs y progreso compatible; no guarda partidas activas ni fusiona progresos. Guardado Unity existente: validar, copiar y pedir sustitución explícita; nunca sumar saldos o recompensas. El original exportado no se modifica.
+
+Excepción acotada a `src/`: U4 necesita exportación JSON validada del progreso web. No autoriza modificar reglas/balance. Base funcional `0505b16` y referencias U0/U2/U3 congeladas.
+
+**Las seis propuestas técnicas anteriores no se consideran confirmadas individualmente.** Clasificación recomendada: HoldWhileChoosing, márgenes ya existentes y metodología del ensayo pueden cerrarse como registro técnico; mapa fijo y pausa sin opciones son provisionales sustituidos en U4; presentación técnica se pule en U5. Ninguna necesita una decisión bloqueante para U4. No ampliar tolerancias.
+
+Dirección futura confirmada: después de terminar y aprobar U4–U6, bloques separados para mundo y estructuras considerablemente mayores; terreno rectangular/geométrico, grandes mesetas, cambios de altura, rampas y verticalidad; escalada libre; acabado retro profesional y animaciones de jugador, enemigos, ataques, impactos, muertes, jefe y mundo; después expansión de contenido e iconos/ilustraciones originales. Megabonk es referencia de escala, verticalidad y lectura espacial, sin copiar arte, mapas, assets ni diseño exacto. No ejecutar estas mejoras todavía.

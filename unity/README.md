@@ -1,6 +1,6 @@
 # MAMPORRO en Unity
 
-> Estado vigente en [ESTADO_ACTUAL](../docs/ESTADO_ACTUAL.md): U1 y U2 aprobados; U3 implementado y verificado, pendiente de la prueba manual y la aprobación del autor ([cierre e instrucciones](../docs/PROGRESO_U3.md#checkpoint-al-terminar-u3)). U4 no autorizado.
+> Estado vigente en [ESTADO_ACTUAL](../docs/ESTADO_ACTUAL.md): U1–U3 aprobados; aprobación manual U3 el 04/10/2026 ([cierre](../docs/PROGRESO_U3.md#checkpoint-al-terminar-u3)). [U4 autorizado solo para planificación](../docs/PROGRESO_U4.md); no implementar hasta la siguiente respuesta del autor.
 
 ## Referencia U1 (aceptada por el autor)
 
@@ -226,4 +226,4 @@ la horda provisional no garantiza el coste del futuro combate completo.
 - `Generated/`: escena, malla, datos y materiales originales con sus `.meta`.
 
 La web y `Docs/Reference/` permanecen intactos. U1 ya ha recibido revisión favorable del
-autor; U2 está aprobado y U3 está autorizado. No iniciar U4.
+autor; U2 y U3 están aprobados. U4 está autorizado solo para planificación; no implementarlo hasta la siguiente respuesta del autor.

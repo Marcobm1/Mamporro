@@ -11,7 +11,7 @@ Antes de modificar código o documentación, lee:
 1. [`docs/INSTRUCCIONES_PROYECTO.md`](docs/INSTRUCCIONES_PROYECTO.md).
 2. [`docs/ESTADO_ACTUAL.md`](docs/ESTADO_ACTUAL.md).
 3. [`docs/CONTINUIDAD_AGENTES.md`](docs/CONTINUIDAD_AGENTES.md).
-4. [`docs/PROGRESO_U3.md`](docs/PROGRESO_U3.md) (bloque vigente; U2 cerrado en [`docs/PROGRESO_U2.md`](docs/PROGRESO_U2.md)).
+4. [`docs/PROGRESO_U4.md`](docs/PROGRESO_U4.md) (planificación vigente) y cierre aprobado en [`docs/PROGRESO_U3.md`](docs/PROGRESO_U3.md).
 5. [`docs/DECISIONES.md`](docs/DECISIONES.md) y [`docs/ESPECIFICACION.md`](docs/ESPECIFICACION.md).
 6. [`docs/MIGRACION_UNITY.md`](docs/MIGRACION_UNITY.md).
 7. [`README.md`](README.md) y [`unity/README.md`](unity/README.md).
@@ -19,7 +19,7 @@ Antes de modificar código o documentación, lee:
 
 Las decisiones posteriores concretan o sustituyen la especificación original. Los apartados antiguos que digan «U1 no iniciado», «U2 no autorizado» o «Codex pendiente de instalar» son históricos: manda `docs/ESTADO_ACTUAL.md`.
 
-## Estado vigente — 29/09/2026
+## Estado vigente — 04/10/2026
 
 - Repositorio: `https://github.com/Marcobm1/Mamporro`.
 - Rama por defecto y de trabajo: `claude/zen-pasteur-674ik0`. Push directo permitido; sin PR salvo petición. Nunca force-push.
@@ -28,11 +28,11 @@ Las decisiones posteriores concretan o sustituyen la especificación original. L
 - Unity: proyecto real en `unity/`, Unity 6.6 `6000.6.3f1`, Windows x64 Mono, URP 17.6.0, Input System 1.20.0, uGUI 2.6.0, Test Framework 1.8.0.
 - U1: implementado en `abe0a9b7f0b8c53f478b91c870341999df2ea073`, checkpoint `eb691b595eb247118075368430d34ed0a95735d1`; build y pruebas automáticas correctas y **aprobación manual del autor posterior al checkpoint**.
 - U2: aprobado por el autor el 29/09/2026 (`docs/PROGRESO_U2.md`).
-- **U3 está expresamente autorizado. U4 no está autorizado.** U3 implementado y verificado el 03/10/2026; a la espera de la prueba manual y la aprobación del autor (`docs/PROGRESO_U3.md`).
+- **U3 aprobada manualmente el 04/10/2026. U4 autorizado solo para planificación.** No implementar hasta la siguiente respuesta del autor (`docs/PROGRESO_U4.md`).
 - Codex CLI ya está instalado/verificado; no repetir la instalación.
-- Codex y Claude Code pueden ejecutar U3 por turnos. El último checkpoint publicado manda sobre recuerdos de sesiones anteriores.
+- Codex y Claude Code trabajan por turnos. El último checkpoint publicado manda sobre recuerdos de sesiones anteriores.
 
-## U3: único bloque autorizado
+## U3: alcance ya aprobado (histórico)
 
 Objetivo: mundo y partida completa equivalentes a la web aprobada (`0505b16`), sobre el núcleo y el combate de U2.
 
@@ -45,19 +45,19 @@ Decisiones, plan y criterios: `docs/PROGRESO_U3.md`.
 ## Forma de trabajar
 
 1. Antes de editar, comprueba rama, `git status --short --branch`, últimos commits, remoto y cambios locales. Haz `git fetch origin`; si el árbol está limpio y solo falta avanzar, usa `git pull --ff-only`. Conserva cambios del autor, de Unity y del agente anterior; no uses `reset --hard`, `git clean`, checkout destructivo ni reclonado para «arreglar» un árbol sucio.
-2. Lee el último apartado de relevo en `docs/PROGRESO_U3.md`. No asumas que Codex terminó todo lo planeado ni repitas trabajo sin comprobar commits y estado.
-3. El bloque U3 ya está autorizado: no vuelvas a pedir autorización general. Antes de programar, presenta un plan breve y agrupa únicamente dudas de diseño/materiales que no estén resueltas. Si no hay una decisión importante abierta, continúa dentro del alcance autorizado.
+2. Lee el último apartado de relevo en `docs/PROGRESO_U4.md`. No asumas que Codex terminó todo lo planeado ni repitas trabajo sin comprobar commits y estado.
+3. U4 está autorizado solo para planificación. El plan y las dudas agrupadas están en `docs/PROGRESO_U4.md`; esperar la siguiente respuesta del autor antes de programar.
 4. Mantén la base web y `unity/Docs/Reference/` como referencia. Nunca uses `--write` o cambies valores esperados para hacer pasar un port incorrecto.
 5. Implementa por piezas verificables. Código en inglés; comentarios, documentación y commits en español. No nombres modelos de IA en código ni commits.
 6. Verifica lo que realmente ejecutes. Distingue pruebas unitarias, Edit Mode, Play Mode, build y benchmark; un benchmark de lógica no equivale a FPS reales.
-7. Actualiza `docs/PROGRESO_U3.md` cuando cambie el punto de continuación y siempre antes de ceder el turno a Codex. Actualiza `README.md`, `docs/DECISIONES.md`, `docs/ESTADO_ACTUAL.md` y demás documentación cuando cambie el estado global o haya decisiones permanentes.
+7. Actualiza `docs/PROGRESO_U4.md` cuando cambie el punto de continuación y siempre antes de ceder el turno a Codex. Actualiza `README.md`, `docs/DECISIONES.md`, `docs/ESTADO_ACTUAL.md` y demás documentación cuando cambie el estado global o haya decisiones permanentes.
 8. Commits pequeños que compilen y pasen sus pruebas por separado; push directo a la rama. Sin PR.
 9. Si la sesión/tokens se acercan al límite, no empieces una pieza nueva: deja lo terminado verificado, commit/push cuando sea seguro, documenta cualquier cambio local no publicado y escribe un `Siguiente paso exacto` para Codex o para la siguiente sesión.
-10. Al cerrar U3, resume qué cambió, cómo probarlo, decisiones técnicas, límites de verificación y siguiente bloque; después detente para que el autor lo pruebe. No empieces U4 automáticamente.
+10. Al cerrar U4, resume cambios, pruebas reales, decisiones y limitaciones; detente para la prueba manual del autor. U3 ya fue aprobada.
 
 ## Relevo a Codex
 
-Antes de terminar una sesión con trabajo relevante, `docs/PROGRESO_U3.md` debe indicar:
+Antes de terminar una sesión con trabajo relevante, `docs/PROGRESO_U4.md` debe indicar:
 
 - que la sesión fue realizada con Claude Code;
 - objetivo concreto abordado;
@@ -78,7 +78,7 @@ No crear un commit roto solo para transferir contexto. Si un trabajo incompleto 
 - Datos separados de lógica/presentación. No guardar progreso del jugador en ScriptableObjects.
 - Evitar un `Update` o `Rigidbody` por enemigo por defecto; U1 validó una horda centralizada con arrays/pool/rejilla e instanciación.
 - No introducir DOTS/ECS solo porque Burst/Collections existan como dependencias transitivas.
-- La web sigue intacta durante el port. Si se modifica, hay que justificarlo y volver a ejecutar sus verificaciones correspondientes.
+- La base web `0505b16` y las referencias congeladas se conservan. U4 permite modificar `src/` exclusivamente para exportación JSON validada del progreso, con typecheck, tests, build y navegador cuando corresponda; sin cambios de reglas ni balance.
 - Todo contenido debe ser original. En Unity están permitidos iconos e ilustraciones originales en archivos; no implica autorización automática para packs de terceros o compras.
 - Guardado compatible será U4: moneda meta, desbloqueos, misiones, usos extra, selección y opciones equivalentes; no se trasladan partidas activas.
 

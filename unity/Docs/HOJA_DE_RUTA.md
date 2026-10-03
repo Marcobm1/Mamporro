@@ -1,6 +1,6 @@
 # Mejoras de MAMPORRO en Unity
 
-> Estado vigente en [ESTADO_ACTUAL](../../docs/ESTADO_ACTUAL.md): U1 y U2 aprobados; U3 implementado y verificado, pendiente de la prueba manual y la aprobación del autor ([PROGRESO_U3](../../docs/PROGRESO_U3.md)). U4 no autorizado.
+> Estado vigente en [ESTADO_ACTUAL](../../docs/ESTADO_ACTUAL.md): U1–U3 aprobados; aprobación manual U3 el 04/10/2026. [U4 autorizado solo para planificación](../../docs/PROGRESO_U4.md); no implementar hasta la siguiente respuesta del autor.
 
 **Historial — U1 autorizado el 29/09/2026 y posteriormente aceptado:** prototipo técnico de movimiento, imagen y horda;
 seguimiento en [PROGRESO_U1](../../docs/PROGRESO_U1.md). La escalada libre, mundo
@@ -78,7 +78,7 @@ Fuentes oficiales consultadas el 28/09/2026:
   poder evaluar después las rampas/escalada; cualquier variante de movimiento
   requiere su plan concreto y aceptación, conservando una escena de referencia.
 - **U2 aprobado por el autor:** núcleo y combate equivalentes en escenario controlado.
-- **U3 implementado, pendiente de aprobación; U4–U6 no autorizados:** trasladar y validar los sistemas restantes. Las diferencias
+- **U3 aprobado; U4 solo planificación; U5–U6 futuros:** trasladar y validar los sistemas restantes. Las diferencias
   intencionadas se documentarán en vez de hacer pasar un cambio de diseño por
   un fallo del port. No ampliar el catálogo durante la migración.
 - **Después de la base Unity aprobada:** bloques P0, luego P1 y lotes pequeños P2.
@@ -97,3 +97,16 @@ Fuentes oficiales consultadas el 28/09/2026:
   estilo y tamaños; no implica comprar o usar packs de terceros automáticamente.
 - Tamaño del mundo y cantidad de contenido: fijar tras medir movilidad, densidad
   de objetivos, presupuesto de memoria y rendimiento en el equipo de referencia.
+
+
+## Dirección confirmada el 04/10/2026 — después de U4–U6
+
+U3 ha sido aprobada como base funcional. Las observaciones de presentación y diseño no son regresiones que bloqueen la migración. Primero terminar y aprobar U4–U6; después abordar por bloques separados:
+
+- Mundo considerablemente mayor y estructuras mayores.
+- Terreno más rectangular/geométrico, grandes mesetas, cambios de altura marcados, rampas y mayor verticalidad.
+- Escalada libre por paredes en su bloque específico.
+- Acabado retro bastante más profesional y animaciones de jugador, enemigos, ataques, impactos, muertes, jefe y mundo.
+- Posterior expansión de enemigos, armas, tomos, personajes e iconos/ilustraciones originales, junto con las mejoras ya registradas.
+
+Megabonk sirve como referencia de escala, verticalidad y lectura espacial, manteniendo identidad, arte y diseño propios de MAMPORRO. No copiar arte, mapas, assets ni diseño exacto. Esta dirección no autoriza implementar las mejoras durante U4.
