@@ -6,10 +6,11 @@ Este archivo es el **checkpoint vivo de continuidad entre Codex CLI y Claude Cod
 
 ## Cómo retomar
 
-- **Última implementación publicada:** `d09b5d09a091c02b3a02e2a0f88a9a696e5a3972` (paso 11). El cierre documental del paso 12 se recupera y verifica el 04/10/2026; commit «Completa el cierre documental de U3» (consultar `git log`; publicación registrada en la siguiente entrada). Paso 10: `19562c2`; paso 9: `443645d`; paso 8: `16543c8`; núcleo del paso 10: `db490f5`; paso 7: `59a5f7f`; paso 6: `c42e22d`. Base recibida por Claude Code el 03/10/2026: `b21160cf060ef30daa4c55759aec1e0095b0bd54`.
+- **Último cierre publicado y verificado:** `121b0c26b30f94a5e2008cb02bc34072c1514ecd`, «Completa el cierre documental de U3» (04/10/2026, paso 12). Este checkpoint añade el diagnóstico acotado del minuto 5; localizar su commit «Documenta el diagnóstico de los picos de U3» con `git log`. Última implementación: `d09b5d0` (paso 11); paso 10: `19562c2`; paso 9: `443645d`; paso 8: `16543c8`; núcleo del paso 10: `db490f5`; paso 7: `59a5f7f`; paso 6: `c42e22d`.
 - **Paso actual:** ninguno. U3 cerrado (pasos 1–12) y **detenido para la prueba manual del autor** (instrucciones en «Checkpoint al terminar U3»).
 - **Terminado y verificado:** pasos 1–12 (ensayo de partida real en la build: ver «Ensayo de rendimiento U3»). Las cuatro partidas de `runs` coinciden con la web de principio a fin (`IntegratedRunTests`) y en escena se juegan 2 personajes × 3 duraciones hasta resultados (`U3RunFlowTests`). El 03/10/2026 (paso 11): Edit Mode **167/167**, Play Mode **17/17**, build Windows x64 Mono y ensayo 8/8 puntos con `validRender`. **`u3-world.json` sigue congelada**, sin regeneración.
 - **A medias:** nada. Pendiente: prueba manual y aprobación del autor, y confirmación de las decisiones técnicas propuestas en `DECISIONES.md`. U4 no autorizado.
+- **Revalidación del relevo, 04/10/2026:** Edit Mode 167/167, Play Mode 17/17 y verificadores U0/U2/U3 correctos, sin cambios de código. Cierre publicado; diagnóstico de CSV completado sin atribuir causa a los picos ni aplicar una corrección especulativa.
 - **Sin commit a propósito:** `unity/ProjectSettings/ProjectSettings.asset` (configuración local de nube), `ProjectAuditorSettings.asset`, `PackageManagerSettings.asset` y `URPProjectSettings.asset`: no publicar. También se conservan fuera del índice los cambios de espacios/EOL de `RetroPipeline.asset`, `UniversalRenderPipelineGlobalSettings.asset` y `GraphicsSettings.asset` (el autor confirmó el 03/10/2026 que se tratan igual). No limpiar ni restaurar estos archivos automáticamente.
 - **Siguiente paso exacto:** esperar al autor. Si informa de fallos, corregirlos dentro de U3. No empezar U4 sin su autorización expresa.
 
@@ -99,7 +100,7 @@ Sonda temporal con 200 000 entradas exactas (base64). Diferencias de Mono 6.13 (
 | 2560×1440 | enjambre | 1667,9 | 0,85 | 1,57 | 6,51 | 0 | 747–750 | 0,986 | 0,60 |
 
 - **Objetivo cumplido en este equipo:** 60 FPS con ~300 enemigos en el mapa real (minuto 5: >2000 FPS) y también en el enjambre con 750 vivos (>1600 FPS, P99 <1,7 ms). No hizo falta perfilar.
-- **Picos aislados:** en el minuto 5, 2–4 fotogramas superan 16,7 ms (máximo 62 y 106 ms) de unos 60 000; los demás puntos no tienen ninguno. No se ha aislado la causa (candidatos sin comprobar: recolección de basura o creación de textos de la interfaz); U1 también registró picos aislados.
+- **Picos aislados:** en el minuto 5, 2–4 fotogramas superan 16,7 ms (máximo 62 y 106 ms) de unos 60 000; los demás puntos no tienen ninguno. Diagnóstico del 04/10 en la entrada inferior: ningún tick medido llega a esos tiempos; no coinciden con oleadas/élite ni directamente con la captura. Causa sin aislar; GC/interfaz siguen siendo hipótesis, no conclusiones. No bloquea el cierre.
 - **Límites:** GPU no disponible (`-1`) y GC por fotograma no disponible en la build normal, como en U1/U2. Memoria Unity al final, no pico. Un único equipo potente; no representa requisitos mínimos. La invulnerabilidad y la primera carta automática son condiciones de ensayo. Capturas `u3-<salida>-<punto>.png` revisadas (la del enjambre muestra 750 vivos, HUD y «+00:43 ENJAMBRE»).
 - Informes: `unity/TestResults/U3/u3-<ancho>x<alto>-<punto>-*.json`, `.csv` y `-ticks.csv`; logs `player-1920x1080.log`, `player-2560x1440.log`.
 
@@ -384,7 +385,7 @@ Pruebas ejecutadas el **03/10/2026**, horas Europe/Madrid; los XML/logs finales 
 - **Decisiones nuevas:** ninguna. Las seis propuestas técnicas de `DECISIONES.md` permanecen pendientes de confirmación del autor; no se modifica ese archivo. U4 no autorizado.
 - **Pruebas nuevas realmente ejecutadas:** tabla inferior. Build, visual y benchmark del 03/10 se revisan como evidencia histórica, sin atribuirlos a esta sesión ni a una prueba jugable manual.
 - **Pruebas pendientes:** prueba manual y aprobación del autor. Después de publicar este cierre se revisarán con tiempo limitado los CSV del minuto 5; no bloquea la entrega.
-- **Commit previsto:** «Completa el cierre documental de U3», exclusivamente los ocho Markdown revisados. Resultado del commit/push y hash se registrarán en la siguiente entrada tras verificarlos; este texto no certifica todavía su publicación.
+- **Commit y push realizados:** `121b0c26b30f94a5e2008cb02bc34072c1514ecd`, «Completa el cierre documental de U3», exclusivamente ocho Markdown. `git diff --cached --check` correcto; el check global solo señala espacios en los ajustes Unity excluidos. Tras `git fetch origin`, remoto seguía en `d09b5d0`; push normal `d09b5d0..121b0c2` y `git ls-remote origin refs/heads/claude/zen-pasteur-674ik0` confirmaron el hash publicado. Árbol posterior: únicamente los siete ajustes Unity excluidos (cinco modificados y dos sin seguimiento).
 - **Estado local/exclusiones:** cuatro ajustes ProjectSettings enumerados en «Cómo retomar» y espacios/EOL de los tres assets allí enumerados, conservados sin publicar ni restaurar. `Builds` y `TestResults` ignorados. Ningún cambio de código, `src/` ni referencias.
 - **Limitaciones:** picos aislados del minuto 5 sin causa confirmada; no se altera el balance ni se infiere una causa de GC sin medición. Aprobación y decisiones técnicas pendientes del autor.
 - **Siguiente paso exacto:** publicar el cierre, diagnóstico acotado del minuto 5 y detenerse para la prueba manual; no empezar U4.
@@ -397,6 +398,31 @@ Pruebas ejecutadas el **03/10/2026**, horas Europe/Madrid; los XML/logs finales 
 | 04/10/2026 01:13–01:16 | `node scripts\unity-reference-u2.mjs` | U2 coincide con la web aprobada, exit 0 | consola de la sesión; referencia leída `unity/Docs/Reference/u2-combat.json` |
 | 04/10/2026 01:16–01:18 | `node scripts\unity-reference-u3.mjs` | U3 coincide con la web aprobada, exit 0; sin regeneración | consola de la sesión; referencia leída `unity/Docs/Reference/u3-world.json` |
 | 04/10/2026 01:10 | `git diff --exit-code 0505b1690656d15188860157612455639820fe1f -- src` y `git diff --exit-code b21160c -- unity/Docs/Reference unity/Assets/Mamporro/U2` | sin diferencias | consola de la sesión |
+
+### 04/10/2026 — diagnóstico acotado de los picos del minuto 5 — Codex
+
+- **Punto de partida:** cierre `121b0c2` ya publicado y verificado. Diagnóstico después del cierre, dentro del límite de 30–40 minutos solicitado; revisión de datos/código y registro 01:19–01:26, sin modificar runtime.
+- **Fuentes leídas:** los ocho informes originales `unity/TestResults/U3/u3-*-20261003T*.json` y sus CSV por fotograma/tick, ambos `player-*.log`; `U3Benchmark.cs`, `U3Game.cs`, `RunHud.cs`, `Core/World/Director.cs` y `Core/Catalog.cs`.
+- **Comando ejecutado:** `node unity\TestResults\U3\diagnostico-min5-20261004.cjs` (04/10/2026 01:20, exit 0). Script y salida `unity/TestResults/U3/diagnostico-min5-20261004.json` son artefactos locales ignorados, conservados. El análisis lee los CSV originales sin alterarlos: acumula `ms / 1000` por fila para situar cada fotograma, selecciona `ms > 1000/60`, ordena los ticks por duración y calcula el máximo entre 2,9–3,5 s para contrastar la captura. No es una nueva ejecución del ensayo.
+
+| Resolución / CSV del 03/10 | Fotograma (índice CSV) | Intervalo desde inicio de medición (s) | Duración (ms) |
+| --- | --- | --- | --- |
+| 1080p / `u3-1920x1080-min5-20261003T183024349.csv` | 62126 | 29,4508–29,4754 | 24,6271 |
+| mismo | 62130 | 29,4781–29,5400 | 61,8965 |
+| mismo | 62133 | 29,5649–29,5864 | 21,5521 |
+| mismo | 62134 | 29,5864–29,6055 | 19,0328 |
+| 1440p / `u3-2560x1440-min5-20261003T183316584.csv` | 10930 | 5,0228–5,1283 | 105,5353 |
+| mismo | 10933 | 5,1471–5,1661 | 18,9627 |
+
+- **Tick largo:** en 1080p hay 62 987 fotogramas y 1766 ticks; máximo de tick **0,5520 ms** (índice 1432). En 1440p, 64 737 fotogramas y 1800 ticks; máximo **1,5301 ms** (índice 370). Ningún intervalo cronometrado `Session.Step + CombatView.Step` explica por sí solo los picos. `Run.Choose` automático y UI están fuera de ese cronómetro: no se descartan por esta prueba. Los otros seis puntos no tienen fotogramas >16,67 ms.
+- **Oleada/élite:** no corresponde una especial ni élite nueva dentro del intervalo de partida 290–330,1 s del punto min5 en duración 10. Las especiales anterior/siguiente son 270/360 s; élites 240/360 s. No hubo saltos de depuración ni interactuables durante ese intervalo. Quedan apariciones y combate ordinarios.
+- **Captura:** `CaptureScreenshot` se solicita a los 3 s de medición. En 2,9–3,5 s, máximos **3,6846 ms (1080p)** y **6,4195 ms (1440p)**; los picos grandes ocurren bastante después y en instantes distintos entre resoluciones. Se descarta la coincidencia directa; no se prueba ausencia de trabajo diferido.
+- **Nivel/carta/interfaz:** el ensayo elige automáticamente y no abre el panel de cartas (`AutoChoose`); no se registra el instante de cada nivel/elección. `RunHud` crea cadenas y tres `StringBuilder` por fotograma mediante `Chips`, aunque evita asignar `Text.text` si el contenido no cambia. `RefreshStatus` construye el texto de F3 cada 0,1 s incluso con el panel oculto. Son costes observables por lectura, pero **no hay evidencia temporal que atribuya los picos a ellos o al GC**. Los textos de HUD se crean en `Build`, antes de medir; actualizar cadenas/mallas es otra operación.
+- **Límite de los CSV:** fotogramas solo tienen índice/ms/CPU/GPU; ticks, índice/ms. No comparten frame ID ni tiempo de partida ni lista de eventos. `runTimeFrom=290` incluye calentamiento, mientras los CSV empiezan después. No se debe convertir el índice de tick en un frame exacto ni alinear CPU/GPU por fila: los timings de Unity pueden llegar con retraso. En estos datos los máximos CPU aparecen varios fotogramas después. GC no disponible y GPU agregada invalidada en los informes originales.
+- **Decisión y resultado:** causa sin aislar con la evidencia disponible. Se conserva como limitación conocida, sin optimización especulativa ni cambio de reglas. No se repiten Edit/Play/build/min5 porque no se ha modificado código; siguen siendo nuevas de esta sesión 167/167 y 17/17, con verificadores U0/U2/U3 correctos. No se modifica `src/`, referencias, scripts ni `DECISIONES.md`.
+- **Para una investigación posterior, si se solicita:** instrumentar en una build de perfilado la relación frame/tick/tiempo y eventos de nivel/elección; medir por separado `Choose`, actualización de HUD, canvas y GC, y reproducir min5 en las dos resoluciones. Los CSV actuales no permiten resolver esa atribución retrospectivamente. No bloquea la prueba manual de U3 ni autoriza U4.
+- **Entrega:** documentación de este diagnóstico en commit «Documenta el diagnóstico de los picos de U3», tras revisar el índice; fetch antes del push normal y comprobación del remoto. Solo se versiona este Markdown; artefactos del diagnóstico y siete ajustes Unity permanecen locales. El hash propio se consulta en Git para evitar un registro circular.
+- **Siguiente paso exacto:** detenerse y esperar la prueba manual/aprobación del autor y su confirmación de las seis propuestas técnicas. Ninguna pieza de código queda a medias.
 
 ## Checkpoint al terminar U3
 
