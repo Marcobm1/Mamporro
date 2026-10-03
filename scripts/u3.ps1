@@ -1,10 +1,30 @@
-param([ValidateSet('create','edit','play','build','visual')][string]$Action='edit')
+param([ValidateSet('create','edit','play','build','visual','benchmark')][string]$Action='edit')
 $ErrorActionPreference='Stop'
 $repo=Split-Path $PSScriptRoot -Parent
 $project=Join-Path $repo 'unity'
 $results=Join-Path $project 'TestResults\U3'
 New-Item -ItemType Directory -Force -Path $results | Out-Null
-if($Action -eq 'visual') {
+if($Action -eq 'benchmark') {
+    $player=Join-Path $project 'Builds\U3\Mamporro-U3.exe'
+    if(!(Test-Path -LiteralPath $player)){throw 'Primero genera la build U3.'}
+    $summary=@()
+    foreach($size in @(@(1920,1080),@(2560,1440))) {
+        $width=$size[0];$height=$size[1];$started=Get-Date
+        $log=Join-Path $results "player-${width}x${height}.log"
+        # Ensayo gráfico explícitamente visible; no ocultar ni usar -nographics.
+        $process=Start-Process -FilePath $player -WorkingDirectory $project -ArgumentList "-screen-fullscreen 1 -window-mode exclusive -screen-width $width -screen-height $height -u3-benchmark -u3-output `"$results`" -logFile `"$log`"" -WindowStyle Normal -PassThru
+        if(!$process.WaitForExit(900000)){throw "El ensayo no terminó en 15 min: $log"}
+        if($process.ExitCode -ne 0){throw "Build terminó con error: $log"}
+        $reports=@(Get-ChildItem -LiteralPath $results -Filter "u3-${width}x${height}-*.json" | Where-Object {$_.LastWriteTime -ge $started})
+        if($reports.Count -ne 4){throw 'No se completaron los cuatro puntos (minutos 2, 5, 9 y enjambre).'}
+        foreach($report in $reports){
+            $data=Get-Content -Raw $report.FullName | ConvertFrom-Json
+            if(!$data.validRender -or $data.outputWidth -ne $width -or $data.outputHeight -ne $height){throw "Render/resolución inválidos: $($report.Name)"}
+            $summary+=[pscustomobject]@{salida="${width}x${height}";punto=$data.scenario;fps=[math]::Round($data.meanFps,1);p95ms=[math]::Round($data.p95,2);p99ms=[math]::Round($data.p99,2);enemigos="$($data.minEntities)-$($data.maxEntities)";tickMs=[math]::Round($data.tickMean,3);gpuMs=[math]::Round($data.gpuMean,2)}
+        }
+    }
+    $summary | Format-Table -AutoSize | Out-String | Write-Output
+} elseif($Action -eq 'visual') {
     $player=Join-Path $project 'Builds\U3\Mamporro-U3.exe'
     if(!(Test-Path -LiteralPath $player)){throw 'Primero genera la build U3.'}
     $visual=Join-Path $results 'Visual'

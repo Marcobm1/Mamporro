@@ -27,7 +27,8 @@ namespace Mamporro.Tests
             // Minimapa: terreno pintado y sin marcas hasta descubrir; la depuración 8 lo revela todo.
             var pixels=g.Hud.Map.Texture.GetPixels32();var first=pixels[0];bool varied=false;foreach(var p in pixels)if(!p.Equals(first)){varied=true;break;}
             Assert.That(varied,Is.True,"terreno del minimapa");
-            g.Hud.Map.Update(s,0,Time.unscaledTime,true);Assert.That(g.Hud.Map.Markers,Is.Zero);
+            g.Hud.Map.Update(s,0,Time.unscaledTime,true);int found=0;foreach(var i in s.Interactables.List)if(i.Discovered)found++;
+            Assert.That(g.Hud.Map.Markers,Is.EqualTo(found),"solo los descubiertos");Assert.That(found,Is.LessThan(s.Interactables.List.Length));
             g.QaAction(8);g.Hud.Map.Update(s,0,Time.unscaledTime,true);
             Assert.That(g.Hud.Map.Markers,Is.EqualTo(s.Interactables.List.Length));Assert.That(s.Cheated,Is.True);
             // Avisos: +2 minutos → estampida y élite en el siguiente tick.

@@ -54,6 +54,10 @@ namespace Mamporro.U3
         public bool FreeCamera;
         // Comprobación visual: oculta HUD y pantallas para fotografiar solo el mundo.
         public bool HideInterface;
+        // Ensayo de rendimiento: las cartas se resuelven solas con la primera, sin pantalla.
+        public bool AutoChoose;
+        public int AutoChosen {get;private set;}
+        U3Benchmark benchmark;
         public bool DebugVisible {get;private set;}
         // Tiempos del último tick de lógica y del envío de la cámara del mundo (ms).
         public double LogicMs {get;private set;}
@@ -93,7 +97,12 @@ namespace Mamporro.U3
             LoadWorld(seedArg>=0&&seedArg+1<args.Length?NormalizeSeed(args[seedArg+1])??defaultSeed:defaultSeed);
         }
 
-        void Start(){if(Array.IndexOf(Environment.GetCommandLineArgs(),"-u3-visual-check")>=0)gameObject.AddComponent<U3VisualCheck>().Game=this;}
+        void Start()
+        {
+            var args=Environment.GetCommandLineArgs();
+            if(Array.IndexOf(args,"-u3-visual-check")>=0)gameObject.AddComponent<U3VisualCheck>().Game=this;
+            else if(Array.IndexOf(args,"-u3-benchmark")>=0){benchmark=gameObject.AddComponent<U3Benchmark>();benchmark.Game=this;}
+        }
 
         void OnEnable()
         {
@@ -319,10 +328,11 @@ namespace Mamporro.U3
             if(ScriptedIntent.HasValue)intent=ScriptedIntent.Value;
             logicWatch.Restart();
             Session.Step(intent,1.0/60,WebYaw,interactPressed);interactPressed=false;CombatView.Step(1.0/60);
-            LogicMs=logicWatch.Elapsed.TotalMilliseconds;
+            LogicMs=logicWatch.Elapsed.TotalMilliseconds;benchmark?.RecordTick(LogicMs);
             intent.JumpPressed=intent.SlidePressed=false;
             currentPosition=WebSpace.ToUnity(Body.X,Body.Y,Body.Z);
             if(Session.Finished){FinishRun();return;}
+            if(Run.Choosing&&AutoChoose){while(Run.Choosing){Run.Choose(0);AutoChosen++;}}
             if(Run.Choosing){SetPaused(true);if(!Cards.Visible)Cards.Show(true);}
         }
 

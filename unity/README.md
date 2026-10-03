@@ -90,29 +90,35 @@ Controles de U2 (sin conflictos con U1: en esta escena R, 1–4 y F5 de U1 no se
   y se oculta durante el ensayo automático.
 - F7: idioma ES/EN. F8: reiniciar la partida de pruebas.
 
-## Escena U3: mundo procedural y combate controlado
+## Escena U3: mundo procedural y partida completa
 
 Abre `Assets/Mamporro/U3/U3_Partida.unity`, o ejecuta
-`unity\Builds\U3\Mamporro-U3.exe`. El paso 5 conecta el combate de U2 con el
-mundo y la física de la web: WASD, ratón, Espacio, Mayús/C; Esc pausa y clic continúa.
-F1 cambia 240/360/480, F2 dithering, F9 ajuste de vértices y F6 tamaño de ventana.
-F8 reinicia el mundo y todo el estado de combate. Empieza sin enemigos: aún no
-hay director automático, oleadas ni temporizador de partida completa (paso 6).
+`unity\Builds\U3\Mamporro-U3.exe`. Es la partida completa de la web aprobada
+sobre el mundo procedural, con pantallas técnicas (uGUI) en lugar de los menús
+finales de U4.
 
-F3 abre el panel técnico de QA. Abrirlo no marca trucos; ejecutar sus acciones sí:
-
-- 1: invencibilidad; 2: subir un nivel; 4: añadir hasta 100 enemigos controlados
-  (los cuatro tipos normales y Rata élite) alrededor del jugador.
-- 5: matar los enemigos, incluido el jefe, al avanzar el siguiente tick.
-- 6: invocar Pelusa Madre delante de la cámara; 7: añadir 100 de oro.
-- 3 y 8 quedan pendientes del director y descubrimiento; no hacen nada todavía.
-
-Las cartas uGUI tienen prioridad sobre QA: 1–4/clic para elegir, R para volver
-a tirar, X para saltar, B para descartar y Esc para cancelar el descarte; guardia
-de entrada de 0,4 s. Pausan física y combate. Al morir, F8 permite empezar limpio.
-Para comprobar la horda, pulsa F3, 4 y clic para continuar; recorre terreno y
-obstáculos, observa daño/bajas/XP/oro y prueba el jefe con 6. Los modelos y avisos
-siguen siendo técnicos; esta escena aún no representa la partida completa.
+- **Inicio:** Doña Remedios o Sir Baguette (con su pasiva), duración 5/10/15
+  minutos y semilla opcional (se normaliza como en la web; vacía = mapa actual).
+  «Nuevo mapa» sortea otra semilla. La escena técnica arranca en `MAMPORRO`
+  (`-u3-seed X` lo cambia).
+- **Partida:** director de la web (tabla y curva de aparición, seis oleadas,
+  Rata de Gimnasio cada 2 minutos de dificultad, enjambre final hasta 750 vivos),
+  14 baúles con precio creciente, 3 mesas camilla (bendiciones), 2 tótems de
+  desafío y el armario escondido que invoca a la Pelusa Madre; la victoria llega
+  1,6 s después de derrotarla. HUD con vida, experiencia, oro, cuenta atrás,
+  bajas, armas, tomos, objetos, minimapa con descubrimiento, barra del jefe,
+  avisos y telegrafiado de sus ataques.
+- **Controles:** WASD, ratón, Espacio (salto), Mayús/C (deslizarse), E (usar
+  baúl, tótem o armario), Esc (pausa: semilla, estadísticas, objetos y volver al
+  inicio). Cartas: 1–4/clic, R volver a tirar, X saltar, B descartar.
+- **Resultados:** victoria o derrota, tiempo, bajas, nivel, oro, baúles, daño por
+  arma y objetos; sin Calderilla (U4). Reintentar, nuevo mapa o volver al inicio.
+- **Técnico:** F1 resolución interna 240/360/480, F2 dithering, F9 ajuste de
+  vértices, F6 ventana 1080p/1440p, F8 vuelve al inicio con el mismo mapa.
+- **F3:** panel de depuración (FPS, tiempos, draw calls, posición, director…).
+  Con el panel abierto y jugando: 1 invencible, 2 +nivel, 3 +1 minuto, 4 +100
+  enemigos, 5 matar todo, 6 invocar jefe, 7 +100 de oro, 8 revelar el mapa. Abrir
+  el panel no marca trucos; usar una acción sí («Partida con trucos de debug»).
 
 Con el Editor cerrado, desde la raíz en CMD:
 
@@ -121,18 +127,26 @@ scripts\u3.cmd edit
 scripts\u3.cmd play
 scripts\u3.cmd build
 scripts\u3.cmd visual
+scripts\u3.cmd benchmark
 ```
 
-`visual` ejecuta la build con `-u3-visual-check -u3-output` y genera nueve capturas
+`visual` ejecuta la build con `-u3-visual-check -u3-output` y genera trece capturas
 en `unity/TestResults/U3/Visual/`: inicio, vista alta, casa, templo, granja, pozo,
-combate, cartas y reinicio.
-Comprueba que sean nuevas y contengan imagen; abre una ventana visible durante
-unos segundos. También exige diferencias de píxeles al activar/desactivar el
-render de combate con cámara/simulación/viento inmóviles: detecta instancing
+combate con HUD, interactuables, telegrafiado, pausa, cartas, resultados y
+reinicio. Comprueba que sean nuevas y contengan imagen; abre una ventana visible
+durante unos segundos. También exige diferencias de píxeles al activar/desactivar
+el render de combate con cámara/simulación/viento inmóviles: detecta instancing
 ausente en la build. Es una comprobación visual, no una medida de rendimiento.
-XML y logs quedan en `unity/TestResults/U3/`; builds y capturas no se publican.
-`scripts\u3.cmd create` regenera deliberadamente solo la escena U3; no hace
-falta para jugar. No existe aún el ensayo de rendimiento del paso 11.
+
+`benchmark` ejecuta la build a pantalla completa (1920×1080 y 2560×1440) con
+`-u3-benchmark`: una partida real (Remedios, 10 minutos, `MAMPORRO`, director
+activo, invulnerable de ensayo y siempre la primera carta) que avanza sin medir
+hasta 10 s antes de cada punto y mide 10 s + 30 s en los minutos 2, 5 y 9 y en
+el enjambre (desde los 640 s). Escribe JSON y CSV por punto (`u3-<ancho>x<alto>-<punto>-*.json`)
+con FPS, P95/P99, CPU/GPU, GC, ticks y `validRender`, y muestra un resumen.
+XML, logs, informes y capturas quedan en `unity/TestResults/U3/`; builds y
+capturas no se publican. `scripts\u3.cmd create` regenera deliberadamente solo la
+escena U3; no hace falta para jugar.
 
 ## Pruebas y build (CMD desde la raíz)
 

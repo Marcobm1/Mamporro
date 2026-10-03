@@ -580,3 +580,14 @@ El autor autoriza U3: mundo y partida completa equivalentes a la web aprobada
    U3 el ajuste de vértices pasa a F9 (U1 y U2 no cambian); E interactúa.
 6. **Catálogo:** todo desbloqueado (6 armas y 12 objetos), como la web sin filtros
    de meta; los filtros se conectarán en U4 con el guardado.
+
+## U3: decisiones técnicas de implementación (03/10/2026, propuestas por Claude Code; pendientes de confirmación del autor)
+
+Tomadas dentro del alcance autorizado, sin cambiar reglas ni balance de la web. Detalle y pruebas en [PROGRESO_U3](PROGRESO_U3.md).
+
+- **Pausa por carta separada de la lógica.** `Run.update` de la web no se detiene con una carta abierta (la pausa la pone `Game`). `CombatRun.HoldWhileChoosing` (activado en el juego) separa esa pausa para poder reproducir el guion de `u3-world.json`, que deja abierta la segunda carta de una subida doble.
+- **Margen de los totales tras 120 s** en las partidas integradas: bajas, apariciones y nivel ±3 %; vivos y oro ±5 %; desenlace igual con ±1 s. Hoy la coincidencia es total; el margen solo cubre diferencias de un bit en otro runtime.
+- **Mapa inicial fijo** `MAMPORRO` en la escena técnica (la web sortea uno al abrir), para pruebas reproducibles; «Nuevo mapa» y la semilla escrita funcionan como en la web.
+- **Pausa sin opciones**: las opciones de la pausa web (idioma, volumen, etc.) dependen del guardado y quedan para U4.
+- **Ensayo U3**: partida real con director que avanza sin medir hasta cada punto (minutos 2, 5, 9 y enjambre) y mide allí 10 s + 30 s; invulnerable de ensayo y primera carta, como en U2.
+- **Presentación técnica**: telegrafiado, tapas de baúl, anillos de las mesas y brillos con el render instanciado de combate; el efecto de abrir baúl es un anillo (la web usa partículas) y el texto usa la fuente integrada de Unity. Pulido en U5.

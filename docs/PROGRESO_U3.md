@@ -6,12 +6,12 @@ Este archivo es el **checkpoint vivo de continuidad entre Codex CLI y Claude Cod
 
 ## Cómo retomar
 
-- **Último punto verificado y publicado:** paso 10, commit «Juega en escena 2 personajes × 3 duraciones hasta resultados» (consultar `git log`; el hash no se escribe aquí para no crear un commit circular). Paso 9: `443645d`; paso 8: `16543c8`; núcleo del paso 10: `db490f5`; paso 7: `59a5f7f`; paso 6: `c42e22d`. Base recibida por Claude Code el 03/10/2026: `b21160cf060ef30daa4c55759aec1e0095b0bd54`.
-- **Paso actual:** 11 del plan: build Windows x64 Mono y ensayo de partida real (minutos 2, 5 y 9 y enjambre con 750 vivos, 1080p y 1440p, `validRender`), con la acción `benchmark` de vuelta en `scripts\u3.cmd`.
-- **Terminado y verificado:** pasos 1–10. Las cuatro partidas de `runs` coinciden con la web de principio a fin (`IntegratedRunTests`) y en escena se juegan 2 personajes × 3 duraciones hasta resultados (`U3RunFlowTests`). El 03/10/2026 (paso 10): Edit Mode **167/167**, Play Mode **17/17**. **`u3-world.json` sigue congelada**, sin regeneración.
-- **A medias:** nada. Pendientes: pasos 11 y 12. U4 no autorizado.
+- **Último punto verificado y publicado:** paso 11, commit «Añade el ensayo de partida real de U3» (consultar `git log`; el hash no se escribe aquí para no crear un commit circular). Paso 10: `19562c2`; paso 9: `443645d`; paso 8: `16543c8`; núcleo del paso 10: `db490f5`; paso 7: `59a5f7f`; paso 6: `c42e22d`. Base recibida por Claude Code el 03/10/2026: `b21160cf060ef30daa4c55759aec1e0095b0bd54`.
+- **Paso actual:** 12 del plan: cierre documental y parada para la prueba manual del autor.
+- **Terminado y verificado:** pasos 1–11 (ensayo de partida real en la build: ver «Ensayo de rendimiento U3»). Las cuatro partidas de `runs` coinciden con la web de principio a fin (`IntegratedRunTests`) y en escena se juegan 2 personajes × 3 duraciones hasta resultados (`U3RunFlowTests`). El 03/10/2026 (paso 11): Edit Mode **167/167**, Play Mode **17/17**, build Windows x64 Mono y ensayo 8/8 puntos con `validRender`. **`u3-world.json` sigue congelada**, sin regeneración.
+- **A medias:** nada. Pendiente: paso 12 (cierre). U4 no autorizado.
 - **Sin commit a propósito:** `unity/ProjectSettings/ProjectSettings.asset` (configuración local de nube), `ProjectAuditorSettings.asset`, `PackageManagerSettings.asset` y `URPProjectSettings.asset`: no publicar. También se conservan fuera del índice los cambios de espacios/EOL de `RetroPipeline.asset`, `UniversalRenderPipelineGlobalSettings.asset` y `GraphicsSettings.asset` (el autor confirmó el 03/10/2026 que se tratan igual). No limpiar ni restaurar estos archivos automáticamente.
-- **Siguiente paso exacto:** paso 11. Ensayo de partida real en la build (`-u3-benchmark`): partida automática en el mapa real con el director, mediciones en los minutos 2, 5 y 9 y en el enjambre con 750 vivos, a 1920×1080 y 2560×1440, con el mismo formato e informe que U1/U2 (FrameTimingManager, `validRender`, P95, GC); añadir `benchmark` a `scripts\u3.ps1`/`u3.cmd`. Objetivo 60 FPS con 300 enemigos; si el enjambre no llega, perfilar y documentar.
+- **Siguiente paso exacto:** paso 12: actualizar `ESTADO_ACTUAL.md`, `CLAUDE.md`/`AGENTS.md` si procede y el checkpoint final; push; parar con instrucciones de prueba manual.
 
 Comprobar el estado desde CMD:
 
@@ -83,6 +83,26 @@ Sonda temporal con 200 000 entradas exactas (base64). Diferencias de Mono 6.13 (
 - **Aserciones (tolerancia acordada):** cronología exacta en los primeros 120 s (sucesos, detalle, totales; posiciones 1e-6 m, enemigos 1e-4 m por Float32). Después, totales cada segundo con margen: bajas, apariciones y nivel ±3 % (mínimo 3/3/1), vivos y oro ±5 % (mínimo 10), mismo estado de enjambre y baúles ±1; mismo desenlace con el tick final ±60. El margen solo cubre posibles diferencias de un bit en otro runtime; hoy la coincidencia es total.
 - **Comportamiento del guion web que hay que reproducir:** `while (run.openChoice()) run.choose(0)` deja abierta la segunda carta cuando hay dos subidas en el mismo tick (tras elegir, `closeChoice` abre la siguiente y `openChoice()` devuelve false), y `Run.update` no se detiene con una carta abierta (la pausa la pone `Game`). En `remedios-5min-invencible` pasa en el tick 5931 (niveles 8 y 9): desde ahí la web ya no elige más cartas. `CombatRun.HoldWhileChoosing` (true por defecto, el comportamiento de juego) separa esa pausa de la lógica de `Run.update`; el arnés lo pone a false y usa el mismo bucle que la web. No es un cambio de reglas.
 
+## Ensayo de rendimiento U3 (paso 11)
+
+`scripts\u3.cmd benchmark` (build con `-u3-benchmark`, pantalla completa exclusiva, D3D11, Mono, sin desarrollo, sin vsync ni límite de FPS, interna 360): partida real Remedios, 10 min, `MAMPORRO`, director activo, invulnerable de ensayo, primera carta siempre, circuito de 8 s; avanza sin medir hasta 10 s antes de cada punto y mide 10 s + 30 s dibujando mundo, combate y HUD. Equipo: Ryzen 7 7700X, RTX 4070 Ti SUPER, ~32 GB. Ejecutado el 03/10/2026 20:28–20:34.
+
+| Salida | Punto (tiempo de partida) | FPS medios | P95 ms | P99 ms | Máx. ms | >16,7 ms | Enemigos | Tick medio ms | CPU ms |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 1920×1080 | min2 (110–148 s) | 2558,6 | 0,57 | 0,75 | 12,31 | 0 | 11–19 | 0,048 | 0,39 |
+| 1920×1080 | min5 (290–329 s) | 2099,5 | 0,70 | 0,88 | 61,9 | 4 | 272–307 | 0,302 | 0,48 |
+| 1920×1080 | min9 (530–570 s) | 1932,3 | 0,79 | 1,05 | 5,02 | 0 | 323–530 | 0,428 | 0,52 |
+| 1920×1080 | enjambre (630–670 s) | 1615,9 | 0,94 | 1,65 | 5,36 | 0 | 746–750 | 1,037 | 0,62 |
+| 2560×1440 | min2 | 2721,7 | 0,46 | 0,61 | 6,07 | 0 | 11–19 | 0,045 | 0,37 |
+| 2560×1440 | min5 | 2157,9 | 0,67 | 0,85 | 105,54 | 2 | 262–307 | 0,296 | 0,46 |
+| 2560×1440 | min9 | 1900,5 | 0,73 | 1,11 | 6,02 | 0 | 481–529 | 0,591 | 0,53 |
+| 2560×1440 | enjambre | 1667,9 | 0,85 | 1,57 | 6,51 | 0 | 747–750 | 0,986 | 0,60 |
+
+- **Objetivo cumplido en este equipo:** 60 FPS con ~300 enemigos en el mapa real (minuto 5: >2000 FPS) y también en el enjambre con 750 vivos (>1600 FPS, P99 <1,7 ms). No hizo falta perfilar.
+- **Picos aislados:** en el minuto 5, 2–4 fotogramas superan 16,7 ms (máximo 62 y 106 ms) de unos 60 000; los demás puntos no tienen ninguno. No se ha aislado la causa (candidatos sin comprobar: recolección de basura o creación de textos de la interfaz); U1 también registró picos aislados.
+- **Límites:** GPU no disponible (`-1`) y GC por fotograma no disponible en la build normal, como en U1/U2. Memoria Unity al final, no pico. Un único equipo potente; no representa requisitos mínimos. La invulnerabilidad y la primera carta automática son condiciones de ensayo. Capturas `u3-<salida>-<punto>.png` revisadas (la del enjambre muestra 750 vivos, HUD y «+00:43 ENJAMBRE»).
+- Informes: `unity/TestResults/U3/u3-<ancho>x<alto>-<punto>-*.json`, `.csv` y `-ticks.csv`; logs `player-1920x1080.log`, `player-2560x1440.log`.
+
 ## Alcance autorizado
 
 Mundo y partida completa equivalentes a la web aprobada `0505b1690656d15188860157612455639820fe1f`:
@@ -123,7 +143,7 @@ Commits pequeños que compilen y pasen sus pruebas; actualizar este checkpoint t
 8. **Hecho, 03/10/2026.** HUD, minimapa, avisos, telegrafiado y pausa.
 9. **Hecho, 03/10/2026.** Pantallas de inicio y resultados; depuración con `run.cheated`.
 10. **Hecho, 03/10/2026.** Integración: partidas deterministas contra la cronología web (ver «Partidas integradas»); Play Mode con partidas aceleradas (2 personajes × 3 duraciones) hasta resultados; victoria, derrota, enjambre y reinicio sin restos.
-11. Build Windows x64 Mono ejecutada y ensayo de partida real: minutos 2, 5 y 9 y enjambre con 750 vivos, a 1080p y 1440p, con las mismas condiciones y `validRender` que U1/U2. Objetivo: 60 FPS con 300 enemigos en el mapa real; si el enjambre no llega, perfilar y documentar antes de cerrar.
+11. **Hecho, 03/10/2026.** Build Windows x64 Mono ejecutada y ensayo de partida real: minutos 2, 5 y 9 y enjambre con 750 vivos, a 1080p y 1440p, con las mismas condiciones y `validRender` que U1/U2. Objetivo: 60 FPS con 300 enemigos en el mapa real; si el enjambre no llega, perfilar y documentar antes de cerrar.
 12. Cierre: documentación, push y parada para la prueba manual del autor con instrucciones.
 
 ## Pruebas ejecutadas
@@ -322,6 +342,30 @@ Pruebas ejecutadas el **03/10/2026**, horas Europe/Madrid; los XML/logs finales 
 | 03/10/2026 20:23 | `scripts\u3.cmd play` (dos intentos) | 16/17: comprobación del temporizador con un fotograma de retraso (corregida en la prueba) y matriz inválida del jersey (fallo real del render, corregido) | `unity/TestResults/U3/play.log` |
 | 03/10/2026 20:25 | `scripts\u3.cmd play` | 17/17 (`U3RunFlowTests` 55 s) | `unity/TestResults/U3/play.xml`, `play.log` |
 | 03/10/2026 20:25 | `scripts\u3.cmd edit` | 167/167 | `unity/TestResults/U3/edit.xml`, `edit.log` |
+
+### 03/10/2026 — paso 11: build y ensayo de partida real — Claude Code
+
+- Punto de partida/commit: `19562c2`.
+- Trabajo realizado: `U3/U3Benchmark.cs` (`-u3-benchmark`, `-u3-output`) y acción `benchmark` en `scripts\u3.ps1` (vuelve al lanzador), con el mismo formato de informe que U1/U2. `U3Game` resuelve cartas solas en el ensayo (`AutoChoose`) y registra el tiempo de cada tick. README de Unity actualizado con la partida completa, controles, pantallas y comandos. Propuestas de decisiones técnicas de U3 añadidas a `DECISIONES.md`, pendientes de confirmación del autor. Se corrige una comprobación frágil de `U3HudTests` (un baúl puede descubrirse en el primer tick).
+- Archivos/sistemas principales: `U3/U3Benchmark.cs` (nuevo), `U3/U3Game.cs`, `scripts/u3.ps1`, `unity/README.md`, `docs/DECISIONES.md`, `Tests/PlayMode/U3HudTests.cs`.
+- Decisiones nuevas: ninguna de diseño; técnicas propuestas en `DECISIONES.md`.
+- Pruebas realmente ejecutadas y resultado: ver «Ensayo de rendimiento U3» y la tabla siguiente.
+- Pruebas pendientes/no ejecutadas: prueba manual del autor.
+- Commits creados: «Añade el ensayo de partida real de U3». Push: ver «Cómo retomar».
+- Estado del árbol al terminar: solo los ajustes Unity excluidos.
+- Errores/limitaciones conocidas: picos aislados en el minuto 5 sin causa aislada; GPU/GC no disponibles en la build.
+- Decisiones pendientes del autor: confirmar las decisiones técnicas propuestas de U3.
+- Siguiente paso exacto: paso 12.
+
+#### Pruebas del paso 11
+
+| Fecha y hora | Comando (CMD, raíz del repo) | Resultado | Registro |
+| --- | --- | --- | --- |
+| 03/10/2026 20:28 | `scripts\u3.cmd build` | Success, Windows x64 Mono | `unity/TestResults/U3/build.log` |
+| 03/10/2026 20:28–20:34 | `scripts\u3.cmd benchmark` | 8/8 puntos con `validRender` y resolución correcta (tabla de arriba) | `unity/TestResults/U3/u3-*.json`, `player-*.log` |
+| 03/10/2026 20:36 | `scripts\u3.cmd edit` | 167/167 | `unity/TestResults/U3/edit.xml` |
+| 03/10/2026 20:36 | `scripts\u3.cmd play` | 16/17: comprobación frágil del minimapa (corregida) | `unity/TestResults/U3/play.log` |
+| 03/10/2026 20:38 | `scripts\u3.cmd play` | 17/17 | `unity/TestResults/U3/play.xml`, `play.log` |
 
 ## Checkpoint al terminar U3
 
