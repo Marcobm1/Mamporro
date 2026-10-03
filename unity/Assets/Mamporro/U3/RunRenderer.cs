@@ -9,8 +9,10 @@ namespace Mamporro.U3
     public sealed class RunRenderer : MonoBehaviour
     {
         U3Game session;
-        readonly Matrix4x4[][] matrices=new Matrix4x4[12][];readonly int[] counts=new int[12];
-        readonly Matrix4x4[] chunk=new Matrix4x4[1023];readonly Material[] materials=new Material[12];
+        // 12 colores de combate y la madera de las tapas de los baúles (12).
+        const int Materials=13,Wood=12;
+        readonly Matrix4x4[][] matrices=new Matrix4x4[Materials][];readonly int[] counts=new int[Materials];
+        readonly Matrix4x4[] chunk=new Matrix4x4[1023];readonly Material[] materials=new Material[Materials];
         readonly CombatEffect[] effects=new CombatEffect[512];int effectCount;
         public int DroppedEffects {get;private set;}
         public int EffectCount=>effectCount;
@@ -20,8 +22,8 @@ namespace Mamporro.U3
         public void Initialize(U3Game value)
         {
             session=value;
-            Color[] colors={new Color(.7f,.67f,.8f),new Color(.35f,.18f,.08f),new Color(.1f,.7f,.55f),new Color(.55f,.65f,.9f),new Color(.65f,.2f,.3f),new Color(.55f,.35f,.7f),new Color(1,.35f,.65f),new Color(.1f,.9f,.5f),new Color(1,.8f,.1f),new Color(1,.15f,.1f),new Color(.9f,.85f,.65f),new Color(.25f,.7f,1)};
-            for(int i=0;i<12;i++){matrices[i]=new Matrix4x4[8192];materials[i]=new Material(session.CombatMaterial){name="U3 "+i,enableInstancing=true};materials[i].SetColor("_BaseColor",colors[i].linear);}
+            Color[] colors={new Color(.7f,.67f,.8f),new Color(.35f,.18f,.08f),new Color(.1f,.7f,.55f),new Color(.55f,.65f,.9f),new Color(.65f,.2f,.3f),new Color(.55f,.35f,.7f),new Color(1,.35f,.65f),new Color(.1f,.9f,.5f),new Color(1,.8f,.1f),new Color(1,.15f,.1f),new Color(.9f,.85f,.65f),new Color(.25f,.7f,1),new Color(.6f,.35f,.16f)};
+            for(int i=0;i<Materials;i++){matrices[i]=new Matrix4x4[8192];materials[i]=new Material(session.CombatMaterial){name="U3 "+i,enableInstancing=true};materials[i].SetColor("_BaseColor",colors[i].linear);}
         }
         public void Clear(){effectCount=0;DroppedEffects=0;DrawnInstances=0;System.Array.Clear(counts,0,counts.Length);openedAt=null;}
         public void Emit(CombatEffect effect){if(effectCount<effects.Length)effects[effectCount++]=effect;else DroppedEffects++;}
@@ -68,7 +70,7 @@ namespace Mamporro.U3
                 if(f.Kind=="chain"||f.Kind=="pearl")Line(f.Kind=="chain"?11:10,p,new Vector3((float)f.X2,(float)f.Y2,(float)f.Z2),.1f);
                 else Ring(f.Kind=="aura"?7:f.Kind=="arc"?8:9,p,(float)f.Radius,(float)f.Angle*Mathf.Rad2Deg+180,f.Kind=="arc"?150:360);
             }
-            for(int mat=0;mat<12;mat++)for(int offset=0;offset<counts[mat];offset+=1023){int n=Mathf.Min(1023,counts[mat]-offset);DrawnInstances+=n;System.Array.Copy(matrices[mat],offset,chunk,0,n);
+            for(int mat=0;mat<Materials;mat++)for(int offset=0;offset<counts[mat];offset+=1023){int n=Mathf.Min(1023,counts[mat]-offset);DrawnInstances+=n;System.Array.Copy(matrices[mat],offset,chunk,0,n);
                 var rp=new RenderParams(materials[mat]){camera=session.worldCamera,shadowCastingMode=ShadowCastingMode.Off,receiveShadows=false,worldBounds=new Bounds(new Vector3(0,80,0),new Vector3(340,200,340))};Graphics.RenderMeshInstanced(rp,session.CombatMesh,0,chunk,n);}
         }
         void DrawProjectiles(Projectiles p,int color,float alpha){for(int i=0;i<p.Count;i++)Box(color,new Vector3(Mathf.Lerp(p.Px[i],p.X[i],alpha),Mathf.Lerp(p.Py[i],p.Y[i],alpha),Mathf.Lerp(p.Pz[i],p.Z[i],alpha)),new Vector3(p.Radius[i]*1.8f,.2f,p.Radius[i]*2.5f),Quaternion.Euler(0,p.Spin[i]*Mathf.Rad2Deg,0));}
@@ -91,7 +93,7 @@ namespace Mamporro.U3
                         if(item.Used&&float.IsNegativeInfinity(openedAt[i]))openedAt[i]=now;if(!item.Used)openedAt[i]=float.NegativeInfinity;
                         float t=Mathf.Clamp01((now-openedAt[i])/LidOpenTime),eased=1-(1-t)*(1-t);
                         var hinge=new Vector3(0,.55f,.38f);var open=Quaternion.AngleAxis(LidAngle*eased*Mathf.Rad2Deg,Vector3.right);
-                        Box(1,p+turn*(hinge+open*new Vector3(0,.1f,-.38f)),new Vector3(1.3f,.26f,.86f),turn*open);
+                        Box(Wood,p+turn*(hinge+open*new Vector3(0,.1f,-.38f)),new Vector3(1.3f,.26f,.86f),turn*open);
                         break;}
                     case "shrine":
                         if(item.Used){Box(10,p+Vector3.up*.05f,new Vector3(2,.07f,2),turn);break;}

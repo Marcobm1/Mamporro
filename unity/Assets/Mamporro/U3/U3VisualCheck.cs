@@ -5,10 +5,12 @@ using Mamporro.Core;
 
 namespace Mamporro.U3
 {
-    // Solo con -u3-visual-check: capturas locales del mundo desde puntos fijos, sin guardado.
+    // Solo con -u3-visual-check: capturas locales de las pantallas y del mundo desde puntos
+    // fijos, sin guardado. No es un ensayo de rendimiento.
     public sealed class U3VisualCheck : MonoBehaviour
     {
         public U3Game Game;
+        public static readonly string[] Names={"inicio","vista-alta","sitio-house","sitio-temple","sitio-farm","sitio-well","combate","interactuables","telegrafiado","pausa","cartas","resultados","reinicio"};
         IEnumerator Start()
         {
             string output=Path.Combine(Application.persistentDataPath,"U3Visual");
@@ -17,8 +19,8 @@ namespace Mamporro.U3
             Directory.CreateDirectory(output);
             yield return new WaitForSecondsRealtime(1);
             yield return Capture(output,"inicio");
-            // Vista desde lo alto y junto a un sitio de cada tipo.
-            var world=Game.World;
+            // Mundo sin interfaz: vista desde lo alto y junto a un sitio de cada tipo.
+            var world=Game.World;Game.HideInterface=true;
             yield return Look(output,"vista-alta",new Vector3(0,45,-55),new Vector3(0,5,10));
             foreach(string kind in new[]{"house","temple","farm","well"}){
                 var site=world.Sites.Find(s=>s.Kind==kind);
@@ -26,16 +28,18 @@ namespace Mamporro.U3
                 var center=WebSpace.ToUnity(site.X,site.FloorY,site.Z);
                 yield return Look(output,"sitio-"+kind,center+new Vector3(9,5,-9),center+Vector3.up*1.5f);
             }
-            Game.LoadWorld("MAMPORRO");Game.QaAction(1);Game.QaAction(4);
+            Game.HideInterface=false;
+            // Combate con HUD (Remedios, 10 min), con enemigos cerca y efectos persistentes.
+            Game.StartRun("MAMPORRO");Game.QaAction(1);Game.QaAction(4);
             for(int i=0;i<8;i++)Game.Run.Spawn(i%4,-5+i*1.4,-7);
-            Game.SetPaused(false);yield return new WaitForSecondsRealtime(1.2f);Game.SetPaused(true);
-            // Efectos y proyectiles persistentes durante la captura, sobre suelo real.
+            yield return new WaitForSecondsRealtime(1.2f);Game.SetPaused(true);
             double y=Game.World.Heightfield.HeightAt(2,-3)+1;
             Game.Run.Projectiles.Spawn(2,y,-3,0,-1,0,10,.5);
             Game.Run.EnemyShots.Spawn(-2,y,-3,0,1,0,10,.5,damage:10);
             Game.Emit(new CombatEffect{Kind="aura",X=0,Y=Game.Body.Y,Z=0,Radius=3,Life=10});
+            Game.HideInterface=true;
             var origin=WebSpace.ToUnity(Game.Body.X,Game.Body.Y,Game.Body.Z);
-            yield return Look(output,"combate",origin+new Vector3(9,8,-12),origin+new Vector3(0,1,5));
+            yield return Look(output,"combate",origin+new Vector3(9,8,-12),origin+new Vector3(0,1,5),false);
             // Comparación de píxeles de la cámara, sin HUD, movimiento ni viento.
             // Detecta variantes de instancing eliminadas en build: contar entidades
             // o llamadas de dibujo no demuestra que lleguen a la imagen.
@@ -48,14 +52,33 @@ namespace Mamporro.U3
             Game.CombatView.enabled=true;Game.Renderer.enabled=true;
             if(changed<50){Debug.LogError("U3 combate no visible en build: "+changed+" píxeles distintos.");Application.Quit(1);yield break;}
             Debug.Log("U3 instancing visible: "+changed+" píxeles distintos con/sin combate.");
+            // Con la partida en marcha para que se vea el HUD (en pausa lo taparía la pausa).
+            Game.HideInterface=false;Game.SetPaused(false);yield return Capture(output,"combate");Game.SetPaused(true);Game.HideInterface=true;
+            // Interactuables (solo mundo): un baúl abierto y una mesa camilla a medio cargar.
+            Game.Run.Enemies.Clear();Game.Run.GainGold(200);
+            var list=Game.Session.Interactables.List;var chest=System.Array.Find(list,i=>i.Spot.Kind=="chest");var shrine=System.Array.Find(list,i=>i.Spot.Kind=="shrine");
+            Game.Body.PlaceAt(chest.Spot.X+1.5,Game.World.Heightfield.HeightAt(chest.Spot.X+1.5,chest.Spot.Z),chest.Spot.Z);Game.Session.SyncPlayer();
+            Game.Session.Interact();shrine.Charge=.55;Game.QaAction(8);
+            var chestPos=WebSpace.ToUnity(chest.Spot.X,chest.Spot.Y,chest.Spot.Z);
+            yield return Look(output,"interactuables",chestPos+new Vector3(4,3.5f,-4),chestPos+Vector3.up*.6f);
+            // Telegrafiado: culetazo del jefe a medio preparar.
+            Game.FreeCamera=false;Game.QaAction(6);var r=Game.Run;int b=r.Enemies.IndexOf(r.Boss.EnemyId);
+            r.Boss.Phase="windup";r.Boss.Attack="slam";r.Boss.PhaseLength=1.3;r.Boss.Timer=.6;
+            var bossPos=WebSpace.ToUnity(r.Enemies.X[b],r.Enemies.Y[b],r.Enemies.Z[b]);
+            yield return Look(output,"telegrafiado",bossPos+new Vector3(10,11,-10),bossPos);
+            Game.FreeCamera=false;Game.HideInterface=false;yield return Capture(output,"pausa");
             Game.QaAction(2);yield return Capture(output,"cartas");
-            Game.LoadWorld("MAMPORRO");yield return Capture(output,"reinicio");
-            Debug.Log("U3 visual check: mundo, combate, cartas y reinicio guardados.");Application.Quit(0);
+            Game.Choose(0);while(Game.Run.Choosing)Game.Choose(0);
+            Game.QaAction(5);Game.SetPaused(false);yield return new WaitForSecondsRealtime(2.2f);
+            if(Game.State!=U3Game.Screen.Results){Debug.LogError("U3 no llegó a los resultados tras la victoria.");Application.Quit(1);yield break;}
+            yield return Capture(output,"resultados");
+            Game.Retry(false);yield return Capture(output,"reinicio");Game.SetPaused(true);
+            Debug.Log("U3 visual check: pantallas, mundo, combate, interactuables, telegrafiado, cartas, resultados y reinicio guardados.");Application.Quit(0);
         }
-        IEnumerator Look(string output,string name,Vector3 position,Vector3 target)
+        IEnumerator Look(string output,string name,Vector3 position,Vector3 target,bool capture=true)
         {
             Game.FreeCamera=true;Game.worldCamera.transform.SetPositionAndRotation(position,Quaternion.LookRotation(target-position));
-            yield return Capture(output,name);
+            if(capture)yield return Capture(output,name);
         }
         Color32[] ReadWorld()
         {

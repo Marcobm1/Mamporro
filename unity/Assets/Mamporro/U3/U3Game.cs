@@ -1,6 +1,8 @@
 using System;
+using System.Diagnostics;
 using Mamporro.Core;
 using Mamporro.U2;
+using Unity.Profiling;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
@@ -8,17 +10,21 @@ using UnityEngine.UI;
 
 namespace Mamporro.U3
 {
-    // Controlador de la escena U3: mundo real, física del jugador de la web y la cámara,
-    // la entrada y la salida retro de U1 (textura interna, dithering y ajuste de vértices).
-    // La lógica trabaja en coordenadas web; aquí se convierte a Unity (Z invertida).
+    // Controlador de la escena U3 (Game.ts): estados inicio → partida (con pausa y cartas)
+    // → resultados, mundo real, física del jugador de la web, cámara, entrada y la salida
+    // retro de U1 (textura interna, dithering y ajuste de vértices). La lógica trabaja en
+    // coordenadas web; aquí se convierte a Unity (Z invertida).
     public sealed class U3Game : MonoBehaviour,ICombatEffects
     {
+        public enum Screen { Title, Playing, Results }
+
         public Camera worldCamera;
         public RawImage display;
         public Text status,help;
         public Shader worldShader,skyShader;
         // Referencia serializada: conserva la variante de instancing en la build.
         public Material combatTemplate;
+        // Mapa con el que arranca la escena técnica (-u3-seed lo cambia). «Nuevo mapa» sortea otro.
         public string defaultSeed="MAMPORRO";
 
         public WorldRenderer Renderer {get;private set;}
@@ -37,12 +43,21 @@ namespace Mamporro.U3
         public bool Dither {get;private set;}=true;
         public bool Snap {get;private set;}=true;
         public bool Paused {get;private set;}=true;
+        public Screen State {get;private set;}=Screen.Title;
         public long RenderedFrames {get;private set;}
+        // Selección de la pantalla de inicio (sin guardado: U4).
+        public CharacterDef Character=Catalog.Characters[0];
+        public int Minutes=10;
         // Giro de cámara en convenio web (0 = mirando hacia -Z de la web).
         public double WebYaw=>-yaw*Mathf.Deg2Rad;
         // Cámara libre (comprobación visual): LateUpdate no la mueve.
         public bool FreeCamera;
+        // Comprobación visual: oculta HUD y pantallas para fotografiar solo el mundo.
+        public bool HideInterface;
         public bool DebugVisible {get;private set;}
+        // Tiempos del último tick de lógica y del envío de la cámara del mundo (ms).
+        public double LogicMs {get;private set;}
+        public double RenderMs {get;private set;}
 
         Transform avatar;
         Material avatarMaterial;
@@ -53,6 +68,8 @@ namespace Mamporro.U3
         float yaw,pitch=20,textTimer;
         int previousWidth,previousHeight;
         Vector3 previousPosition,currentPosition;
+        readonly Stopwatch logicWatch=new Stopwatch(),renderWatch=new Stopwatch();
+        ProfilerRecorder drawCalls,triangles;
         static readonly int SnapId=Shader.PropertyToID("_RetroSnap"),DitherId=Shader.PropertyToID("_RetroDither"),SizeId=Shader.PropertyToID("_RetroSize");
 
         void Awake()
@@ -72,23 +89,65 @@ namespace Mamporro.U3
             Cards=gameObject.AddComponent<RunCards>();Cards.Session=this;Cards.Build();
             Hud=gameObject.AddComponent<RunHud>();Hud.Build(this);
             Screens=gameObject.AddComponent<RunScreens>();Screens.Build(this);
-            LoadWorld(defaultSeed);
-            SetPaused(true);
-            UpdateHelp();
+            var args=Environment.GetCommandLineArgs();int seedArg=Array.IndexOf(args,"-u3-seed");
+            LoadWorld(seedArg>=0&&seedArg+1<args.Length?NormalizeSeed(args[seedArg+1])??defaultSeed:defaultSeed);
         }
 
         void Start(){if(Array.IndexOf(Environment.GetCommandLineArgs(),"-u3-visual-check")>=0)gameObject.AddComponent<U3VisualCheck>().Game=this;}
 
-        void OnEnable(){RenderPipelineManager.endCameraRendering+=OnCameraRendered;}
-        void OnDisable(){RenderPipelineManager.endCameraRendering-=OnCameraRendered;Cursor.lockState=CursorLockMode.None;Cursor.visible=true;}
-        void OnCameraRendered(ScriptableRenderContext context,Camera camera){if(camera==worldCamera)RenderedFrames++;}
+        void OnEnable()
+        {
+            RenderPipelineManager.beginCameraRendering+=OnCameraBegin;RenderPipelineManager.endCameraRendering+=OnCameraRendered;
+            drawCalls=ProfilerRecorder.StartNew(ProfilerCategory.Render,"Draw Calls Count");triangles=ProfilerRecorder.StartNew(ProfilerCategory.Render,"Triangles Count");
+        }
+        void OnDisable()
+        {
+            RenderPipelineManager.beginCameraRendering-=OnCameraBegin;RenderPipelineManager.endCameraRendering-=OnCameraRendered;
+            Cursor.lockState=CursorLockMode.None;Cursor.visible=true;drawCalls.Dispose();triangles.Dispose();
+        }
+        void OnCameraBegin(ScriptableRenderContext context,Camera camera){if(camera==worldCamera)renderWatch.Restart();}
+        void OnCameraRendered(ScriptableRenderContext context,Camera camera){if(camera==worldCamera){RenderedFrames++;RenderMs=renderWatch.Elapsed.TotalMilliseconds;}}
 
+        // ------------------------------------------------------------ estados (Game.ts)
+        // Mapa nuevo con esa semilla y vuelta a la pantalla de inicio.
         public void LoadWorld(string seed)
         {
             Seed=seed;Renderer.Build(WorldData.Generate(seed),seed);
-            Session=new WorldRun(World,seed,Catalog.Characters[0],this);
+            BeginRun();State=Screen.Title;
+        }
+        // Partida nueva en el mapa actual con el personaje y la duración elegidos (beginRun).
+        public void BeginRun()
+        {
+            Session=new WorldRun(World,Seed,Character,this,Minutes);
             FreeCamera=false;DebugVisible=false;
-            ResetPlayer();CombatView.Clear();Cards.Hide();Hud.Reset(World);eventCursor=0;lastHp=Run.Hp;SetPaused(true);UpdateHelp();
+            ResetPlayer();CombatView.Clear();Cards.Hide();Hud.Reset(World);eventCursor=0;lastHp=Run.Hp;
+            Screens.ShowResults(false);SetPaused(true);UpdateHelp();
+        }
+        // Jugar desde el inicio: la semilla escrita (normalizada) cambia el mapa si es otra.
+        public void StartRun(string seedText)
+        {
+            string seed=NormalizeSeed(seedText??"");
+            if(seed!=null&&seed!=Seed)LoadWorld(seed);else BeginRun();
+            State=Screen.Playing;SetPaused(false);
+        }
+        public void NewMap(){if(State==Screen.Title)LoadWorld(RandomSeed());}
+        public void Retry(bool newMap){if(State!=Screen.Results)return;if(newMap)LoadWorld(RandomSeed());else BeginRun();State=Screen.Playing;SetPaused(false);}
+        public void BackToTitle(){BeginRun();State=Screen.Title;}
+        void FinishRun(){State=Screen.Results;SetPaused(true);Screens.ShowResults(true);}
+
+        // normalizeSeed/randomSeed de la web: mayúsculas, solo A–Z y 0–9, como mucho 12.
+        const string SeedAlphabet="23456789ABCDEFGHJKLMNPQRSTUVWXYZ";
+        public static string NormalizeSeed(string input)
+        {
+            var sb=new System.Text.StringBuilder();
+            foreach(char c in input.ToUpperInvariant())if(((c>='A'&&c<='Z')||(c>='0'&&c<='9'))&&sb.Length<12)sb.Append(c);
+            return sb.Length>0?sb.ToString():null;
+        }
+        public static string RandomSeed(int length=6)
+        {
+            var bytes=new byte[length*4];System.Security.Cryptography.RandomNumberGenerator.Fill(bytes);var sb=new System.Text.StringBuilder();
+            for(int i=0;i<length;i++)sb.Append(SeedAlphabet[(int)(BitConverter.ToUInt32(bytes,i*4)%(uint)SeedAlphabet.Length)]);
+            return sb.ToString();
         }
 
         // Punto de inicio de la web: (0, altura del terreno, 0).
@@ -105,12 +164,14 @@ namespace Mamporro.U3
         public void SetPaused(bool paused)
         {
             if(Session==null)return;
-            if(!paused&&(Run.Choosing||Session.Finished))return;
+            if(!paused&&(Run.Choosing||Session.Finished||State==Screen.Results))return;
+            // Desde el inicio, continuar equivale a jugar con la partida preparada.
+            if(!paused&&State==Screen.Title)State=Screen.Playing;
             Paused=paused;intent=default;interactPressed=false;
             Cursor.lockState=paused?CursorLockMode.None:CursorLockMode.Locked;Cursor.visible=paused;
             RefreshStatus();
         }
-        void OnApplicationFocus(bool focus){if(!focus)SetPaused(true);}
+        void OnApplicationFocus(bool focus){if(!focus&&State==Screen.Playing)SetPaused(true);}
 
         public void Emit(CombatEffect effect)=>CombatView.Emit(effect);
         public void Choose(int index){if(Run.Choose(index))AfterChoice(true);}
@@ -140,37 +201,37 @@ namespace Mamporro.U3
             if(Run.Hp<lastHp-1e-9)Hud.FlashHurt();
             lastHp=Run.Hp;
         }
-        // HUD durante la partida (también en pausa y con cartas); pausa encima si no hay cartas.
+        // Cada pantalla en su estado; HUD durante la partida (también en pausa y con cartas).
         void RefreshPanels()
         {
-            bool playing=Session!=null&&!Session.Finished;
+            bool playing=State==Screen.Playing&&!Session.Finished&&!HideInterface;
             Hud.Show(playing);
+            Screens.ShowTitle(State==Screen.Title&&!HideInterface);
+            if(HideInterface&&Screens.ResultsVisible)Screens.ShowResults(false);
             bool pause=playing&&Paused&&!Cards.Visible;
             if(pause!=Screens.PauseVisible)Screens.ShowPause(pause);
             if(status.transform.parent.gameObject.activeSelf!=DebugVisible)status.transform.parent.gameObject.SetActive(DebugVisible);
             if(help.transform.parent.gameObject.activeSelf)help.transform.parent.gameObject.SetActive(false);
         }
 
-        void UpdateHelp()
-        {
-            help.text="WASD · moverse | Ratón · cámara | Espacio · salto | Mayús/C · deslizarse\nEsc · pausa | Clic · continuar | F8 · reiniciar | F3 · QA | F1 · resolución | F2 · dither | F9 · vértices | F6 · ventana"+
-                (DebugVisible?"\nDepuración: 1 invencible · 2 nivel · 3 +1 minuto · 4 +100 enemigos · 5 matar todos · 6 jefe · 7 +100 oro · 8 revelar mapa\nLas cartas tienen prioridad.":"\nE · usar baúl, tótem o armario. Director activo: 10 minutos y enjambre final.");
-        }
-        // Acciones explícitas de QA; abrir el panel no marca trucos.
+        void UpdateHelp(){help.text="";}
+        // Acciones de depuración de la F3 web (1–8); todas marcan la partida con trucos.
         public void QaAction(int action)
         {
             if(Run.Choosing||Session.Over)return;
-            if(action<1||action>8)return;
+            string toast;
             switch(action){
-                case 1:Session.DebugToggleInvincible();break;
-                case 2:Session.DebugLevelUp();break;
-                case 3:Session.DebugSkipMinute();break;
-                case 4:Session.DebugSpawn(100);break;
-                case 5:Session.DebugKillAll();break;
-                case 6:Session.DebugSummonBoss();break;
-                case 7:Session.DebugAddGold(100);break;
-                case 8:Session.DebugRevealMap();break;
+                case 1:toast=Session.DebugToggleInvincible()?"debug.invincibleOn":"debug.invincibleOff";break;
+                case 2:Session.DebugLevelUp();toast="debug.levelUp";break;
+                case 3:Session.DebugSkipMinute();toast="debug.skipTime";break;
+                case 4:Session.DebugSpawn(100);toast="debug.spawn";break;
+                case 5:Session.DebugKillAll();toast="debug.killAll";break;
+                case 6:toast=Session.DebugSummonBoss()?"debug.boss":"debug.bossBusy";break;
+                case 7:Session.DebugAddGold(100);toast="debug.gold";break;
+                case 8:Session.DebugRevealMap();toast="debug.reveal";break;
+                default:return;
             }
+            Hud.Notice(CombatText.Get(toast),false);
             if(Run.OpenChoice()){SetPaused(true);Cards.Show(true);}
         }
 
@@ -196,21 +257,21 @@ namespace Mamporro.U3
 
         void Update()
         {
-            if(target==null||previousWidth!=Screen.width||previousHeight!=Screen.height)Resize();
+            if(target==null||previousWidth!=UnityEngine.Screen.width||previousHeight!=UnityEngine.Screen.height)Resize();
             var k=Keyboard.current;var mouse=Mouse.current;
             if(k!=null){
-                if(k.escapeKey.wasPressedThisFrame&&!Cards.Visible)SetPaused(!Paused);
+                if(k.escapeKey.wasPressedThisFrame&&State==Screen.Playing&&!Cards.Visible)SetPaused(!Paused);
                 if(k.f8Key.wasPressedThisFrame)LoadWorld(Seed);
-                if(k.f3Key.wasPressedThisFrame){DebugVisible=!DebugVisible;UpdateHelp();}
-                if(DebugVisible&&!Cards.Visible){
+                if(k.f3Key.wasPressedThisFrame)DebugVisible=!DebugVisible;
+                // Como la web: con el panel abierto y jugando (sin pausa ni cartas).
+                if(DebugVisible&&State==Screen.Playing&&!Paused&&!Cards.Visible){
                     for(int n=1;n<=8;n++)if(k[(Key)((int)Key.Digit1+n-1)].wasPressedThisFrame){QaAction(n);break;}
                 }
                 if(k.f1Key.wasPressedThisFrame)ConfigurePresentation(InternalHeight==240?360:InternalHeight==360?480:240,Dither,Snap);
                 if(k.f2Key.wasPressedThisFrame)Dither=!Dither;
                 if(k.f9Key.wasPressedThisFrame)Snap=!Snap;
-                if(k.f6Key.wasPressedThisFrame)Screen.SetResolution(Screen.width<2200?2560:1920,Screen.width<2200?1440:1080,FullScreenMode.Windowed);
+                if(k.f6Key.wasPressedThisFrame)UnityEngine.Screen.SetResolution(UnityEngine.Screen.width<2200?2560:1920,UnityEngine.Screen.width<2200?1440:1080,FullScreenMode.Windowed);
             }
-            if(Paused&&!Cards.Visible&&mouse!=null&&mouse.leftButton.wasPressedThisFrame)SetPaused(false);
             if(!Paused&&k!=null){
                 var axis=new Vector2((k.dKey.isPressed?1:0)-(k.aKey.isPressed?1:0),(k.wKey.isPressed?1:0)-(k.sKey.isPressed?1:0));
                 var move=Quaternion.Euler(0,yaw,0)*new Vector3(axis.x,0,axis.y);
@@ -225,17 +286,23 @@ namespace Mamporro.U3
             Shader.SetGlobalFloat(SnapId,Snap?1:0);Shader.SetGlobalFloat(DitherId,Dither?1:0);
             ReadEvents();RefreshPanels();
             textTimer-=Time.unscaledDeltaTime;
-            if(textTimer<=0){textTimer=.25f;RefreshStatus();}
+            if(textTimer<=0){textTimer=.1f;RefreshStatus();}
         }
 
+        // Panel F3 (Game.updateStats): rendimiento, jugador, semilla, entidades, partida y director.
         void RefreshStatus()
         {
             if(target==null||Session==null)return;
-            status.text=$"MAMPORRO · U3 · semilla {Seed}\n{Screen.width}×{Screen.height} → {target.width}×{target.height} · {(1/Mathf.Max(Time.unscaledDeltaTime,.00001f)):F0} FPS\n"+
-                    $"x {Body.X:F1} · y {Body.Y:F1} · z {Body.Z:F1} · {Body.HorizontalSpeed:F1} m/s{(Body.Sliding?" · deslizando":"")}{(Body.OnSteep?" · pendiente":"")}\n"+
-                    $"Vida {Run.Hp:F0}/{Run.Stats[Stat.maxHp]:F0} · Nivel {Run.Level} · Oro {Run.Gold:F0} · Bajas {Run.Kills} · Enemigos {Run.Enemies.Count}\n"+
-                    $"Tiempo {(Session.Swarm?"+":"")}{Math.Abs(Session.TimeLeft):F0} s{(Session.Swarm?" · ENJAMBRE":"")} · ritmo {Session.Params.Rate:F1}/s · tope {Session.Params.MaxAlive:F0}\n"+
-                    $"Frenado {Run.CrowdSlow:P0} · {(Run.Invincible?"Invencible · ":"")}{(Session.Cheated?"QA con trucos · ":"")}{(Run.Dead?"Derrota: F8 reinicia":Run.Victory?"Victoria: F8 reinicia":Paused?"En pausa":"Combate")}"+(Session.HasPrompt?"\n"+PromptText():"");
+            string state=Body.Sliding?"deslizando":Body.Grounded?"suelo":Body.OnSteep?"resbalando":"aire";
+            double slope=Math.Acos(Math.Min(1,Body.Normal.Y))*180/Math.PI;
+            string calls=drawCalls.Valid&&drawCalls.LastValue>0?drawCalls.LastValue.ToString():"n/d",tris=triangles.Valid&&triangles.LastValue>0?triangles.LastValue.ToString():"n/d";
+            status.text=$"{CombatText.Get("debug.title")} · U3 · semilla {Seed}\n"+
+                $"{(1/Mathf.Max(Time.unscaledDeltaTime,.00001f)):F0} FPS · frame {Time.unscaledDeltaTime*1000:F1} ms · lógica {LogicMs:F2} ms · render {RenderMs:F2} ms · draw calls {calls} · triángulos {tris}\n"+
+                $"{UnityEngine.Screen.width}×{UnityEngine.Screen.height} → {target.width}×{target.height} · x {Body.X:F1} · y {Body.Y:F1} · z {Body.Z:F1} · {Body.HorizontalSpeed:F1} m/s · {state} · {slope:F0}°\n"+
+                $"Vida {Run.Hp:F0}/{Run.Stats[Stat.maxHp]:F0} · Nivel {Run.Level} · XP {Run.Xp:F0}/{Rules.XpNeeded(Run.Level)} · Oro {Run.Gold:F0} · Bajas {Run.Kills} · Enemigos {Run.Enemies.Count} · proyectiles {Run.Projectiles.Count} · gemas {Run.Gems.Count} · efectos {CombatView.EffectCount}\n"+
+                $"Tiempo {Run.Time:F1} s · dificultad min {Session.Params.Minutes:F2} · ritmo {Session.Params.Rate:F1}/s · máx. {Session.Params.MaxAlive:F0} · frenado {Run.CrowdSlow:P0}{(Session.Swarm?" · ENJAMBRE":"")}\n"+
+                $"{CombatText.Get("debug.keys")}\n{CombatText.Get("debug.keys2")}\n"+
+                $"{(Run.Invincible?"Invencible · ":"")}{(Session.Cheated?"QA con trucos · ":"")}{State}{(Paused?" · en pausa":"")}";
         }
 
         // Texto de lo que se puede usar delante (baúl, tótem, armario), como promptText de la web.
@@ -247,18 +314,22 @@ namespace Mamporro.U3
 
         void FixedUpdate()
         {
-            if(Paused||World==null)return;
+            if(Paused||World==null||State!=Screen.Playing)return;
             previousPosition=currentPosition;
             if(ScriptedIntent.HasValue)intent=ScriptedIntent.Value;
+            logicWatch.Restart();
             Session.Step(intent,1.0/60,WebYaw,interactPressed);interactPressed=false;CombatView.Step(1.0/60);
+            LogicMs=logicWatch.Elapsed.TotalMilliseconds;
             intent.JumpPressed=intent.SlidePressed=false;
             currentPosition=WebSpace.ToUnity(Body.X,Body.Y,Body.Z);
+            if(Session.Finished){FinishRun();return;}
             if(Run.Choosing){SetPaused(true);if(!Cards.Visible)Cards.Show(true);}
-            if(Session.Finished)SetPaused(true);
         }
 
         void LateUpdate()
         {
+            // En el inicio la cámara gira despacio alrededor del punto de salida (TITLE_ORBIT_SPEED).
+            if(State==Screen.Title&&!FreeCamera){yaw+=Time.unscaledDeltaTime*.12f*Mathf.Rad2Deg;Body.Facing=WebYaw;}
             var p=Vector3.Lerp(previousPosition,currentPosition,Paused?1:(Time.time-Time.fixedTime)/Time.fixedDeltaTime);
             avatar.position=p;
             // facing de la web: 0 = mirando hacia -Z web (= +Z de Unity).
@@ -277,9 +348,9 @@ namespace Mamporro.U3
 
         void Resize()
         {
-            previousWidth=Screen.width;previousHeight=Screen.height;
+            previousWidth=UnityEngine.Screen.width;previousHeight=UnityEngine.Screen.height;
             if(target!=null){worldCamera.targetTexture=null;target.Release();Destroy(target);}
-            int width=Mathf.Max(1,Mathf.RoundToInt(InternalHeight*(float)Mathf.Max(1,Screen.width)/Mathf.Max(1,Screen.height)));
+            int width=Mathf.Max(1,Mathf.RoundToInt(InternalHeight*(float)Mathf.Max(1,UnityEngine.Screen.width)/Mathf.Max(1,UnityEngine.Screen.height)));
             target=new RenderTexture(width,InternalHeight,24,RenderTextureFormat.ARGB32){filterMode=FilterMode.Point,antiAliasing=1,name="U3 Retro"};
             target.Create();worldCamera.targetTexture=target;worldCamera.aspect=(float)width/InternalHeight;
             display.texture=target;display.GetComponent<AspectRatioFitter>().aspectRatio=worldCamera.aspect;

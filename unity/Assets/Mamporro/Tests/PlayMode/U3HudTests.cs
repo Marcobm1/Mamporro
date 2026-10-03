@@ -19,8 +19,10 @@ namespace Mamporro.Tests
             yield return SceneManager.LoadSceneAsync("U3_Partida");yield return null;
             var g=Object.FindAnyObjectByType<U3Game>();var s=g.Session;var r=g.Run;
             yield return Frames(2);
-            Assert.That(g.Hud.Visible,Is.True);Assert.That(g.Hud.TimerText,Is.EqualTo("10:00"));
-            Assert.That(g.Screens.PauseVisible,Is.True,"empieza en pausa");
+            Assert.That(g.Screens.TitleVisible,Is.True,"empieza en la pantalla de inicio");Assert.That(g.Hud.Visible,Is.False);
+            g.SetPaused(false);yield return Frames(2);g.SetPaused(true);yield return Frames(2);
+            Assert.That(g.Hud.Visible,Is.True);Assert.That(g.Hud.TimerText,Is.EqualTo(RunHud.FormatCountdown(s.TimeLeft)));
+            Assert.That(g.Screens.PauseVisible,Is.True,"pausa");Assert.That(g.Screens.TitleVisible,Is.False);
             Assert.That(g.Screens.PauseText,Does.Contain(g.Seed).And.Contain("Vida"));
             // Minimapa: terreno pintado y sin marcas hasta descubrir; la depuración 8 lo revela todo.
             var pixels=g.Hud.Map.Texture.GetPixels32();var first=pixels[0];bool varied=false;foreach(var p in pixels)if(!p.Equals(first)){varied=true;break;}
