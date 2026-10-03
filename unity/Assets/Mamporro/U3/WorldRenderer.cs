@@ -268,7 +268,8 @@ namespace Mamporro.U3
             foreach(var s in world.Interactables){
                 var parts=new List<(Shape shape,double y,uint color)>();
                 switch(s.Kind){
-                    case "chest":parts.Add((Shape.Box(1.24,0.52,0.8),0.26,Palette.Wood));parts.Add((Shape.Box(1.3,0.26,0.86),0.65,Palette.WoodDark));parts.Add((Shape.Box(0.2,0.2,0.05),0.48,Palette.Coin));break;
+                    // La tapa del baúl se dibuja aparte (RunRenderer) para poder abrirla.
+                    case "chest":parts.Add((Shape.Box(1.24,0.52,0.8),0.26,Palette.Wood));parts.Add((Shape.Box(0.2,0.2,0.05),0.48,Palette.Coin));break;
                     case "shrine":parts.Add((Shape.Box(1.6,0.08,1.6),0.74,Palette.Wood));parts.Add((Shape.Cylinder(0.85,0.85,0.7,10),0.35,Palette.Plaid));break;
                     case "totem":parts.Add((Shape.Cylinder(0.38,0.42,2.7,6),1.35,Palette.StoneDark));parts.Add((Shape.Box(0.6,0.5,0.6),2.45,Palette.Marble));break;
                     default:parts.Add((Shape.Box(1.9,2.8,1),1.4,Palette.WoodDark));parts.Add((Shape.Box(0.8,2.4,0.06),1.3,Palette.Wood));break;

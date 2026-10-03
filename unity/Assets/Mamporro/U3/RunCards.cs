@@ -91,13 +91,13 @@ namespace Mamporro.U3
         public void Paint()
         {
             var r=Session.Run;if(r.Offer==null){Hide();return;}
-            CardCount=r.Offer.Count;
-            title.text=CombatText.Format("levelup.title","n",r.Level-r.PendingLevels+1);
-            subtitle.text=BanishMode?CombatText.Get("levelup.banishHint"):CombatText.Get("levelup.subtitle");
-            int left=r.PendingLevels-1;pending.text=left>0?CombatText.Format("levelup.pending","n",left):"";
+            CardCount=r.Offer.Count;bool shrine=r.ShrineOffer;
+            title.text=shrine?CombatText.Get("shrine.title"):CombatText.Format("levelup.title","n",r.Level-r.PendingLevels+1);
+            subtitle.text=shrine?CombatText.Get("shrine.subtitle"):BanishMode?CombatText.Get("levelup.banishHint"):CombatText.Get("levelup.subtitle");
+            int left=r.PendingLevels+r.PendingShrines-1;pending.text=left>0?CombatText.Format("levelup.pending","n",left):"";
             for(int i=0;i<4;i++){
                 bool shown=i<CardCount;cards[i].gameObject.SetActive(shown);if(!shown)continue;
-                var view=CardText.Describe(r.Offer[i],r);string tone=BanishMode?(view.Banishable?"banish":"disabled"):view.Tone;
+                var view=r.Offer[i].Kind=="boost"?BoostView(r.Offer[i]):CardText.Describe(r.Offer[i],r);string tone=BanishMode?(view.Banishable?"banish":"disabled"):view.Tone;
                 cards[i].color=Tone(tone,true);
                 var text=new System.Text.StringBuilder();text.Append("<b>").Append(i+1).Append("</b>");
                 if(view.Tag.Length>0)text.Append("   <color=#").Append(ColorUtility.ToHtmlStringRGB(Tone(tone,false))).Append('>').Append(view.Tag).Append("</color>");
@@ -107,10 +107,19 @@ namespace Mamporro.U3
                 if(view.Description.Length>0)text.Append("\n\n<i>").Append(view.Description).Append("</i>");
                 cardTexts[i].text=text.ToString();
             }
+            // Las bendiciones no se pueden volver a tirar, saltar ni descartar.
+            for(int i=0;i<3;i++)actions[i].gameObject.SetActive(!shrine);
             ActionLabel(0,"R",CombatText.Format("levelup.reroll","n",r.Rerolls),r.Rerolls>0,false);
             ActionLabel(1,"X",CombatText.Format("levelup.skip","n",r.Skips),r.Skips>0,false);
             if(BanishMode)ActionLabel(2,"B",CombatText.Get("levelup.cancel"),true,true);
             else ActionLabel(2,"B",CombatText.Format("levelup.banish","n",r.Banishes),r.Banishes>0,false);
+        }
+        // describeCard('boost') de la web.
+        static CardView BoostView(Card card)
+        {
+            var boost=Offers.Boost(card.Id);
+            return new CardView{Tone=card.Rarity,Tag=CombatText.Get("rarity."+card.Rarity),Title=CombatText.Get(boost.nameKey),Level="",
+                Lines=new[]{CardText.EffectLine(boost.effect,card.Amount)},Description="",Banishable=false};
         }
         void ActionLabel(int i,string key,string label,bool enabled,bool active)
         {
@@ -128,12 +137,12 @@ namespace Mamporro.U3
         // 0 volver a tirar, 1 saltar, 2 descartar o cancelar el descarte.
         public void Action(int action)
         {
-            var r=Session.Run;if(!Visible||r.Offer==null||!Ready)return;
+            var r=Session.Run;if(!Visible||r.Offer==null||!Ready||r.ShrineOffer)return;
             if(action==0&&r.Rerolls>0)Session.Reroll();
             else if(action==1&&r.Skips>0)Session.Skip();
             else if(action==2)SetBanishMode(!BanishMode);
         }
-        public void SetBanishMode(bool on){if(on&&Session.Run.Banishes<=0)return;BanishMode=on;Paint();}
+        public void SetBanishMode(bool on){if(on&&(Session.Run.Banishes<=0||Session.Run.ShrineOffer))return;BanishMode=on;Paint();}
 
         void Update()
         {

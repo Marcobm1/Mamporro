@@ -35,13 +35,22 @@ namespace Mamporro.Core
         public double Pace=1;
         public double SpawnHp=1,SpawnXp=1,SpawnGold=1;
         // Director de U3: parámetros de aparición y apariciones en el orden de Run.update.
-        public interface ISchedule { void Refresh(CombatRun run); void Spawn(CombatRun run,double dt); }
+        // Late: interactuables, tras recoger gemas y oro (mismo punto que Run.update).
+        public interface ISchedule { void Refresh(CombatRun run); void Spawn(CombatRun run,double dt); void Late(CombatRun run,double dt); }
         public ISchedule Schedule;
         public readonly List<RunEvent> Events=new List<RunEvent>(256);
         // Enemigos creados por la partida (fx.enemySpawned), sin contar los del director.
         public int Spawned;
         public double Minutes=>Math.Max(0,Time)/60*Pace;
-        readonly Rng combatRng,offerRng;
+        // U3: bendiciones de las mesas camilla, suerte del desafío del tótem, elecciones de
+        // mesa pendientes y baúles abiertos (precio de la carta de relleno de oro).
+        public struct Boost { public Stat Stat;public double Amount; }
+        public readonly List<Boost> Boosts=new List<Boost>(16);
+        public double ChallengeLuck;
+        public int PendingShrines,ChestsOpened;
+        public string OfferSource="levelup";
+        public bool ShrineOffer=>OfferSource=="shrine";
+        readonly Rng combatRng,offerRng,itemRng;
         readonly ICombatEffects fx;
         readonly int[] nearby=new int[256];
         readonly List<CombatEffect> blasts=new List<CombatEffect>(4096),batch=new List<CombatEffect>(4096);
@@ -50,7 +59,7 @@ namespace Mamporro.Core
         public CombatRun(ICombatWorld world,string seed,CharacterDef character,int enemyCapacity=4096,ICombatEffects effects=null,double worldSize=96)
         {
             World=world;Character=character;fx=effects;Enemies=new Enemies(enemyCapacity,worldSize);
-            var rng=new Rng(seed+"/run");combatRng=rng.Derive("combat");offerRng=rng.Derive("offers");
+            var rng=new Rng(seed+"/run");combatRng=rng.Derive("combat");offerRng=rng.Derive("offers");itemRng=rng.Derive("items");
             Stats.Reset(character);basis.Reset(character);Hp=Stats[Stat.maxHp];AddWeapon(character.startingWeapon);
         }
         public void Emit(string kind,double x,double y,double z,double radius=0,double angle=0,double x2=0,double y2=0,double z2=0,double life=.25)
@@ -73,6 +82,7 @@ namespace Mamporro.Core
             FlushDead();
             double xp=Gems.Step(dt,Player,Stats[Stat.pickupRadius]);if(xp>0)GainXp(xp);
             double gold=Coins.Step(dt,Player,Stats[Stat.pickupRadius]);if(gold>0)GainGold(gold*Stats[Stat.goldGain]);
+            Schedule?.Late(this,dt);
             Invulnerable=Math.Max(0,Invulnerable-dt);
             if(Stats[Stat.regen]>0&&Hp>0)Hp=Math.Min(Stats[Stat.maxHp],Hp+Stats[Stat.regen]*dt);
             // La web abre elección en Game tras Run.update. Aquí se impide el siguiente tick.
@@ -149,14 +159,14 @@ namespace Mamporro.Core
         public void Hurt(double amount)
         {
             if(Invincible||Invulnerable>0||Hp<=0||amount<=0)return;
-            if(Character.passive=="shield"&&ShieldCharge>=Character.recharge){ShieldCharge=0;Invulnerable=.7;Emit("shield",Player.X,Player.Y,Player.Z,1);return;}
+            if(Character.passive=="shield"&&ShieldCharge>=Character.recharge){ShieldCharge=0;Invulnerable=.7;Emit("shield",Player.X,Player.Y,Player.Z,1);Event("shield");return;}
             ShieldCharge=0;Hp=Math.Max(0,Hp-Rules.Mitigate(amount,Stats[Stat.armor]));Invulnerable=.7;
             if(Hp<=0) {
                 var stack=Items.Find(s=>s.Def.id=="bata");if(stack==null)return;
                 if(--stack.Count<=0)Items.Remove(stack);RefreshStats();Hp=Stats[Stat.maxHp]*.5;Invulnerable=2.5;
                 int n=Enemies.Query(Player.X,Player.Z,8,nearby);
                 for(int k=0;k<n;k++){int i=nearby[k];if(i>=Enemies.Count)continue;double dx=Enemies.X[i]-Player.X,dz=Enemies.Z[i]-Player.Z,d=Rules.Nonzero(Rules.Hypot(dx,dz)),mass=Enemies.Def(i).mass;Enemies.Kx[i]=(float)(Enemies.Kx[i]+dx/d*14/mass);Enemies.Kz[i]=(float)(Enemies.Kz[i]+dz/d*14/mass);}
-                EnemyShots.Count=0;Emit("revive",Player.X,Player.Y,Player.Z,8);
+                EnemyShots.Count=0;Emit("revive",Player.X,Player.Y,Player.Z,8);Event("revive");
             }
         }
         public void GainXp(double amount)
@@ -166,7 +176,9 @@ namespace Mamporro.Core
         }
         // debugKillAll de la web: todos a 0 y recuento inmediato (bajas, gemas, victoria).
         public void KillAll(){for(int i=0;i<Enemies.Count;i++)Enemies.Hp[i]=0;FlushDead();}
-        public void GainGold(double amount){Gold+=amount;GoldCollected+=amount;if(purses>0&&Math.Floor(Gold/100)!=purseStep)RefreshStats();}
+        public void GainGold(double amount){Gold+=amount;GoldCollected+=amount;CheckPurse();}
+        // El monedero pega más con cada centena de oro: se recalcula al cruzar una.
+        public void CheckPurse(){if(purses>0&&Math.Floor(Gold/100)!=purseStep)RefreshStats();}
         public Weapon AddWeapon(string id)
         {
             if(Weapons.Count>=4||Weapons.Exists(w=>w.Def.id==id))return null;
@@ -184,19 +196,28 @@ namespace Mamporro.Core
         public void AddItem(string id)
         {
             var d=Array.Find(Catalog.Items,v=>v.id==id);if(d==null)return;
-            var s=Items.Find(v=>v.Def.id==id);if(s==null)Items.Add(new ItemStack{Def=d,Count=1});else s.Count++;RefreshStats();
+            var s=Items.Find(v=>v.Def.id==id);if(s==null)Items.Add(new ItemStack{Def=d,Count=1});else s.Count++;RefreshStats();Event("item",id);
         }
+        // U3: objeto de un baúl o del tótem, con el RNG propio de objetos (seed/run/items).
+        public ItemDef RollItem(double luck)=>Offers.RollItem(luck,itemRng,Items,Stats);
         public int ItemCount(string id){foreach(var s in Items)if(s.Def.id==id)return s.Count;return 0;}
         public void RefreshStats()
         {
             double old=Stats[Stat.maxHp];Stats.Reset(Character);
             foreach(var t in Tomes)for(int i=0;i<t.Bonus.Length;i++)Stats.Add(t.Def.effects[i],t.Bonus[i],basis);
             foreach(var s in Items)foreach(var e in s.Def.effects)Stats.Add(e,e.amount*s.Count,basis);
+            foreach(var b in Boosts)Stats[b.Stat]+=b.Amount;
             pearls=ItemCount("perlas");ollas=ItemCount("olla");purses=ItemCount("monedero");purseStep=Math.Floor(Gold/100);
-            Stats[Stat.damage]+=Rules.PurseBonus(Gold,purses);Stats.Cap();if(Stats[Stat.maxHp]>old)Hp+=Stats[Stat.maxHp]-old;Hp=Math.Min(Hp,Stats[Stat.maxHp]);foreach(var w in Weapons)w.Refresh(Stats);
+            Stats[Stat.damage]+=Rules.PurseBonus(Gold,purses);if(ChallengeLuck!=0)Stats[Stat.luck]+=ChallengeLuck;Stats.Cap();if(Stats[Stat.maxHp]>old)Hp+=Stats[Stat.maxHp]-old;Hp=Math.Min(Hp,Stats[Stat.maxHp]);foreach(var w in Weapons)w.Refresh(Stats);
         }
+        // Primero las mesas camilla, luego las subidas de nivel.
         public bool OpenChoice()
-        {if(Choosing||PendingLevels<=0||Dead||Victory)return false;Offer=Offers.Generate(Weapons,Tomes,Stats,Banished,offerRng,(int)Stats[Stat.choices]);return true;}
+        {
+            if(Choosing||Dead||Victory)return false;
+            if(PendingShrines>0){OfferSource="shrine";Offer=Offers.Shrine(Stats,(int)Tuning.ShrineChoices,offerRng);return true;}
+            if(PendingLevels<=0)return false;
+            OfferSource="levelup";Offer=Offers.Generate(Weapons,Tomes,Stats,Banished,offerRng,(int)Stats[Stat.choices],null,null,ChestsOpened);return true;
+        }
         public bool Choose(int index)
         {
             if(Offer==null||index<0||index>=Offer.Count)return false;var c=Offer[index];
@@ -206,16 +227,23 @@ namespace Mamporro.Core
                 case "tome":AddTome(c.Id,c.Amounts);break;
                 case "heal":Hp=Math.Min(Stats[Stat.maxHp],Hp+Stats[Stat.maxHp]*c.Amount);break;
                 case "gold":GainGold(c.Amount);break;
+                case "boost":Boosts.Add(new Boost{Stat=Offers.Boost(c.Id).effect.stat,Amount=c.Amount});RefreshStats();break;
             }
             CloseChoice();return true;
         }
-        void CloseChoice(){Offer=null;PendingLevels=Math.Max(0,PendingLevels-1);OpenChoice();}
-        public bool Reroll(){if(!Choosing||Rerolls<=0)return false;Rerolls--;Offer=Offers.Generate(Weapons,Tomes,Stats,Banished,offerRng,(int)Stats[Stat.choices]);return true;}
-        public bool Skip(){if(!Choosing||Skips<=0)return false;Skips--;CloseChoice();return true;}
+        void CloseChoice()
+        {
+            Offer=null;
+            if(ShrineOffer)PendingShrines=Math.Max(0,PendingShrines-1);else PendingLevels=Math.Max(0,PendingLevels-1);
+            OpenChoice();
+        }
+        // Volver a tirar, saltar y descartar solo existen al subir de nivel.
+        public bool Reroll(){if(!Choosing||ShrineOffer||Rerolls<=0)return false;Rerolls--;Offer=Offers.Generate(Weapons,Tomes,Stats,Banished,offerRng,(int)Stats[Stat.choices],null,null,ChestsOpened);return true;}
+        public bool Skip(){if(!Choosing||ShrineOffer||Skips<=0)return false;Skips--;CloseChoice();return true;}
         public bool Banish(int index)
         {
-            if(!Choosing||Banishes<=0||index<0||index>=Offer.Count||Offer[index].Key==null)return false;
-            Banishes--;Banished.Add(Offer[index].Key);var rest=new List<Card>(Offer);rest.RemoveAt(index);var replacement=Offers.Replace(Weapons,Tomes,Stats,Banished,offerRng,rest);
+            if(!Choosing||ShrineOffer||Banishes<=0||index<0||index>=Offer.Count||Offer[index].Key==null)return false;
+            Banishes--;Banished.Add(Offer[index].Key);var rest=new List<Card>(Offer);rest.RemoveAt(index);var replacement=Offers.Replace(Weapons,Tomes,Stats,Banished,offerRng,rest,ChestsOpened);
             if(replacement!=null)Offer[index]=replacement;else Offer.RemoveAt(index);if(Offer.Count==0)Offer.Add(Offers.Heal());return true;
         }
     }

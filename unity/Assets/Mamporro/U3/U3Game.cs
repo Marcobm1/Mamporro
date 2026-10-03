@@ -46,6 +46,8 @@ namespace Mamporro.U3
         Material avatarMaterial;
         RenderTexture target;
         PlayerIntent intent;
+        // E pulsada desde el último tick (se usa una vez, como input.wasPressed de la web).
+        bool interactPressed;
         float yaw,pitch=20,textTimer;
         int previousWidth,previousHeight;
         Vector3 previousPosition,currentPosition;
@@ -99,8 +101,8 @@ namespace Mamporro.U3
         public void SetPaused(bool paused)
         {
             if(Session==null)return;
-            if(!paused&&(Run.Choosing||Session.Over))return;
-            Paused=paused;intent=default;
+            if(!paused&&(Run.Choosing||Session.Finished))return;
+            Paused=paused;intent=default;interactPressed=false;
             Cursor.lockState=paused?CursorLockMode.None:CursorLockMode.Locked;Cursor.visible=paused;
             RefreshStatus();
         }
@@ -117,20 +119,22 @@ namespace Mamporro.U3
         void UpdateHelp()
         {
             help.text="WASD · moverse | Ratón · cámara | Espacio · salto | Mayús/C · deslizarse\nEsc · pausa | Clic · continuar | F8 · reiniciar | F3 · QA | F1 · resolución | F2 · dither | F9 · vértices | F6 · ventana"+
-                (DebugVisible?"\nDepuración: 1 invencible · 2 nivel · 4 +100 enemigos · 5 matar todos · 6 jefe · 7 +100 oro\n3 y 8 pendientes. Las cartas tienen prioridad.":"\nDirector activo: 10 minutos y enjambre final.");
+                (DebugVisible?"\nDepuración: 1 invencible · 2 nivel · 3 +1 minuto · 4 +100 enemigos · 5 matar todos · 6 jefe · 7 +100 oro · 8 revelar mapa\nLas cartas tienen prioridad.":"\nE · usar baúl, tótem o armario. Director activo: 10 minutos y enjambre final.");
         }
         // Acciones explícitas de QA; abrir el panel no marca trucos.
         public void QaAction(int action)
         {
             if(Run.Choosing||Session.Over)return;
-            if(action!=1&&action!=2&&action!=4&&action!=5&&action!=6&&action!=7)return;
+            if(action<1||action>8)return;
             switch(action){
                 case 1:Session.DebugToggleInvincible();break;
                 case 2:Session.DebugLevelUp();break;
+                case 3:Session.DebugSkipMinute();break;
                 case 4:Session.DebugSpawn(100);break;
                 case 5:Session.DebugKillAll();break;
                 case 6:Session.DebugSummonBoss();break;
                 case 7:Session.DebugAddGold(100);break;
+                case 8:Session.DebugRevealMap();break;
             }
             if(Run.OpenChoice()){SetPaused(true);Cards.Show(true);}
         }
@@ -164,12 +168,7 @@ namespace Mamporro.U3
                 if(k.f8Key.wasPressedThisFrame)LoadWorld(Seed);
                 if(k.f3Key.wasPressedThisFrame){DebugVisible=!DebugVisible;UpdateHelp();}
                 if(DebugVisible&&!Cards.Visible){
-                    if(k.digit1Key.wasPressedThisFrame)QaAction(1);
-                    else if(k.digit2Key.wasPressedThisFrame)QaAction(2);
-                    else if(k.digit4Key.wasPressedThisFrame)QaAction(4);
-                    else if(k.digit5Key.wasPressedThisFrame)QaAction(5);
-                    else if(k.digit6Key.wasPressedThisFrame)QaAction(6);
-                    else if(k.digit7Key.wasPressedThisFrame)QaAction(7);
+                    for(int n=1;n<=8;n++)if(k[(Key)((int)Key.Digit1+n-1)].wasPressedThisFrame){QaAction(n);break;}
                 }
                 if(k.f1Key.wasPressedThisFrame)ConfigurePresentation(InternalHeight==240?360:InternalHeight==360?480:240,Dither,Snap);
                 if(k.f2Key.wasPressedThisFrame)Dither=!Dither;
@@ -185,6 +184,7 @@ namespace Mamporro.U3
                 intent.MoveX=dir.x;intent.MoveZ=-dir.y;
                 intent.JumpPressed|=k.spaceKey.wasPressedThisFrame;intent.JumpHeld=k.spaceKey.isPressed;
                 intent.SlidePressed|=k.leftShiftKey.wasPressedThisFrame||k.cKey.wasPressedThisFrame;intent.SlideHeld=k.leftShiftKey.isPressed||k.cKey.isPressed;
+                interactPressed|=k.eKey.wasPressedThisFrame;
                 if(mouse!=null&&Cursor.lockState==CursorLockMode.Locked){var d=mouse.delta.ReadValue();yaw+=d.x*.126f;pitch=Mathf.Clamp(pitch-d.y*.126f,-25,70);}
             }
             Shader.SetGlobalFloat(SnapId,Snap?1:0);Shader.SetGlobalFloat(DitherId,Dither?1:0);
@@ -199,7 +199,14 @@ namespace Mamporro.U3
                     $"x {Body.X:F1} · y {Body.Y:F1} · z {Body.Z:F1} · {Body.HorizontalSpeed:F1} m/s{(Body.Sliding?" · deslizando":"")}{(Body.OnSteep?" · pendiente":"")}\n"+
                     $"Vida {Run.Hp:F0}/{Run.Stats[Stat.maxHp]:F0} · Nivel {Run.Level} · Oro {Run.Gold:F0} · Bajas {Run.Kills} · Enemigos {Run.Enemies.Count}\n"+
                     $"Tiempo {(Session.Swarm?"+":"")}{Math.Abs(Session.TimeLeft):F0} s{(Session.Swarm?" · ENJAMBRE":"")} · ritmo {Session.Params.Rate:F1}/s · tope {Session.Params.MaxAlive:F0}\n"+
-                    $"Frenado {Run.CrowdSlow:P0} · {(Run.Invincible?"Invencible · ":"")}{(Session.Cheated?"QA con trucos · ":"")}{(Run.Dead?"Derrota: F8 reinicia":Run.Victory?"Victoria: F8 reinicia":Paused?"En pausa":"Combate")}";
+                    $"Frenado {Run.CrowdSlow:P0} · {(Run.Invincible?"Invencible · ":"")}{(Session.Cheated?"QA con trucos · ":"")}{(Run.Dead?"Derrota: F8 reinicia":Run.Victory?"Victoria: F8 reinicia":Paused?"En pausa":"Combate")}"+(Session.HasPrompt?"\n"+PromptText():"");
+        }
+
+        // Texto de lo que se puede usar delante (baúl, tótem, armario), como promptText de la web.
+        public string PromptText()
+        {
+            if(!Session.HasPrompt)return "";var p=Session.Prompt;
+            return p.Kind=="chest"?CombatText.Format("prompt.chest","cost",p.Cost):p.Kind=="totem"?CombatText.Format("prompt.totem","s",Tuning.TotemDuration):CombatText.Get("prompt.portal");
         }
 
         void FixedUpdate()
@@ -207,11 +214,11 @@ namespace Mamporro.U3
             if(Paused||World==null)return;
             previousPosition=currentPosition;
             if(ScriptedIntent.HasValue)intent=ScriptedIntent.Value;
-            Session.Step(intent,1.0/60,WebYaw);CombatView.Step(1.0/60);
+            Session.Step(intent,1.0/60,WebYaw,interactPressed);interactPressed=false;CombatView.Step(1.0/60);
             intent.JumpPressed=intent.SlidePressed=false;
             currentPosition=WebSpace.ToUnity(Body.X,Body.Y,Body.Z);
             if(Run.Choosing){SetPaused(true);if(!Cards.Visible)Cards.Show(true);}
-            if(Session.Over)SetPaused(true);
+            if(Session.Finished)SetPaused(true);
         }
 
         void LateUpdate()

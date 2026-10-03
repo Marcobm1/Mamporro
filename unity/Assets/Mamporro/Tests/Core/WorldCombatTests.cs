@@ -39,7 +39,7 @@ namespace Mamporro.Tests
             double y=world.Heightfield.HeightAt(3,0);
             obstacle=Collider.Oriented(3,0,1,8,0,y,y+top,true);
             var colliders=new List<Collider>(world.Colliders){obstacle};
-            return new WorldData{Heightfield=world.Heightfield,Colliders=colliders,
+            return new WorldData{Heightfield=world.Heightfield,Colliders=colliders,Interactables=world.Interactables,
                 Collision=new WorldCollision(world.Heightfield,new ColliderGrid(colliders,world.Heightfield.Half),world.Collision.Limit)};
         }
         [Test]public void SolidObstacleBlocksAnEnemyOnTheRealMap()

@@ -47,8 +47,9 @@ namespace Mamporro.Core
         public static bool Useful(Effect[] effects,PlayerStats stats)
         { foreach(var e in effects) if(!stats.Capped(e.stat)) return true; return false; }
         public static Card Heal() => new Card{Kind="heal",Amount=Tuning.FillerHeal};
-        public static Card Gold() => new Card{Kind="gold",Amount=Rules.FillerGold(0)};
-        public static List<Card> Generate(List<Weapon> weapons,List<Tome> tomes,PlayerStats stats,HashSet<string> banished,Rng rng,int count,HashSet<string> exclude=null,HashSet<string> allowed=null)
+        // Carta de relleno de oro: mitad del precio del siguiente baúl (U2 no abre baúles: 0).
+        public static Card Gold(int chestsOpened=0) => new Card{Kind="gold",Amount=Rules.FillerGold(chestsOpened)};
+        public static List<Card> Generate(List<Weapon> weapons,List<Tome> tomes,PlayerStats stats,HashSet<string> banished,Rng rng,int count,HashSet<string> exclude=null,HashSet<string> allowed=null,int chestsOpened=0)
         {
             var pool=new List<Candidate>();
             bool Include(string key)=>!banished.Contains(key)&&(exclude==null||!exclude.Contains(key));
@@ -79,18 +80,53 @@ namespace Mamporro.Core
                 cards.Add(card);
             }
             if(cards.Count<count) cards.Add(Heal());
-            if(cards.Count<count) cards.Add(Gold());
+            if(cards.Count<count) cards.Add(Gold(chestsOpened));
             return cards;
         }
-        public static Card Replace(List<Weapon> weapons,List<Tome> tomes,PlayerStats stats,HashSet<string> banished,Rng rng,List<Card> rest)
+        public static Card Replace(List<Weapon> weapons,List<Tome> tomes,PlayerStats stats,HashSet<string> banished,Rng rng,List<Card> rest,int chestsOpened=0)
         {
             var exclude=new HashSet<string>(); foreach(var c in rest) if(c.Key!=null) exclude.Add(c.Key);
-            var card=Generate(weapons,tomes,stats,banished,rng,1,exclude)[0];
+            var card=Generate(weapons,tomes,stats,banished,rng,1,exclude,null,chestsOpened)[0];
             if(card.Key!=null) return card;
             if(!rest.Exists(c=>c.Kind=="heal")) return Heal();
-            if(!rest.Exists(c=>c.Kind=="gold")) return Gold();
+            if(!rest.Exists(c=>c.Kind=="gold")) return Gold(chestsOpened);
             return null;
         }
         public static bool ItemAvailable(ItemDef d,int owned,PlayerStats stats) => (d.maxStacks==0||owned<d.maxStacks)&&(d.effects.Length==0||Useful(d.effects,stats));
+
+        // generateShrineOffer: `count` bendiciones distintas, cada una con su rareza.
+        public static List<Card> Shrine(PlayerStats stats,int count,Rng rng)
+        {
+            var pool=new List<ShrineBoost>();
+            foreach(var b in Catalog.ShrineBoosts) if(!stats.Capped(b.effect.stat)) pool.Add(b);
+            rng.Shuffle(pool);
+            var cards=new List<Card>();
+            for(int i=0;i<pool.Count&&i<count;i++) {
+                var b=pool[i]; var rarity=RollRarity(stats[Stat.luck],rng);
+                cards.Add(new Card{Kind="boost",Key="boost:"+b.id,Id=b.id,Rarity=rarity.id,Amount=Rules.Scaled(b.effect.amount,rarity.power,b.effect.integer)});
+            }
+            if(cards.Count==0) cards.Add(Heal());
+            return cards;
+        }
+        public static ShrineBoost Boost(string id) => Array.Find(Catalog.ShrineBoosts,b=>b.id==id);
+
+        // rollItem: primero la rareza (con la Suerte) y luego un objeto de esa rareza;
+        // si no queda ninguno, las rarezas más cercanas (antes las de abajo).
+        public static ItemDef RollItem(double luck,Rng rng,List<ItemStack> items,PlayerStats stats)
+        {
+            var rarity=RollRarity(luck,rng); int n=Catalog.Rarities.Length,start=Array.IndexOf(Catalog.Rarities,rarity);
+            var order=new List<int>(n); for(int i=0;i<n;i++) order.Add(i);
+            order.Sort((a,b)=>{int da=Math.Abs(a-start),db=Math.Abs(b-start);return da!=db?da-db:a-b;});
+            var pool=new List<ItemDef>();
+            foreach(int r in order) {
+                pool.Clear(); string id=Catalog.Rarities[r].id;
+                foreach(var d in Catalog.Items) {
+                    int owned=0; foreach(var s in items) if(s.Def.id==d.id) owned=s.Count;
+                    if(d.rarity==id&&ItemAvailable(d,owned,stats)) pool.Add(d);
+                }
+                if(pool.Count>0) return rng.Pick(pool);
+            }
+            return null;
+        }
     }
 }

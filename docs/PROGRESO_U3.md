@@ -6,12 +6,12 @@ Este archivo es el **checkpoint vivo de continuidad entre Codex CLI y Claude Cod
 
 ## Cómo retomar
 
-- **Último punto verificado y publicado:** paso 6, commit «Añade el director completo de U3» (consultar `git log`; el hash no se escribe aquí para no crear un commit circular). Base recibida por Claude Code el 03/10/2026: `b21160cf060ef30daa4c55759aec1e0095b0bd54`.
-- **Paso actual:** 7 del plan: interactuables, armario, jefe y victoria.
-- **Terminado y verificado:** pasos 1–6. El 03/10/2026 (paso 6): Edit Mode **151/151**, Play Mode **13/13**. Director, apariciones y formaciones coinciden con las secciones `director` y `spawns` de `u3-world.json`. **`u3-world.json` sigue congelada**, sin regeneración.
-- **A medias:** nada del paso 6. Pasos 7–12 pendientes. U4 no autorizado.
+- **Último punto verificado y publicado:** paso 7, commit «Añade los interactuables, el armario y la victoria de U3» (consultar `git log`; el hash no se escribe aquí para no crear un commit circular). Paso 6: `c42e22d`. Base recibida por Claude Code el 03/10/2026: `b21160cf060ef30daa4c55759aec1e0095b0bd54`.
+- **Paso actual:** 8 del plan: HUD, minimapa, avisos, telegrafiado y pausa.
+- **Terminado y verificado:** pasos 1–7. El 03/10/2026 (paso 7): Edit Mode **159/159**, Play Mode **13/13**, build y nueve capturas. Director, apariciones, formaciones, precios de baúl y recorrido de interactuables coinciden con `u3-world.json`. **`u3-world.json` sigue congelada**, sin regeneración.
+- **A medias:** nada del paso 7. Pasos 8–12 pendientes. U4 no autorizado.
 - **Sin commit a propósito:** `unity/ProjectSettings/ProjectSettings.asset` (configuración local de nube), `ProjectAuditorSettings.asset`, `PackageManagerSettings.asset` y `URPProjectSettings.asset`: no publicar. También se conservan fuera del índice los cambios de espacios/EOL de `RetroPipeline.asset`, `UniversalRenderPipelineGlobalSettings.asset` y `GraphicsSettings.asset` (el autor confirmó el 03/10/2026 que se tratan igual). No limpiar ni restaurar estos archivos automáticamente.
-- **Siguiente paso exacto:** paso 7. Portar `Interactables.ts` (descubrimiento, carga/descarga de mesas camilla, tótem, aviso de interacción) y la parte de `Run.ts` que los usa (baúles con `chestCost`, `rollItem` con su RNG `items`, desafío del tótem con sus modificadores al director, bendiciones de santuario con `generateShrineOffer`, armario → Pelusa Madre, victoria a los 1,6 s y carta de relleno con `chestCost(baúlesAbiertos)`), dentro de `WorldRun`. Probar contra `chestCosts` e `interactables` de `u3-world.json`.
+- **Siguiente paso exacto:** paso 8. HUD uGUI equivalente a `src/ui/Hud.ts` (vida, XP, nivel, oro, tiempo/enjambre, bajas, armas/tomos/objetos, jefe, aviso de interacción, barra de mesa/desafío), minimapa con descubrimiento (`src/ui/Minimap.ts`), avisos a partir de `CombatRun.Events` (textos de `Game.showNotice`), telegrafiado de los ataques del jefe (`src/render/Telegraphs.ts`) y pausa con semilla, estadísticas y objetos. Sin cambiar la lógica del núcleo.
 
 Comprobar el estado desde CMD:
 
@@ -111,7 +111,7 @@ Commits pequeños que compilen y pasen sus pruebas; actualizar este checkpoint t
 4. **Hecho.** Render del mundo con variante del material retro de U1 en una escena nueva `Assets/Mamporro/U3/U3_Partida.unity`; U1 y U2 conservan sus escenas y builds.
 5. **Hecho, 03/10/2026.** Física del jugador y combate/horda conectados al mundo real; apariciones controladas QA, reciclado lejano, cartas, render instanciado y reinicio probado.
 6. **Hecho, 03/10/2026.** Director completo.
-7. Interactuables, armario, jefe y victoria.
+7. **Hecho, 03/10/2026.** Interactuables, armario, jefe y victoria.
 8. HUD, minimapa, avisos, telegrafiado y pausa.
 9. Pantallas de inicio y resultados; depuración con `run.cheated`.
 10. Integración: partidas deterministas contra la cronología web; Play Mode con partidas aceleradas (2 personajes × 3 duraciones) hasta resultados; victoria, derrota, enjambre y reinicio sin restos.
@@ -202,6 +202,29 @@ Pruebas ejecutadas el **03/10/2026**, horas Europe/Madrid; los XML/logs finales 
 | --- | --- | --- | --- |
 | 03/10/2026 19:45 | `scripts\u3.cmd edit` | 151/151 (132 anteriores + 19 nuevas de director/apariciones) | `unity/TestResults/U3/edit.xml`, `edit.log` |
 | 03/10/2026 19:46 | `scripts\u3.cmd play` | 13/13 | `unity/TestResults/U3/play.xml`, `play.log` |
+
+### 03/10/2026 — paso 7: interactuables, armario, jefe y victoria — Claude Code
+
+- Punto de partida/commit: `c42e22d` (paso 6 publicado).
+- Trabajo realizado: port de `Interactables.ts` (`Core/World/Interactables.cs`: descubrimiento a 30 m y armario a 22 m, carga de mesa camilla en 9 s dentro de 4,2 m y descarga al 35 %, desafío del tótem, aviso de interacción con alcance por tipo y precio del siguiente baúl, revelar). `WorldRun` añade lo que hace `Run.ts` con ellos: E en el mismo punto del tick que la web (tras la física y con la posición del tick anterior); baúl con `chestCost`, aviso `noGold`, `rollItem` con su propio RNG `seed/run/items` y devolución del oro si no queda objeto; tótem de 45 s con modificadores al director (×2,2 ritmo, ×1,25 vida, ×2 oro) y +50 de suerte, y objeto con +100 de suerte al superarlo; mesas camilla con `generateShrineOffer` (bendiciones con rareza, sin volver a tirar/saltar/descartar) antes que las subidas de nivel; armario → Pelusa Madre a 4 m por detrás; el enjambre revela el armario; victoria con espera de 1,6 s (solo física, la partida no avanza). La carta de relleno de oro usa `chestCost(baúlesAbiertos)`. Escena: E interactúa, el estado muestra el aviso, la tapa de los baúles se dibuja aparte y se abre como en la web, anillo de carga sobre el terreno en las mesas, brillos de tótem/armario y su estado usado; las cartas muestran las bendiciones. Depuración 3 (+1 minuto) y 8 (revelar mapa) ya conectadas; todas marcan `Cheated`.
+- Archivos/sistemas principales: `Core/World/Interactables.cs` (nuevo), `Core/World/WorldRun.cs`, `Core/CombatRun.cs` (bendiciones, suerte del desafío, elecciones de mesa, RNG de objetos, `CheckPurse`, sucesos `item`/`shield`/`revive`), `Core/Offers.cs` (`Shrine`, `RollItem`, relleno con baúles abiertos), `U3/RunRenderer.cs`, `U3/WorldRenderer.cs` (sin tapa estática), `U3/RunCards.cs`, `U3/U3Game.cs`, `Tests/Core/InteractableTests.cs` (nuevo).
+- Decisiones nuevas: ninguna.
+- Pruebas realmente ejecutadas y resultado: ver «Pruebas del paso 7». Precios 0–19 y el recorrido completo de interactuables (descubrimientos, carga, avisos y precios cada 30 ticks) coinciden con la web.
+- Pruebas pendientes/no ejecutadas: partidas integradas (paso 10).
+- Commits creados: «Añade los interactuables, el armario y la victoria de U3». Push: ver «Cómo retomar».
+- Estado del árbol al terminar: solo los ajustes Unity excluidos.
+- Errores/limitaciones conocidas: HUD, minimapa, avisos visibles y pantallas técnicas llegan en los pasos 8–9; hasta entonces la escena muestra el estado en el panel de texto.
+- Decisiones pendientes del autor: ninguna.
+- Siguiente paso exacto: paso 8 (ver «Cómo retomar»).
+
+#### Pruebas del paso 7
+
+| Fecha y hora | Comando (CMD, raíz del repo) | Resultado | Registro |
+| --- | --- | --- | --- |
+| 03/10/2026 19:53 | `scripts\u3.cmd edit` | 159/159 (8 nuevas de interactuables) | `unity/TestResults/U3/edit.xml`, `edit.log` |
+| 03/10/2026 19:55 | `scripts\u3.cmd play` | 13/13 | `unity/TestResults/U3/play.xml`, `play.log` |
+| 03/10/2026 19:56 | `scripts\u3.cmd build` | Success, Windows x64 Mono | `unity/TestResults/U3/build.log` |
+| 03/10/2026 19:56 | `scripts\u3.cmd visual` | 9 capturas nuevas revisadas | `unity/TestResults/U3/visual.log`, `Visual/*.png` |
 
 ## Checkpoint al terminar U3
 

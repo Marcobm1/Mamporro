@@ -66,7 +66,7 @@ namespace Mamporro.Tests
                 r.Enemies.X[0]=999;r.Hp=0;r.GainGold(999);old.Body.X=999;
                 g.SetPaused(false);yield return new WaitForSeconds(.15f);g.SetPaused(true);
                 Assert.That(fresh.Time,Is.GreaterThan(0));Assert.That(fresh.Hp,Is.EqualTo(100));Assert.That(fresh.Gold,Is.Zero);
-                Assert.That(g.Body.X,Is.Zero);Assert.That(fresh.Enemies.Count,Is.Zero);Assert.That(g.CombatView.DrawnInstances,Is.Zero);
+                Assert.That(g.Body.X,Is.Zero);Assert.That(fresh.Enemies.Count,Is.Zero);Assert.That(g.CombatView.DrawnInstances,Is.EqualTo(g.CombatView.InteractableInstances),"solo interactuables");
                 yield return null;Assert.That(g.transform.childCount,Is.EqualTo(children),"sin acumulación de objetos de escena");
             }
             LogAssert.NoUnexpectedReceived();
