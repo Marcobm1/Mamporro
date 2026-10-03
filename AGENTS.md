@@ -23,7 +23,7 @@ Codex y Claude Code trabajan por turnos sobre la misma rama. **No trabajan a la 
 - U0 preparado y conservado como referencia.
 - **U1 implementado, probado por el autor y aprobado el 29/09/2026.** Implementación publicada en `abe0a9b7f0b8c53f478b91c870341999df2ea073`; checkpoint publicado en `eb691b595eb247118075368430d34ed0a95735d1`.
 - U2 aprobado por el autor el 29/09/2026.
-- **U3 está autorizado. U4 no.** Trabaja exclusivamente el alcance descrito en `docs/PROGRESO_U3.md`.
+- **U3 está autorizado. U4 no.** Trabaja exclusivamente el alcance descrito en `docs/PROGRESO_U3.md`. U3 está implementado y verificado (03/10/2026) y a la espera de la prueba manual y la aprobación del autor.
 - Unity confirmado: 6.6 / `6000.6.3f1`, Windows x64 Mono, URP 17.6.0, Input System 1.20.0, uGUI 2.6.0 y Test Framework 1.8.0.
 - Codex CLI ya está instalado y verificado en el equipo del autor. No vuelvas a tratar su instalación como pendiente.
 

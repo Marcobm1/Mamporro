@@ -1,7 +1,9 @@
 # MAMPORRO — estado actual y punto de continuación
 
-Corte: **29/09/2026**, después de la aprobación manual de U1, de la autorización de U2 y de establecer el relevo compartido Codex ↔ Claude Code.
+Corte vigente: **04/10/2026**, cierre documental de U3 sobre el trabajo local del relevo. U3 implementado y verificado; pendiente de la prueba manual y la aprobación del autor. U4 no autorizado.
 
+> **Actualización 03/10/2026:** U3 **implementado y verificado** (mundo y partida completa; las cuatro partidas de referencia coinciden con la web; ensayo de rendimiento en la build). **Pendiente de la prueba manual y la aprobación del autor. U4 no autorizado.** Instrucciones en «Checkpoint al terminar U3» de [PROGRESO_U3](PROGRESO_U3.md).
+>
 > **Actualización 29/09/2026 (noche):** U2 **aprobado por el autor**. **U3 autorizado y en curso; U4 no autorizado.** El punto exacto de continuación está en la sección «Cómo retomar» de [PROGRESO_U3](PROGRESO_U3.md); el cierre de U2, en [PROGRESO_U2](PROGRESO_U2.md). Estas notas mandan sobre las frases de este documento que digan que U2 no está implementado o que U3 no está autorizado. Relevo entre herramientas: [CONTINUIDAD_AGENTES](CONTINUIDAD_AGENTES.md) y checkpoints de bloque en [INSTRUCCIONES_PROYECTO](INSTRUCCIONES_PROYECTO.md).
 
 ## Resumen ejecutivo
@@ -11,7 +13,7 @@ Corte: **29/09/2026**, después de la aprobación manual de U1, de la autorizaci
 - U0: referencia reproducible preparada y conservada.
 - U1: **implementado, verificado y aprobado por el autor**.
 - U2: **implementado, probado y aprobado por el autor el 29/09/2026**; cierre en `docs/PROGRESO_U2.md`.
-- U3: **autorizado el 29/09/2026 y en curso**; checkpoint en `docs/PROGRESO_U3.md`.
+- U3: **autorizado el 29/09/2026; implementado y verificado el 03/10/2026, a la espera de la prueba manual y la aprobación del autor**; cierre e instrucciones en `docs/PROGRESO_U3.md`.
 - U4–U6: no autorizados para empezar.
 - Rama de trabajo y por defecto: `claude/zen-pasteur-674ik0`.
 - Implementación U1: `abe0a9b7f0b8c53f478b91c870341999df2ea073`.
@@ -27,7 +29,7 @@ Codex CLI y Claude Code se alternarán cuando termine la sesión/tokens de uno. 
 
 Norma canónica: [`CONTINUIDAD_AGENTES.md`](CONTINUIDAD_AGENTES.md).
 
-El checkpoint vivo del bloque actual es [`PROGRESO_U2.md`](PROGRESO_U2.md). Durante U2 debe actualizarse no solo al final del hito, sino también cuando una sesión cambie de forma útil el punto de continuación o antes de ceder el turno entre agentes.
+El checkpoint vivo del bloque actual es [`PROGRESO_U3.md`](PROGRESO_U3.md). Contiene el cierre, las pruebas y las instrucciones manuales. Debe actualizarse al corregir fallos de U3 o antes de ceder el turno entre agentes.
 
 Cada relevo debe registrar trabajo realmente realizado, pruebas ejecutadas, commits/push, limitaciones, cambios locales sin publicar y siguiente paso exacto. No registrar planes como si fueran resultados.
 
@@ -37,7 +39,7 @@ Los Markdown del traspaso del 28/29 de septiembre decían que Codex CLI estaba p
 
 El entorno local se comprobó, Codex CLI se instaló/verificó y U1 se implementó realmente en Unity. Unity importó el proyecto, compiló C#, ejecutó Edit/Play Mode, generó una build Windows x64 Mono y la build se ejecutó con D3D11. Tras esa entrega, el autor probó U1 y confirmó que estaba bien; a continuación autorizó U2.
 
-Por tanto, cualquier frase histórica como «no iniciar U2» dentro de un checkpoint anterior debe interpretarse en su fecha, no como restricción vigente. El bloque vigente es `docs/PROGRESO_U2.md`.
+Por tanto, cualquier frase histórica como «no iniciar U2» dentro de un checkpoint anterior debe interpretarse en su fecha, no como restricción vigente. El bloque vigente es `docs/PROGRESO_U3.md`.
 
 ## Repositorio y protección del trabajo local
 
@@ -121,16 +123,12 @@ git remote -v
 git fetch origin
 ```
 
-Si el árbol está limpio y la rama local solo necesita avanzar:
-
-```cmd
-git pull --ff-only
-```
+En este relevo no hacer pull, stash ni restaurar ajustes locales. Comparar primero HEAD, remoto y diferencias; conservar el trabajo local.
 
 Codex CLI: iniciar `codex` en la raíz y pedir que lea `AGENTS.md`.
 
 Claude Code: iniciarlo en la raíz; `CLAUDE.md` contiene la entrada equivalente.
 
-Ambos deben leer `docs/CONTINUIDAD_AGENTES.md`, este documento y `docs/PROGRESO_U2.md` antes de cambiar archivos. No volver a pedir aprobación general de U2, pero sí detenerse ante una decisión de diseño importante que no esté cubierta.
+Ambos deben leer `docs/CONTINUIDAD_AGENTES.md`, este documento y `docs/PROGRESO_U3.md` antes de cambiar archivos. U3 espera la prueba manual y la aprobación del autor; las seis decisiones técnicas propuestas siguen pendientes de confirmación. U4 no está autorizado.
 
-Al terminar una sesión con cambios relevantes, el agente saliente debe actualizar `docs/PROGRESO_U2.md` antes de entregar el turno.
+Al terminar una sesión con cambios relevantes, el agente saliente debe actualizar `docs/PROGRESO_U3.md` antes de entregar el turno.

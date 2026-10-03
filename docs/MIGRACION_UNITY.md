@@ -1,6 +1,6 @@
 # Migración propuesta a Unity
 
-> Estado vigente en [ESTADO_ACTUAL](ESTADO_ACTUAL.md): U1 aceptado; U2 aprobado por el autor ([PROGRESO_U2](PROGRESO_U2.md)). No comenzar U3.
+> Estado vigente en [ESTADO_ACTUAL](ESTADO_ACTUAL.md): U1 y U2 aprobados; U3 implementado y verificado, pendiente de la prueba manual y la aprobación del autor ([PROGRESO_U3](PROGRESO_U3.md)). U4 no autorizado. Las autorizaciones antiguas que figuran debajo son históricas.
 
 ## Historial de preparación (sustituido por el checkpoint U2)
 

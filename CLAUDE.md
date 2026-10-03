@@ -28,7 +28,7 @@ Las decisiones posteriores concretan o sustituyen la especificación original. L
 - Unity: proyecto real en `unity/`, Unity 6.6 `6000.6.3f1`, Windows x64 Mono, URP 17.6.0, Input System 1.20.0, uGUI 2.6.0, Test Framework 1.8.0.
 - U1: implementado en `abe0a9b7f0b8c53f478b91c870341999df2ea073`, checkpoint `eb691b595eb247118075368430d34ed0a95735d1`; build y pruebas automáticas correctas y **aprobación manual del autor posterior al checkpoint**.
 - U2: aprobado por el autor el 29/09/2026 (`docs/PROGRESO_U2.md`).
-- **U3 está expresamente autorizado. U4 no está autorizado.**
+- **U3 está expresamente autorizado. U4 no está autorizado.** U3 implementado y verificado el 03/10/2026; a la espera de la prueba manual y la aprobación del autor (`docs/PROGRESO_U3.md`).
 - Codex CLI ya está instalado/verificado; no repetir la instalación.
 - Codex y Claude Code pueden ejecutar U3 por turnos. El último checkpoint publicado manda sobre recuerdos de sesiones anteriores.
 

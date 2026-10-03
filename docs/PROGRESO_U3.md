@@ -1,17 +1,17 @@
 # Checkpoint U3 — mundo y partida completa equivalentes
 
-Estado: **AUTORIZADO por el autor el 29/09/2026; EN CURSO.** U4 no está autorizado.
+Estado: **IMPLEMENTADO Y VERIFICADO el 03/10/2026; a la espera de la prueba manual y la aprobación del autor.** U4 no está autorizado.
 
 Este archivo es el **checkpoint vivo de continuidad entre Codex CLI y Claude Code** mientras U3 siga activo. Debe actualizarse después de cada paso completado y siempre antes de un relevo de herramienta. Protocolo: [`CONTINUIDAD_AGENTES.md`](CONTINUIDAD_AGENTES.md); reglas comunes: [`INSTRUCCIONES_PROYECTO.md`](INSTRUCCIONES_PROYECTO.md).
 
 ## Cómo retomar
 
-- **Último punto verificado y publicado:** paso 11, commit «Añade el ensayo de partida real de U3» (consultar `git log`; el hash no se escribe aquí para no crear un commit circular). Paso 10: `19562c2`; paso 9: `443645d`; paso 8: `16543c8`; núcleo del paso 10: `db490f5`; paso 7: `59a5f7f`; paso 6: `c42e22d`. Base recibida por Claude Code el 03/10/2026: `b21160cf060ef30daa4c55759aec1e0095b0bd54`.
-- **Paso actual:** 12 del plan: cierre documental y parada para la prueba manual del autor.
-- **Terminado y verificado:** pasos 1–11 (ensayo de partida real en la build: ver «Ensayo de rendimiento U3»). Las cuatro partidas de `runs` coinciden con la web de principio a fin (`IntegratedRunTests`) y en escena se juegan 2 personajes × 3 duraciones hasta resultados (`U3RunFlowTests`). El 03/10/2026 (paso 11): Edit Mode **167/167**, Play Mode **17/17**, build Windows x64 Mono y ensayo 8/8 puntos con `validRender`. **`u3-world.json` sigue congelada**, sin regeneración.
-- **A medias:** nada. Pendiente: paso 12 (cierre). U4 no autorizado.
+- **Última implementación publicada:** `d09b5d09a091c02b3a02e2a0f88a9a696e5a3972` (paso 11). El cierre documental del paso 12 se recupera y verifica el 04/10/2026; commit «Completa el cierre documental de U3» (consultar `git log`; publicación registrada en la siguiente entrada). Paso 10: `19562c2`; paso 9: `443645d`; paso 8: `16543c8`; núcleo del paso 10: `db490f5`; paso 7: `59a5f7f`; paso 6: `c42e22d`. Base recibida por Claude Code el 03/10/2026: `b21160cf060ef30daa4c55759aec1e0095b0bd54`.
+- **Paso actual:** ninguno. U3 cerrado (pasos 1–12) y **detenido para la prueba manual del autor** (instrucciones en «Checkpoint al terminar U3»).
+- **Terminado y verificado:** pasos 1–12 (ensayo de partida real en la build: ver «Ensayo de rendimiento U3»). Las cuatro partidas de `runs` coinciden con la web de principio a fin (`IntegratedRunTests`) y en escena se juegan 2 personajes × 3 duraciones hasta resultados (`U3RunFlowTests`). El 03/10/2026 (paso 11): Edit Mode **167/167**, Play Mode **17/17**, build Windows x64 Mono y ensayo 8/8 puntos con `validRender`. **`u3-world.json` sigue congelada**, sin regeneración.
+- **A medias:** nada. Pendiente: prueba manual y aprobación del autor, y confirmación de las decisiones técnicas propuestas en `DECISIONES.md`. U4 no autorizado.
 - **Sin commit a propósito:** `unity/ProjectSettings/ProjectSettings.asset` (configuración local de nube), `ProjectAuditorSettings.asset`, `PackageManagerSettings.asset` y `URPProjectSettings.asset`: no publicar. También se conservan fuera del índice los cambios de espacios/EOL de `RetroPipeline.asset`, `UniversalRenderPipelineGlobalSettings.asset` y `GraphicsSettings.asset` (el autor confirmó el 03/10/2026 que se tratan igual). No limpiar ni restaurar estos archivos automáticamente.
-- **Siguiente paso exacto:** paso 12: actualizar `ESTADO_ACTUAL.md`, `CLAUDE.md`/`AGENTS.md` si procede y el checkpoint final; push; parar con instrucciones de prueba manual.
+- **Siguiente paso exacto:** esperar al autor. Si informa de fallos, corregirlos dentro de U3. No empezar U4 sin su autorización expresa.
 
 Comprobar el estado desde CMD:
 
@@ -144,7 +144,7 @@ Commits pequeños que compilen y pasen sus pruebas; actualizar este checkpoint t
 9. **Hecho, 03/10/2026.** Pantallas de inicio y resultados; depuración con `run.cheated`.
 10. **Hecho, 03/10/2026.** Integración: partidas deterministas contra la cronología web (ver «Partidas integradas»); Play Mode con partidas aceleradas (2 personajes × 3 duraciones) hasta resultados; victoria, derrota, enjambre y reinicio sin restos.
 11. **Hecho, 03/10/2026.** Build Windows x64 Mono ejecutada y ensayo de partida real: minutos 2, 5 y 9 y enjambre con 750 vivos, a 1080p y 1440p, con las mismas condiciones y `validRender` que U1/U2. Objetivo: 60 FPS con 300 enemigos en el mapa real; si el enjambre no llega, perfilar y documentar antes de cerrar.
-12. Cierre: documentación, push y parada para la prueba manual del autor con instrucciones.
+12. **Cierre documental completado y base verificada el 04/10/2026.** Borrador del 03/10 recuperado; publicación y parada registradas en la entrada de cierre de esta sesión.
 
 ## Pruebas ejecutadas
 
@@ -367,6 +367,80 @@ Pruebas ejecutadas el **03/10/2026**, horas Europe/Madrid; los XML/logs finales 
 | 03/10/2026 20:36 | `scripts\u3.cmd play` | 16/17: comprobación frágil del minimapa (corregida) | `unity/TestResults/U3/play.log` |
 | 03/10/2026 20:38 | `scripts\u3.cmd play` | 17/17 | `unity/TestResults/U3/play.xml`, `play.log` |
 
+### 03/10/2026 — paso 12: borrador local de cierre de U3 — Claude Code
+
+- Punto de partida/commit: `d09b5d0`.
+- Trabajo registrado por la sesión anterior: verificación de que `src/` coincide con `0505b16` y de que referencias y código U2 no cambiaron; verificadores U0/U2/U3 correctos. Borrador de checkpoint de cierre con instrucciones de prueba manual y cambios en `ESTADO_ACTUAL.md`, `CLAUDE.md` y `AGENTS.md`. La auditoría del 04/10 confirma que README raíz todavía no se había actualizado.
+- Pruebas realmente ejecutadas y resultado: `git diff --exit-code 0505b16 -- src` y `git diff --exit-code b21160c -- unity/Docs/Reference unity/Assets/Mamporro/U2` sin diferencias; `node scripts\unity-reference.mjs`, `node scripts\unity-reference-u2.mjs` y `node scripts\unity-reference-u3.mjs` coinciden (03/10/2026 20:40). Sin cambios de código en este paso.
+- Corrección factual de la auditoría del 04/10: **no se creó ni publicó el commit de cierre**. HEAD local y remoto seguían en `d09b5d0`; este borrador y los otros tres documentos estaban sin commit, además de los ajustes Unity excluidos. Las pruebas de esta entrada son históricas, no ejecuciones de la sesión de relevo.
+- Decisiones pendientes del autor: aprobación de U3 y confirmación de las decisiones técnicas propuestas.
+- Siguiente paso exacto: esperar al autor; no empezar U4.
+
+### 04/10/2026 — recuperación y cierre documental del paso 12 — Codex
+
+- **Punto de partida:** `d09b5d09a091c02b3a02e2a0f88a9a696e5a3972`, HEAD local y origin iguales tras fetch; ahead 0 / behind 0. Sin commits inéditos. Se leyeron el diff completo y los dos archivos sin seguimiento antes de editar. Se conserva intacto el stash antiguo `codex: cabeceras CLAUDE/ENTORNO (sustituidas por 2b67ea5)`; no se aplica ni se borra.
+- **Trabajo heredado y conservado:** borrador del paso 12 en `AGENTS.md`, `CLAUDE.md`, `docs/ESTADO_ACTUAL.md` y este checkpoint. No había WIP de código. El borrador decía que había commit/push y README actualizado; Git demuestra que aún no. Se corrigen esas afirmaciones manteniendo el registro histórico de pruebas atribuido a la sesión anterior.
+- **Trabajo completado:** checkpoint final con commits, alcance, pruebas diferenciadas por fecha, condiciones de build/ensayo, limitaciones e instrucciones manuales en CMD sin pull. Se actualizan las entradas de los dos agentes, estado global, README raíz/Unity y encabezados de migración/hoja de ruta que todavía prohibían empezar U3. Se conserva la implementación de los pasos 1–11.
+- **Decisiones nuevas:** ninguna. Las seis propuestas técnicas de `DECISIONES.md` permanecen pendientes de confirmación del autor; no se modifica ese archivo. U4 no autorizado.
+- **Pruebas nuevas realmente ejecutadas:** tabla inferior. Build, visual y benchmark del 03/10 se revisan como evidencia histórica, sin atribuirlos a esta sesión ni a una prueba jugable manual.
+- **Pruebas pendientes:** prueba manual y aprobación del autor. Después de publicar este cierre se revisarán con tiempo limitado los CSV del minuto 5; no bloquea la entrega.
+- **Commit previsto:** «Completa el cierre documental de U3», exclusivamente los ocho Markdown revisados. Resultado del commit/push y hash se registrarán en la siguiente entrada tras verificarlos; este texto no certifica todavía su publicación.
+- **Estado local/exclusiones:** cuatro ajustes ProjectSettings enumerados en «Cómo retomar» y espacios/EOL de los tres assets allí enumerados, conservados sin publicar ni restaurar. `Builds` y `TestResults` ignorados. Ningún cambio de código, `src/` ni referencias.
+- **Limitaciones:** picos aislados del minuto 5 sin causa confirmada; no se altera el balance ni se infiere una causa de GC sin medición. Aprobación y decisiones técnicas pendientes del autor.
+- **Siguiente paso exacto:** publicar el cierre, diagnóstico acotado del minuto 5 y detenerse para la prueba manual; no empezar U4.
+
+| Fecha/hora (Europe/Madrid) | Comando CMD desde la raíz | Resultado | Registro |
+| --- | --- | --- | --- |
+| 04/10/2026 01:09 | `scripts\u3.cmd edit` | 167/167, 0 fallos, exit 0 | `unity/TestResults/U3/edit.xml`, `edit.log` (XML: 23:09:10–23:09:23 UTC del 03/10) |
+| 04/10/2026 01:09–01:10 | `scripts\u3.cmd play` | 17/17, 0 fallos, exit 0 | `unity/TestResults/U3/play.xml`, `play.log` (XML: 23:09:50–23:10:55 UTC del 03/10) |
+| 04/10/2026 01:11–01:13 | `node scripts\unity-reference.mjs` | datos y medios U0 coinciden, exit 0 | consola de la sesión; referencia leída `unity/Docs/Reference/baseline.json` |
+| 04/10/2026 01:13–01:16 | `node scripts\unity-reference-u2.mjs` | U2 coincide con la web aprobada, exit 0 | consola de la sesión; referencia leída `unity/Docs/Reference/u2-combat.json` |
+| 04/10/2026 01:16–01:18 | `node scripts\unity-reference-u3.mjs` | U3 coincide con la web aprobada, exit 0; sin regeneración | consola de la sesión; referencia leída `unity/Docs/Reference/u3-world.json` |
+| 04/10/2026 01:10 | `git diff --exit-code 0505b1690656d15188860157612455639820fe1f -- src` y `git diff --exit-code b21160c -- unity/Docs/Reference unity/Assets/Mamporro/U2` | sin diferencias | consola de la sesión |
+
 ## Checkpoint al terminar U3
 
-Registrar aquí: commits publicados; sistemas portados; decisiones nuevas; pruebas exactas y resultados; build y condiciones de rendimiento; limitaciones; cambios locales no publicados; instrucciones de prueba manual; aprobación del autor o pendientes; siguiente paso propuesto (U4), sin empezarlo.
+Cierre documental recuperado del borrador de Claude Code del 03/10/2026 y completado por Codex el 04/10/2026. **Implementado y verificado; pendiente de la prueba manual y la aprobación del autor.**
+
+- **Commits publicados de U3 al recibir el relevo:** `4bce54d` (apertura), `525fb1e` (referencia), `522d8de` (núcleo del mundo), `272ce95` (escena y render), `4de718d` (combate en el mundo), `b21160c` (checkpoint del paso 5), `c42e22d` (director), `59a5f7f` (interactuables, armario y victoria), `db490f5` (partidas integradas), `16543c8` (HUD, minimapa, avisos y pausa), `443645d` (inicio, resultados y F3), `19562c2` (partidas aceleradas en escena), `d09b5d0` (ensayo de rendimiento). Publicación del cierre: entrada del 04/10.
+- **Sistemas portados:** mundo procedural, física del jugador, combate sobre el mundo, director completo (tabla, curva, oleadas, élites, enjambre, 5/10/15), interactuables (baúles, mesas camilla, tótems, armario → Pelusa Madre → victoria), HUD, minimapa, avisos, telegrafiado, pausa, inicio, resultados y depuración F3.
+- **Equivalencia:** las cuatro partidas de `runs` coinciden con la web de principio a fin (ver «Partidas integradas»); director, apariciones, formaciones, precios e interactuables coinciden con sus secciones de `u3-world.json`. `src/`, `baseline.json`, `u2-combat.json` y `u3-world.json` sin cambios (verificadores U0/U2/U3 correctos el 03/10/2026 20:40).
+- **Pruebas nuevas del relevo (04/10):** Edit Mode 167/167 y Play Mode 17/17; comandos, horas y rutas en la entrada de sesión inferior. **Evidencia histórica del 03/10:** `scripts\u3.cmd build` a las 20:28, Success, Windows x64 Mono (`unity/TestResults/U3/build.log`); `scripts\u3.cmd visual` a las 20:20, 13 capturas revisadas y 2335 píxeles con/sin combate (`unity/TestResults/U3/visual.log`, `Visual/*.png`); `scripts\u3.cmd benchmark` 20:28–20:34, 8/8 puntos (`unity/TestResults/U3/u3-*.json`, `.csv`, `-ticks.csv`, `player-*.log`). No se repiten build/visual/ensayo para este cambio exclusivamente documental. El visual es anterior al ajuste del jersey/fregona del paso 10; la build y el ensayo son posteriores.
+- **Build y condiciones:** `unity/Builds/U3/Mamporro-U3.exe` con toda su carpeta de datos/DLL. Unity 6000.6.3f1, Windows x64 Mono normal, D3D11, pantalla completa exclusiva 1920×1080 y 2560×1440, interna 360, dither/snap, VSync 0 y FPS ilimitados. Ryzen 7 7700X, RTX 4070 Ti SUPER, ~32 GB. Remedios, 10 min, `MAMPORRO`, director activo, invulnerable, primera carta automática, circuito de 8 s; avance sin medir y 10 s de calentamiento + 30 s de medida por punto. No es una partida manual ni acredita rendimiento en otros equipos.
+- **Rendimiento:** objetivo de 60 FPS con 300 enemigos cumplido con mucho margen en el equipo de referencia; enjambre de 750 vivos >1600 FPS (ver «Ensayo de rendimiento U3»).
+- **Decisiones:** ninguna nueva de diseño; decisiones técnicas propuestas en `DECISIONES.md` («U3: decisiones técnicas de implementación»), **pendientes de confirmación del autor**.
+- **Limitaciones:** presentación técnica (modelos de cajas, avatar provisional, fuente integrada, efecto de baúl como anillo, sin partículas ni audio); sin menús finales, Calderilla, tienda, misiones ni guardado (U4); picos aislados en el minuto 5 del ensayo; GPU/GC no disponibles en la build; la escena técnica arranca en el mapa `MAMPORRO`.
+- **Cambios locales no publicados:** solo los ajustes Unity excluidos de «Cómo retomar».
+
+### Instrucciones de prueba manual (autor)
+
+Con el Editor de Unity cerrado, desde la raíz en CMD:
+
+```cmd
+cd /d "C:\Users\bymar\Desktop\Varios\Proyectos\Mamporro-git"
+start "" "unity\Builds\U3\Mamporro-U3.exe" -screen-fullscreen 0 -screen-width 1920 -screen-height 1080
+```
+
+La build local ya existe. Si falta o necesitas reconstruirla, ejecuta primero `scripts\u3.cmd build` con el Editor cerrado y después el comando `start`. Conserva toda la carpeta `Builds\U3`, no solo el EXE. No hace falta hacer pull ni limpiar el árbol para probar. Alt+F4 cierra la build.
+
+Opcional: `scripts\u3.cmd edit`, `scripts\u3.cmd play`, `scripts\u3.cmd visual` y `scripts\u3.cmd benchmark` repiten las comprobaciones automáticas; el ensayo tarda unos 6 minutos y abre la build a pantalla completa. Los resultados quedan en `unity\TestResults\U3`.
+
+1. **Inicio, ambos personajes y tres duraciones:** inicia las seis combinaciones Remedios/Baguette × 5/10/15. Comprueba selección, arma inicial (Chancla/Barra), cuenta 05:00/10:00/15:00 y mapa. Para pasar a la siguiente combinación, Esc → volver al inicio. Remedios ralentiza cerca; Baguette carga su escudo tras 8 s sin daño.
+2. **Semilla:** escribe `prueba 1` (se normaliza a `PRUEBA1`); confirma en pausa y resultados. Repite con la misma semilla: terreno e interactuables en los mismos sitios. «Nuevo mapa» cambia semilla y mapa; vacía conserva el mapa actual, inicialmente `MAMPORRO`.
+3. **Movimiento y combate:** WASD/ratón, Espacio mantenido para salto, Mayús/C para deslizarse. Recorre terreno, pendientes y obstáculos durante el combate: enemigos persiguen, chocan y frenan al atravesarlos; armas automáticas dañan/matan, se recoge XP/oro y se sube de nivel. Comprueba las pipas de paloma y el daño de contacto.
+4. **Cartas:** la partida se detiene; elige con clic o 1–4 tras la espera inicial de 0,4 s. Prueba R (volver a tirar), X (saltar), B y una carta (descartar); verifica usos limitados y que continúa el combate. Para provocar una elección usa F3, 2; cierra F3 antes de seguir jugando si no necesitas trucos.
+5. **Baúles y minimapa:** descubre marcas al explorar (aprox. 30 m; armario a 22 m). Acércate a un baúl y pulsa E: sin oro avisa; con oro entrega objeto, abre tapa y sube el próximo precio (15, 30, 49…). F3, 7 añade oro para QA; F3, 8 revela el mapa para localizar el resto.
+6. **Mesas camilla:** entra en el círculo; observa progreso, sal para comprobar descarga y vuelve hasta completar 9 s de carga. Elige una de tres bendiciones; no debe ofrecer Reroll/Saltar/Descartar. La mesa usada no concede otra recompensa.
+7. **Tótems:** pulsa E; comprueba aviso, desafío de 45 s, presión adicional y recompensa de objeto al completarlo. No puede activarse otra vez. Con invencibilidad (F3, 1) puedes revisar el recorrido sin morir.
+8. **Oleadas, élite y avisos:** en 10 min, especiales a 1:30/3:00/4:30/6:00/7:30/9:00 transcurridos y rata élite cada 2 min de dificultad; en 5 min ocurren al doble de ritmo y en 15 a dos tercios. Observa avisos, formaciones y franja previa de embestida. F3, 3 adelanta un minuto de partida si quieres acelerar QA; no sustituye jugar a ritmo normal.
+9. **Pausa:** Esc detiene tiempo/combate y muestra semilla, estadísticas y objetos. Continúa; alterna fuera y dentro de la ventana para comprobar la pausa al perder foco. La pausa técnica no tiene aún las opciones persistentes de U4.
+10. **Armario, jefe y victoria:** encuentra el armario (o revela con F3, 8) y pulsa E. Pelusa Madre aparece detrás: barra de vida, rodillo con franja, culetazo con círculo y estornudo; con media vida se enfurece. Derrotarla lleva a victoria tras 1,6 s. F3, 6 invoca un jefe para QA, pero no prueba abrir el armario; F3, 5 permite comprobar resultados rápidamente, pero no sustituye combatirlo.
+11. **Enjambre y derrota:** en otra partida deja acabar 5/10/15 sin matar al jefe (puedes adelantar con F3, 3 e invencibilidad). Aparecen ENJAMBRE, cuenta `+mm:ss`, aviso y armario revelado; crece la horda, hasta 750 vivos. Desactiva invencibilidad y recibe daño hasta la derrota. Comprueba resultados de ambos desenlaces: tiempo, bajas, nivel, oro, baúles, objetos y daño por arma; sin Calderilla.
+12. **F3:** abrir solo el panel no marca trucos. Con él abierto, jugando y sin carta/pausa, 1 invencible, 2 nivel, 3 +minuto, 4 +100 enemigos, 5 matar todo, 6 jefe, 7 oro y 8 revelar. Una acción marca toda esa partida incluso después de apagar el truco; resultados indican «Partida con trucos de debug».
+13. **Reinicio fuerte:** tras acumular enemigos, disparos, daño, objetos y niveles, prueba Reintentar desde resultados: mismo personaje/duración/semilla, vida y nivel iniciales, oro/bajas a cero, sin jefe ni efectos anteriores; el director empieza de nuevo (pueden aparecer enemigos nuevos enseguida). Repite tras victoria y derrota, prueba Nuevo mapa y Volver al inicio; F8 vuelve al inicio con el mapa actual. No debe arrastrarse invencibilidad, carta, desafío, avisos ni objetos de la sesión anterior.
+14. **Presentación técnica:** F1 interna 240/360/480, F2 dithering, F9 ajuste de vértices, F6 ventana 1080p/1440p; comprueba legibilidad de cartas/HUD y que se dibujan enemigos, armas y proyectiles. Los FPS instantáneos de F3 no sustituyen el ensayo registrado.
+
+Dime qué falla o qué no se parece a la web. Si todo está bien, la aprobación de U3 y la confirmación de las decisiones técnicas propuestas quedan registradas aquí y en `DECISIONES.md`.
+
+- **Aprobación del autor:** pendiente.
+- **Siguiente bloque propuesto:** U4 (menús finales, Calderilla, tienda, misiones, guardado compatible y filtros de desbloqueo), **sin empezar** hasta que el autor lo autorice.
