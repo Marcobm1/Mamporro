@@ -47,6 +47,12 @@ namespace Mamporro.Core
         public void Remove(int i)
         {int last=--Count;if(i==last)return;foreach(var a in arrays)a[i]=a[last];Type[i]=Type[last];State[i]=State[last];Detour[i]=Detour[last];Id[i]=Id[last];}
         public void Clear() {Count=0;nextId=1;Rebuild();}
+        // SpawnSystem.relocate de la web: conserva identidad, vida y estado de IA.
+        public void Relocate(int i,double x,double y,double z)
+        {
+            X[i]=Px[i]=(float)x;Y[i]=Py[i]=(float)y;Z[i]=Pz[i]=(float)z;
+            Vx[i]=Vz[i]=Kx[i]=Kz[i]=0;
+        }
         public int IndexOf(uint id) {for(int i=0;i<Count;i++)if(Id[i]==id)return i;return -1;}
         public void Rebuild()
         {Grid.Rebuild(X,Z,Count);BigCount=0;for(int i=0;i<Count&&BigCount<8;i++)if(Radius(i)>.9)Bigs[BigCount++]=i;}

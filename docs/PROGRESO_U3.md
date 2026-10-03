@@ -6,12 +6,12 @@ Este archivo es el **checkpoint vivo de continuidad entre Codex CLI y Claude Cod
 
 ## Cómo retomar
 
-- **Último punto verificado:** paso 4, commit «Añade la escena y el render del mundo de U3» (consultar `git log -1 origin/claude/zen-pasteur-674ik0` para confirmar su publicación). Base recibida y remoto auditado: `522d8de17ed2844647f234b920ead2ee6d082c3f`.
-- **Paso actual:** 5 del plan: conectar combate y horda al mundo real.
-- **Terminado y verificado:** pasos 1–4 y física del jugador del paso 5. Edit Mode 118/118, Play Mode 11/11, build Windows x64 Mono y seis capturas de la build final el 29/09/2026 (registro abajo). **`u3-world.json` está congelada**: la usan las pruebas C# desde las 21:59; no regenerarla.
-- **A medias:** nada del paso 4; los pasos 5–12 siguen pendientes.
-- **Sin commit a propósito:** `unity/ProjectSettings/ProjectSettings.asset` (identificador de nube), `ProjectAuditorSettings.asset`, `PackageManagerSettings.asset` y `URPProjectSettings.asset`: no publicar nunca. Unity reescribe con espacios algunos ajustes al abrir el proyecto (`RetroPipeline.asset`, `UniversalRenderPipelineGlobalSettings.asset`, `GraphicsSettings.asset`, `ProjectAuditorSettings.asset`): si solo cambian espacios o finales de línea, restaurarlos antes de hacer commit.
-- **Siguiente paso exacto:** conectar `CombatRun` y la horda a `PlayerPhysics` y `WorldCollision` en U3, con la conversión de Z únicamente en render y rejilla espacial para los 320 m del mundo. Probar presión/frenado, empuje del jefe, obstáculos, pendientes y reinicio. No reimplementar el mundo ni regenerar referencias.
+- **Último punto verificado:** paso 5, «Conecta el combate de U3 al mundo procedural», ver registro del 03/10/2026. Base local/remota recibida: `272ce95566df98d36ba60456731d16de09022852`. Publicación del paso 5 pendiente al preparar este checkpoint; confirmar con Git antes de continuar.
+- **Paso actual:** 6 del plan: director completo. Paso 5 terminado y probado; no se ha empezado el director.
+- **Terminado y verificado:** pasos 1–5. El 03/10/2026: Edit Mode **132/132**, Play Mode **13/13**, build Windows x64 Mono y nueve capturas revisadas. U0/U2/U3 coinciden con la web. **`u3-world.json` sigue congelada**, sin regeneración.
+- **A medias:** ninguna pieza de código del paso 5. Pasos 6–12 pendientes; F3 tiene QA controlado, no el director ni todo el debug final. U4 no autorizado.
+- **Sin commit a propósito:** `unity/ProjectSettings/ProjectSettings.asset` (configuración local de nube), `ProjectAuditorSettings.asset`, `PackageManagerSettings.asset` y `URPProjectSettings.asset`: no publicar. También se conservan fuera del índice los cambios de espacios/EOL de `RetroPipeline.asset`, `UniversalRenderPipelineGlobalSettings.asset` y `GraphicsSettings.asset`. No limpiar ni restaurar estos archivos automáticamente.
+- **Siguiente paso exacto:** portar el director web a C# y conectarlo a `WorldRun`/`CombatRun`; completar sobre `WorldSpawns` las apariciones, tablas/curvas, formaciones, élites, enjambre y ritmo 5/10/15. Usar `u3-world.json` congelada para sus pruebas de director/spawns. Conservar el combate, render y reinicio del paso 5. No crear otro sistema de combate ni regenerar referencias.
 
 Comprobar el estado desde CMD:
 
@@ -80,7 +80,7 @@ Sonda temporal con 200 000 entradas exactas (base64). Diferencias de Mono 6.13 (
 Mundo y partida completa equivalentes a la web aprobada `0505b1690656d15188860157612455639820fe1f`:
 
 - Mundo procedural: heightfield de 320 m con bancales; sites (casas, templos, granjas, pozos) con props y colisionadores; decoración con colisión; cobertura del suelo y fauna decorativa (desactivables si pesan).
-- Colisiones del jugador y de la horda sobre el mundo real (pendiente máxima 48°, los enemigos suben hasta 1,6 m, reciclado lejano).
+- Colisiones del jugador y de la horda sobre el mundo real (pendiente máxima del jugador 48°, escalón enemigo 0,6 m y alcance vertical de contacto 1,6 m según la web, reciclado lejano).
 - Director: `SPAWN_TABLE`/`SPAWN_CURVE`, 6 oleadas especiales, élite cada 2 min, enjambre final (hasta 750 vivos), duraciones 5/10/15 con su escalado de XP/oro y temporizador.
 - Interactuables: 14 baúles con precio creciente, 3 mesas camilla, 2 tótems, armario escondido → Pelusa Madre → victoria a los 1,6 s. La carta de relleno de oro pasa a usar `chestCost(baúlesAbiertos)`, como la web.
 - Minimapa con descubrimiento; avisos (oleadas, élite, enjambre, armario); telegrafiado de los ataques del jefe; pausa con semilla y estadísticas.
@@ -109,7 +109,7 @@ Commits pequeños que compilen y pasen sus pruebas; actualizar este checkpoint t
 2. Referencia `u3-world.json`. **Hecho.**
 3. **Hecho.** Núcleo del mundo en C# puro (`Assets/Mamporro/Core`, sin UnityEngine): port de simplex-noise, heightfield, sites, props y colisionadores, decoración, cobertura del suelo, interactuables y colisión del mundo; pruebas contra `u3-world.json` y `baseline.worlds`.
 4. **Hecho.** Render del mundo con variante del material retro de U1 en una escena nueva `Assets/Mamporro/U3/U3_Partida.unity`; U1 y U2 conservan sus escenas y builds.
-5. Física del jugador y colisiones de la horda sobre el mundo real. (Física portada y probada en el paso 3; falta conectarla a la escena y a la horda.)
+5. **Hecho, 03/10/2026.** Física del jugador y combate/horda conectados al mundo real; apariciones controladas QA, reciclado lejano, cartas, render instanciado y reinicio probado.
 6. Director completo.
 7. Interactuables, armario, jefe y victoria.
 8. HUD, minimapa, avisos, telegrafiado y pausa.
@@ -149,6 +149,38 @@ Commits pequeños que compilen y pasen sus pruebas; actualizar este checkpoint t
 - Estado antes del commit: solo archivos del paso 4 y documentación seleccionados. Restaurados explícitamente los cuatro ajustes con diferencias exclusivamente de espacios/EOL (`RetroPipeline`, `UniversalRenderPipelineGlobalSettings`, `GraphicsSettings`, `ProjectAuditorSettings`). Se conservan fuera del commit `ProjectSettings.asset`, `PackageManagerSettings.asset` y `URPProjectSettings.asset`; no se publican Builds, TestResults ni capturas.
 - Commit de esta pieza: «Añade la escena y el render del mundo de U3»; push normal tras fetch y comprobación del remoto. El resultado del push se registra al continuar el checkpoint, sin incluir un hash propio circular.
 - Siguiente paso exacto: paso 5 descrito en «Cómo retomar». Sin decisiones pendientes del autor; U4 no autorizado.
+
+### 03/10/2026 — recuperación del WIP y cierre del paso 5 — Codex
+
+- **Punto de partida:** `272ce95566df98d36ba60456731d16de09022852`, local y remoto iguales tras fetch (ahead 0 / behind 0). Sin commits inéditos ni archivos preparados. Se leyeron documentación, diff y todos los archivos sin seguimiento antes de editar; no se hizo pull, stash, reset, clean ni regeneración de referencias.
+- **WIP recuperado:** `Core/CombatRun.cs`, `U3/U3Game.cs`, `Core/World/WorldRun.cs` (esta es su ruta real), `U3/RunCards.cs`, `U3/RunRenderer.cs` y sus `.meta`. Ya contenía el puente física/combate, tamaño de rejilla configurable, cartas y render. Compilaba y pasaba 118/118 Edit y 11/11 Play, pero no tenía apariciones en escena ni pruebas específicas. Se conservó esa implementación.
+- **Completado:** conexión sobre `WorldCollision`, coordenadas web en la lógica y conversión Z solo en render; QA F3 con acciones 1/2/4/5/6/7 y marca `WorldRun.Cheated`; 3/8 reservadas sin implementar. QA 4 añade hasta 100 enemigos alternando los cuatro normales y la rata; no usa ni pretende sustituir la futura tabla del director. F8 crea una sesión nueva, vacía pools/efectos/cartas, reinicia física/cámara/HUD y conserva los recursos de render reutilizables.
+- `Core/World/WorldSpawns.cs` porta **solo** búsqueda de posición y reciclado de `SpawnSystem.ts`, con RNG derivado de `seed + /run/spawn`, distancias existentes y exclusión de élite/jefe. `Enemies.Relocate` conserva ID/vida/IA y restablece posiciones anteriores/velocidades. La reconstrucción de rejilla permanece al final del movimiento, como en la web. Este código se ampliará en el paso 6, sin un spawner alternativo.
+- **Presentación:** modelos técnicos de U2 adaptados a coordenadas web, proyectiles propios/hostiles, recogibles, efectos y avisos provisionales. Matrices, pools y lotes reutilizados; sin GameObject/Update/Rigidbody por enemigo. Material `U3/Combat.mat` referenciado desde escena/generador, malla de combate propia con color de vértice blanco y destrucción de recursos al cerrar. `RunCards` conserva la espera de 0,4 s y prioridad sobre las teclas QA.
+- **Pruebas añadidas:** 14 casos Edit en `Tests/Core/WorldCombatTests.cs`: altura/aparición/rejilla de 320 m, persecución, muro sólido en el terreno generado, escalones 0,55/0,65 m alrededor del límite web 0,6, terreno irregular, presión/frenado/contacto/iframes, arma automática, muerte y XP/oro/cartas, disparos hostiles y paloma, empuje/culetazo del jefe, reciclado y reutilización de slots. Bucle caliente de mundo/combate sin asignaciones gestionadas tras calentamiento. No es una medición de FPS ni del GC de UI/render.
+- **Play Mode:** dos casos nuevos en `U3CombatSceneTests.cs`: escena con QA, movimiento, instancias y elección con guardia; reinicio fuerte **tres veces**, con dos semillas, enemigos/jefe, ambos pools de proyectiles, daño, XP, oro, objetos/tomos/armas, descartes, cooldowns, cámara/entrada, cartas y efectos. Verifica almacenamiento independiente de la sesión anterior, rejilla vacía, HUD limpio y ausencia de acumulación de objetos de escena.
+- **Incidencias resueltas:** arranque del entorno aislado bloqueado; lecturas/Unity ejecutados fuera con permisos. La primera captura de combate colocaba la cámara bajo el terreno y el HUD podía quedar atrasado tras reset: corregidos. La build inicialmente eliminaba la variante instanciada de `RetroWorld` (2 variantes antes y 1 después del stripping), pese a pasar Play Mode: `Combat.mat` serializado hace que conserve **2/2**. Las capturas anteriores no se consideran validación del combate.
+- **Visual reforzado:** `U3VisualCheck` y `scripts/u3.ps1` generan nueve capturas, añadiendo combate, cartas y reinicio. Además compara los píxeles de la RenderTexture con/sin combate, con cámara, simulación y viento inmóviles y sin HUD. Falla si cambian menos de 50 píxeles. Última ejecución: **2575 píxeles distintos**, enemigos/proyectiles/efectos visibles; nueve PNG revisados. No equivale a fidelidad píxel a píxel con la web ni a benchmark.
+- **Decisiones:** ninguna nueva decisión de diseño. Se corrige arriba la descripción histórica del step: `ENEMY_STEP=0.6` y `ENEMY_REACH_HEIGHT=1.6` en la web. No se rebalancea ni se portan preventivamente matemáticas de V8.
+
+Pruebas ejecutadas el **03/10/2026**, horas Europe/Madrid; los XML/logs finales sustituyen los intentos previos:
+
+| Hora | Comando CMD | Resultado | Registro |
+| --- | --- | --- | --- |
+| 18:47 | `scripts\u3.cmd edit` | 132/132, exit 0; incluye U0/U2/mundo y 14 casos nuevos | `unity/TestResults/U3/edit.xml`, `edit.log` |
+| 18:48 | `scripts\u3.cmd play` | 13/13, exit 0; incluye U1/U2 y dos integraciones nuevas | `unity/TestResults/U3/play.xml`, `play.log` |
+| 18:49 | `scripts\u3.cmd build` | Success, Windows x64 Mono, exit 0; 2/2 variantes de RetroWorld conservadas | `unity/TestResults/U3/build.log` |
+| 18:49 | `scripts\u3.cmd visual` | exit 0, nueve PNG nuevos revisados y comprobación de píxeles correcta; D3D11 / RTX 4070 Ti SUPER | `unity/TestResults/U3/visual.log`, `Visual/*.png` |
+| 18:22–18:24 | `node scripts\unity-reference.mjs` | U0: datos y medios coinciden, exit 0 | consola de esta sesión |
+| 18:22–18:24 | `node scripts\unity-reference-u2.mjs` | U2 coincide, exit 0 | consola de esta sesión |
+| 18:22–18:24 | `node scripts\unity-reference-u3.mjs` | U3 coincide, exit 0; sin exportar/regenerar | consola de esta sesión |
+| Durante auditoría/cierre | `git diff --exit-code 0505b1690656d15188860157612455639820fe1f -- src` y `git diff --exit-code -- src unity/Docs/Reference unity/Assets/Mamporro/U2` | sin diferencias, exit 0 | consola de esta sesión |
+
+- Los verificadores Node se ejecutaron concurrentemente y U2/U3 avisaron del puerto de WebSocket 24678 ocupado; los tres completaron la comparación correctamente con exit 0. No se modificó su configuración ni las referencias.
+- **Exclusiones locales conservadas:** los cuatro ProjectSettings prohibidos y diferencias de formato de RetroPipeline, UniversalRenderPipelineGlobalSettings y GraphicsSettings. `git diff --check` global señala espacios de ajustes Unity excluidos; se revisa por separado el índice del commit. Builds, TestResults y capturas permanecen ignorados. `src/`, referencias y escena/código U2 intactos.
+- **Límites y pendientes:** escena técnica con Remedios como selección inicial, sin selector final ni director automático. Modelos/avisos provisionales; niebla y silueta marcada del borde del mundo heredadas del paso 4. Falta comparar la cronología integrada (paso 10), ensayar rendimiento real (paso 11) y validar el conjunto U3 con el autor. No se atribuye a estas pruebas una partida completa 5/10/15 ni un objetivo FPS cumplido.
+- **Commit previsto de esta pieza:** «Conecta el combate de U3 al mundo procedural». Push aún pendiente al preparar esta entrada; registrar su resultado tras fetch/comprobación del remoto. No hay código del paso 5 pendiente deliberadamente fuera del commit.
+- **Siguiente paso exacto:** paso 6, director completo, sobre `WorldRun`, `WorldSpawns` y `CombatRun` existentes. No hay decisiones bloqueantes del autor. U4 no autorizado.
 
 ## Checkpoint al terminar U3
 

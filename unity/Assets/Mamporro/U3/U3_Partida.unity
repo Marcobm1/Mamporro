@@ -306,6 +306,7 @@ MonoBehaviour:
   help: {fileID: 797993130}
   worldShader: {fileID: 4800000, guid: 7a4d0454d001b3c4b88a9100ef0c37ab, type: 3}
   skyShader: {fileID: 4800000, guid: 3a715be8c758bd142914dc1a6e11c38c, type: 3}
+  combatTemplate: {fileID: 2100000, guid: 32a05919cb2243d7bf24d7a34ec2a5c5, type: 2}
   defaultSeed: MAMPORRO
   FreeCamera: 0
 --- !u!4 &221493356

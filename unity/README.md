@@ -90,13 +90,29 @@ Controles de U2 (sin conflictos con U1: en esta escena R, 1–4 y F5 de U1 no se
   y se oculta durante el ensayo automático.
 - F7: idioma ES/EN. F8: reiniciar la partida de pruebas.
 
-## Escena U3: mundo procedural
+## Escena U3: mundo procedural y combate controlado
 
 Abre `Assets/Mamporro/U3/U3_Partida.unity`, o ejecuta
-`unity\Builds\U3\Mamporro-U3.exe`. El paso 4 permite recorrer el mundo con la
-física portada de la web: WASD, ratón, Espacio, Mayús/C; Esc pausa y clic continúa.
+`unity\Builds\U3\Mamporro-U3.exe`. El paso 5 conecta el combate de U2 con el
+mundo y la física de la web: WASD, ratón, Espacio, Mayús/C; Esc pausa y clic continúa.
 F1 cambia 240/360/480, F2 dithering, F9 ajuste de vértices y F6 tamaño de ventana.
-El combate y la partida completa se conectan en los siguientes pasos de U3.
+F8 reinicia el mundo y todo el estado de combate. Empieza sin enemigos: aún no
+hay director automático, oleadas ni temporizador de partida completa (paso 6).
+
+F3 abre el panel técnico de QA. Abrirlo no marca trucos; ejecutar sus acciones sí:
+
+- 1: invencibilidad; 2: subir un nivel; 4: añadir hasta 100 enemigos controlados
+  (los cuatro tipos normales y Rata élite) alrededor del jugador.
+- 5: matar los enemigos, incluido el jefe, al avanzar el siguiente tick.
+- 6: invocar Pelusa Madre delante de la cámara; 7: añadir 100 de oro.
+- 3 y 8 quedan pendientes del director y descubrimiento; no hacen nada todavía.
+
+Las cartas uGUI tienen prioridad sobre QA: 1–4/clic para elegir, R para volver
+a tirar, X para saltar, B para descartar y Esc para cancelar el descarte; guardia
+de entrada de 0,4 s. Pausan física y combate. Al morir, F8 permite empezar limpio.
+Para comprobar la horda, pulsa F3, 4 y clic para continuar; recorre terreno y
+obstáculos, observa daño/bajas/XP/oro y prueba el jefe con 6. Los modelos y avisos
+siguen siendo técnicos; esta escena aún no representa la partida completa.
 
 Con el Editor cerrado, desde la raíz en CMD:
 
@@ -107,8 +123,9 @@ scripts\u3.cmd build
 scripts\u3.cmd visual
 ```
 
-`visual` ejecuta la build con `-u3-visual-check -u3-output` y genera seis capturas
-en `unity/TestResults/U3/Visual/`: inicio, vista alta, casa, templo, granja y pozo.
+`visual` ejecuta la build con `-u3-visual-check -u3-output` y genera nueve capturas
+en `unity/TestResults/U3/Visual/`: inicio, vista alta, casa, templo, granja, pozo,
+combate, cartas y reinicio.
 Comprueba que sean nuevas y contengan imagen; abre una ventana visible durante
 unos segundos. Es una comprobación visual, no una medida de rendimiento.
 XML y logs quedan en `unity/TestResults/U3/`; builds y capturas no se publican.

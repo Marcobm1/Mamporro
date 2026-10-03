@@ -26,6 +26,8 @@ namespace Mamporro.Editor
             var root=new GameObject("U3 · mundo y partida");
             var game=root.AddComponent<U3Game>();
             game.worldShader=Shader.Find("Mamporro/RetroWorld");game.skyShader=Shader.Find("Mamporro/RetroSky");
+            game.combatTemplate=AssetDatabase.LoadAssetAtPath<Material>(Root+"/Combat.mat");
+            if(!game.combatTemplate||!game.combatTemplate.enableInstancing)throw new BuildFailedException("Falta Combat.mat con instancing activado.");
             if(!game.worldShader||!game.skyShader)throw new BuildFailedException("Faltan los shaders Mamporro/RetroWorld o Mamporro/RetroSky.");
             var camera=new GameObject("Cámara mundo",typeof(Camera)).GetComponent<Camera>();
             camera.clearFlags=CameraClearFlags.SolidColor;camera.backgroundColor=WebSpace.Linear(Mamporro.Core.Palette.SkyHorizon).gamma;

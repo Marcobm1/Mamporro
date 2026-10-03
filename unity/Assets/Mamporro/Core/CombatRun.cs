@@ -37,9 +37,9 @@ namespace Mamporro.Core
         readonly List<CombatEffect> blasts=new List<CombatEffect>(4096),batch=new List<CombatEffect>(4096);
         int pearls,ollas,purses;double purseStep;
         uint excludedId;
-        public CombatRun(ICombatWorld world,string seed,CharacterDef character,int enemyCapacity=4096,ICombatEffects effects=null)
+        public CombatRun(ICombatWorld world,string seed,CharacterDef character,int enemyCapacity=4096,ICombatEffects effects=null,double worldSize=96)
         {
-            World=world;Character=character;fx=effects;Enemies=new Enemies(enemyCapacity,96);
+            World=world;Character=character;fx=effects;Enemies=new Enemies(enemyCapacity,worldSize);
             var rng=new Rng(seed+"/run");combatRng=rng.Derive("combat");offerRng=rng.Derive("offers");
             Stats.Reset(character);basis.Reset(character);Hp=Stats[Stat.maxHp];AddWeapon(character.startingWeapon);
         }
