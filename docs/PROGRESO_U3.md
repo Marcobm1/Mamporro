@@ -6,10 +6,10 @@ Este archivo es el **checkpoint vivo de continuidad entre Codex CLI y Claude Cod
 
 ## Cómo retomar
 
-- **Último punto verificado y publicado:** paso 7, commit «Añade los interactuables, el armario y la victoria de U3» (consultar `git log`; el hash no se escribe aquí para no crear un commit circular). Paso 6: `c42e22d`. Base recibida por Claude Code el 03/10/2026: `b21160cf060ef30daa4c55759aec1e0095b0bd54`.
+- **Último punto verificado y publicado:** commit «Compara las cuatro partidas integradas con la web» (núcleo del paso 10; consultar `git log`, el hash no se escribe aquí para no crear un commit circular). Paso 7: `59a5f7f`; paso 6: `c42e22d`. Base recibida por Claude Code el 03/10/2026: `b21160cf060ef30daa4c55759aec1e0095b0bd54`.
 - **Paso actual:** 8 del plan: HUD, minimapa, avisos, telegrafiado y pausa.
-- **Terminado y verificado:** pasos 1–7. El 03/10/2026 (paso 7): Edit Mode **159/159**, Play Mode **13/13**, build y nueve capturas. Director, apariciones, formaciones, precios de baúl y recorrido de interactuables coinciden con `u3-world.json`. **`u3-world.json` sigue congelada**, sin regeneración.
-- **A medias:** nada del paso 7. Pasos 8–12 pendientes. U4 no autorizado.
+- **Terminado y verificado:** pasos 1–7 y la parte de núcleo del paso 10 (adelantada): las cuatro partidas de `runs` coinciden con la web de principio a fin (`IntegratedRunTests`). El 03/10/2026: Edit Mode **167/167**, Play Mode **13/13**. **`u3-world.json` sigue congelada**, sin regeneración.
+- **A medias:** nada. Pasos 8, 9, 11, 12 y la parte de Play Mode del 10 (partidas aceleradas hasta resultados, que necesitan las pantallas del paso 9) pendientes. U4 no autorizado.
 - **Sin commit a propósito:** `unity/ProjectSettings/ProjectSettings.asset` (configuración local de nube), `ProjectAuditorSettings.asset`, `PackageManagerSettings.asset` y `URPProjectSettings.asset`: no publicar. También se conservan fuera del índice los cambios de espacios/EOL de `RetroPipeline.asset`, `UniversalRenderPipelineGlobalSettings.asset` y `GraphicsSettings.asset` (el autor confirmó el 03/10/2026 que se tratan igual). No limpiar ni restaurar estos archivos automáticamente.
 - **Siguiente paso exacto:** paso 8. HUD uGUI equivalente a `src/ui/Hud.ts` (vida, XP, nivel, oro, tiempo/enjambre, bajas, armas/tomos/objetos, jefe, aviso de interacción, barra de mesa/desafío), minimapa con descubrimiento (`src/ui/Minimap.ts`), avisos a partir de `CombatRun.Events` (textos de `Game.showNotice`), telegrafiado de los ataques del jefe (`src/render/Telegraphs.ts`) y pausa con semilla, estadísticas y objetos. Sin cambiar la lógica del núcleo.
 
@@ -75,6 +75,14 @@ Pruebas (`Tests/Core/WorldReferenceTests.cs`): ruido, terreno sin aplanar, altur
 
 Sonda temporal con 200 000 entradas exactas (base64). Diferencias de Mono 6.13 (runtime del Editor) frente a V8: `atan2` 19,5 %, `exp` 9,5 %, `sin`/`cos` ~2 %, `pow` ~0,2 %, `Hypot` portada 0 %. Además, **JsonUtility lee mal el 9,4 % de los double** (un bit). Decisión técnica: no portar las funciones de V8 mientras las pruebas pasen, porque las diferencias son de un bit y quedan dentro de 1e-6 m. Si la cronología de la partida integrada (paso 10) diverge, lo primero que hay que revisar son `atan2` y `exp`.
 
+## Partidas integradas (paso 10, núcleo)
+
+`Tests/Core/IntegratedRunTests.cs` reproduce las cuatro partidas de `runs` con `WorldRun` y el mismo guion que `scripts/unity-reference-u3.mjs` (ruta por vecino más cercano, E al llegar, espera en mesas camilla, giro de cámara = dirección de marcha, primera carta, victoria tras 1,6 s).
+
+- **Resultado medido el 03/10/2026:** las cuatro coinciden con la web **de principio a fin**: mismos sucesos en el mismo tick (51, 4, 6 y 26), todas las filas de detalle (posición, vida, XP, oro, bajas, vivos y los 8 primeros enemigos) con desvío máximo de posición 1,4e-14 m, mismos totales cada segundo y el mismo final (incluido el daño de cada arma, el enjambre hasta 750 vivos, la derrota en el tick 5215/1844 y la victoria en el 17930). No ha hecho falta portar `atan2`/`exp` de V8.
+- **Aserciones (tolerancia acordada):** cronología exacta en los primeros 120 s (sucesos, detalle, totales; posiciones 1e-6 m, enemigos 1e-4 m por Float32). Después, totales cada segundo con margen: bajas, apariciones y nivel ±3 % (mínimo 3/3/1), vivos y oro ±5 % (mínimo 10), mismo estado de enjambre y baúles ±1; mismo desenlace con el tick final ±60. El margen solo cubre posibles diferencias de un bit en otro runtime; hoy la coincidencia es total.
+- **Comportamiento del guion web que hay que reproducir:** `while (run.openChoice()) run.choose(0)` deja abierta la segunda carta cuando hay dos subidas en el mismo tick (tras elegir, `closeChoice` abre la siguiente y `openChoice()` devuelve false), y `Run.update` no se detiene con una carta abierta (la pausa la pone `Game`). En `remedios-5min-invencible` pasa en el tick 5931 (niveles 8 y 9): desde ahí la web ya no elige más cartas. `CombatRun.HoldWhileChoosing` (true por defecto, el comportamiento de juego) separa esa pausa de la lógica de `Run.update`; el arnés lo pone a false y usa el mismo bucle que la web. No es un cambio de reglas.
+
 ## Alcance autorizado
 
 Mundo y partida completa equivalentes a la web aprobada `0505b1690656d15188860157612455639820fe1f`:
@@ -114,7 +122,7 @@ Commits pequeños que compilen y pasen sus pruebas; actualizar este checkpoint t
 7. **Hecho, 03/10/2026.** Interactuables, armario, jefe y victoria.
 8. HUD, minimapa, avisos, telegrafiado y pausa.
 9. Pantallas de inicio y resultados; depuración con `run.cheated`.
-10. Integración: partidas deterministas contra la cronología web; Play Mode con partidas aceleradas (2 personajes × 3 duraciones) hasta resultados; victoria, derrota, enjambre y reinicio sin restos.
+10. Integración: partidas deterministas contra la cronología web (**hecho el 03/10/2026, adelantado**: ver «Partidas integradas»); Play Mode con partidas aceleradas (2 personajes × 3 duraciones) hasta resultados; victoria, derrota, enjambre y reinicio sin restos.
 11. Build Windows x64 Mono ejecutada y ensayo de partida real: minutos 2, 5 y 9 y enjambre con 750 vivos, a 1080p y 1440p, con las mismas condiciones y `validRender` que U1/U2. Objetivo: 60 FPS con 300 enemigos en el mapa real; si el enjambre no llega, perfilar y documentar antes de cerrar.
 12. Cierre: documentación, push y parada para la prueba manual del autor con instrucciones.
 
@@ -225,6 +233,28 @@ Pruebas ejecutadas el **03/10/2026**, horas Europe/Madrid; los XML/logs finales 
 | 03/10/2026 19:55 | `scripts\u3.cmd play` | 13/13 | `unity/TestResults/U3/play.xml`, `play.log` |
 | 03/10/2026 19:56 | `scripts\u3.cmd build` | Success, Windows x64 Mono | `unity/TestResults/U3/build.log` |
 | 03/10/2026 19:56 | `scripts\u3.cmd visual` | 9 capturas nuevas revisadas | `unity/TestResults/U3/visual.log`, `Visual/*.png` |
+
+### 03/10/2026 — paso 10 (núcleo, adelantado): partidas integradas — Claude Code
+
+- Punto de partida/commit: `59a5f7f` (paso 7 publicado).
+- Trabajo realizado: se adelanta la comparación de las cuatro partidas de `runs` para detectar cuanto antes cualquier divergencia del núcleo antes de la interfaz. Primera ejecución: tres coincidían enteras y `remedios-5min-invencible` divergía en el tick 6390; la causa era el guion web descrito en «Partidas integradas» (segunda carta abierta para siempre), no el port. Se añade `CombatRun.HoldWhileChoosing` y el arnés reproduce el bucle web; desde entonces las cuatro coinciden de principio a fin.
+- Archivos/sistemas principales: `Tests/Core/IntegratedRunTests.cs` (nuevo), `Core/CombatRun.cs` y `Core/World/WorldRun.cs` (`HoldWhileChoosing`).
+- Decisiones nuevas: ninguna de diseño. Tolerancia aplicada según lo acordado y documentada en «Partidas integradas».
+- Pruebas realmente ejecutadas y resultado: ver «Pruebas del paso 10 (núcleo)».
+- Pruebas pendientes/no ejecutadas: Play Mode con partidas aceleradas 2 personajes × 3 duraciones hasta resultados, victoria/derrota/enjambre/reinicio en escena (tras el paso 9).
+- Commits creados: «Compara las cuatro partidas integradas con la web». Push: ver «Cómo retomar».
+- Estado del árbol al terminar: solo los ajustes Unity excluidos.
+- Errores/limitaciones conocidas: ninguna nueva.
+- Decisiones pendientes del autor: ninguna.
+- Siguiente paso exacto: paso 8 (ver «Cómo retomar»).
+
+#### Pruebas del paso 10 (núcleo)
+
+| Fecha y hora | Comando (CMD, raíz del repo) | Resultado | Registro |
+| --- | --- | --- | --- |
+| 03/10/2026 19:58–20:00 | Unity batch Edit Mode con `-testFilter IntegratedRunTests` (iteración) | diagnóstico: primero 3/4 completas; tras reproducir el guion web, 4/4 idénticas | `unity/TestResults/U3/filter.xml`, `filter.log` |
+| 03/10/2026 20:01 | `scripts\u3.cmd edit` | 167/167 (8 nuevas: ruta y partida completa × 4) | `unity/TestResults/U3/edit.xml`, `edit.log` |
+| 03/10/2026 20:01 | `scripts\u3.cmd play` | 13/13 | `unity/TestResults/U3/play.xml`, `play.log` |
 
 ## Checkpoint al terminar U3
 

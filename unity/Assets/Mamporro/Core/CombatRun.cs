@@ -27,6 +27,10 @@ namespace Mamporro.Core
         public bool Invincible,WeaponsOff,Paused;
         // U3: matar al jefe gana la partida (BossEndsRun). En U2 solo cierra su escenario.
         public bool BossEndsRun,Victory;
+        // Pausa por elección abierta y apertura automática al final del paso: es lo que hace
+        // Game.ts con su estado «levelup». Run.update de la web no se detiene con una carta
+        // abierta; false reproduce ese comportamiento (solo para el guion de la referencia).
+        public bool HoldWhileChoosing=true;
         public bool Dead=>Hp<=0;
         public bool Choosing=>Offer!=null;
         public Boss Boss {get;private set;}
@@ -66,7 +70,7 @@ namespace Mamporro.Core
         {fx?.Emit(new CombatEffect{Kind=kind,X=x,Y=y,Z=z,Radius=radius,Angle=angle,X2=x2,Y2=y2,Z2=z2,Life=life});}
         public void Step(double dt)
         {
-            if(Paused||Choosing||Dead||Victory)return;
+            if(Paused||(Choosing&&HoldWhileChoosing)||Dead||Victory)return;
             Time+=dt;RefreshSpawnParams();
             if(Character.passive=="shield")ShieldCharge=Math.Min(Character.recharge,ShieldCharge+dt);
             else for(int i=0;i<Enemies.Count;i++){double dx=Enemies.X[i]-Player.X,dz=Enemies.Z[i]-Player.Z;if(dx*dx+dz*dz<=Character.radius*Character.radius&&Math.Abs(Enemies.Y[i]-Player.Y)<2)Enemies.ApplySlow(i,Character.amount,dt*2);}
@@ -86,7 +90,7 @@ namespace Mamporro.Core
             Invulnerable=Math.Max(0,Invulnerable-dt);
             if(Stats[Stat.regen]>0&&Hp>0)Hp=Math.Min(Stats[Stat.maxHp],Hp+Stats[Stat.regen]*dt);
             // La web abre elección en Game tras Run.update. Aquí se impide el siguiente tick.
-            OpenChoice();
+            if(HoldWhileChoosing)OpenChoice();
         }
         public void Event(string kind,string detail="")=>Events.Add(new RunEvent{Time=Time,Kind=kind,Detail=detail});
         public void RefreshSpawnParams()

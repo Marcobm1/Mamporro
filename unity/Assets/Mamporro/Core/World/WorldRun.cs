@@ -53,7 +53,7 @@ namespace Mamporro.Core
         // Run.update y, tras la victoria, solo física y la cuenta atrás hasta los resultados.
         public void Step(PlayerIntent intent,double dt,double viewYaw=0,bool interact=false)
         {
-            if(Combat.Paused||Combat.Choosing||Finished)return;
+            if(Combat.Paused||(Combat.Choosing&&Combat.HoldWhileChoosing)||Finished)return;
             PlayerPhysics.StepInCrowd(Body,intent,World.Collision,PlayerTuning.Default,
                 Tuning.PlayerBaseMoveSpeed*Combat.Stats[Stat.moveSpeed],Combat.CrowdSlow,dt);
             if(interact)Interact();
