@@ -99,7 +99,7 @@ namespace Mamporro.U3
         public void SetPaused(bool paused)
         {
             if(Session==null)return;
-            if(!paused&&(Run.Choosing||Run.Dead))return;
+            if(!paused&&(Run.Choosing||Session.Over))return;
             Paused=paused;intent=default;
             Cursor.lockState=paused?CursorLockMode.None:CursorLockMode.Locked;Cursor.visible=paused;
             RefreshStatus();
@@ -117,21 +117,20 @@ namespace Mamporro.U3
         void UpdateHelp()
         {
             help.text="WASD · moverse | Ratón · cámara | Espacio · salto | Mayús/C · deslizarse\nEsc · pausa | Clic · continuar | F8 · reiniciar | F3 · QA | F1 · resolución | F2 · dither | F9 · vértices | F6 · ventana"+
-                (DebugVisible?"\nQA paso 5: 1 invencible · 2 nivel · 4 +100 enemigos · 5 matar todos · 6 jefe · 7 +100 oro\nSin director automático. 3 y 8 pendientes. Las cartas tienen prioridad.":"\nCombate controlado: F3 y 4 para añadir enemigos. Sin apariciones automáticas.");
+                (DebugVisible?"\nDepuración: 1 invencible · 2 nivel · 4 +100 enemigos · 5 matar todos · 6 jefe · 7 +100 oro\n3 y 8 pendientes. Las cartas tienen prioridad.":"\nDirector activo: 10 minutos y enjambre final.");
         }
         // Acciones explícitas de QA; abrir el panel no marca trucos.
         public void QaAction(int action)
         {
-            if(Run.Choosing||Run.Dead)return;
+            if(Run.Choosing||Session.Over)return;
             if(action!=1&&action!=2&&action!=4&&action!=5&&action!=6&&action!=7)return;
-            Session.Cheated=true;
             switch(action){
-                case 1:Run.Invincible=!Run.Invincible;break;
-                case 2:Run.GainXp((Rules.XpNeeded(Run.Level)-Run.Xp)/Run.Stats[Stat.xpGain]);break;
-                case 4:for(int i=0;i<100;i++)Session.Spawns.SpawnQa(Run,World.Collision,i%5,WebYaw);break;
-                case 5:for(int i=0;i<Run.Enemies.Count;i++)Run.Enemies.Hp[i]=0;break;
-                case 6:Run.SpawnBoss(Body.X-Math.Sin(WebYaw)*10,Body.Z-Math.Cos(WebYaw)*10);break;
-                case 7:Run.GainGold(100);break;
+                case 1:Session.DebugToggleInvincible();break;
+                case 2:Session.DebugLevelUp();break;
+                case 4:Session.DebugSpawn(100);break;
+                case 5:Session.DebugKillAll();break;
+                case 6:Session.DebugSummonBoss();break;
+                case 7:Session.DebugAddGold(100);break;
             }
             if(Run.OpenChoice()){SetPaused(true);Cards.Show(true);}
         }
@@ -199,7 +198,8 @@ namespace Mamporro.U3
             status.text=$"MAMPORRO · U3 · semilla {Seed}\n{Screen.width}×{Screen.height} → {target.width}×{target.height} · {(1/Mathf.Max(Time.unscaledDeltaTime,.00001f)):F0} FPS\n"+
                     $"x {Body.X:F1} · y {Body.Y:F1} · z {Body.Z:F1} · {Body.HorizontalSpeed:F1} m/s{(Body.Sliding?" · deslizando":"")}{(Body.OnSteep?" · pendiente":"")}\n"+
                     $"Vida {Run.Hp:F0}/{Run.Stats[Stat.maxHp]:F0} · Nivel {Run.Level} · Oro {Run.Gold:F0} · Bajas {Run.Kills} · Enemigos {Run.Enemies.Count}\n"+
-                    $"Frenado {Run.CrowdSlow:P0} · {(Run.Invincible?"Invencible · ":"")}{(Session.Cheated?"QA con trucos · ":"")}{(Run.Dead?"Derrota: F8 reinicia":Paused?"En pausa":"Combate")}";
+                    $"Tiempo {(Session.Swarm?"+":"")}{Math.Abs(Session.TimeLeft):F0} s{(Session.Swarm?" · ENJAMBRE":"")} · ritmo {Session.Params.Rate:F1}/s · tope {Session.Params.MaxAlive:F0}\n"+
+                    $"Frenado {Run.CrowdSlow:P0} · {(Run.Invincible?"Invencible · ":"")}{(Session.Cheated?"QA con trucos · ":"")}{(Run.Dead?"Derrota: F8 reinicia":Run.Victory?"Victoria: F8 reinicia":Paused?"En pausa":"Combate")}";
         }
 
         void FixedUpdate()
@@ -211,7 +211,7 @@ namespace Mamporro.U3
             intent.JumpPressed=intent.SlidePressed=false;
             currentPosition=WebSpace.ToUnity(Body.X,Body.Y,Body.Z);
             if(Run.Choosing){SetPaused(true);if(!Cards.Visible)Cards.Show(true);}
-            if(Run.Dead)SetPaused(true);
+            if(Session.Over)SetPaused(true);
         }
 
         void LateUpdate()

@@ -5,6 +5,8 @@ namespace Mamporro.Core
 {
     public struct CombatEffect { public string Kind; public double X,Y,Z,X2,Y2,Z2,Radius,Angle,Life; }
     public interface ICombatEffects { void Emit(CombatEffect effect); }
+    // Sucesos de la partida (avisos, subidas, objetos...); la interfaz pone el texto.
+    public struct RunEvent { public double Time; public string Kind,Detail; }
     public sealed partial class CombatRun : IEnemyActions,IProjectileHits,ITargetFilter
     {
         public readonly ICombatWorld World;
@@ -23,13 +25,21 @@ namespace Mamporro.Core
         public int Level=1,PendingLevels,Kills,Rerolls=2,Skips=2,Banishes=2;
         public double Xp,Hp,Time,Invulnerable,ShieldCharge,Gold,GoldCollected,CrowdSlow;
         public bool Invincible,WeaponsOff,Paused;
+        // U3: matar al jefe gana la partida (BossEndsRun). En U2 solo cierra su escenario.
+        public bool BossEndsRun,Victory;
         public bool Dead=>Hp<=0;
         public bool Choosing=>Offer!=null;
         public Boss Boss {get;private set;}
-        // Multiplicadores de aparición según el minuto de dificultad (director web sin su calendario, que es U3).
-        // U2 usa la duración de referencia: ritmo 1.
-        const double Pace=1;
+        // Multiplicadores de aparición según el minuto de dificultad. U2 usa la duración de
+        // referencia (ritmo 1) y no tiene calendario; en U3 los fija el director (Schedule).
+        public double Pace=1;
         public double SpawnHp=1,SpawnXp=1,SpawnGold=1;
+        // Director de U3: parámetros de aparición y apariciones en el orden de Run.update.
+        public interface ISchedule { void Refresh(CombatRun run); void Spawn(CombatRun run,double dt); }
+        public ISchedule Schedule;
+        public readonly List<RunEvent> Events=new List<RunEvent>(256);
+        // Enemigos creados por la partida (fx.enemySpawned), sin contar los del director.
+        public int Spawned;
         public double Minutes=>Math.Max(0,Time)/60*Pace;
         readonly Rng combatRng,offerRng;
         readonly ICombatEffects fx;
@@ -47,10 +57,11 @@ namespace Mamporro.Core
         {fx?.Emit(new CombatEffect{Kind=kind,X=x,Y=y,Z=z,Radius=radius,Angle=angle,X2=x2,Y2=y2,Z2=z2,Life=life});}
         public void Step(double dt)
         {
-            if(Paused||Choosing||Dead)return;
+            if(Paused||Choosing||Dead||Victory)return;
             Time+=dt;RefreshSpawnParams();
             if(Character.passive=="shield")ShieldCharge=Math.Min(Character.recharge,ShieldCharge+dt);
             else for(int i=0;i<Enemies.Count;i++){double dx=Enemies.X[i]-Player.X,dz=Enemies.Z[i]-Player.Z;if(dx*dx+dz*dz<=Character.radius*Character.radius&&Math.Abs(Enemies.Y[i]-Player.Y)<2)Enemies.ApplySlow(i,Character.amount,dt*2);}
+            Schedule?.Spawn(this,dt);
             if(Boss!=null&&!Boss.Step(dt,this))Boss=null;
             double contact=Enemies.Step(dt,Player,World,this);
             Player.X+=Enemies.PushX;Player.Z+=Enemies.PushZ;
@@ -67,22 +78,24 @@ namespace Mamporro.Core
             // La web abre elección en Game tras Run.update. Aquí se impide el siguiente tick.
             OpenChoice();
         }
+        public void Event(string kind,string detail="")=>Events.Add(new RunEvent{Time=Time,Kind=kind,Detail=detail});
         public void RefreshSpawnParams()
-        {double m=Minutes;SpawnHp=1+Tuning.SpawnHpGrowth*m+Tuning.SpawnHpCurve*m*m;SpawnXp=(1+Tuning.SpawnXpGrowth*m)*Pace;SpawnGold=Pace;}
+        {if(Schedule!=null){Schedule.Refresh(this);return;}double m=Minutes;SpawnHp=1+Tuning.SpawnHpGrowth*m+Tuning.SpawnHpCurve*m*m;SpawnXp=(1+Tuning.SpawnXpGrowth*m)*Pace;SpawnGold=Pace;}
         public int Spawn(int type,double x,double z,double hp=1)
-        {int i=Enemies.Spawn(type,x,World.Height(x,z),z,hp,1);Enemies.Rebuild();return i;}
+        {int i=Enemies.Spawn(type,x,World.Height(x,z),z,hp,1);if(i>=0)Spawned++;Enemies.Rebuild();return i;}
         // Como debugSpawnEnemy de la web: con los multiplicadores del minuto actual.
         public int SpawnScaled(int type,double x,double z)
-        {RefreshSpawnParams();int i=Enemies.Spawn(type,x,World.Height(x,z),z,SpawnHp,SpawnXp,SpawnGold);Enemies.Rebuild();return i;}
+        {RefreshSpawnParams();int i=Enemies.Spawn(type,x,World.Height(x,z),z,SpawnHp,SpawnXp,SpawnGold);if(i>=0)Spawned++;Enemies.Rebuild();return i;}
         // Pelusa hija del estornudo del jefe; la rejilla se reconstruye al final del paso, como en la web.
         public void SpawnMinion(double x,double z)
-        {if(World.IsInside(x,z,2))Enemies.Spawn(0,x,World.Height(x,z),z,SpawnHp,SpawnXp,SpawnGold);}
+        {if(World.IsInside(x,z,2)&&Enemies.Spawn(0,x,World.Height(x,z),z,SpawnHp,SpawnXp,SpawnGold)>=0)Spawned++;}
         public bool SpawnBoss(double x,double z)
         {
-            if(Boss!=null)return false;if(Enemies.Count>=Enemies.Capacity)Enemies.Remove(Enemies.Count-1);
+            if(Boss!=null||Victory)return false;if(Enemies.Count>=Enemies.Capacity)Enemies.Remove(Enemies.Count-1);
             RefreshSpawnParams();double m=Minutes,hp=1+Tuning.BossHpGrowth*m+Tuning.BossHpCurve*m*m;World.Clamp(ref x,ref z);
-            int i=Enemies.Spawn(5,x,World.Height(x,z),z,hp,SpawnXp,SpawnGold);if(i<0)return false;Enemies.Xp[i]=0;Enemies.Rebuild();
-            Boss=new Boss(Enemies.Id[i],combatRng.Derive("boss-"+Time.ToString("F2",System.Globalization.CultureInfo.InvariantCulture)));return true;
+            int i=Enemies.Spawn(5,x,World.Height(x,z),z,hp,SpawnXp,SpawnGold);if(i<0)return false;Spawned++;Enemies.Xp[i]=0;Enemies.Rebuild();
+            Boss=new Boss(Enemies.Id[i],combatRng.Derive("boss-"+Time.ToString("F2",System.Globalization.CultureInfo.InvariantCulture)));
+            Event("bossSpawned");Event("boss",Catalog.Enemies[5].id);return true;
         }
         public void Shoot(int i,double dx,double dz)
         {
@@ -116,7 +129,7 @@ namespace Mamporro.Core
                 if(d.goldChance>0&&combatRng.Next()<d.goldChance){double value=Math.Floor(combatRng.Int(d.goldMin,d.goldMax)*Enemies.Gold[i]+combatRng.Next());if(value>0)Coins.Spawn(x,y+.5,z,value);}
                 if(ollas>0&&combatRng.Next()<Rules.OllaChance(ollas))blasts.Add(new CombatEffect{X=x,Y=y,Z=z,Radius=3.2*Stats[Stat.area],X2=16*Stats[Stat.damage]+.5*Enemies.MaxHp[i]});
                 // La victoria pertenece a U3. En U2 el jefe solo termina el escenario de combate.
-                if(d.behavior=="boss")Boss=null;
+                if(d.behavior=="boss"){Boss=null;if(BossEndsRun)Victory=true;}
                 foreach(var s in states){s.NextBite[i]=s.NextBite[Enemies.Count-1];s.NextBite[Enemies.Count-1]=0;}
                 Enemies.Remove(i);
             }
@@ -146,7 +159,13 @@ namespace Mamporro.Core
                 EnemyShots.Count=0;Emit("revive",Player.X,Player.Y,Player.Z,8);
             }
         }
-        public void GainXp(double amount) {PendingLevels+=Rules.AddExperience(ref Level,ref Xp,amount*Stats[Stat.xpGain]);}
+        public void GainXp(double amount)
+        {
+            int before=Level,gained=Rules.AddExperience(ref Level,ref Xp,amount*Stats[Stat.xpGain]);PendingLevels+=gained;
+            for(int k=1;k<=gained;k++)Event("levelUp",(before+k).ToString(System.Globalization.CultureInfo.InvariantCulture));
+        }
+        // debugKillAll de la web: todos a 0 y recuento inmediato (bajas, gemas, victoria).
+        public void KillAll(){for(int i=0;i<Enemies.Count;i++)Enemies.Hp[i]=0;FlushDead();}
         public void GainGold(double amount){Gold+=amount;GoldCollected+=amount;if(purses>0&&Math.Floor(Gold/100)!=purseStep)RefreshStats();}
         public Weapon AddWeapon(string id)
         {
@@ -177,7 +196,7 @@ namespace Mamporro.Core
             Stats[Stat.damage]+=Rules.PurseBonus(Gold,purses);Stats.Cap();if(Stats[Stat.maxHp]>old)Hp+=Stats[Stat.maxHp]-old;Hp=Math.Min(Hp,Stats[Stat.maxHp]);foreach(var w in Weapons)w.Refresh(Stats);
         }
         public bool OpenChoice()
-        {if(Choosing||PendingLevels<=0||Dead)return false;Offer=Offers.Generate(Weapons,Tomes,Stats,Banished,offerRng,(int)Stats[Stat.choices]);return true;}
+        {if(Choosing||PendingLevels<=0||Dead||Victory)return false;Offer=Offers.Generate(Weapons,Tomes,Stats,Banished,offerRng,(int)Stats[Stat.choices]);return true;}
         public bool Choose(int index)
         {
             if(Offer==null||index<0||index>=Offer.Count)return false;var c=Offer[index];

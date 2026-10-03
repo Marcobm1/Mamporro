@@ -6,12 +6,12 @@ Este archivo es el **checkpoint vivo de continuidad entre Codex CLI y Claude Cod
 
 ## Cómo retomar
 
-- **Último punto verificado y publicado:** paso 5, `4de718d2af996c44dc0b7f9d097e0f8bf3a076ee`, «Conecta el combate de U3 al mundo procedural». Push normal y HEAD remoto comprobados el 03/10/2026. Este ajuste documental registra la publicación; consultar Git para el último commit de checkpoint. Base local/remota recibida: `272ce95566df98d36ba60456731d16de09022852`.
-- **Paso actual:** 6 del plan: director completo. Paso 5 terminado y probado; no se ha empezado el director.
-- **Terminado y verificado:** pasos 1–5. El 03/10/2026: Edit Mode **132/132**, Play Mode **13/13**, build Windows x64 Mono y nueve capturas revisadas. U0/U2/U3 coinciden con la web. **`u3-world.json` sigue congelada**, sin regeneración.
-- **A medias:** ninguna pieza de código del paso 5. Pasos 6–12 pendientes; F3 tiene QA controlado, no el director ni todo el debug final. U4 no autorizado.
-- **Sin commit a propósito:** `unity/ProjectSettings/ProjectSettings.asset` (configuración local de nube), `ProjectAuditorSettings.asset`, `PackageManagerSettings.asset` y `URPProjectSettings.asset`: no publicar. También se conservan fuera del índice los cambios de espacios/EOL de `RetroPipeline.asset`, `UniversalRenderPipelineGlobalSettings.asset` y `GraphicsSettings.asset`. No limpiar ni restaurar estos archivos automáticamente.
-- **Siguiente paso exacto:** portar el director web a C# y conectarlo a `WorldRun`/`CombatRun`; completar sobre `WorldSpawns` las apariciones, tablas/curvas, formaciones, élites, enjambre y ritmo 5/10/15. Usar `u3-world.json` congelada para sus pruebas de director/spawns. Conservar el combate, render y reinicio del paso 5. No crear otro sistema de combate ni regenerar referencias.
+- **Último punto verificado y publicado:** paso 6, commit «Añade el director completo de U3» (consultar `git log`; el hash no se escribe aquí para no crear un commit circular). Base recibida por Claude Code el 03/10/2026: `b21160cf060ef30daa4c55759aec1e0095b0bd54`.
+- **Paso actual:** 7 del plan: interactuables, armario, jefe y victoria.
+- **Terminado y verificado:** pasos 1–6. El 03/10/2026 (paso 6): Edit Mode **151/151**, Play Mode **13/13**. Director, apariciones y formaciones coinciden con las secciones `director` y `spawns` de `u3-world.json`. **`u3-world.json` sigue congelada**, sin regeneración.
+- **A medias:** nada del paso 6. Pasos 7–12 pendientes. U4 no autorizado.
+- **Sin commit a propósito:** `unity/ProjectSettings/ProjectSettings.asset` (configuración local de nube), `ProjectAuditorSettings.asset`, `PackageManagerSettings.asset` y `URPProjectSettings.asset`: no publicar. También se conservan fuera del índice los cambios de espacios/EOL de `RetroPipeline.asset`, `UniversalRenderPipelineGlobalSettings.asset` y `GraphicsSettings.asset` (el autor confirmó el 03/10/2026 que se tratan igual). No limpiar ni restaurar estos archivos automáticamente.
+- **Siguiente paso exacto:** paso 7. Portar `Interactables.ts` (descubrimiento, carga/descarga de mesas camilla, tótem, aviso de interacción) y la parte de `Run.ts` que los usa (baúles con `chestCost`, `rollItem` con su RNG `items`, desafío del tótem con sus modificadores al director, bendiciones de santuario con `generateShrineOffer`, armario → Pelusa Madre, victoria a los 1,6 s y carta de relleno con `chestCost(baúlesAbiertos)`), dentro de `WorldRun`. Probar contra `chestCosts` e `interactables` de `u3-world.json`.
 
 Comprobar el estado desde CMD:
 
@@ -110,7 +110,7 @@ Commits pequeños que compilen y pasen sus pruebas; actualizar este checkpoint t
 3. **Hecho.** Núcleo del mundo en C# puro (`Assets/Mamporro/Core`, sin UnityEngine): port de simplex-noise, heightfield, sites, props y colisionadores, decoración, cobertura del suelo, interactuables y colisión del mundo; pruebas contra `u3-world.json` y `baseline.worlds`.
 4. **Hecho.** Render del mundo con variante del material retro de U1 en una escena nueva `Assets/Mamporro/U3/U3_Partida.unity`; U1 y U2 conservan sus escenas y builds.
 5. **Hecho, 03/10/2026.** Física del jugador y combate/horda conectados al mundo real; apariciones controladas QA, reciclado lejano, cartas, render instanciado y reinicio probado.
-6. Director completo.
+6. **Hecho, 03/10/2026.** Director completo.
 7. Interactuables, armario, jefe y victoria.
 8. HUD, minimapa, avisos, telegrafiado y pausa.
 9. Pantallas de inicio y resultados; depuración con `run.cheated`.
@@ -181,6 +181,27 @@ Pruebas ejecutadas el **03/10/2026**, horas Europe/Madrid; los XML/logs finales 
 - **Límites y pendientes:** escena técnica con Remedios como selección inicial, sin selector final ni director automático. Modelos/avisos provisionales; niebla y silueta marcada del borde del mundo heredadas del paso 4. Falta comparar la cronología integrada (paso 10), ensayar rendimiento real (paso 11) y validar el conjunto U3 con el autor. No se atribuye a estas pruebas una partida completa 5/10/15 ni un objetivo FPS cumplido.
 - **Commit y push:** `4de718d2af996c44dc0b7f9d097e0f8bf3a076ee`, «Conecta el combate de U3 al mundo procedural». Índice revisado: 23 archivos exclusivamente del paso 5/documentación; `git diff --cached --check` correcto. Tras `git fetch origin`, remoto aún en `272ce955`; push normal correcto `272ce95..4de718d`. `git ls-remote origin refs/heads/claude/zen-pasteur-674ik0` confirmó el hash completo publicado. No hay código del paso 5 sin commit; quedan solo los ajustes Unity excluidos enumerados arriba. El presente ajuste documental registra ese resultado.
 - **Siguiente paso exacto:** paso 6, director completo, sobre `WorldRun`, `WorldSpawns` y `CombatRun` existentes. No hay decisiones bloqueantes del autor. U4 no autorizado.
+
+### 03/10/2026 — paso 6: director completo — Claude Code
+
+- Punto de partida/commit: `b21160c` local y remoto iguales tras `git fetch`. Base comprobada antes de editar: `scripts\u3.cmd edit` 132/132 y `scripts\u3.cmd play` 13/13. Árbol: los cuatro ajustes excluidos más las diferencias de espacios/EOL de `RetroPipeline`, `UniversalRenderPipelineGlobalSettings` y `GraphicsSettings`; el autor confirmó que se dejan sin publicar ni restaurar.
+- Trabajo realizado: port de `Director.ts` y `difficulty.ts` (`Core/World/Director.cs`: curva, tope de vivos, vida/XP/oro por minuto de dificultad, ritmo 5/10/15, temporizador, 6 oleadas, élite cada 2 min de dificultad, enjambre con ritmo que se duplica cada 20 s, tope 750 y +60 % de vida por minuto de prórroga; `PickEnemy` con un único sorteo). `WorldSpawns` completa `SpawnSystem.ts` sobre el mismo RNG `seed/run/spawn`: acumulador, tope, sorteo de tabla, élite en el anillo, formaciones fila/anillo/arco, ráfaga de depuración y reciclado (excluye élite y jefe por tipo). `WorldRun` hace de `Run.ts`: crea el director, fija `CombatRun.Pace`, y se engancha a `CombatRun.Step` justo después de las pasivas (`ISchedule`, mismo orden que `Run.update`: parámetros → director → apariciones/reciclado → jefe → enemigos…). Capacidad de enemigos 800 (`ENEMY_CAPACITY` web). Matar al jefe marca `Victory` solo en U3 (`BossEndsRun`); U2 no cambia. Sucesos de partida en `CombatRun.Events` (`wave`, `elite`, `swarm`, `levelUp`, `bossSpawned`, `boss`). Acciones de depuración 1/2/3/4/5/6/7 portadas en `WorldRun` (las teclas 3 y 8 se conectan en el paso 9); `DebugLevelUp` y `DebugKillAll` ahora hacen lo mismo que la web.
+- Archivos/sistemas principales: `Core/World/Director.cs` (nuevo), `Core/World/WorldSpawns.cs`, `Core/World/WorldRun.cs`, `Core/CombatRun.cs`, `U3/U3Game.cs` (estado con tiempo/ritmo/tope y victoria), `Tests/Core/DirectorReferenceTests.cs` y `Tests/Core/WorldDirectorTests.cs` (nuevos), `Tests/Core/WorldCombatTests.cs` (sus pruebas de combate controlado desactivan el director con `Automatic=false`).
+- Decisiones nuevas: ninguna de diseño. Técnica: `WorldRun.Automatic=false` solo para pruebas de combate aislado.
+- Pruebas realmente ejecutadas y resultado: ver la tabla «Pruebas del paso 6». Coinciden con la web: parámetros cada 5 s de las tres duraciones, cronología exacta de oleadas/élites/enjambre por tick, 3600 ticks de apariciones (159 posiciones, recuentos por segundo, posiciones y tipos finales) y las tres formaciones.
+- Pruebas pendientes/no ejecutadas: build y comprobación visual no se repitieron en este paso (sin cambios de render); partidas integradas, paso 10.
+- Commits creados: «Añade el director completo de U3». Push: ver «Cómo retomar».
+- Estado del árbol al terminar: solo los ajustes Unity excluidos.
+- Errores/limitaciones conocidas: la escena todavía no tiene pantalla de inicio (10 min por defecto), HUD final ni interactuables activos.
+- Decisiones pendientes del autor: ninguna.
+- Siguiente paso exacto: paso 7 (ver «Cómo retomar»).
+
+#### Pruebas del paso 6
+
+| Fecha y hora | Comando (CMD, raíz del repo) | Resultado | Registro |
+| --- | --- | --- | --- |
+| 03/10/2026 19:45 | `scripts\u3.cmd edit` | 151/151 (132 anteriores + 19 nuevas de director/apariciones) | `unity/TestResults/U3/edit.xml`, `edit.log` |
+| 03/10/2026 19:46 | `scripts\u3.cmd play` | 13/13 | `unity/TestResults/U3/play.xml`, `play.log` |
 
 ## Checkpoint al terminar U3
 

@@ -15,7 +15,7 @@ namespace Mamporro.Tests
         [OneTimeSetUp]public void Generate(){world=WorldData.Generate("MAMPORRO");}
         WorldRun New(WorldData data=null)
         {
-            var s=new WorldRun(data??world,"U3-COMBATE",Catalog.Characters[0]);
+            var s=new WorldRun(data??world,"U3-COMBATE",Catalog.Characters[0]){Automatic=false};
             s.Combat.WeaponsOff=true;return s;
         }
         static void Place(WorldRun s,double x,double z)
