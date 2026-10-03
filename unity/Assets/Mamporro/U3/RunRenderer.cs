@@ -28,8 +28,10 @@ namespace Mamporro.U3
         public void Clear(){effectCount=0;DroppedEffects=0;DrawnInstances=0;System.Array.Clear(counts,0,counts.Length);openedAt=null;}
         public void Emit(CombatEffect effect){if(effectCount<effects.Length)effects[effectCount++]=effect;else DroppedEffects++;}
         public void Step(double dt){for(int i=effectCount-1;i>=0;i--){effects[i].Life-=dt;if(effects[i].Life<=0)effects[i]=effects[--effectCount];}}
+        // Sin rotación = identidad. Quaternion == compara por producto escalar y (0,0,0,0) nunca
+        // es «igual» a default, así que se comprueba componente a componente.
         void Box(int mat,Vector3 pos,Vector3 scale,Quaternion rotation=default)
-        {if(counts[mat]>=matrices[mat].Length)return;if(rotation==default)rotation=Quaternion.identity;matrices[mat][counts[mat]++]=Matrix4x4.TRS(new Vector3(pos.x,pos.y,-pos.z),new Quaternion(-rotation.x,-rotation.y,rotation.z,rotation.w),scale);}
+        {if(counts[mat]>=matrices[mat].Length)return;if(rotation.x==0&&rotation.y==0&&rotation.z==0&&rotation.w==0)rotation=Quaternion.identity;matrices[mat][counts[mat]++]=Matrix4x4.TRS(new Vector3(pos.x,pos.y,-pos.z),new Quaternion(-rotation.x,-rotation.y,rotation.z,rotation.w),scale);}
         void Line(int mat,Vector3 a,Vector3 b,float width=.08f,float height=-1)
         {var d=b-a;if(d.sqrMagnitude<.0001f)return;Box(mat,(a+b)*.5f,new Vector3(width,height<0?width:height,d.magnitude),Quaternion.LookRotation(d));}
         void Ring(int mat,Vector3 p,float r,float angle=0,float opening=360)

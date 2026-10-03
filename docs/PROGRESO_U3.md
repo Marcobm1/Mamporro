@@ -6,12 +6,12 @@ Este archivo es el **checkpoint vivo de continuidad entre Codex CLI y Claude Cod
 
 ## Cómo retomar
 
-- **Último punto verificado y publicado:** paso 9, commit «Añade las pantallas de inicio y resultados y la depuración F3 de U3» (consultar `git log`; el hash no se escribe aquí para no crear un commit circular). Paso 8: `16543c8`; núcleo del paso 10: `db490f5`; paso 7: `59a5f7f`; paso 6: `c42e22d`. Base recibida por Claude Code el 03/10/2026: `b21160cf060ef30daa4c55759aec1e0095b0bd54`.
-- **Paso actual:** 10 del plan (parte de Play Mode): partidas aceleradas 2 personajes × 3 duraciones hasta resultados; victoria, derrota, enjambre y reinicio sin restos.
-- **Terminado y verificado:** pasos 1–9 y la parte de núcleo del paso 10 (adelantada): las cuatro partidas de `runs` coinciden con la web de principio a fin (`IntegratedRunTests`). El 03/10/2026 (paso 9): Edit Mode **167/167**, Play Mode **16/16**, build correcta y 13 capturas revisadas. **`u3-world.json` sigue congelada**, sin regeneración.
-- **A medias:** nada. Pendientes: parte de Play Mode del paso 10, pasos 11 (build, ensayo real y acción `benchmark` del lanzador) y 12. U4 no autorizado.
+- **Último punto verificado y publicado:** paso 10, commit «Juega en escena 2 personajes × 3 duraciones hasta resultados» (consultar `git log`; el hash no se escribe aquí para no crear un commit circular). Paso 9: `443645d`; paso 8: `16543c8`; núcleo del paso 10: `db490f5`; paso 7: `59a5f7f`; paso 6: `c42e22d`. Base recibida por Claude Code el 03/10/2026: `b21160cf060ef30daa4c55759aec1e0095b0bd54`.
+- **Paso actual:** 11 del plan: build Windows x64 Mono y ensayo de partida real (minutos 2, 5 y 9 y enjambre con 750 vivos, 1080p y 1440p, `validRender`), con la acción `benchmark` de vuelta en `scripts\u3.cmd`.
+- **Terminado y verificado:** pasos 1–10. Las cuatro partidas de `runs` coinciden con la web de principio a fin (`IntegratedRunTests`) y en escena se juegan 2 personajes × 3 duraciones hasta resultados (`U3RunFlowTests`). El 03/10/2026 (paso 10): Edit Mode **167/167**, Play Mode **17/17**. **`u3-world.json` sigue congelada**, sin regeneración.
+- **A medias:** nada. Pendientes: pasos 11 y 12. U4 no autorizado.
 - **Sin commit a propósito:** `unity/ProjectSettings/ProjectSettings.asset` (configuración local de nube), `ProjectAuditorSettings.asset`, `PackageManagerSettings.asset` y `URPProjectSettings.asset`: no publicar. También se conservan fuera del índice los cambios de espacios/EOL de `RetroPipeline.asset`, `UniversalRenderPipelineGlobalSettings.asset` y `GraphicsSettings.asset` (el autor confirmó el 03/10/2026 que se tratan igual). No limpiar ni restaurar estos archivos automáticamente.
-- **Siguiente paso exacto:** paso 10, Play Mode: `U3RunFlowTests` con 2 personajes × 3 duraciones jugadas en la escena hasta la pantalla de resultados (acelerando con `Time.timeScale` y la depuración de tiempo), cubriendo victoria, derrota, enjambre (750 vivos) y reinicio sin restos.
+- **Siguiente paso exacto:** paso 11. Ensayo de partida real en la build (`-u3-benchmark`): partida automática en el mapa real con el director, mediciones en los minutos 2, 5 y 9 y en el enjambre con 750 vivos, a 1920×1080 y 2560×1440, con el mismo formato e informe que U1/U2 (FrameTimingManager, `validRender`, P95, GC); añadir `benchmark` a `scripts\u3.ps1`/`u3.cmd`. Objetivo 60 FPS con 300 enemigos; si el enjambre no llega, perfilar y documentar.
 
 Comprobar el estado desde CMD:
 
@@ -122,7 +122,7 @@ Commits pequeños que compilen y pasen sus pruebas; actualizar este checkpoint t
 7. **Hecho, 03/10/2026.** Interactuables, armario, jefe y victoria.
 8. **Hecho, 03/10/2026.** HUD, minimapa, avisos, telegrafiado y pausa.
 9. **Hecho, 03/10/2026.** Pantallas de inicio y resultados; depuración con `run.cheated`.
-10. Integración: partidas deterministas contra la cronología web (**hecho el 03/10/2026, adelantado**: ver «Partidas integradas»); Play Mode con partidas aceleradas (2 personajes × 3 duraciones) hasta resultados; victoria, derrota, enjambre y reinicio sin restos.
+10. **Hecho, 03/10/2026.** Integración: partidas deterministas contra la cronología web (ver «Partidas integradas»); Play Mode con partidas aceleradas (2 personajes × 3 duraciones) hasta resultados; victoria, derrota, enjambre y reinicio sin restos.
 11. Build Windows x64 Mono ejecutada y ensayo de partida real: minutos 2, 5 y 9 y enjambre con 750 vivos, a 1080p y 1440p, con las mismas condiciones y `validRender` que U1/U2. Objetivo: 60 FPS con 300 enemigos en el mapa real; si el enjambre no llega, perfilar y documentar antes de cerrar.
 12. Cierre: documentación, push y parada para la prueba manual del autor con instrucciones.
 
@@ -300,6 +300,28 @@ Pruebas ejecutadas el **03/10/2026**, horas Europe/Madrid; los XML/logs finales 
 | 03/10/2026 20:19 | `scripts\u3.cmd play` | 16/16 (nuevas `U3ScreensTests` ×2) | `unity/TestResults/U3/play.xml`, `play.log` |
 | 03/10/2026 20:20 | `scripts\u3.cmd build` | Success, Windows x64 Mono | `unity/TestResults/U3/build.log` |
 | 03/10/2026 20:20 | `scripts\u3.cmd visual` | 13 capturas nuevas revisadas; 2335 píxeles distintos con/sin combate | `unity/TestResults/U3/visual.log`, `Visual/*.png` |
+
+### 03/10/2026 — paso 10 (Play Mode): partidas aceleradas hasta resultados — Claude Code
+
+- Punto de partida/commit: `443645d`.
+- Trabajo realizado: `Tests/PlayMode/U3RunFlowTests.cs` juega en la escena real, desde la pantalla de inicio, Doña Remedios y Sir Baguette en 5, 10 y 15 minutos con `Time.timeScale` 10 (invencible y saltos de minuto de la depuración): 20 s con apariciones y bajas, salto al último minuto, llegada al enjambre (seis oleadas, armario revelado, tope 750, más de 200 vivos y cuenta `+mm:ss`; en Remedios 5 min se espera hasta los **750 vivos**), y final: Remedios abre el armario con E y derrota a la Pelusa Madre (victoria tras 1,6 s); Baguette pierde la invencibilidad y cae en el enjambre (derrota). Resultados con trucos marcados y, al reintentar, partida nueva del mismo personaje y duración sin restos (enemigos, proyectiles, gemas, oro, bajas, sucesos, jefe, enjambre, interactuables, efectos y objetos de escena). Seis partidas en 55 s. Corrige un fallo del render del paso 5 que destapó la prueba: `Box` sin rotación generaba una matriz inválida (el `==` de `Quaternion` no reconoce (0,0,0,0)); afectaba al jersey y a la fregona.
+- Archivos/sistemas principales: `Tests/PlayMode/U3RunFlowTests.cs` (nuevo), `U3/RunRenderer.cs`.
+- Decisiones nuevas: ninguna.
+- Pruebas realmente ejecutadas y resultado: ver «Pruebas del paso 10 (Play Mode)».
+- Pruebas pendientes/no ejecutadas: build y ensayo de rendimiento (paso 11).
+- Commits creados: «Juega en escena 2 personajes × 3 duraciones hasta resultados». Push: ver «Cómo retomar».
+- Estado del árbol al terminar: solo los ajustes Unity excluidos.
+- Errores/limitaciones conocidas: las partidas aceleradas usan la depuración (saltos de minuto e invencibilidad); la equivalencia sin trucos la cubren las cuatro partidas de `runs` en Edit Mode.
+- Decisiones pendientes del autor: ninguna.
+- Siguiente paso exacto: ver «Cómo retomar».
+
+#### Pruebas del paso 10 (Play Mode)
+
+| Fecha y hora | Comando (CMD, raíz del repo) | Resultado | Registro |
+| --- | --- | --- | --- |
+| 03/10/2026 20:23 | `scripts\u3.cmd play` (dos intentos) | 16/17: comprobación del temporizador con un fotograma de retraso (corregida en la prueba) y matriz inválida del jersey (fallo real del render, corregido) | `unity/TestResults/U3/play.log` |
+| 03/10/2026 20:25 | `scripts\u3.cmd play` | 17/17 (`U3RunFlowTests` 55 s) | `unity/TestResults/U3/play.xml`, `play.log` |
+| 03/10/2026 20:25 | `scripts\u3.cmd edit` | 167/167 | `unity/TestResults/U3/edit.xml`, `edit.log` |
 
 ## Checkpoint al terminar U3
 
