@@ -1,4 +1,5 @@
 using Mamporro.Core;
+using Math=System.Math;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -27,8 +28,8 @@ namespace Mamporro.U3
         public void Step(double dt){for(int i=effectCount-1;i>=0;i--){effects[i].Life-=dt;if(effects[i].Life<=0)effects[i]=effects[--effectCount];}}
         void Box(int mat,Vector3 pos,Vector3 scale,Quaternion rotation=default)
         {if(counts[mat]>=matrices[mat].Length)return;if(rotation==default)rotation=Quaternion.identity;matrices[mat][counts[mat]++]=Matrix4x4.TRS(new Vector3(pos.x,pos.y,-pos.z),new Quaternion(-rotation.x,-rotation.y,rotation.z,rotation.w),scale);}
-        void Line(int mat,Vector3 a,Vector3 b,float width=.08f)
-        {var d=b-a;if(d.sqrMagnitude<.0001f)return;Box(mat,(a+b)*.5f,new Vector3(width,width,d.magnitude),Quaternion.LookRotation(d));}
+        void Line(int mat,Vector3 a,Vector3 b,float width=.08f,float height=-1)
+        {var d=b-a;if(d.sqrMagnitude<.0001f)return;Box(mat,(a+b)*.5f,new Vector3(width,height<0?width:height,d.magnitude),Quaternion.LookRotation(d));}
         void Ring(int mat,Vector3 p,float r,float angle=0,float opening=360)
         {
             const int segments=24;var last=p+Quaternion.Euler(0,angle-opening/2,0)*Vector3.forward*r;
@@ -44,7 +45,15 @@ namespace Mamporro.U3
                 var rot=Quaternion.Euler(0,e.Heading[i]*Mathf.Rad2Deg,0);int color=e.Flash[i]>.3f?10:e.Type[i];
                 Box(color,p+Vector3.up*(float)d.height*.5f,new Vector3((float)d.radius*1.7f,(float)d.height,(float)d.radius*1.5f),rot);
                 Box(10,p+Vector3.up*(float)d.height*.75f+rot*Vector3.back*(float)d.radius*.7f,new Vector3((float)d.radius*.8f,.12f,.12f),rot);
-                if(e.State[i]==1){float reach=e.Type[i]==5&&r.Boss?.Attack=="slam"?5.5f:(float)d.radius+1;Ring(9,p+Vector3.up*.1f,reach);Line(9,p+Vector3.up*.15f,p+new Vector3(e.AimX[i],0,e.AimZ[i])*6+Vector3.up*.15f,.18f);}
+                // Telegrafiado (RunView.ts): embestida de la rata durante su preparación.
+                if(e.State[i]==1&&d.charge!=null)TelegraphLine(e.X[i],e.Z[i],e.AimX[i],e.AimZ[i],d.charge.dashSpeed*d.charge.dashTime+d.radius,d.radius*2,1-e.StateTime[i]/d.charge.windup);
+            }
+            // Ataques del jefe: rodillo (franja) y culetazo (círculo) que se llenan durante la preparación.
+            if(r.Boss!=null&&r.Boss.Phase=="windup"){
+                int b=e.IndexOf(r.Boss.EnemyId);
+                if(b>=0){double progress=r.Boss.PhaseLength>0?1-r.Boss.Timer/r.Boss.PhaseLength:0,radius=e.Radius(b);
+                    if(r.Boss.Attack=="roll")TelegraphLine(e.X[b],e.Z[b],e.AimX[b],e.AimZ[b],22+radius,(radius+CombatPlayer.Radius)*2,progress);
+                    else if(r.Boss.Attack=="slam")TelegraphCircle(e.X[b],e.Z[b],5.5,progress);}
             }
             DrawProjectiles(r.Projectiles,6,alpha);DrawProjectiles(r.EnemyShots,9,alpha);
             DrawPickups(r.Gems,7);DrawPickups(r.Coins,8);
@@ -93,6 +102,31 @@ namespace Mamporro.U3
                     case "totem":Box(item.Used?10:9,p+Vector3.up*3.3f,Vector3.one*(item.Used?.3f:.3f+.1f*pulse),turn);break;
                     default:Box(item.Used?10:5,p+turn*new Vector3(0,1.42f,-.52f),new Vector3(.12f,2.1f,.06f),turn);break;
                 }
+            }
+        }
+        // Franjas y círculos de Telegraphs.ts: fondo y relleno que avanza con `progress`,
+        // a 0,14 m sobre el terreno para no quedar enterrados en las cuestas.
+        const int TelegraphSteps=14,CircleRings=4,CircleSegments=28;const double Lift=.14;
+        void TelegraphLine(double x,double z,double dirX,double dirZ,double length,double width,double progress)
+        {
+            Strip(9,x,z,dirX,dirZ,length,width,0);
+            Strip(4,x,z,dirX,dirZ,length*Math.Max(.02,Math.Min(1,progress)),width*.8,.02);
+        }
+        void Strip(int mat,double x,double z,double dirX,double dirZ,double length,double width,double extra)
+        {
+            var hf=session.World.Heightfield;Vector3 Point(double along){double px=x+dirX*along,pz=z+dirZ*along;return new Vector3((float)px,(float)(hf.HeightAt(px,pz)+Lift+extra),(float)pz);}
+            var last=Point(0);for(int k=1;k<=TelegraphSteps;k++){var next=Point(length*k/TelegraphSteps);Line(mat,last,next,(float)width,.03f);last=next;}
+        }
+        void TelegraphCircle(double x,double z,double radius,double progress)
+        {
+            Disc(9,x,z,radius,0);Disc(4,x,z,radius*Math.Max(.02,Math.Min(1,progress)),.02);
+        }
+        void Disc(int mat,double x,double z,double radius,double extra)
+        {
+            var hf=session.World.Heightfield;double band=radius/CircleRings;
+            for(int ring=0;ring<CircleRings;ring++){
+                double rr=band*(ring+.5);Vector3 Point(int k){double a=k*Math.PI*2/CircleSegments,px=x+Math.Cos(a)*rr,pz=z+Math.Sin(a)*rr;return new Vector3((float)px,(float)(hf.HeightAt(px,pz)+Lift+extra),(float)pz);}
+                var last=Point(0);for(int k=1;k<=CircleSegments;k++){var next=Point(k);Line(mat,last,next,(float)band*1.05f,.03f);last=next;}
             }
         }
         // Anillo que sigue el terreno; `fraction` dibuja solo esa parte (carga de la mesa).

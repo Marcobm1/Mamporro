@@ -29,6 +29,8 @@ namespace Mamporro.U3
         public PlayerBody Body=>Session.Body;
         public RunRenderer CombatView {get;private set;}
         public RunCards Cards {get;private set;}
+        public RunHud Hud {get;private set;}
+        public RunScreens Screens {get;private set;}
         public Material CombatMaterial {get;private set;}
         public Mesh CombatMesh {get;private set;}
         public int InternalHeight {get;private set;}=360;
@@ -68,6 +70,8 @@ namespace Mamporro.U3
             var colors=new Color[CombatMesh.vertexCount];for(int i=0;i<colors.Length;i++)colors[i]=Color.white;CombatMesh.colors=colors;
             CombatView=gameObject.AddComponent<RunRenderer>();CombatView.Initialize(this);
             Cards=gameObject.AddComponent<RunCards>();Cards.Session=this;Cards.Build();
+            Hud=gameObject.AddComponent<RunHud>();Hud.Build(this);
+            Screens=gameObject.AddComponent<RunScreens>();Screens.Build(this);
             LoadWorld(defaultSeed);
             SetPaused(true);
             UpdateHelp();
@@ -84,7 +88,7 @@ namespace Mamporro.U3
             Seed=seed;Renderer.Build(WorldData.Generate(seed),seed);
             Session=new WorldRun(World,seed,Catalog.Characters[0],this);
             FreeCamera=false;DebugVisible=false;
-            ResetPlayer();CombatView.Clear();Cards.Hide();SetPaused(true);UpdateHelp();
+            ResetPlayer();CombatView.Clear();Cards.Hide();Hud.Reset(World);eventCursor=0;lastHp=Run.Hp;SetPaused(true);UpdateHelp();
         }
 
         // Punto de inicio de la web: (0, altura del terreno, 0).
@@ -115,6 +119,37 @@ namespace Mamporro.U3
         public void Banish(int index){if(Run.Banish(index))AfterChoice(false);}
         void AfterChoice(bool fresh)
         {if(Run.Choosing)Cards.Show(fresh);else{Cards.Hide();SetPaused(false);}}
+
+        // Sucesos nuevos de la partida → avisos, objeto conseguido y destello (Game.showNotice).
+        int eventCursor;double lastHp;
+        void ReadEvents()
+        {
+            var events=Run.Events;
+            for(;eventCursor<events.Count;eventCursor++){
+                var e=events[eventCursor];
+                switch(e.Kind){
+                    case "wave":Hud.Notice(CombatText.Get(e.Detail),true);break;
+                    case "elite":Hud.Notice(CombatText.Format("notice.elite","name",CombatText.Get("enemy."+e.Detail)),true);break;
+                    case "boss":Hud.Notice(CombatText.Format("notice.boss","name",CombatText.Get("enemy."+e.Detail)),true);break;
+                    case "noGold":Hud.Notice(CombatText.Format("notice.noGold","n",e.Detail),false);break;
+                    case "swarm":case "portalFound":case "challengeStart":case "challengeDone":case "revive":Hud.Notice(CombatText.Get("notice."+e.Kind),true);break;
+                    case "portalRevealed":case "shrineCharged":case "shield":Hud.Notice(CombatText.Get("notice."+e.Kind),false);break;
+                    case "item":var def=Array.Find(Catalog.Items,i=>i.id==e.Detail);if(def!=null)Hud.ShowItem(def);break;
+                }
+            }
+            if(Run.Hp<lastHp-1e-9)Hud.FlashHurt();
+            lastHp=Run.Hp;
+        }
+        // HUD durante la partida (también en pausa y con cartas); pausa encima si no hay cartas.
+        void RefreshPanels()
+        {
+            bool playing=Session!=null&&!Session.Finished;
+            Hud.Show(playing);
+            bool pause=playing&&Paused&&!Cards.Visible;
+            if(pause!=Screens.PauseVisible)Screens.ShowPause(pause);
+            if(status.transform.parent.gameObject.activeSelf!=DebugVisible)status.transform.parent.gameObject.SetActive(DebugVisible);
+            if(help.transform.parent.gameObject.activeSelf)help.transform.parent.gameObject.SetActive(false);
+        }
 
         void UpdateHelp()
         {
@@ -188,6 +223,7 @@ namespace Mamporro.U3
                 if(mouse!=null&&Cursor.lockState==CursorLockMode.Locked){var d=mouse.delta.ReadValue();yaw+=d.x*.126f;pitch=Mathf.Clamp(pitch-d.y*.126f,-25,70);}
             }
             Shader.SetGlobalFloat(SnapId,Snap?1:0);Shader.SetGlobalFloat(DitherId,Dither?1:0);
+            ReadEvents();RefreshPanels();
             textTimer-=Time.unscaledDeltaTime;
             if(textTimer<=0){textTimer=.25f;RefreshStatus();}
         }

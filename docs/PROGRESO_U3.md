@@ -6,12 +6,12 @@ Este archivo es el **checkpoint vivo de continuidad entre Codex CLI y Claude Cod
 
 ## Cómo retomar
 
-- **Último punto verificado y publicado:** commit «Compara las cuatro partidas integradas con la web» (núcleo del paso 10; consultar `git log`, el hash no se escribe aquí para no crear un commit circular). Paso 7: `59a5f7f`; paso 6: `c42e22d`. Base recibida por Claude Code el 03/10/2026: `b21160cf060ef30daa4c55759aec1e0095b0bd54`.
-- **Paso actual:** 8 del plan: HUD, minimapa, avisos, telegrafiado y pausa.
-- **Terminado y verificado:** pasos 1–7 y la parte de núcleo del paso 10 (adelantada): las cuatro partidas de `runs` coinciden con la web de principio a fin (`IntegratedRunTests`). El 03/10/2026: Edit Mode **167/167**, Play Mode **13/13**. **`u3-world.json` sigue congelada**, sin regeneración.
-- **A medias:** nada. Pasos 8, 9, 11, 12 y la parte de Play Mode del 10 (partidas aceleradas hasta resultados, que necesitan las pantallas del paso 9) pendientes. U4 no autorizado.
+- **Último punto verificado y publicado:** paso 8, commit «Añade el HUD, el minimapa, los avisos y la pausa de U3» (consultar `git log`; el hash no se escribe aquí para no crear un commit circular). Núcleo del paso 10: `db490f5`; paso 7: `59a5f7f`; paso 6: `c42e22d`. Base recibida por Claude Code el 03/10/2026: `b21160cf060ef30daa4c55759aec1e0095b0bd54`.
+- **Paso actual:** 9 del plan: pantallas técnicas de inicio y resultados; depuración F3 completa.
+- **Terminado y verificado:** pasos 1–8 y la parte de núcleo del paso 10 (adelantada): las cuatro partidas de `runs` coinciden con la web de principio a fin (`IntegratedRunTests`). El 03/10/2026 (paso 8): Edit Mode **167/167**, Play Mode **14/14**, build correcta. **`u3-world.json` sigue congelada**, sin regeneración.
+- **A medias:** nada. Pasos 9, 11, 12 y la parte de Play Mode del 10 (partidas aceleradas hasta resultados, que necesitan las pantallas del paso 9) pendientes. La comprobación visual (`scripts\u3.cmd visual`) se ejecutó tras el paso 8, pero sus capturas salen con la pausa delante: hay que adaptarla en el paso 9 (pantalla de inicio, ocultar pantallas en las vistas del mundo y añadir capturas de HUD, interactuables, telegrafiado y resultados). U4 no autorizado.
 - **Sin commit a propósito:** `unity/ProjectSettings/ProjectSettings.asset` (configuración local de nube), `ProjectAuditorSettings.asset`, `PackageManagerSettings.asset` y `URPProjectSettings.asset`: no publicar. También se conservan fuera del índice los cambios de espacios/EOL de `RetroPipeline.asset`, `UniversalRenderPipelineGlobalSettings.asset` y `GraphicsSettings.asset` (el autor confirmó el 03/10/2026 que se tratan igual). No limpiar ni restaurar estos archivos automáticamente.
-- **Siguiente paso exacto:** paso 8. HUD uGUI equivalente a `src/ui/Hud.ts` (vida, XP, nivel, oro, tiempo/enjambre, bajas, armas/tomos/objetos, jefe, aviso de interacción, barra de mesa/desafío), minimapa con descubrimiento (`src/ui/Minimap.ts`), avisos a partir de `CombatRun.Events` (textos de `Game.showNotice`), telegrafiado de los ataques del jefe (`src/render/Telegraphs.ts`) y pausa con semilla, estadísticas y objetos. Sin cambiar la lógica del núcleo.
+- **Siguiente paso exacto:** paso 9. Pantalla técnica de inicio (uGUI): ambos personajes (Remedios y Baguette), duración 5/10/15 y semilla opcional (vacía = aleatoria, como `normalizeSeed`/`randomSeed` web), que crea el `WorldRun` con esas opciones. Pantalla técnica de resultados: victoria/derrota, tiempo, bajas, daño por arma y nivel, sin Calderilla; reintentar y volver al inicio; pausa con «Volver al inicio». Panel F3 con los datos de `Game.updateStats` (FPS, ms, posición, estado, pendiente, semilla, entidades, director) y las 8 acciones con su aviso. Después adaptar `U3VisualCheck`.
 
 Comprobar el estado desde CMD:
 
@@ -120,7 +120,7 @@ Commits pequeños que compilen y pasen sus pruebas; actualizar este checkpoint t
 5. **Hecho, 03/10/2026.** Física del jugador y combate/horda conectados al mundo real; apariciones controladas QA, reciclado lejano, cartas, render instanciado y reinicio probado.
 6. **Hecho, 03/10/2026.** Director completo.
 7. **Hecho, 03/10/2026.** Interactuables, armario, jefe y victoria.
-8. HUD, minimapa, avisos, telegrafiado y pausa.
+8. **Hecho, 03/10/2026.** HUD, minimapa, avisos, telegrafiado y pausa.
 9. Pantallas de inicio y resultados; depuración con `run.cheated`.
 10. Integración: partidas deterministas contra la cronología web (**hecho el 03/10/2026, adelantado**: ver «Partidas integradas»); Play Mode con partidas aceleradas (2 personajes × 3 duraciones) hasta resultados; victoria, derrota, enjambre y reinicio sin restos.
 11. Build Windows x64 Mono ejecutada y ensayo de partida real: minutos 2, 5 y 9 y enjambre con 750 vivos, a 1080p y 1440p, con las mismas condiciones y `validRender` que U1/U2. Objetivo: 60 FPS con 300 enemigos en el mapa real; si el enjambre no llega, perfilar y documentar antes de cerrar.
@@ -255,6 +255,28 @@ Pruebas ejecutadas el **03/10/2026**, horas Europe/Madrid; los XML/logs finales 
 | 03/10/2026 19:58–20:00 | Unity batch Edit Mode con `-testFilter IntegratedRunTests` (iteración) | diagnóstico: primero 3/4 completas; tras reproducir el guion web, 4/4 idénticas | `unity/TestResults/U3/filter.xml`, `filter.log` |
 | 03/10/2026 20:01 | `scripts\u3.cmd edit` | 167/167 (8 nuevas: ruta y partida completa × 4) | `unity/TestResults/U3/edit.xml`, `edit.log` |
 | 03/10/2026 20:01 | `scripts\u3.cmd play` | 13/13 | `unity/TestResults/U3/play.xml`, `play.log` |
+
+### 03/10/2026 — paso 8: HUD, minimapa, avisos, telegrafiado y pausa — Claude Code
+
+- Punto de partida/commit: `db490f5`.
+- Trabajo realizado: `U3/RunHud.cs` (uGUI construido en código, equivalente a `Hud.ts`): barra de experiencia, nivel, vida, oro, pasiva de Baguette, cuenta atrás `mm:ss`/`+mm:ss` (ámbar en los últimos 30 s, roja en el enjambre) y rótulo ENJAMBRE, bajas, barra del jefe (morada; roja enfurecido), armas, tomos (nombre corto) y objetos con su rareza, aviso de interacción, barra de mesa camilla/desafío, hasta tres avisos de 2,6 s (grandes o normales, como `Game.showNotice`), cartel del objeto conseguido 4,2 s (`describeItem`, con los porcentajes de los objetos especiales) y destello rojo al recibir daño. Minimapa de 112×112 (como el canvas web): terreno por bandas de altura con sombreado y sitios, una vez por mapa; marcas de interactuables descubiertos, jefe parpadeante y flecha del jugador según la cámara, a 10 Hz. `U3Game` lee `CombatRun.Events` para los avisos. Pausa técnica (`U3/RunScreens.cs`): continuar, semilla, estadísticas (`statLines`), objetos y controles; sin las opciones guardadas (U4). Telegrafiado fiel a `RunView`/`Telegraphs.ts`: franja de embestida de la rata durante su preparación, rodillo del jefe (franja) y culetazo (círculo que se llena), a 0,14 m sobre el terreno; se retira el anillo genérico anterior. El panel de estado técnico solo se ve con F3.
+- Archivos/sistemas principales: `U3/RunHud.cs` y `U3/RunScreens.cs` (nuevos), `U3/U3Game.cs`, `U3/RunRenderer.cs`, `Tests/PlayMode/U3HudTests.cs` (nuevo).
+- Decisiones nuevas: ninguna. Las opciones de la pausa web (idioma, volumen, etc.) dependen del guardado y quedan para U4.
+- Pruebas realmente ejecutadas y resultado: ver «Pruebas del paso 8».
+- Pruebas pendientes/no ejecutadas: revisión visual del HUD sin la pausa delante (paso 9).
+- Commits creados: «Añade el HUD, el minimapa, los avisos y la pausa de U3». Push: ver «Cómo retomar».
+- Estado del árbol al terminar: solo los ajustes Unity excluidos.
+- Errores/limitaciones conocidas: la escena aún arranca en la pausa (la pantalla de inicio llega en el paso 9). Texto con la fuente integrada de Unity; sin la fuente pixelada web (pulido U5).
+- Decisiones pendientes del autor: ninguna.
+- Siguiente paso exacto: paso 9 (ver «Cómo retomar»).
+
+#### Pruebas del paso 8
+
+| Fecha y hora | Comando (CMD, raíz del repo) | Resultado | Registro |
+| --- | --- | --- | --- |
+| 03/10/2026 20:03 | `scripts\u3.cmd edit` | 167/167 | `unity/TestResults/U3/edit.xml`, `edit.log` |
+| 03/10/2026 20:08 | `scripts\u3.cmd build` y `scripts\u3.cmd visual` | build correcta; 9 capturas, pero con la pausa delante (se rehace en el paso 9) | `unity/TestResults/U3/build.log`, `visual.log` |
+| 03/10/2026 20:09 | `scripts\u3.cmd play` | 14/14 (nueva `U3HudTests`) | `unity/TestResults/U3/play.xml`, `play.log` |
 
 ## Checkpoint al terminar U3
 
