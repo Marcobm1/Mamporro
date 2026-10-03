@@ -6,7 +6,7 @@ Este archivo es el **checkpoint vivo de continuidad entre Codex CLI y Claude Cod
 
 ## Cómo retomar
 
-- **Último punto verificado:** paso 5, «Conecta el combate de U3 al mundo procedural», ver registro del 03/10/2026. Base local/remota recibida: `272ce95566df98d36ba60456731d16de09022852`. Publicación del paso 5 pendiente al preparar este checkpoint; confirmar con Git antes de continuar.
+- **Último punto verificado y publicado:** paso 5, `4de718d2af996c44dc0b7f9d097e0f8bf3a076ee`, «Conecta el combate de U3 al mundo procedural». Push normal y HEAD remoto comprobados el 03/10/2026. Este ajuste documental registra la publicación; consultar Git para el último commit de checkpoint. Base local/remota recibida: `272ce95566df98d36ba60456731d16de09022852`.
 - **Paso actual:** 6 del plan: director completo. Paso 5 terminado y probado; no se ha empezado el director.
 - **Terminado y verificado:** pasos 1–5. El 03/10/2026: Edit Mode **132/132**, Play Mode **13/13**, build Windows x64 Mono y nueve capturas revisadas. U0/U2/U3 coinciden con la web. **`u3-world.json` sigue congelada**, sin regeneración.
 - **A medias:** ninguna pieza de código del paso 5. Pasos 6–12 pendientes; F3 tiene QA controlado, no el director ni todo el debug final. U4 no autorizado.
@@ -179,7 +179,7 @@ Pruebas ejecutadas el **03/10/2026**, horas Europe/Madrid; los XML/logs finales 
 - Los verificadores Node se ejecutaron concurrentemente y U2/U3 avisaron del puerto de WebSocket 24678 ocupado; los tres completaron la comparación correctamente con exit 0. No se modificó su configuración ni las referencias.
 - **Exclusiones locales conservadas:** los cuatro ProjectSettings prohibidos y diferencias de formato de RetroPipeline, UniversalRenderPipelineGlobalSettings y GraphicsSettings. `git diff --check` global señala espacios de ajustes Unity excluidos; se revisa por separado el índice del commit. Builds, TestResults y capturas permanecen ignorados. `src/`, referencias y escena/código U2 intactos.
 - **Límites y pendientes:** escena técnica con Remedios como selección inicial, sin selector final ni director automático. Modelos/avisos provisionales; niebla y silueta marcada del borde del mundo heredadas del paso 4. Falta comparar la cronología integrada (paso 10), ensayar rendimiento real (paso 11) y validar el conjunto U3 con el autor. No se atribuye a estas pruebas una partida completa 5/10/15 ni un objetivo FPS cumplido.
-- **Commit previsto de esta pieza:** «Conecta el combate de U3 al mundo procedural». Push aún pendiente al preparar esta entrada; registrar su resultado tras fetch/comprobación del remoto. No hay código del paso 5 pendiente deliberadamente fuera del commit.
+- **Commit y push:** `4de718d2af996c44dc0b7f9d097e0f8bf3a076ee`, «Conecta el combate de U3 al mundo procedural». Índice revisado: 23 archivos exclusivamente del paso 5/documentación; `git diff --cached --check` correcto. Tras `git fetch origin`, remoto aún en `272ce955`; push normal correcto `272ce95..4de718d`. `git ls-remote origin refs/heads/claude/zen-pasteur-674ik0` confirmó el hash completo publicado. No hay código del paso 5 sin commit; quedan solo los ajustes Unity excluidos enumerados arriba. El presente ajuste documental registra ese resultado.
 - **Siguiente paso exacto:** paso 6, director completo, sobre `WorldRun`, `WorldSpawns` y `CombatRun` existentes. No hay decisiones bloqueantes del autor. U4 no autorizado.
 
 ## Checkpoint al terminar U3

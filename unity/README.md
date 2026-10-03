@@ -127,7 +127,9 @@ scripts\u3.cmd visual
 en `unity/TestResults/U3/Visual/`: inicio, vista alta, casa, templo, granja, pozo,
 combate, cartas y reinicio.
 Comprueba que sean nuevas y contengan imagen; abre una ventana visible durante
-unos segundos. Es una comprobación visual, no una medida de rendimiento.
+unos segundos. También exige diferencias de píxeles al activar/desactivar el
+render de combate con cámara/simulación/viento inmóviles: detecta instancing
+ausente en la build. Es una comprobación visual, no una medida de rendimiento.
 XML y logs quedan en `unity/TestResults/U3/`; builds y capturas no se publican.
 `scripts\u3.cmd create` regenera deliberadamente solo la escena U3; no hace
 falta para jugar. No existe aún el ensayo de rendimiento del paso 11.
