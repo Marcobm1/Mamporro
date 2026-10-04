@@ -30,7 +30,7 @@ Al iniciar una sesión, leer en este orden:
 
 1. `docs/ESTADO_ACTUAL.md`.
 2. `docs/CONTINUIDAD_AGENTES.md`.
-3. El checkpoint del bloque vigente (`docs/PROGRESO_U5.md`: U5 aprobado manualmente; siguiente tarea: planificación U6).
+3. El checkpoint del bloque vigente (`docs/PROGRESO_U6.md`: solo planificación; U5 aprobado manualmente).
 4. `docs/DECISIONES.md` y cualquier continuación posterior indicada por el estado actual.
 5. `docs/ESPECIFICACION.md` como especificación histórica de partida.
 6. `docs/MIGRACION_UNITY.md`.

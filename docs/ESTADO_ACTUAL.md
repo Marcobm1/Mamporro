@@ -32,7 +32,7 @@ Codex CLI y Claude Code se alternarán cuando termine la sesión/tokens de uno. 
 
 Norma canónica: [`CONTINUIDAD_AGENTES.md`](CONTINUIDAD_AGENTES.md).
 
-El checkpoint vivo es [`PROGRESO_U5.md`](PROGRESO_U5.md) (U5 aprobado manualmente; siguiente tarea: planificar U6). [`PROGRESO_U4.md`](PROGRESO_U4.md) y [`PROGRESO_U3.md`](PROGRESO_U3.md) conservan los cierres aprobados, pruebas e instrucciones manuales. Actualizar el checkpoint vigente antes de cada relevo.
+El checkpoint vivo es [`PROGRESO_U6.md`](PROGRESO_U6.md), solo planificación; implementación no autorizada. U5 aprobado y publicado en `4fcbcdf7707f4b22594164ae27552e62629228ac`; cierre en [`PROGRESO_U5.md`](PROGRESO_U5.md). [`PROGRESO_U4.md`](PROGRESO_U4.md) y [`PROGRESO_U3.md`](PROGRESO_U3.md) conservan los cierres aprobados, pruebas e instrucciones manuales. Actualizar el checkpoint vigente antes de cada relevo.
 
 Cada relevo debe registrar trabajo realmente realizado, pruebas ejecutadas, commits/push, limitaciones, cambios locales sin publicar y siguiente paso exacto. No registrar planes como si fueran resultados.
 
@@ -42,7 +42,7 @@ Los Markdown del traspaso del 28/29 de septiembre decían que Codex CLI estaba p
 
 El entorno local se comprobó, Codex CLI se instaló/verificó y U1 se implementó realmente en Unity. Unity importó el proyecto, compiló C#, ejecutó Edit/Play Mode, generó una build Windows x64 Mono y la build se ejecutó con D3D11. Tras esa entrega, el autor probó U1 y confirmó que estaba bien; a continuación autorizó U2.
 
-Por tanto, cualquier frase histórica como «no iniciar U2» dentro de un checkpoint anterior debe interpretarse en su fecha, no como restricción vigente. El bloque vigente es `docs/PROGRESO_U5.md`, aprobado manualmente; U6 solo en planificación.
+Por tanto, cualquier frase histórica como «no iniciar U2» dentro de un checkpoint anterior debe interpretarse en su fecha, no como restricción vigente. El bloque vigente es `docs/PROGRESO_U6.md`, solo planificación; U5 aprobado manualmente.
 
 ## Repositorio y protección del trabajo local
 
@@ -132,6 +132,6 @@ Codex CLI: iniciar `codex` en la raíz y pedir que lea `AGENTS.md`.
 
 Claude Code: iniciarlo en la raíz; `CLAUDE.md` contiene la entrada equivalente.
 
-Ambos deben leer `docs/CONTINUIDAD_AGENTES.md`, este documento y `docs/PROGRESO_U5.md`, además de los cierres de U3 y U4. U3 y U4 están aprobadas; las seis propuestas técnicas de U3 no se consideran confirmadas individualmente. U5 está aprobado manualmente. Preparar U6 y esperar aprobación expresa de su plan antes de implementar.
+Ambos deben leer `docs/CONTINUIDAD_AGENTES.md`, este documento y `docs/PROGRESO_U6.md`, además de los cierres de U3–U5. U3 y U4 están aprobadas; las seis propuestas técnicas de U3 no se consideran confirmadas individualmente. U5 está aprobado manualmente. Preparar U6 y esperar aprobación expresa de su plan antes de implementar.
 
-Al terminar una sesión con cambios relevantes, el agente saliente debe actualizar `docs/PROGRESO_U5.md` antes de entregar el turno.
+Al terminar una sesión con cambios relevantes, el agente saliente debe actualizar `docs/PROGRESO_U6.md` antes de entregar el turno.

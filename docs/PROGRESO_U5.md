@@ -9,7 +9,7 @@ Estado: **IMPLEMENTADO, VERIFICADO Y APROBADO MANUALMENTE POR EL AUTOR el 04/10/
 - **Terminado:** pasos 1–9. Regresión final (04/10/2026): web 232/232, contrato 5/5, verificador histórico, Edit 392/392, Play 37/37, build, visual (audio, 5 partidas seguidas, 19 + 44 capturas), ensayo 16/16 y diagnóstico Development 8/8.
 - **A medias:** nada.
 - **Sin commit a propósito:** siete ajustes Unity de «Cambios locales excluidos».
-- **Siguiente paso exacto:** preparar el plan de U6 y reunir sus decisiones pendientes; esperar respuesta del autor antes de implementar. La aprobación de U5 no autoriza implementar U6.
+- **Siguiente paso exacto:** plan U6 preparado en [PROGRESO_U6](PROGRESO_U6.md); esperar respuesta del autor a sus dos decisiones antes de implementar. Aprobación U5 publicada en `4fcbcdf7707f4b22594164ae27552e62629228ac`; no autoriza implementar U6.
 - **Autorización:** pasos 1–9 seguidos, con checkpoint, pruebas, commit y push tras cada pieza. Detenerse solo ante una decisión nueva importante de diseño/arquitectura (o si el compresor propio resulta inestable, con latencia o coste inesperado) y al terminar U5.
 
 Comprobación desde CMD:

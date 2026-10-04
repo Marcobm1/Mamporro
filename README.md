@@ -684,7 +684,7 @@ npm run preview
 `unity/`, Editor 6000.6.3f1, Windows x64 Mono, URP 17.6.0 e Input System 1.20.0.
 La licencia, importación, compilación, escena en Play Mode y generación de build
 ya se han probado. [Instrucciones Unity](unity/README.md) y
-[plan y checkpoint actual](docs/PROGRESO_U5.md). El historial de U0 se conserva en
+[plan U6, pendiente de autorización de implementación](docs/PROGRESO_U6.md). El historial de U0 se conserva en
 los documentos de decisiones y referencia.
 
 Los seis hitos web están aprobados. Destino inicial Unity: **Windows de

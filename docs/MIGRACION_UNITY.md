@@ -182,6 +182,8 @@ jugable del autor. Corregir regresiones antes de añadir contenido nuevo.
 
 ### U6. Adoptar Unity como versión principal
 
+Plan propuesto el 04/10/2026 en [PROGRESO_U6](PROGRESO_U6.md), después de la aprobación de U5. **Implementación no autorizada**: esperar respuesta del autor sobre destino web e identidad/configuración de entrega.
+
 - Actualizar README y guía de trabajo con Editor exacto, apertura, pruebas y build.
 - Conservar una referencia recuperable a la última versión web aprobada y sus
   instrucciones. Decidir explícitamente si se mantiene publicada o se archiva.

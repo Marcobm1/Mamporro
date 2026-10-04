@@ -10,7 +10,7 @@ Codex y Claude Code trabajan por turnos sobre la misma rama. **No trabajan a la 
 1. [`docs/INSTRUCCIONES_PROYECTO.md`](docs/INSTRUCCIONES_PROYECTO.md) — reglas compartidas de trabajo.
 2. [`docs/ESTADO_ACTUAL.md`](docs/ESTADO_ACTUAL.md) — punto real de continuación.
 3. [`docs/CONTINUIDAD_AGENTES.md`](docs/CONTINUIDAD_AGENTES.md) — protocolo obligatorio de relevo Codex ↔ Claude Code.
-4. [`docs/PROGRESO_U5.md`](docs/PROGRESO_U5.md) — cierre de U5 aprobado manualmente el 04/10/2026; siguiente tarea: planificación U6. Cierres aprobados de U3 y U4 en `docs/PROGRESO_U3.md` y `docs/PROGRESO_U4.md`.
+4. [`docs/PROGRESO_U6.md`](docs/PROGRESO_U6.md) — planificación vigente; implementación no autorizada. Cierre aprobado de U5 en `docs/PROGRESO_U5.md`. Cierres aprobados de U3 y U4 en `docs/PROGRESO_U3.md` y `docs/PROGRESO_U4.md`.
 5. [`docs/DECISIONES.md`](docs/DECISIONES.md) — decisiones históricas; las posteriores prevalecen.
 6. [`docs/MIGRACION_UNITY.md`](docs/MIGRACION_UNITY.md) — plan U0–U6.
 7. [`README.md`](README.md) y [`unity/README.md`](unity/README.md) — uso de la web y del proyecto Unity.
@@ -42,11 +42,11 @@ Si el árbol está limpio y el remoto va por delante, actualiza solo con `git pu
 
 Conserva cualquier cambio local. El cierre de U1 registró cambios posteriores generados por Unity fuera de los commits publicados; **no uses `reset --hard`, `clean`, force-push ni reclonado para ocultarlos**. Si hay conflicto real con el trabajo de U2, informa y resuélvelo sin borrar trabajo del autor o de Claude Code.
 
-Comprueba en `docs/PROGRESO_U5.md` el último relevo antes de editar. No supongas que el agente anterior completó todo lo que tenía previsto.
+Comprueba en `docs/PROGRESO_U6.md` el último relevo antes de editar. No supongas que el agente anterior completó todo lo que tenía previsto.
 
 ## Al terminar o ceder el turno
 
-Antes de que termine la sesión de Codex, actualiza `docs/PROGRESO_U5.md` con lo realmente hecho, pruebas ejecutadas, commits/push, cambios locales pendientes, limitaciones y el **siguiente paso exacto** para Claude Code o para la siguiente sesión de Codex.
+Antes de que termine la sesión de Codex, actualiza `docs/PROGRESO_U6.md` con lo realmente hecho, pruebas ejecutadas, commits/push, cambios locales pendientes, limitaciones y el **siguiente paso exacto** para Claude Code o para la siguiente sesión de Codex.
 
 Si una pieza está completa y verificable, haz commit pequeño y push antes del relevo. No crees un commit roto solo para transferir contexto. Si queda trabajo local no publicable, descríbelo con precisión y no lo borres.
 
