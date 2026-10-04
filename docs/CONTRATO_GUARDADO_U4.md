@@ -116,3 +116,10 @@ Estrategia a implementar/probar en paso 3: temporal en el mismo directorio, cerr
 - `unity/Docs/Reference/u4-import-cases.json`: corpus contractual independiente, con clasificación y cambios esperados según la política del autor. Reutiliza candidatos del corpus web; datos extremos mediante recetas acotadas. No atribuir estos rechazos estrictos al saneamiento web.
 - `node --test scripts/u4-contract.test.mjs`: verifica integridad, invariantes y cobertura del contrato/corpus. **No prueba un importador aún inexistente.** Paso 2 consumirá los resultados meta en C#; pasos 3–5 ejecutarán todos los casos contra los validadores reales y ampliarán fallos IO/confirmación/repetición.
 - U0/U2/U3 permanecen intactas. Tras la futura excepción de exportación web, ejecutar verificadores guardados sobre una instantánea aislada de la base aprobada, sin relajar sus guardas.
+
+
+## Implementación de validación disponible (paso 3, primera pieza)
+
+`Core/ProgressJson.cs` y `ProgressValidation.cs` implementan el parser acotado, tokens numéricos exactos, migraciones/normalización e informe. `ProgressValidator.Import` admite transferencia/web heredada; `Stored` exige formato Unity. Ambas devuelven un candidato completo o ninguno, sin IO. `ProgressTree.Stored` ofrece serialización canónica; no escribe archivos. Los 94 casos contractuales ya se ejecutan contra C# mediante `ProgressValidationTests`; no se han cambiado sus esperados para hacer pasar el validador.
+
+Pendientes: confirmar en UI, snapshot inmutable para sustitución y servicio físico de almacenamiento/recuperación. La prueba de doble importación actual verifica identidad del candidato serializado, no dos escrituras físicas.

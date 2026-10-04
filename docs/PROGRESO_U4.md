@@ -5,11 +5,11 @@ Estado: **IMPLEMENTACIÓN AUTORIZADA Y EN CURSO desde el 04/10/2026.** Política
 ## Cómo retomar
 
 - **Paso 1 publicado:** `fabaf2a64f5ff6c34d3592a25a6594f066130208`. Paso 2 en «Porta las reglas meta y la liquidación de U4»; localizar hash con `git log -1 --format="%H %s" -- unity/Assets/Mamporro/Core/MetaRules.cs`.
-- **Paso actual:** 3, validación/migración estricta y persistencia Unity; no iniciado.
-- **Terminado:** pasos 1–2: contrato/corpus y DTO/reglas meta C# puras sobre estado válido. Edit Mode 184/184, Play Mode 17/17 y build Windows x64 Mono correctos en esta sesión. Ver registro para comandos, fecha y rutas.
-- **A medias:** ninguna pieza de runtime. No existe aún exportador, importador ni persistencia Unity U4.
+- **Paso actual:** 3 en curso: parser/validación/migraciones puras terminados; falta almacenamiento físico, backup y recuperación.
+- **Terminado:** pasos 1–2 (`fabaf2a`, `dd994b8`) y primera pieza del 3 (parser/validación). Último Edit Mode 287/287; Play Mode 17/17 y build Mono corresponden al cierre del paso 2. Ver registro para comandos, fecha y rutas.
+- **A medias:** ninguna pieza rota. Paso 3 incompleto: validación pura ya funciona, todavía no existe persistencia ni UI de importación/exportación U4.
 - **Sin commit a propósito:** siete ajustes Unity de «Cambios locales excluidos».
-- **Siguiente paso exacto:** paso 3: parser acotado y validador/migraciones puros que ejecuten los 94 casos contractuales; después servicio de archivo temporal/backup/sustitución/verificación con tests IO separados. No deserializar entrada externa directamente con JsonUtility ni reutilizar los clamps de números de partida para importación.
+- **Siguiente paso exacto:** completar paso 3 con servicio de archivos usando `ProgressValidator.Stored` y `ProgressTree.Stored`: temporal validado, confirmación sobre snapshot, backup verificado, sustitución, relectura y recuperación; tests IO/fallos separados. `ProgressValidator.Import` ya procesa transferencia y web heredada sin escribir. No reimplementar el parser ni cambiar esperados.
 - **Autorización:** continuar los pasos 2–9 sin nuevas confirmaciones generales. Detenerse solo ante decisión nueva importante y, al terminar U4, para prueba manual del autor.
 
 Comprobación desde CMD:
@@ -160,6 +160,19 @@ Conservar sin publicar ni restaurar:
 - **Estado/exclusiones:** no hay runtime a medias; solo siete ajustes Unity excluidos tras publicar. Núcleo nuevo opera sobre DTO válido de fábrica o del futuro validador: **no es un importador ni un saneador de entrada externa**.
 - **Pendientes:** validación estricta, migraciones y IO reales (paso 3), exportación/importación (4–5), conexión completa de filtros/recompensas/abandono a sesión (6), menús/opciones (7–8), cierre/manual (9).
 - **Siguiente paso exacto:** implementar el parser/validador puro del paso 3 según contrato, hacer pasar el corpus sin modificar esperados para acomodar el port y seguir con persistencia. No requiere nueva autorización.
+
+### 04/10/2026 — paso 3, primera pieza: validación pura — Codex
+
+- **Punto de partida:** `dd994b886d2e64ed4eaf2954ca7c18e5def0de58`, paso 2 publicado y verificado en remoto; sin WIP aparte de siete ajustes Unity excluidos.
+- **Trabajo:** `ProgressJson.cs`, parser JSON sin dependencias, con presupuestos, UTF-8 estricto, rechazo de claves duplicadas y tokens numéricos conservados para no aceptar fracciones redondeadas como enteros críticos. Serializador canónico de árboles propios.
+- **Validación:** `ProgressValidation.cs`, entradas Import/Stored separadas; web v1/v2/v3, transferencia v1 y almacenamiento Unity v1; candidato/informe en memoria, defaults opcionales informados, exclusiones inequívocas, invariantes críticas y migraciones explícitas. `ProgressTree` serializa DTO sin reflexión ni estado activo.
+- **Pruebas nuevas:** `ProgressValidationTests.cs`, 94 entradas del corpus y 9 casos adicionales (103 en total): resultados/candidatos/diagnósticos contra esperados congelados, precisión de cantidades, fronteras de tamaño, escapes/UTF-8, cultura ES, original intacto, separación de formatos e idempotencia del candidato. El caso sin guardado comprueba el DTO nuevo; la existencia de archivos y la idempotencia persistente corresponden a la pieza IO pendiente.
+- **Pruebas ejecutadas:** `scripts\u3.cmd edit`, **287/287**, 04/10/2026 10:47:04–10:47:15 Europe/Madrid. XML/log originales en U3; copias `unity/TestResults/U4/step3-validation-edit.xml` y `step3-validation-edit.log`.
+- **Validación Git:** índice de esta pieza sin errores de whitespace. El diff global sigue mostrando whitespace en los ajustes Unity excluidos; no se limpian. No cambios en web, corpus esperados ni referencias anteriores.
+- **No ejecutado de nuevo:** Play Mode/build/visual en esta pieza pura y aún no conectada; última regresión de esos dos primeros comandos es la del paso 2. El paso 3 completo necesita pruebas IO y build antes de cerrarse.
+- **Commit/push:** «Valida y migra el progreso de U4 sin escribir archivos», fetch previo, push normal y verificación del remoto. Localizar hash con `git log -1 --format="%H %s" -- unity/Assets/Mamporro/Core/ProgressValidation.cs`.
+- **Estado/exclusiones:** pieza compilada y probada, solo siete ajustes Unity excluidos tras publicar. No se ha escrito ningún guardado de usuario.
+- **Siguiente paso exacto:** almacenamiento con temporal/backup/sustitución/relectura y recuperación, reutilizando este validador; no marcar paso 3 terminado todavía.
 
 ## Checkpoint al terminar U4
 
