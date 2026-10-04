@@ -216,6 +216,27 @@ namespace Mamporro.Tests
             Assert.That(session.Settle(Run("siguiente",kills:20)).Saved,Is.True);Assert.That(Open().Progress.meta.coins,Is.EqualTo(1+4+30),"bajas + supervivencia + primera partida");
         }
 
+        // ------------------------------------------------------------ tienda y opciones (paso 7)
+        [Test]public void ShopAndOptionsUseMetaRulesAndSafeSaving()
+        {
+            var p=ProgressDto.New("es");p.meta.coins=300;Save(p);var session=Open();
+            Assert.That(session.Purchase("olla"),Is.True);Assert.That(session.Purchase("olla"),Is.False,"ya comprado");
+            Assert.That(session.Purchase("baguette"),Is.False,"faltan 100");Assert.That(session.Purchase("inventado"),Is.False);
+            Assert.That(session.PurchaseExtra("skips"),Is.True);Assert.That(session.Progress.meta.coins,Is.EqualTo(300-180-80));
+            Assert.That(session.SetLanguage("en"),Is.True);Assert.That(session.SetLanguage("fr"),Is.False);
+            Assert.That(session.SetRunMinutes(5),Is.True);Assert.That(session.SetRunMinutes(7),Is.False);
+            var stored=Open().Progress;Assert.That(Json(stored),Is.EqualTo(Json(session.Progress)));
+            Assert.That(stored.meta.items,Does.Contain("olla"));Assert.That(stored.meta.extras.skips,Is.EqualTo(1));
+            Assert.That(stored.settings.language,Is.EqualTo("en"));Assert.That(stored.settings.runMinutes,Is.EqualTo(5));
+            Assert.That(session.Begin().AllowedItems.Contains("olla"),Is.True);
+        }
+        [Test]public void WithoutUsableStorageChoicesStayInMemoryAndTheFileIsKept()
+        {
+            Directory.CreateDirectory(dir);File.WriteAllText(Primary,"{roto",new UTF8Encoding(false));
+            var session=Open();Assert.That(session.SetRunMinutes(15),Is.True);Assert.That(session.Progress.settings.runMinutes,Is.EqualTo(15));
+            Assert.That(File.ReadAllText(Primary),Is.EqualTo("{roto"));
+        }
+
         // ------------------------------------------------------------ partida real → recibo → guardado → recarga
         [Test]public void RealRunCountersFlowThroughMetaRulesIntoStorage()
         {

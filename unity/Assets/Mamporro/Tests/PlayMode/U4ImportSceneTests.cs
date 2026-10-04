@@ -23,12 +23,12 @@ namespace Mamporro.Tests
         {
             tempRoot=Path.GetFullPath(Path.GetTempPath());
             root=Path.GetFullPath(Path.Combine(tempRoot,"Mamporro-U4-scene-"+Guid.NewGuid().ToString("N")));Directory.CreateDirectory(root);
-            U3Game.SaveDirectoryOverride=Path.Combine(root,"Progress");
+            U3Game.SaveDirectoryOverride=Path.Combine(root,"Progress");U3Game.DefaultLanguageOverride="es";
             realSave=Path.Combine(Application.persistentDataPath,"Progress");realExisted=Directory.Exists(realSave);
         }
         [TearDown] public void Cleanup()
         {
-            U3Game.SaveDirectoryOverride=null;
+            U3Game.SaveDirectoryOverride=null;U3Game.DefaultLanguageOverride=null;
             Assert.That(Directory.Exists(realSave),Is.EqualTo(realExisted),"no se toca el guardado real");
             string full=Path.GetFullPath(root);
             Assert.That(Path.GetDirectoryName(full).TrimEnd(Path.DirectorySeparatorChar),Is.EqualTo(tempRoot.TrimEnd(Path.DirectorySeparatorChar)).IgnoreCase);

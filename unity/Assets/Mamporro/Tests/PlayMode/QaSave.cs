@@ -31,12 +31,12 @@ namespace Mamporro.Tests
             System.IO.Directory.CreateDirectory(Root);
             if(progress!=null){var store=new ProgressStore(new ProgressFiles(Directory),"es");
                 Assert.That(store.Confirm(store.Prepare(progress,store.Load()),true).Success,Is.True,"progreso QA guardado");}
-            U3Game.SaveDirectoryOverride=Directory;
+            U3Game.SaveDirectoryOverride=Directory;U3Game.DefaultLanguageOverride="es";
         }
         public ProgressDto Stored=>new ProgressStore(new ProgressFiles(Directory),"es").Load().Candidate;
         public void Dispose()
         {
-            U3Game.SaveDirectoryOverride=null;
+            U3Game.SaveDirectoryOverride=null;U3Game.DefaultLanguageOverride=null;
             Assert.That(State(real),Is.EqualTo(realState),"el guardado real no se toca");
             string full=Path.GetFullPath(Root);
             Assert.That(Path.GetDirectoryName(full).TrimEnd(Path.DirectorySeparatorChar),Is.EqualTo(TempRoot.TrimEnd(Path.DirectorySeparatorChar)).IgnoreCase);

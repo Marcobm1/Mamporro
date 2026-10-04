@@ -79,8 +79,20 @@ namespace Mamporro.U3
                 return i>=0&&i+1<args.Length?args[i+1]:System.IO.Path.Combine(Application.persistentDataPath,"Progress");
             }
         }
-        // Idioma actual de la aplicación para los valores por defecto del progreso.
+        // Idioma actual de la aplicación (el del progreso; sin guardado, el del sistema como
+        // detectLanguage web: español si el sistema está en español, si no inglés).
         public string Language=>CombatText.English?"en":"es";
+        // Pruebas: idioma por defecto cuando no hay guardado, independiente del sistema.
+        public static string DefaultLanguageOverride;
+        static string SystemLanguage=>DefaultLanguageOverride??(Application.systemLanguage==UnityEngine.SystemLanguage.Spanish?"es":"en");
+        // Cambio de idioma desde el menú: se guarda en las opciones y se reconstruyen las pantallas.
+        public void SetLanguage(string language)
+        {
+            if(State!=Screen.Title||(language!="es"&&language!="en"))return;
+            Progress.SetLanguage(language);CombatText.English=Progress.Progress.settings.language=="en";Screens.Rebuild();
+        }
+        // Duración elegida en la preparación; se guarda como la opción runMinutes de la web.
+        public void SetMinutes(int minutes){if(Array.IndexOf(Catalog.RunDurations,minutes)<0)return;Minutes=minutes;Progress.SetRunMinutes(minutes);}
         // La importación usa el mismo almacén que la partida: al confirmarla, la sesión adopta
         // el progreso importado y la siguiente partida ya lo usa, sin reiniciar la aplicación.
         public ProgressImporter CreateImporter()=>new ProgressImporter(Progress.Store,Progress.Language);
@@ -113,6 +125,12 @@ namespace Mamporro.U3
             Renderer=gameObject.AddComponent<WorldRenderer>();Renderer.worldShader=worldShader;Renderer.skyShader=skyShader;
             avatar=BuildAvatar();
             CombatText.Load();
+            // Carga del progreso al arrancar (ProgressStore.Load). Sin guardado: progreso inicial en
+            // memoria, que se escribe en la primera liquidación o elección. Con problemas: se
+            // conserva el archivo y se informa en el menú; nunca se resetea en silencio.
+            Progress=new ProgressSession(new ProgressFiles(SaveDirectory),SystemLanguage);
+            CombatText.English=Progress.Progress.settings.language=="en";
+            Minutes=Array.IndexOf(Catalog.RunDurations,Progress.Progress.settings.runMinutes)>=0?Progress.Progress.settings.runMinutes:10;
             if(!combatTemplate||!combatTemplate.enableInstancing)throw new InvalidOperationException("Falta el material instanciado de combate U3.");
             CombatMaterial=new Material(combatTemplate){name="Combate U3",enableInstancing=true};
             var primitive=GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -122,11 +140,6 @@ namespace Mamporro.U3
             Cards=gameObject.AddComponent<RunCards>();Cards.Session=this;Cards.Build();
             Hud=gameObject.AddComponent<RunHud>();Hud.Build(this);
             Screens=gameObject.AddComponent<RunScreens>();Screens.Build(this);
-            // Carga del progreso al arrancar (ProgressStore.Load). Sin guardado: progreso inicial en
-            // memoria, que se escribe en la primera liquidación o selección. Con problemas: se
-            // conserva el archivo y se informa en el inicio; nunca se resetea en silencio.
-            Progress=new ProgressSession(new ProgressFiles(SaveDirectory),Language);
-            Minutes=Array.IndexOf(Catalog.RunDurations,Progress.Progress.settings.runMinutes)>=0?Progress.Progress.settings.runMinutes:10;
             var args=Environment.GetCommandLineArgs();int seedArg=Array.IndexOf(args,"-u3-seed");
             LoadWorld(seedArg>=0&&seedArg+1<args.Length?NormalizeSeed(args[seedArg+1])??defaultSeed:defaultSeed);
         }
@@ -175,7 +188,8 @@ namespace Mamporro.U3
         {
             string seed=NormalizeSeed(seedText??"");
             if(seed!=null&&seed!=Seed)LoadWorld(seed);else BeginRun();
-            State=Screen.Playing;SetPaused(false);
+            // El menú se cierra ya: al volver se abre en su página de inicio (UI.show web).
+            State=Screen.Playing;Screens.ShowTitle(false);SetPaused(false);
         }
         public void NewMap(){if(State==Screen.Title)LoadWorld(RandomSeed());}
         public void Retry(bool newMap){if(State!=Screen.Results)return;if(newMap)LoadWorld(RandomSeed());else BeginRun();State=Screen.Playing;SetPaused(false);}

@@ -89,7 +89,7 @@ namespace Mamporro.U3
         {
             if(importer==null||review==null||!review.CanConfirm)return;
             if(game.State!=U3Game.Screen.Title)return;
-            bool same=review.Unchanged;var result=importer.Confirm(review,true);review=null;game.AdoptImported(result);PaintTitle();
+            bool same=review.Unchanged;var result=importer.Confirm(review,true);review=null;game.AdoptImported(result);OpenPage(current);
             if(result.Success){Message(CombatText.Get(same?"import.doneSame":"import.done"),false);importCurrent.text=Summary(result.Snapshot.Candidate);importWarning.text="";}
             else Message(Error(result.Error),true);
             Paint();

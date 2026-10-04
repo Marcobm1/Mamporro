@@ -105,6 +105,8 @@ finales de U4.
   progreso guardado, el del archivo y los cambios → «Sustituir mi progreso» hace copia
   de seguridad y sustituye (nunca suma). Guardado en `Application.persistentDataPath/Progress`
   (`-u4-save-dir` lo cambia).
+- **Menú (U4):** Inicio, Jugar (semilla, duración), Personajes, Tienda (compras y
+  mejoras), Misiones y Opciones (idioma e importación), en español o inglés.
 - **Progreso permanente (U4):** se carga al arrancar; la partida usa el personaje
   desbloqueado seleccionado, los desbloqueos de armas y objetos y los usos 2 + extras.
   Al ganar o perder se liquida una sola vez (Calderilla del Caos y misiones, como la

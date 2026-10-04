@@ -85,7 +85,26 @@ namespace Mamporro.Persistence
         public bool Select(string character)
         {
             if(Progress.meta.selected==character)return MetaRules.Owns(Progress.meta,"character",character);
-            var next=Copy(Progress);if(!MetaRules.Select(next.meta,character))return false;
+            return Change(next=>MetaRules.Select(next.meta,character));
+        }
+
+        // Tienda (MetaRules.Purchase / PurchaseExtra) y opciones, guardadas igual que la selección.
+        // Sin guardado disponible se aplican solo en memoria, como la web sin almacenamiento.
+        public bool Purchase(string id)=>Change(next=>MetaRules.Purchase(next.meta,id));
+        public bool PurchaseExtra(string action)=>Change(next=>MetaRules.PurchaseExtra(next.meta,action));
+        public bool SetLanguage(string language)
+        {
+            if(language!="es"&&language!="en")return false;
+            return Progress.settings.language==language||Change(next=>{next.settings.language=language;return true;});
+        }
+        public bool SetRunMinutes(int minutes)
+        {
+            if(minutes!=5&&minutes!=10&&minutes!=15)return false;
+            return Progress.settings.runMinutes==minutes||Change(next=>{next.settings.runMinutes=minutes;return true;});
+        }
+        bool Change(Func<ProgressDto,bool> apply)
+        {
+            var next=Copy(Progress);if(!apply(next))return false;
             if(!CanSave){Progress=next;return true;}
             return Save(next).Success;
         }

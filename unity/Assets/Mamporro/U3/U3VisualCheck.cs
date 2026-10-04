@@ -10,7 +10,7 @@ namespace Mamporro.U3
     public sealed class U3VisualCheck : MonoBehaviour
     {
         public U3Game Game;
-        public static readonly string[] Names={"inicio","importar","vista-alta","sitio-house","sitio-temple","sitio-farm","sitio-well","combate","interactuables","telegrafiado","pausa","cartas","resultados","reinicio"};
+        public static readonly string[] Names={"inicio","tienda","misiones","importar","vista-alta","sitio-house","sitio-temple","sitio-farm","sitio-well","combate","interactuables","telegrafiado","pausa","cartas","resultados","reinicio"};
         IEnumerator Start()
         {
             string output=Path.Combine(Application.persistentDataPath,"U3Visual");
@@ -19,6 +19,9 @@ namespace Mamporro.U3
             Directory.CreateDirectory(output);
             yield return new WaitForSecondsRealtime(1);
             yield return Capture(output,"inicio");
+            Game.Screens.OpenPage(RunScreens.Shop);yield return Capture(output,"tienda");
+            Game.Screens.OpenPage(RunScreens.Missions);yield return Capture(output,"misiones");
+            Game.Screens.OpenPage(RunScreens.Home);
             // Importación U4 revisada (sin confirmar) sobre el guardado de la sesión; el lanzador
             // pasa -u4-save-dir para que la comprobación nunca use el guardado del autor.
             var sample=Mamporro.Core.Progress.ProgressDto.New("es");sample.meta.coins=1234;sample.meta.characters=new[]{"remedios","baguette"};

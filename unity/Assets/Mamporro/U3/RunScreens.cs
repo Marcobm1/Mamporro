@@ -14,19 +14,14 @@ namespace Mamporro.U3
     {
         U3Game game;Font font;
         GameObject pause;Text pauseSeed,pauseStats,pauseItems,pauseControls;
-        GameObject title,results;Text titleMap,titlePassive,titleProgress,resultsTitle,resultsSubtitle,resultsStats,resultsDamage,resultsItems,resultsSeed,resultsMeta;
-        Button titleRecover,resultsRetrySave;
-        InputField seedInput;readonly Image[] characterButtons=new Image[2],durationButtons=new Image[3];
+        GameObject results;Text resultsTitle,resultsSubtitle,resultsStats,resultsDamage,resultsItems,resultsSeed,resultsMeta;
+        Button resultsRetrySave;GameObject canvasObject;
         public bool PauseVisible=>pause&&pause.activeSelf;
-        public bool TitleVisible=>title&&title.activeSelf;
         public bool ResultsVisible=>results&&results.activeSelf;
         public string ResultsText=>resultsTitle.text+"\n"+resultsSubtitle.text+"\n"+resultsStats.text+"\n"+resultsDamage.text+"\n"+resultsItems.text+"\n"+resultsSeed.text;
-        public string TitleText=>titleMap.text+"\n"+titlePassive.text+"\n"+titleProgress.text;
         public string ResultsMetaText=>resultsMeta.text;
         public bool RetrySaveVisible=>resultsRetrySave.gameObject.activeSelf;
-        public bool RecoverVisible=>titleRecover.gameObject.activeSelf;
         public bool CharacterLocked(int index)=>Array.IndexOf(game.Progress.Progress.meta.characters,Catalog.Characters[index].id)<0;
-        public string SeedInput {get=>seedInput.text;set=>seedInput.text=value;}
         public string PauseText=>pauseSeed.text+"\n"+pauseStats.text+"\n"+pauseItems.text;
 
         static Color Hex(string hex){ColorUtility.TryParseHtmlString(hex,out var c);return c;}
@@ -34,7 +29,7 @@ namespace Mamporro.U3
         public void Build(U3Game owner)
         {
             game=owner;font=Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-            var canvasObject=new GameObject("Pantallas U3",typeof(Canvas),typeof(CanvasScaler),typeof(GraphicRaycaster));canvasObject.transform.SetParent(transform,false);
+            canvasObject=new GameObject("Pantallas U3",typeof(Canvas),typeof(CanvasScaler),typeof(GraphicRaycaster));canvasObject.transform.SetParent(transform,false);
             var canvas=canvasObject.GetComponent<Canvas>();canvas.renderMode=RenderMode.ScreenSpaceOverlay;canvas.sortingOrder=40;
             var scaler=canvasObject.GetComponent<CanvasScaler>();scaler.uiScaleMode=CanvasScaler.ScaleMode.ScaleWithScreenSize;scaler.referenceResolution=new Vector2(1920,1080);scaler.matchWidthOrHeight=.5f;
             pause=Panel(canvasObject.transform,"Pausa");
@@ -47,57 +42,16 @@ namespace Mamporro.U3
             pauseItems=Label(Content(pause),"",24,TextAnchor.UpperLeft,new Vector2(.38f,.06f),new Vector2(.66f,.68f));
             Label(Content(pause),CombatText.Get("controls.title"),26,TextAnchor.UpperLeft,new Vector2(.68f,.68f),new Vector2(.95f,.73f)).color=Hex("#a49cc0");
             pauseControls=Label(Content(pause),Controls(),24,TextAnchor.UpperLeft,new Vector2(.68f,.06f),new Vector2(.95f,.68f));
-            Button(Content(pause),CombatText.Get("pause.backToTitle"),new Vector2(.68f,.76f),new Vector2(.95f,.84f),()=>game.BackToTitle());
+            // Volver al inicio pide confirmación: abandonar no da Calderilla ni misiones (web).
+            Button(Content(pause),CombatText.Get("pause.backToTitle"),new Vector2(.68f,.76f),new Vector2(.95f,.84f),()=>ShowAbandon(true));
+            abandon=new GameObject("Abandonar",typeof(RectTransform),typeof(Image));abandon.transform.SetParent(Content(pause),false);
+            var ar=(RectTransform)abandon.transform;ar.anchorMin=new Vector2(.2f,.3f);ar.anchorMax=new Vector2(.8f,.7f);ar.offsetMin=ar.offsetMax=Vector2.zero;abandon.GetComponent<Image>().color=Hex("#2a2048");
+            Label(abandon.transform,CombatText.Get("meta.abandon"),30,TextAnchor.MiddleCenter,new Vector2(.05f,.45f),new Vector2(.95f,.95f));
+            Button(abandon.transform,CombatText.Get("meta.cancel"),new Vector2(.05f,.08f),new Vector2(.47f,.35f),()=>ShowAbandon(false));
+            Button(abandon.transform,CombatText.Get("meta.confirm"),new Vector2(.53f,.08f),new Vector2(.95f,.35f),()=>{ShowAbandon(false);game.BackToTitle();});
+            abandon.SetActive(false);
             pause.SetActive(false);
-            BuildTitle(canvasObject.transform);BuildResults(canvasObject.transform);BuildImport(canvasObject.transform);
-        }
-
-        // ------------------------------------------------------------ inicio
-        void BuildTitle(Transform parent)
-        {
-            title=Panel(parent,"Inicio");
-            Label(Content(title),"MAMPORRO · U3",72,TextAnchor.MiddleCenter,new Vector2(.05f,.86f),new Vector2(.95f,.97f));
-            Label(Content(title),"Pantalla técnica de inicio",26,TextAnchor.MiddleCenter,new Vector2(.05f,.81f),new Vector2(.95f,.86f)).color=Hex("#a49cc0");
-            for(int i=0;i<2;i++){
-                int slot=i;var c=Catalog.Characters[i];
-                characterButtons[i]=Button(Content(title),CombatText.Get("character."+c.id),new Vector2(.05f+.31f*i,.66f),new Vector2(.34f+.31f*i,.77f),()=>{game.Character=Catalog.Characters[slot];PaintTitle();}).GetComponent<Image>();
-            }
-            titlePassive=Label(Content(title),"",24,TextAnchor.UpperLeft,new Vector2(.05f,.56f),new Vector2(.65f,.65f));
-            Label(Content(title),CombatText.Get("title.duration"),28,TextAnchor.MiddleLeft,new Vector2(.05f,.47f),new Vector2(.2f,.54f));
-            for(int i=0;i<3;i++){
-                int minutes=Catalog.RunDurations[i];
-                durationButtons[i]=Button(Content(title),CombatText.Format("title.minutes","n",minutes),new Vector2(.21f+.15f*i,.47f),new Vector2(.34f+.15f*i,.54f),()=>{game.Minutes=minutes;PaintTitle();}).GetComponent<Image>();
-            }
-            Label(Content(title),CombatText.Get("title.seedLabel"),28,TextAnchor.MiddleLeft,new Vector2(.05f,.37f),new Vector2(.2f,.44f));
-            seedInput=Input(Content(title),new Vector2(.21f,.37f),new Vector2(.49f,.44f));
-            Button(Content(title),CombatText.Get("title.newMap"),new Vector2(.51f,.37f),new Vector2(.68f,.44f),()=>{game.NewMap();PaintTitle();});
-            titleMap=Label(Content(title),"",26,TextAnchor.MiddleLeft,new Vector2(.05f,.29f),new Vector2(.65f,.35f));
-            Button(Content(title),CombatText.Get("title.play"),new Vector2(.05f,.12f),new Vector2(.34f,.24f),()=>game.StartRun(seedInput.text));
-            Label(Content(title),CombatText.Get("title.clickHint"),22,TextAnchor.MiddleLeft,new Vector2(.36f,.12f),new Vector2(.68f,.24f)).color=Hex("#a49cc0");
-            // U4: Calderilla del Caos y estado del guardado; recuperación solo si se confirma.
-            titleProgress=Label(Content(title),"",22,TextAnchor.UpperLeft,new Vector2(.7f,.68f),new Vector2(.95f,.86f));
-            titleRecover=Button(Content(title),CombatText.Get("progress.recover"),new Vector2(.7f,.61f),new Vector2(.95f,.67f),()=>{var r=game.Progress.Recover(true);PaintTitle();if(r.Success)titleProgress.text+="\n"+CombatText.Get("progress.recovered");});
-            Label(Content(title),CombatText.Get("controls.title"),24,TextAnchor.UpperLeft,new Vector2(.7f,.54f),new Vector2(.95f,.6f)).color=Hex("#a49cc0");
-            var controls=Label(Content(title),Controls(),18,TextAnchor.UpperLeft,new Vector2(.7f,.26f),new Vector2(.95f,.54f));controls.verticalOverflow=VerticalWrapMode.Overflow;
-            // U4: importación del progreso exportado desde la web (paso 5).
-            Button(Content(title),CombatText.Get("import.open"),new Vector2(.7f,.12f),new Vector2(.95f,.24f),()=>ShowImport(true));
-            title.SetActive(false);
-        }
-        public void ShowTitle(bool visible){if(visible)PaintTitle();if(title.activeSelf!=visible)title.SetActive(visible);}
-        void PaintTitle()
-        {
-            for(int i=0;i<2;i++){
-                bool locked=CharacterLocked(i);characterButtons[i].color=locked?Hex("#2a2438"):game.Character==Catalog.Characters[i]?Hex("#8a6cd8"):Hex("#463874");
-                var label=characterButtons[i].GetComponentInChildren<Text>();string name=CombatText.Get("character."+Catalog.Characters[i].id);
-                label.text=locked?name+" · "+CombatText.Get("meta.locked"):name;
-            }
-            var p=game.Progress;string state=p.Status=="loaded"?"":CombatText.Get("progress.state."+p.Status);
-            titleProgress.text=CombatText.Format("meta.balance","n",p.Progress.meta.coins)+(state.Length>0?"\n"+state:"");
-            titleRecover.gameObject.SetActive(p.NeedsRecovery);
-            for(int i=0;i<3;i++)durationButtons[i].color=game.Minutes==Catalog.RunDurations[i]?Hex("#8a6cd8"):Hex("#463874");
-            titlePassive.text=CombatText.Get("character."+game.Character.id+".passive");
-            titleMap.text=CombatText.Format("title.currentSeed","seed",game.Seed);
-            ((Text)seedInput.placeholder).text=CombatText.Get("title.seedPlaceholder");
+            BuildMenu(canvasObject.transform);BuildResults(canvasObject.transform);BuildImport(canvasObject.transform);
         }
 
         // ------------------------------------------------------------ resultados
@@ -154,7 +108,18 @@ namespace Mamporro.U3
                 sb.Clear();foreach(var s in r.Items)sb.Append(s.Count>1?CombatText.Format("hud.itemCount","name",CombatText.Get("item."+s.Def.id),"n",s.Count):CombatText.Get("item."+s.Def.id)).Append('\n');
                 pauseItems.text=r.Items.Count>0?sb.ToString():CombatText.Get("pause.noItems");
             }
+            if(!visible)ShowAbandon(false);
             pause.SetActive(visible);
+        }
+        GameObject abandon;
+        public bool AbandonVisible=>abandon&&abandon.activeSelf;
+        public void ShowAbandon(bool visible){if(abandon)abandon.SetActive(visible);}
+        // Cambio de idioma: las pantallas se reconstruyen con los textos nuevos (como UI.refresh web).
+        public void Rebuild()
+        {
+            bool resultsShown=ResultsVisible,menuShown=TitleVisible;string page=Page;
+            if(canvasObject)Destroy(canvasObject);
+            Build(game);if(menuShown){menu.SetActive(true);OpenPage(page);}if(resultsShown)ShowResults(true);
         }
 
         public struct StatLine { public string Label,Value; }
