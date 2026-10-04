@@ -45,7 +45,7 @@ namespace Mamporro.Tests
         {
             yield return SceneManager.LoadSceneAsync("U3_Partida");yield return null;
             var g=Object.FindAnyObjectByType<U3Game>();var s=g.Screens;yield return Frames(2);
-            Assert.That(g.State,Is.EqualTo(U3Game.Screen.Title));Assert.That(Directory.Exists(Path.Combine(root,"Progress")),Is.False,"sin abrir la importación no se toca el guardado");
+            Assert.That(g.State,Is.EqualTo(U3Game.Screen.Title));Assert.That(File.Exists(Primary),Is.False,"arrancar sin guardado no escribe progreso");Assert.That(g.Progress.Status,Is.EqualTo("new"));
             s.ShowImport(true);yield return Frames(1);
             Assert.That(s.ImportVisible,Is.True);Assert.That(s.ImportText,Does.Contain("Ninguno"));Assert.That(s.ImportCanConfirm,Is.False);
             var progress=ProgressDto.New("es");progress.meta.coins=1234;progress.meta.characters=new[]{"remedios","baguette"};
@@ -60,6 +60,7 @@ namespace Mamporro.Tests
             var stored=ProgressValidator.Stored(File.ReadAllBytes(Primary),"es").Candidate;
             Assert.That(stored.meta.coins,Is.EqualTo(1234));CollectionAssert.AreEqual(new[]{"remedios","baguette"},stored.meta.characters);
             Assert.That(s.ImportText,Does.Contain("1234"));
+            Assert.That(g.Progress.Progress.meta.coins,Is.EqualTo(1234),"la sesión adopta lo importado sin reiniciar");Assert.That(g.Screens.CharacterLocked(1),Is.False);
             // Reimportar el mismo archivo: sin cambios ni más progreso.
             byte[] saved=File.ReadAllBytes(Primary);s.ReviewImport();
             Assert.That(s.ImportReview.Unchanged,Is.True);Assert.That(s.ImportText,Does.Contain("no cambiará nada"));

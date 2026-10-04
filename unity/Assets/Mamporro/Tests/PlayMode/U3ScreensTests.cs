@@ -13,6 +13,8 @@ namespace Mamporro.Tests
     // marca de trucos de la depuración F3.
     public sealed class U3ScreensTests
     {
+        // U4: progreso QA aislado (todo desbloqueado) en una carpeta temporal; nunca el guardado real.
+        QaSave qa;[SetUp]public void UseQaSave(){qa=QaSave.UseAllUnlocked();}[TearDown]public void ReleaseQaSave(){qa.Dispose();}
         static IEnumerator Frames(int n){for(int i=0;i<n;i++)yield return null;}
 
         [Test]public void SeedsAreNormalizedLikeTheWeb()

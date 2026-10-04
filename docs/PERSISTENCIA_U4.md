@@ -1,6 +1,6 @@
 # Persistencia local de U4
 
-Implementada el 04/10/2026 en `Assets/Mamporro/Persistence`. Este servicio no depende de escenas ni de UnityEngine. La aplicación pasa `Path.Combine(Application.persistentDataPath, "Progress")` (sustituible con `U3Game.SaveDirectoryOverride` en pruebas o `-u4-save-dir` en la build). Desde el paso 5 la importación (`ProgressImport.cs`) lo usa desde la pantalla de inicio; la partida aún no lo lee (paso 6). Las pruebas escriben exclusivamente en directorios temporales propios, nunca en el progreso del autor.
+Implementada el 04/10/2026 en `Assets/Mamporro/Persistence`. Este servicio no depende de escenas ni de UnityEngine. La aplicación pasa `Path.Combine(Application.persistentDataPath, "Progress")` (sustituible con `U3Game.SaveDirectoryOverride` en pruebas o `-u4-save-dir` en la build). Desde el paso 5 la importación (`ProgressImport.cs`) lo usa desde la pantalla de inicio, y desde el paso 6 `ProgressSession.cs` carga el progreso al arrancar, configura cada partida y guarda su liquidación con el mismo almacén (un único `ProgressStore` por aplicación). Las pruebas escriben exclusivamente en directorios temporales propios, nunca en el progreso del autor.
 
 ## Archivos y lectura
 

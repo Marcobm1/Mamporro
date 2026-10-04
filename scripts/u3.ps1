@@ -19,7 +19,7 @@ if($Action -eq 'benchmark') {
         $width=$size[0];$height=$size[1];$started=Get-Date
         $log=Join-Path $results "player-${width}x${height}.log"
         # Ensayo gráfico explícitamente visible; no ocultar ni usar -nographics.
-        $process=Start-Process -FilePath $player -WorkingDirectory $project -ArgumentList "-screen-fullscreen 1 -window-mode exclusive -screen-width $width -screen-height $height -u3-benchmark -u3-output `"$results`" -logFile `"$log`"" -WindowStyle Normal -PassThru
+        $process=Start-Process -FilePath $player -WorkingDirectory $project -ArgumentList "-screen-fullscreen 1 -window-mode exclusive -screen-width $width -screen-height $height -u3-benchmark -u3-output `"$results`" -u4-save-dir `"$(Join-Path $results BenchmarkSave)`" -logFile `"$log`"" -WindowStyle Normal -PassThru
         if(!$process.WaitForExit(900000)){throw "El ensayo no terminó en 15 min: $log"}
         if($process.ExitCode -ne 0){throw "Build terminó con error: $log"}
         $reports=@(Get-ChildItem -LiteralPath $results -Filter "u3-${width}x${height}-*.json" | Where-Object {$_.LastWriteTime -ge $started})
@@ -38,7 +38,7 @@ if($Action -eq 'benchmark') {
     $started=Get-Date
     $log=Join-Path $results 'visual.log'
     # La comprobación gráfica solicitada requiere ventana visible: oculta captura negro.
-    $process=Start-Process -FilePath $player -WorkingDirectory $project -ArgumentList "-screen-fullscreen 0 -screen-width 1920 -screen-height 1080 -u3-visual-check -u3-output `"$visual`" -logFile `"$log`"" -WindowStyle Normal -PassThru
+    $process=Start-Process -FilePath $player -WorkingDirectory $project -ArgumentList "-screen-fullscreen 0 -screen-width 1920 -screen-height 1080 -u3-visual-check -u3-output `"$visual`" -u4-save-dir `"$(Join-Path $visual VisualSave)`" -logFile `"$log`"" -WindowStyle Normal -PassThru
     if(!$process.WaitForExit(180000)){throw "La comprobación visual no terminó en 180 s: $log"}
     if($process.ExitCode -ne 0){throw "Build terminó con error: $log"}
     Add-Type -AssemblyName System.Drawing

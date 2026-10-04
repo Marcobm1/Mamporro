@@ -12,6 +12,8 @@ namespace Mamporro.Tests
     // telegrafiado, aviso de interacción y pausa con semilla y estadísticas.
     public sealed class U3HudTests
     {
+        // U4: progreso QA aislado (todo desbloqueado) en una carpeta temporal; nunca el guardado real.
+        QaSave qa;[SetUp]public void UseQaSave(){qa=QaSave.UseAllUnlocked();}[TearDown]public void ReleaseQaSave(){qa.Dispose();}
         static IEnumerator Frames(int n){for(int i=0;i<n;i++)yield return null;}
 
         [UnityTest]public IEnumerator HudMinimapNoticesBossAndPause()

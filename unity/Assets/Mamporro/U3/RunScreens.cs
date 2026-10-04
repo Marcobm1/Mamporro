@@ -14,13 +14,18 @@ namespace Mamporro.U3
     {
         U3Game game;Font font;
         GameObject pause;Text pauseSeed,pauseStats,pauseItems,pauseControls;
-        GameObject title,results;Text titleMap,titlePassive,resultsTitle,resultsSubtitle,resultsStats,resultsDamage,resultsItems,resultsSeed;
+        GameObject title,results;Text titleMap,titlePassive,titleProgress,resultsTitle,resultsSubtitle,resultsStats,resultsDamage,resultsItems,resultsSeed,resultsMeta;
+        Button titleRecover,resultsRetrySave;
         InputField seedInput;readonly Image[] characterButtons=new Image[2],durationButtons=new Image[3];
         public bool PauseVisible=>pause&&pause.activeSelf;
         public bool TitleVisible=>title&&title.activeSelf;
         public bool ResultsVisible=>results&&results.activeSelf;
         public string ResultsText=>resultsTitle.text+"\n"+resultsSubtitle.text+"\n"+resultsStats.text+"\n"+resultsDamage.text+"\n"+resultsItems.text+"\n"+resultsSeed.text;
-        public string TitleText=>titleMap.text+"\n"+titlePassive.text;
+        public string TitleText=>titleMap.text+"\n"+titlePassive.text+"\n"+titleProgress.text;
+        public string ResultsMetaText=>resultsMeta.text;
+        public bool RetrySaveVisible=>resultsRetrySave.gameObject.activeSelf;
+        public bool RecoverVisible=>titleRecover.gameObject.activeSelf;
+        public bool CharacterLocked(int index)=>Array.IndexOf(game.Progress.Progress.meta.characters,Catalog.Characters[index].id)<0;
         public string SeedInput {get=>seedInput.text;set=>seedInput.text=value;}
         public string PauseText=>pauseSeed.text+"\n"+pauseStats.text+"\n"+pauseItems.text;
 
@@ -69,8 +74,11 @@ namespace Mamporro.U3
             titleMap=Label(Content(title),"",26,TextAnchor.MiddleLeft,new Vector2(.05f,.29f),new Vector2(.65f,.35f));
             Button(Content(title),CombatText.Get("title.play"),new Vector2(.05f,.12f),new Vector2(.34f,.24f),()=>game.StartRun(seedInput.text));
             Label(Content(title),CombatText.Get("title.clickHint"),22,TextAnchor.MiddleLeft,new Vector2(.36f,.12f),new Vector2(.68f,.24f)).color=Hex("#a49cc0");
-            Label(Content(title),CombatText.Get("controls.title"),26,TextAnchor.UpperLeft,new Vector2(.7f,.66f),new Vector2(.95f,.72f)).color=Hex("#a49cc0");
-            Label(Content(title),Controls(),24,TextAnchor.UpperLeft,new Vector2(.7f,.27f),new Vector2(.95f,.66f));
+            // U4: Calderilla del Caos y estado del guardado; recuperación solo si se confirma.
+            titleProgress=Label(Content(title),"",22,TextAnchor.UpperLeft,new Vector2(.7f,.68f),new Vector2(.95f,.86f));
+            titleRecover=Button(Content(title),CombatText.Get("progress.recover"),new Vector2(.7f,.61f),new Vector2(.95f,.67f),()=>{var r=game.Progress.Recover(true);PaintTitle();if(r.Success)titleProgress.text+="\n"+CombatText.Get("progress.recovered");});
+            Label(Content(title),CombatText.Get("controls.title"),24,TextAnchor.UpperLeft,new Vector2(.7f,.54f),new Vector2(.95f,.6f)).color=Hex("#a49cc0");
+            var controls=Label(Content(title),Controls(),18,TextAnchor.UpperLeft,new Vector2(.7f,.26f),new Vector2(.95f,.54f));controls.verticalOverflow=VerticalWrapMode.Overflow;
             // U4: importación del progreso exportado desde la web (paso 5).
             Button(Content(title),CombatText.Get("import.open"),new Vector2(.7f,.12f),new Vector2(.95f,.24f),()=>ShowImport(true));
             title.SetActive(false);
@@ -78,7 +86,14 @@ namespace Mamporro.U3
         public void ShowTitle(bool visible){if(visible)PaintTitle();if(title.activeSelf!=visible)title.SetActive(visible);}
         void PaintTitle()
         {
-            for(int i=0;i<2;i++)characterButtons[i].color=game.Character==Catalog.Characters[i]?Hex("#8a6cd8"):Hex("#463874");
+            for(int i=0;i<2;i++){
+                bool locked=CharacterLocked(i);characterButtons[i].color=locked?Hex("#2a2438"):game.Character==Catalog.Characters[i]?Hex("#8a6cd8"):Hex("#463874");
+                var label=characterButtons[i].GetComponentInChildren<Text>();string name=CombatText.Get("character."+Catalog.Characters[i].id);
+                label.text=locked?name+" · "+CombatText.Get("meta.locked"):name;
+            }
+            var p=game.Progress;string state=p.Status=="loaded"?"":CombatText.Get("progress.state."+p.Status);
+            titleProgress.text=CombatText.Format("meta.balance","n",p.Progress.meta.coins)+(state.Length>0?"\n"+state:"");
+            titleRecover.gameObject.SetActive(p.NeedsRecovery);
             for(int i=0;i<3;i++)durationButtons[i].color=game.Minutes==Catalog.RunDurations[i]?Hex("#8a6cd8"):Hex("#463874");
             titlePassive.text=CombatText.Get("character."+game.Character.id+".passive");
             titleMap.text=CombatText.Format("title.currentSeed","seed",game.Seed);
@@ -95,8 +110,11 @@ namespace Mamporro.U3
             Label(Content(results),CombatText.Get("gameover.damage"),26,TextAnchor.UpperLeft,new Vector2(.05f,.39f),new Vector2(.4f,.45f)).color=Hex("#a49cc0");
             resultsDamage=Label(Content(results),"",28,TextAnchor.UpperLeft,new Vector2(.05f,.18f),new Vector2(.4f,.39f));
             Label(Content(results),CombatText.Get("results.items"),26,TextAnchor.UpperLeft,new Vector2(.45f,.7f),new Vector2(.95f,.76f)).color=Hex("#a49cc0");
-            resultsItems=Label(Content(results),"",26,TextAnchor.UpperLeft,new Vector2(.45f,.24f),new Vector2(.95f,.7f));
-            resultsSeed=Label(Content(results),"",24,TextAnchor.MiddleLeft,new Vector2(.45f,.16f),new Vector2(.95f,.24f));resultsSeed.color=Hex("#a49cc0");
+            resultsItems=Label(Content(results),"",26,TextAnchor.UpperLeft,new Vector2(.45f,.52f),new Vector2(.95f,.7f));
+            // U4: Calderilla del Caos ganada, desglose, misiones nuevas y estado del guardado.
+            resultsMeta=Label(Content(results),"",24,TextAnchor.UpperLeft,new Vector2(.45f,.24f),new Vector2(.95f,.52f));
+            resultsRetrySave=Button(Content(results),CombatText.Get("progress.retrySave"),new Vector2(.45f,.16f),new Vector2(.68f,.23f),()=>game.RetrySave());
+            resultsSeed=Label(Content(results),"",22,TextAnchor.MiddleLeft,new Vector2(.7f,.16f),new Vector2(.95f,.24f));resultsSeed.color=Hex("#a49cc0");
             Button(Content(results),CombatText.Get("gameover.retry"),new Vector2(.05f,.04f),new Vector2(.3f,.13f),()=>game.Retry(false));
             Button(Content(results),CombatText.Get("gameover.newMap"),new Vector2(.35f,.04f),new Vector2(.6f,.13f),()=>game.Retry(true));
             Button(Content(results),CombatText.Get("gameover.backToTitle"),new Vector2(.65f,.04f),new Vector2(.95f,.13f),()=>game.BackToTitle());
@@ -114,6 +132,7 @@ namespace Mamporro.U3
                 sb.Clear();foreach(var it in r.Items)sb.Append(it.Count>1?CombatText.Format("hud.itemCount","name",CombatText.Get("item."+it.Def.id),"n",it.Count):CombatText.Get("item."+it.Def.id)).Append('\n');
                 resultsItems.text=r.Items.Count>0?sb.ToString():CombatText.Get("results.noItems");
                 resultsSeed.text=CombatText.Format("gameover.seed","seed",game.Seed)+(s.Cheated?"\n"+CombatText.Get("gameover.cheated"):"");
+                PaintSettlement(game.LastSettlement,s.Cheated);
             }
             if(results.activeSelf!=visible)results.SetActive(visible);
         }
@@ -169,6 +188,26 @@ namespace Mamporro.U3
             r.anchorMin=min;r.anchorMax=max;r.offsetMin=r.offsetMax=Vector2.zero;
             var t=o.GetComponent<Text>();t.font=font;t.fontSize=size;t.alignment=anchor;t.color=Hex("#f4efe0");t.text=text;t.supportRichText=true;
             t.horizontalOverflow=HorizontalWrapMode.Wrap;t.verticalOverflow=VerticalWrapMode.Truncate;t.raycastTarget=false;return t;
+        }
+        // Recibo meta (resultados de Game.ts): Calderilla, desglose, misiones nuevas y guardado.
+        void PaintSettlement(Mamporro.Persistence.Settlement settlement,bool cheated)
+        {
+            var sb=new StringBuilder();bool retry=false;
+            if(cheated)sb.Append(CombatText.Get("meta.cheated"));
+            else if(settlement!=null){
+                var receipt=settlement.Receipt;
+                sb.Append("<b>").Append(CombatText.Format("meta.results","n",receipt.total)).Append("</b>\n");
+                sb.Append(CombatText.Format("meta.breakdown","kills",receipt.kills,"survival",receipt.survival,"victory",receipt.victory,"missions",receipt.missions));
+                foreach(var id in receipt.completed)sb.Append('\n').Append(CombatText.Format("meta.newMission","name",CombatText.Get("mission."+id)));
+                if(!settlement.NothingToSave){
+                    if(settlement.Saved)sb.Append('\n').Append(CombatText.Get("progress.saved"));
+                    else{
+                        bool unavailable=settlement.Error=="storage.unavailable"||settlement.Error=="storage.recovery-pending";
+                        sb.Append("\n<color=#ff6a5a>").Append(CombatText.Get(unavailable?"progress.notSavedState":"progress.notSaved")).Append("</color>");retry=!unavailable;
+                    }
+                }
+            }
+            resultsMeta.text=sb.ToString();resultsRetrySave.gameObject.SetActive(retry);
         }
         InputField Input(Transform parent,Vector2 min,Vector2 max)
         {

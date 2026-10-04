@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using Mamporro.Core;
+using Mamporro.Core.Progress;
 using Mamporro.Persistence;
 using Mamporro.U2;
 using Unity.Profiling;
@@ -46,9 +47,18 @@ namespace Mamporro.U3
         public bool Paused {get;private set;}=true;
         public Screen State {get;private set;}=Screen.Title;
         public long RenderedFrames {get;private set;}
-        // Selección de la pantalla de inicio (sin guardado: U4).
-        public CharacterDef Character=Catalog.Characters[0];
+        // U4: personaje de la próxima partida según el progreso permanente. Asignar uno lo
+        // selecciona y lo guarda solo si está desbloqueado (MetaRules.Select); si no, se ignora.
+        public CharacterDef Character
+        {
+            get=>Array.Find(Catalog.Characters,c=>c.id==Progress.Character);
+            set{if(value!=null)Progress.Select(value.id);}
+        }
         public int Minutes=10;
+        // Progreso permanente (único ProgressStore de la aplicación) y liquidación de la última partida.
+        public ProgressSession Progress {get;private set;}
+        public Settlement LastSettlement {get;private set;}
+        RunSetup runSetup;
         // Giro de cámara en convenio web (0 = mirando hacia -Z de la web).
         public double WebYaw=>-yaw*Mathf.Deg2Rad;
         // Cámara libre (comprobación visual): LateUpdate no la mueve.
@@ -71,8 +81,10 @@ namespace Mamporro.U3
         }
         // Idioma actual de la aplicación para los valores por defecto del progreso.
         public string Language=>CombatText.English?"en":"es";
-        // Un importador por revisión: el plan preparado pertenece a su almacenamiento.
-        public ProgressImporter CreateImporter()=>new ProgressImporter(new ProgressStore(new ProgressFiles(SaveDirectory),Language),Language);
+        // La importación usa el mismo almacén que la partida: al confirmarla, la sesión adopta
+        // el progreso importado y la siguiente partida ya lo usa, sin reiniciar la aplicación.
+        public ProgressImporter CreateImporter()=>new ProgressImporter(Progress.Store,Progress.Language);
+        public void AdoptImported(StoreResult result){if(State==Screen.Title)Progress.Adopt(result);}
         public int AutoChosen {get;private set;}
         U3Benchmark benchmark;
         public bool DebugVisible {get;private set;}
@@ -110,6 +122,11 @@ namespace Mamporro.U3
             Cards=gameObject.AddComponent<RunCards>();Cards.Session=this;Cards.Build();
             Hud=gameObject.AddComponent<RunHud>();Hud.Build(this);
             Screens=gameObject.AddComponent<RunScreens>();Screens.Build(this);
+            // Carga del progreso al arrancar (ProgressStore.Load). Sin guardado: progreso inicial en
+            // memoria, que se escribe en la primera liquidación o selección. Con problemas: se
+            // conserva el archivo y se informa en el inicio; nunca se resetea en silencio.
+            Progress=new ProgressSession(new ProgressFiles(SaveDirectory),Language);
+            Minutes=Array.IndexOf(Catalog.RunDurations,Progress.Progress.settings.runMinutes)>=0?Progress.Progress.settings.runMinutes:10;
             var args=Environment.GetCommandLineArgs();int seedArg=Array.IndexOf(args,"-u3-seed");
             LoadWorld(seedArg>=0&&seedArg+1<args.Length?NormalizeSeed(args[seedArg+1])??defaultSeed:defaultSeed);
         }
@@ -144,7 +161,11 @@ namespace Mamporro.U3
         // Partida nueva en el mapa actual con el personaje y la duración elegidos (beginRun).
         public void BeginRun()
         {
-            Session=new WorldRun(World,Seed,Character,this,Minutes);
+            // Cada partida recibe del progreso permanente su personaje (desbloqueado), filtros de
+            // armas/objetos y usos iniciales (2 + extras). Gastarlos no toca el progreso.
+            runSetup=Progress.Begin();LastSettlement=null;Progress.ForgetSettlement();
+            Session=new WorldRun(World,Seed,Array.Find(Catalog.Characters,c=>c.id==runSetup.Character),this,Minutes);
+            ProgressSession.Apply(runSetup,Session);
             FreeCamera=false;DebugVisible=false;
             ResetPlayer();CombatView.Clear();Cards.Hide();Hud.Reset(World);eventCursor=0;lastHp=Run.Hp;
             Screens.ShowResults(false);SetPaused(true);UpdateHelp();
@@ -159,7 +180,16 @@ namespace Mamporro.U3
         public void NewMap(){if(State==Screen.Title)LoadWorld(RandomSeed());}
         public void Retry(bool newMap){if(State!=Screen.Results)return;if(newMap)LoadWorld(RandomSeed());else BeginRun();State=Screen.Playing;SetPaused(false);}
         public void BackToTitle(){BeginRun();State=Screen.Title;}
-        void FinishRun(){State=Screen.Results;SetPaused(true);Screens.ShowResults(true);}
+        void FinishRun()
+        {
+            // Una sola liquidación por partida terminada: el id de partida y lastRun la protegen
+            // aunque se vuelva a llamar; abandonar (inicio, F8) nunca pasa por aquí.
+            if(State==Screen.Results)return;
+            LastSettlement=Progress.Settle(ProgressSession.Summary(Session,runSetup.RunId));
+            State=Screen.Results;SetPaused(true);Screens.ShowResults(true);
+        }
+        // Reintento manual del guardado si falló: guarda el mismo progreso liquidado, sin repetir premios.
+        public void RetrySave(){if(State==Screen.Results&&LastSettlement!=null){LastSettlement=Progress.RetrySave();Screens.ShowResults(true);}}
 
         // normalizeSeed/randomSeed de la web: mayúsculas, solo A–Z y 0–9, como mucho 12.
         const string SeedAlphabet="23456789ABCDEFGHJKLMNPQRSTUVWXYZ";

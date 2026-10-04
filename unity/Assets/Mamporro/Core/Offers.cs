@@ -83,10 +83,10 @@ namespace Mamporro.Core
             if(cards.Count<count) cards.Add(Gold(chestsOpened));
             return cards;
         }
-        public static Card Replace(List<Weapon> weapons,List<Tome> tomes,PlayerStats stats,HashSet<string> banished,Rng rng,List<Card> rest,int chestsOpened=0)
+        public static Card Replace(List<Weapon> weapons,List<Tome> tomes,PlayerStats stats,HashSet<string> banished,Rng rng,List<Card> rest,int chestsOpened=0,HashSet<string> allowed=null)
         {
             var exclude=new HashSet<string>(); foreach(var c in rest) if(c.Key!=null) exclude.Add(c.Key);
-            var card=Generate(weapons,tomes,stats,banished,rng,1,exclude,null,chestsOpened)[0];
+            var card=Generate(weapons,tomes,stats,banished,rng,1,exclude,allowed,chestsOpened)[0];
             if(card.Key!=null) return card;
             if(!rest.Exists(c=>c.Kind=="heal")) return Heal();
             if(!rest.Exists(c=>c.Kind=="gold")) return Gold(chestsOpened);
@@ -112,7 +112,8 @@ namespace Mamporro.Core
 
         // rollItem: primero la rareza (con la Suerte) y luego un objeto de esa rareza;
         // si no queda ninguno, las rarezas más cercanas (antes las de abajo).
-        public static ItemDef RollItem(double luck,Rng rng,List<ItemStack> items,PlayerStats stats)
+        // allowed: objetos desbloqueados en la meta (null = catálogo completo, escenas QA y referencias).
+        public static ItemDef RollItem(double luck,Rng rng,List<ItemStack> items,PlayerStats stats,HashSet<string> allowed=null)
         {
             var rarity=RollRarity(luck,rng); int n=Catalog.Rarities.Length,start=Array.IndexOf(Catalog.Rarities,rarity);
             var order=new List<int>(n); for(int i=0;i<n;i++) order.Add(i);
@@ -122,7 +123,7 @@ namespace Mamporro.Core
                 pool.Clear(); string id=Catalog.Rarities[r].id;
                 foreach(var d in Catalog.Items) {
                     int owned=0; foreach(var s in items) if(s.Def.id==d.id) owned=s.Count;
-                    if(d.rarity==id&&ItemAvailable(d,owned,stats)) pool.Add(d);
+                    if((allowed==null||allowed.Contains(d.id))&&d.rarity==id&&ItemAvailable(d,owned,stats)) pool.Add(d);
                 }
                 if(pool.Count>0) return rng.Pick(pool);
             }

@@ -10,6 +10,8 @@ namespace Mamporro.Tests
 {
     public sealed class U3CombatSceneTests
     {
+        // U4: progreso QA aislado (todo desbloqueado) en una carpeta temporal; nunca el guardado real.
+        QaSave qa;[SetUp]public void UseQaSave(){qa=QaSave.UseAllUnlocked();}[TearDown]public void ReleaseQaSave(){qa.Dispose();}
         [UnityTest]public IEnumerator ControlledCombatMovesRendersAndOffersCards()
         {
             yield return SceneManager.LoadSceneAsync("U3_Partida");yield return null;

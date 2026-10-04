@@ -15,6 +15,8 @@ namespace Mamporro.Tests
     // armario (jefe derrotado) y Baguette cae en el enjambre; reintentar no deja restos.
     public sealed class U3RunFlowTests
     {
+        // U4: progreso QA aislado (todo desbloqueado) en una carpeta temporal; nunca el guardado real.
+        QaSave qa;[SetUp]public void UseQaSave(){qa=QaSave.UseAllUnlocked();}[TearDown]public void ReleaseQaSave(){qa.Dispose();}
         U3Game g;
         [TearDown]public void RestoreTime(){Time.timeScale=1;}
 

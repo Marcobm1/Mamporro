@@ -53,6 +53,11 @@ namespace Mamporro.Core
         public double ChallengeLuck;
         public int PendingShrines,ChestsOpened;
         public string OfferSource="levelup";
+        // U4: desbloqueos permanentes de la sesión (copias; null = catálogo completo para QA y
+        // referencias). Como la web: armas solo en cartas de arma nueva; objetos en baúl y tótem.
+        public HashSet<string> AllowedWeapons,AllowedItems;
+        // Se ha subido el tomo de vida en esta partida (usedLifeTome web, misión noLife).
+        public bool UsedLifeTome;
         public bool ShrineOffer=>OfferSource=="shrine";
         readonly Rng combatRng,offerRng,itemRng;
         readonly ICombatEffects fx;
@@ -195,6 +200,7 @@ namespace Mamporro.Core
         {
             var t=Tomes.Find(v=>v.Def.id==id);
             if(t==null){if(Tomes.Count>=4)return false;var def=Array.Find(Catalog.Tomes,v=>v.id==id);if(def==null)return false;t=new Tome{Def=def,Bonus=new double[def.effects.Length]};Tomes.Add(t);}
+            if(id=="vitality")UsedLifeTome=true;
             t.Level++;for(int i=0;i<t.Bonus.Length;i++)t.Bonus[i]+=amounts==null?t.Def.effects[i].amount:amounts[i];RefreshStats();return true;
         }
         public void AddItem(string id)
@@ -203,7 +209,7 @@ namespace Mamporro.Core
             var s=Items.Find(v=>v.Def.id==id);if(s==null)Items.Add(new ItemStack{Def=d,Count=1});else s.Count++;RefreshStats();Event("item",id);
         }
         // U3: objeto de un baúl o del tótem, con el RNG propio de objetos (seed/run/items).
-        public ItemDef RollItem(double luck)=>Offers.RollItem(luck,itemRng,Items,Stats);
+        public ItemDef RollItem(double luck)=>Offers.RollItem(luck,itemRng,Items,Stats,AllowedItems);
         public int ItemCount(string id){foreach(var s in Items)if(s.Def.id==id)return s.Count;return 0;}
         public void RefreshStats()
         {
@@ -220,7 +226,7 @@ namespace Mamporro.Core
             if(Choosing||Dead||Victory)return false;
             if(PendingShrines>0){OfferSource="shrine";Offer=Offers.Shrine(Stats,(int)Tuning.ShrineChoices,offerRng);return true;}
             if(PendingLevels<=0)return false;
-            OfferSource="levelup";Offer=Offers.Generate(Weapons,Tomes,Stats,Banished,offerRng,(int)Stats[Stat.choices],null,null,ChestsOpened);return true;
+            OfferSource="levelup";Offer=Offers.Generate(Weapons,Tomes,Stats,Banished,offerRng,(int)Stats[Stat.choices],null,AllowedWeapons,ChestsOpened);return true;
         }
         public bool Choose(int index)
         {
@@ -242,12 +248,12 @@ namespace Mamporro.Core
             OpenChoice();
         }
         // Volver a tirar, saltar y descartar solo existen al subir de nivel.
-        public bool Reroll(){if(!Choosing||ShrineOffer||Rerolls<=0)return false;Rerolls--;Offer=Offers.Generate(Weapons,Tomes,Stats,Banished,offerRng,(int)Stats[Stat.choices],null,null,ChestsOpened);return true;}
+        public bool Reroll(){if(!Choosing||ShrineOffer||Rerolls<=0)return false;Rerolls--;Offer=Offers.Generate(Weapons,Tomes,Stats,Banished,offerRng,(int)Stats[Stat.choices],null,AllowedWeapons,ChestsOpened);return true;}
         public bool Skip(){if(!Choosing||ShrineOffer||Skips<=0)return false;Skips--;CloseChoice();return true;}
         public bool Banish(int index)
         {
             if(!Choosing||ShrineOffer||Banishes<=0||index<0||index>=Offer.Count||Offer[index].Key==null)return false;
-            Banishes--;Banished.Add(Offer[index].Key);var rest=new List<Card>(Offer);rest.RemoveAt(index);var replacement=Offers.Replace(Weapons,Tomes,Stats,Banished,offerRng,rest,ChestsOpened);
+            Banishes--;Banished.Add(Offer[index].Key);var rest=new List<Card>(Offer);rest.RemoveAt(index);var replacement=Offers.Replace(Weapons,Tomes,Stats,Banished,offerRng,rest,ChestsOpened,AllowedWeapons);
             if(replacement!=null)Offer[index]=replacement;else Offer.RemoveAt(index);if(Offer.Count==0)Offer.Add(Offers.Heal());return true;
         }
     }

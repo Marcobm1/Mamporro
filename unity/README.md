@@ -104,7 +104,12 @@ finales de U4.
   `mamporro-progreso.json` (ruta o «Examinar…») → «Revisar archivo» muestra el
   progreso guardado, el del archivo y los cambios → «Sustituir mi progreso» hace copia
   de seguridad y sustituye (nunca suma). Guardado en `Application.persistentDataPath/Progress`
-  (`-u4-save-dir` lo cambia). La partida aún no usa ese progreso (paso 6 de U4).
+  (`-u4-save-dir` lo cambia).
+- **Progreso permanente (U4):** se carga al arrancar; la partida usa el personaje
+  desbloqueado seleccionado, los desbloqueos de armas y objetos y los usos 2 + extras.
+  Al ganar o perder se liquida una sola vez (Calderilla del Caos y misiones, como la
+  web) y se guarda con copia de seguridad; las partidas con trucos y los abandonos no
+  dan nada. `visual` y `benchmark` usan su propia carpeta de guardado.
 - **Partida:** director de la web (tabla y curva de aparición, seis oleadas,
   Rata de Gimnasio cada 2 minutos de dificultad, enjambre final hasta 750 vivos),
   14 baúles con precio creciente, 3 mesas camilla (bendiciones), 2 tótems de

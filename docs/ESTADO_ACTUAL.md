@@ -16,7 +16,7 @@ Las limitaciones visuales son mejoras futuras; los picos aislados sin causa aisl
 - U1: **implementado, verificado y aprobado por el autor**.
 - U2: **implementado, probado y aprobado por el autor el 29/09/2026**; cierre en `docs/PROGRESO_U2.md`.
 - U3: **implementado y verificado; aprobado manualmente por el autor el 04/10/2026**; cierre e instrucciones en `docs/PROGRESO_U3.md`.
-- U4: implementación autorizada el 04/10/2026; pasos 1–5 contrato/corpus, meta pura, persistencia/validación, exportación web e importación Unity terminados; siguiente paso 6 conexión meta ↔ partida. Persistencia aún sin conexión a menús/partida. U5–U6 siguen en el plan, sin implementar.
+- U4: implementación autorizada el 04/10/2026; pasos 1–6 contrato/corpus, meta pura, persistencia/validación, exportación web, importación Unity y conexión meta ↔ partida terminados; siguiente paso 7 menús completos ES/EN. Persistencia aún sin conexión a menús/partida. U5–U6 siguen en el plan, sin implementar.
 - Rama de trabajo y por defecto: `claude/zen-pasteur-674ik0`.
 - Implementación U1: `abe0a9b7f0b8c53f478b91c870341999df2ea073`.
 - Checkpoint U1: `eb691b595eb247118075368430d34ed0a95735d1`.
