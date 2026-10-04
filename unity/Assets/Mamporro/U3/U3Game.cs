@@ -498,8 +498,11 @@ namespace Mamporro.U3
         static float Damp(float lambda,float dt)=>1-Mathf.Exp(-lambda*dt);
         // Sacudida (CameraRig.shake): trauma acumulado 0–1; sin la opción no hay nada.
         public void Shake(float amount){if(!Settings.cameraShake)return;trauma=Mathf.Min(1,trauma+amount);}
+        // QA/capturas: gira la cámara para mirar hacia un punto (coordenadas web).
+        public void FaceTowards(double x,double z){double dx=x-Body.X,dz=z-Body.Z;yaw=-(float)Math.Atan2(-dx,-dz)*Mathf.Rad2Deg;}
         // Colocación directa al empezar una partida (CameraRig.snap).
-        void SnapCamera(){armDistance=ArmLength;}
+        // A diferencia de la web, también se apaga la sacudida pendiente: la partida nueva empieza sin restos de la anterior.
+        void SnapCamera(){armDistance=ArmLength;trauma=0;}
         void UpdateCamera(Vector3 player,float dt)
         {
             if(!Settings.cameraShake)trauma=0;

@@ -57,7 +57,7 @@ if($Action -in @('benchmark','devdiag')) {
     $log=Join-Path $results 'visual.log'
     # La comprobación gráfica solicitada requiere ventana visible: oculta captura negro.
     $process=Start-Process -FilePath $player -WorkingDirectory $project -ArgumentList "-screen-fullscreen 0 -screen-width 1920 -screen-height 1080 -u3-visual-check -u3-output `"$visual`" -u4-save-dir `"$(Join-Path $visual VisualSave)`" -logFile `"$log`"" -WindowStyle Normal -PassThru
-    if(!$process.WaitForExit(180000)){throw "La comprobación visual no terminó en 180 s: $log"}
+    if(!$process.WaitForExit(300000)){throw "La comprobación visual no terminó en 300 s: $log"}
     if($process.ExitCode -ne 0){throw "Build terminó con error: $log"}
     Add-Type -AssemblyName System.Drawing
     foreach($name in @('inicio','tienda','misiones','opciones','opciones-en','importar','vista-alta','sitio-house','sitio-temple','sitio-farm','sitio-well','combate','interactuables','telegrafiado','pausa','pausa-opciones','cartas','resultados','reinicio')) {
@@ -73,7 +73,25 @@ if($Action -in @('benchmark','devdiag')) {
     $audio=Get-Item -LiteralPath (Join-Path $visual 'audio-report.json')
     if($audio.LastWriteTime -lt $started){throw 'Falta la medida de audio nueva (audio-report.json).'}
     Write-Output ('audio  : '+((Get-Content -Raw $audio.FullName | ConvertFrom-Json) | ConvertTo-Json -Compress))
+    $sessions=Get-Item -LiteralPath (Join-Path $visual 'sessions-report.json')
+    if($sessions.LastWriteTime -lt $started){throw 'Falta el ensayo de varias partidas (sessions-report.json).'}
+    Write-Output ('partidas: '+((Get-Content -Raw $sessions.FullName | ConvertFrom-Json) | ConvertTo-Json -Compress))
     Write-Output 'visual : 19 capturas nuevas (no es un ensayo de rendimiento)'
+    # U5: las 11 pantallas en español e inglés a 1280x720 y 1920x1080 (44 capturas).
+    foreach($size in @(@(1280,720),@(1920,1080))){foreach($language in @('es','en')){
+        $w=$size[0];$h=$size[1];$folder=Join-Path $visual "$language-${w}x$h";$started=Get-Date
+        $slog=Join-Path $results "visual-$language-${w}x$h.log"
+        $process=Start-Process -FilePath $player -WorkingDirectory $project -ArgumentList "-monitor 1 -screen-fullscreen 0 -screen-width $w -screen-height $h -u3-visual-check -u5-screens $language -u3-output `"$folder`" -u4-save-dir `"$(Join-Path $folder VisualSave)`" -logFile `"$slog`"" -WindowStyle Normal -PassThru
+        if(!$process.WaitForExit(180000)){throw "Las capturas $language ${w}x$h no terminaron: $slog"}
+        if($process.ExitCode -ne 0){throw "Build terminó con error: $slog"}
+        foreach($name in @('inicio','preparacion','tienda','misiones','opciones','partida','horda','jefe','cartas','pausa','resultados')){
+            $capture=Get-Item -LiteralPath (Join-Path $folder "$name.png")
+            if($capture.LastWriteTime -lt $started -or $capture.Length -eq 0){throw "Captura ausente o antigua: $language ${w}x$h $name"}
+            $bitmap=[System.Drawing.Bitmap]::FromFile($capture.FullName)
+            try{if($bitmap.Width -ne $w -or $bitmap.Height -ne $h){throw "Tamaño inesperado: $language ${w}x$h $name"}}finally{$bitmap.Dispose()}
+        }
+    }}
+    Write-Output 'visual : 44 capturas ES/EN (1280x720 y 1920x1080)'
 } else {
     if(Get-Process Unity -ErrorAction SilentlyContinue){throw 'Hay un Editor abierto. Guarda y cierra la instancia antes de ejecutar batch.'}
     $log=Join-Path $results "$Action.log"

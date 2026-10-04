@@ -4,12 +4,12 @@ Estado: **IMPLEMENTACIÓN AUTORIZADA Y EN CURSO desde el 04/10/2026.** Plan apro
 
 ## Cómo retomar
 
-- **Punto de partida:** `3754e31` (U4 aprobada). Plan en `31711bf` («Registra la aprobación de U4 y planifica U5»). Paso 1 `e7c9933` («Porta la síntesis de audio y el presupuesto de voces de U5»). Paso 2 `6e154ec` («Añade el motor de audio de U5»). Paso 3 `85f7a1b` («Conecta los sucesos de la partida al sonido de U5»). Paso 4 `22821d0` («Añade las partículas decorativas de U5»). Paso 5 `1a7d744` («Añade los números de daño de U5»). Paso 6 `18718fb` («Porta la cámara, la sacudida y los destellos de U5»). Paso 7 en «Mide el rendimiento representativo de U5» (hash: `git log -1 --format="%H %s" -- unity/Assets/Mamporro/U3/U3Benchmark.cs`).
-- **Paso actual:** 8, sesiones, capturas y equivalencia (sin empezar).
-- **Terminado:** pasos 1–7. Último Edit Mode 392/392, Play Mode 36/36, build, visual con audio, ensayo 16/16 y diagnóstico Development 8/8 (04/10/2026).
+- **Punto de partida:** `3754e31` (U4 aprobada). Plan en `31711bf` («Registra la aprobación de U4 y planifica U5»). Paso 1 `e7c9933` («Porta la síntesis de audio y el presupuesto de voces de U5»). Paso 2 `6e154ec` («Añade el motor de audio de U5»). Paso 3 `85f7a1b` («Conecta los sucesos de la partida al sonido de U5»). Paso 4 `22821d0` («Añade las partículas decorativas de U5»). Paso 5 `1a7d744` («Añade los números de daño de U5»). Paso 6 `18718fb` («Porta la cámara, la sacudida y los destellos de U5»). Paso 7 `20265be` («Mide el rendimiento representativo de U5»). Paso 8 en «Valida sesiones, capturas ES/EN y equivalencia de U5» (hash: `git log -1 --format="%H %s" -- docs/EQUIVALENCIA_U5.md`).
+- **Paso actual:** 9, cierre de U5 (sin empezar).
+- **Terminado:** pasos 1–8. Último Edit Mode 392/392, Play Mode 37/37, build, visual (19 técnicas + 44 ES/EN, audio y 5 partidas seguidas), ensayo 16/16 y diagnóstico Development 8/8 (04/10/2026).
 - **A medias:** nada.
 - **Sin commit a propósito:** siete ajustes Unity de «Cambios locales excluidos».
-- **Siguiente paso exacto:** paso 8: `U3VisualCheck` con modo `-u5-screens es|en` (11 pantallas con la cámara de juego: inicio, preparación, tienda, misiones, opciones, partida, horda, jefe, cartas, pausa, resultados) lanzado a 1280×720 y 1920×1080 en ES y EN (44 capturas, revisarlas de verdad); la comprobación técnica actual sigue una vez a 1920×1080 (mundo sin interfaz, audio) y termina con varias partidas seguidas sin trucos (`sessions-report.json`: una liquidación por partida, 18 fuentes, una escucha, una música, sin partículas/números ni pausa arrastrados, opciones intactas, memoria); prueba Play de ciclo de tres partidas; `docs/EQUIVALENCIA_U5.md` (borrador ya escrito, sin publicar) con las cifras finales. El script preparado está en el registro de esta sesión (U3VisualCheck: `Screens`, `Sessions`; `U3Game.FaceTowards`; lanzador `visual`).
+- **Siguiente paso exacto:** paso 9, cierre sin funcionalidades nuevas: regresión completa (web typecheck/test/build, contrato, verificador histórico, Edit, Play, build, visual, ensayo y diagnóstico Development sobre la build final), «Checkpoint al terminar U5» con commits, cifras, rutas, limitaciones y **guía de prueba manual con escucha** (música, efectos, mezcla, volúmenes, silencio, pausa, Alt+Tab, jefe/enjambre, varias partidas, auriculares ↔ altavoces, cámara, sacudida, partículas, números, destellos); estado al día en README, ESTADO_ACTUAL, DECISIONES, MIGRACION y continuidad. Después, detenerse; no iniciar U6.
 - **Autorización:** pasos 1–9 seguidos, con checkpoint, pruebas, commit y push tras cada pieza. Detenerse solo ante una decisión nueva importante de diseño/arquitectura (o si el compresor propio resulta inestable, con latencia o coste inesperado) y al terminar U5.
 
 Comprobación desde CMD:
@@ -284,6 +284,18 @@ Conservar sin publicar ni restaurar:
 - **Commit/push:** «Mide el rendimiento representativo de U5»; fetch previo y push normal si el remoto sigue en `18718fb`.
 - **Árbol al terminar:** siete ajustes Unity excluidos y el borrador sin publicar de `docs/EQUIVALENCIA_U5.md` (paso 8).
 - **Siguiente paso exacto:** paso 8 (ver «Cómo retomar»).
+
+### 04/10/2026 — paso 8: sesiones, capturas ES/EN y equivalencia — Claude Code
+
+- **Punto de partida:** `20265be` (paso 7 publicado); siete ajustes Unity excluidos y el borrador de `EQUIVALENCIA_U5.md`.
+- **Trabajo:** `U3VisualCheck` con modo `-u5-screens es|en`: 11 pantallas con la cámara de juego (inicio, preparación, tienda, misiones, opciones, partida con números/partículas, horda de 300, jefe con su telegrafiado, cartas, pausa, resultados); el lanzador `visual` las pide a **1280×720 y 1920×1080 en español e inglés** (44 capturas, carpetas `Visual/<idioma>-<ancho>x<alto>/`, comprobando que sean nuevas y del tamaño pedido) tras la comprobación técnica de siempre a 1920×1080 (mundo sin interfaz una sola vez, instancing, importación, audio). La comprobación técnica termina con **5 partidas seguidas sin trucos** (derrota con daño real) y `sessions-report.json`, que el lanzador exige. `U3Game.FaceTowards` (QA de capturas). **Corrección:** la sacudida pendiente (golpe mortal) seguía al reintentar enseguida; ahora cada partida empieza con el trauma a 0 (la web solo reinicia la distancia del brazo; diferencia mínima intencionada). `docs/EQUIVALENCIA_U5.md`: equivalente / diferencia intencionada / limitación / aplazado, por sistemas.
+- **Capturas revisadas (las 44 y las 19 técnicas):** sin solapes ni textos cortados en ES/EN a 1280×720 y 1920×1080; textos de tienda y misiones pequeños pero legibles a 1280×720; números de daño legibles con la cámara de juego; jefe y su culetazo visibles (los avisos centrados lo tapan en parte, como en la web). La primera versión de «horda» se hacía demasiado pronto (pocos enemigos en cuadro); se espera ahora 6 s y la horda rodea al jugador.
+- **Varias partidas seguidas (build):** 5/5 liquidadas una sola vez (Calderilla 0 → 30 = suma de recibos), 18 fuentes, 1 escucha, como mucho 1 música sonando, 0 partículas y 0 números al empezar cada partida, sin pausa arrastrada, opciones intactas; montón Mono ≈ 18,7 MB y memoria Unity 237 MiB estables en las cinco.
+- **Pruebas nuevas:** Play (1, `U5SessionsSceneTests`): tres partidas sin trucos con las mismas comprobaciones, más trauma 0 y modo de música correcto.
+- **Pruebas ejecutadas (04/10/2026):** `scripts\u3.cmd play` **37/37** (dos pasadas 36/37 que destaparon la sacudida arrastrada y un fotograma de espera en la propia prueba); `scripts\u3.cmd build` correcta; `scripts\u3.cmd visual` correcta: audio (menú 0,0148; silencio 0; efecto 0,052), partidas seguidas, 19 + 44 capturas. Edit sin cambios desde el paso 6 (392/392).
+- **Commit/push:** «Valida sesiones, capturas ES/EN y equivalencia de U5»; fetch previo y push normal si el remoto sigue en `20265be`.
+- **Árbol al terminar:** solo los siete ajustes Unity excluidos.
+- **Siguiente paso exacto:** paso 9 (ver «Cómo retomar»).
 
 ## Checkpoint al terminar U5
 

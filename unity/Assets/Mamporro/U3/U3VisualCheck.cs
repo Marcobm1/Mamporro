@@ -6,11 +6,15 @@ using Mamporro.Core;
 namespace Mamporro.U3
 {
     // Solo con -u3-visual-check: capturas locales de las pantallas y del mundo desde puntos
-    // fijos, sin guardado. No es un ensayo de rendimiento.
+    // fijos, sin guardado. No es un ensayo de rendimiento. U5: con -u5-screens es|en, solo las
+    // 11 pantallas de la validación ES/EN con la cámara de juego (el lanzador las pide a
+    // 1280×720 y 1920×1080); sin él, la comprobación técnica completa, que termina con varias
+    // partidas seguidas (sessions-report.json).
     public sealed class U3VisualCheck : MonoBehaviour
     {
         public U3Game Game;
         public static readonly string[] Names={"inicio","tienda","misiones","opciones","opciones-en","importar","vista-alta","sitio-house","sitio-temple","sitio-farm","sitio-well","combate","interactuables","telegrafiado","pausa","pausa-opciones","cartas","resultados","reinicio"};
+        public static readonly string[] ScreenNames={"inicio","preparacion","tienda","misiones","opciones","partida","horda","jefe","cartas","pausa","resultados"};
         IEnumerator Start()
         {
             string output=Path.Combine(Application.persistentDataPath,"U3Visual");
@@ -18,6 +22,8 @@ namespace Mamporro.U3
             if(index>=0&&index+1<args.Length)output=args[index+1];
             Directory.CreateDirectory(output);
             yield return new WaitForSecondsRealtime(1);
+            int screens=System.Array.IndexOf(args,"-u5-screens");
+            if(screens>=0&&screens+1<args.Length){yield return Screens(output,args[screens+1]);yield break;}
             yield return AudioProbe(output);if(probeFailed)yield break;
             yield return Capture(output,"inicio");
             Game.Screens.OpenPage(RunScreens.Shop);yield return Capture(output,"tienda");
@@ -92,7 +98,79 @@ namespace Mamporro.U3
             if(Game.State!=U3Game.Screen.Results){Debug.LogError("U3 no llegó a los resultados tras la victoria.");Application.Quit(1);yield break;}
             yield return Capture(output,"resultados");
             Game.Retry(false);yield return Capture(output,"reinicio");Game.SetPaused(true);
-            Debug.Log("U3 visual check: pantallas, mundo, combate, interactuables, telegrafiado, cartas, resultados y reinicio guardados.");Application.Quit(0);
+            Debug.Log("U3 visual check: pantallas, mundo, combate, interactuables, telegrafiado, cartas, resultados y reinicio guardados.");
+            yield return Sessions(output,5);
+            Application.Quit(sessionsFailed?1:0);
+        }
+
+        // ------------------------------------------------------------ U5: 11 pantallas ES/EN
+        IEnumerator Screens(string output,string language)
+        {
+            Game.SetLanguage(language);yield return null;
+            yield return Capture(output,"inicio");
+            Game.Screens.OpenPage(RunScreens.Setup);yield return Capture(output,"preparacion");
+            Game.Screens.OpenPage(RunScreens.Shop);yield return Capture(output,"tienda");
+            Game.Screens.OpenPage(RunScreens.Missions);yield return Capture(output,"misiones");
+            Game.Screens.OpenPage(RunScreens.Options);yield return Capture(output,"opciones");
+            // Partida normal con la cámara de juego: enemigos cerca, números de daño y partículas.
+            Game.StartRun("MAMPORRO");Game.QaAction(1);Game.AutoChoose=true;
+            for(int i=0;i<10;i++)Game.Run.Spawn(i%4,-6+i*1.3,-8);
+            yield return new WaitForSecondsRealtime(2);yield return Capture(output,"partida");
+            // Los 300 aparecen alrededor, a distancia: se espera a que lleguen al encuadre.
+            Game.QaAction(4);Game.QaAction(4);Game.QaAction(4);yield return new WaitForSecondsRealtime(6);yield return Capture(output,"horda");
+            // Jefe con su telegrafiado, mirando hacia él.
+            Game.QaAction(5);Game.QaAction(6);var r=Game.Run;
+            if(r.Boss==null){Debug.LogError("U5: no se pudo invocar al jefe.");Application.Quit(1);yield break;}
+            int b=r.Enemies.IndexOf(r.Boss.EnemyId);
+            Game.FaceTowards(r.Enemies.X[b],r.Enemies.Z[b]);r.Boss.Phase="windup";r.Boss.Attack="slam";r.Boss.PhaseLength=1.3;r.Boss.Timer=.9;
+            yield return Capture(output,"jefe");
+            Game.AutoChoose=false;Game.QaAction(2);yield return Capture(output,"cartas");
+            Game.Choose(0);while(Game.Run.Choosing)Game.Choose(0);
+            Game.SetPaused(true);yield return Capture(output,"pausa");
+            Game.SetPaused(false);Game.QaAction(5);float until=Time.realtimeSinceStartup+5;
+            while(Game.State!=U3Game.Screen.Results&&Time.realtimeSinceStartup<until)yield return null;
+            if(Game.State!=U3Game.Screen.Results){Debug.LogError("U5: no se llegó a los resultados.");Application.Quit(1);yield break;}
+            yield return Capture(output,"resultados");
+            Debug.Log("U5 capturas "+language+": "+string.Join(", ",ScreenNames));Application.Quit(0);
+        }
+
+        // ------------------------------------------------------------ U5: varias partidas seguidas
+        // inicio → partida → resultado → nueva partida… sin trucos (derrota con daño real): una
+        // liquidación por partida, sin fuentes, escuchas, música, partículas, números ni pausa
+        // arrastrados, opciones intactas y memoria estable.
+        [System.Serializable] class SessionReport
+        {
+            public int runs,sources,listeners,maxMusicPlaying,maxParticlesAtStart,maxNumbersAtStart,pausedAfterRetry,settledOk;
+            public bool settingsKept,coinsMatch,failed;public long coinsStart,coinsEnd,receipts;public string memory="",note="";
+        }
+        bool sessionsFailed;
+        IEnumerator Sessions(string output,int runs)
+        {
+            var report=new SessionReport{runs=runs};var a=Game.Audio;
+            string settings=Mamporro.Core.Progress.ProgressTree.Stored(Game.Progress.Progress).Split(new[]{"\"meta\""},System.StringSplitOptions.None)[0];
+            Game.BackToTitle();yield return null;report.coinsStart=Game.Progress.Progress.meta.coins;
+            var memory=new System.Text.StringBuilder();
+            for(int k=0;k<runs;k++){
+                if(k==0)Game.StartRun("");else Game.Retry(false);
+                yield return null;
+                if(Game.Paused)report.pausedAfterRetry++;
+                report.maxParticlesAtStart=Mathf.Max(report.maxParticlesAtStart,Game.Particles.Active);report.maxNumbersAtStart=Mathf.Max(report.maxNumbersAtStart,Game.Numbers.Active);
+                yield return new WaitForSecondsRealtime(1.5f);
+                Game.Run.Invulnerable=0;Game.Run.Hurt(100000);float until=Time.realtimeSinceStartup+4;
+                while(Game.State!=U3Game.Screen.Results&&Time.realtimeSinceStartup<until)yield return null;
+                var settled=Game.LastSettlement;if(Game.State==U3Game.Screen.Results&&settled!=null&&settled.Saved&&!settled.NothingToSave){report.settledOk++;report.receipts+=settled.Receipt.total;}
+                int playing=0;foreach(var src in Game.GetComponentsInChildren<AudioSource>())if(src.loop&&src.isPlaying)playing++;report.maxMusicPlaying=Mathf.Max(report.maxMusicPlaying,playing);
+                System.GC.Collect();memory.Append(k).Append(':').Append(System.GC.GetTotalMemory(false)/1024).Append("KiB/").Append(UnityEngine.Profiling.Profiler.GetTotalAllocatedMemoryLong()/1024/1024).Append("MiB ");
+            }
+            report.sources=Game.GetComponentsInChildren<AudioSource>().Length;report.listeners=FindObjectsByType<AudioListener>(FindObjectsSortMode.None).Length;
+            report.coinsEnd=Game.Progress.Progress.meta.coins;report.coinsMatch=report.coinsEnd-report.coinsStart==report.receipts;
+            report.settingsKept=Mamporro.Core.Progress.ProgressTree.Stored(Game.Progress.Progress).Split(new[]{"\"meta\""},System.StringSplitOptions.None)[0]==settings;
+            report.memory=memory.ToString();
+            report.failed=report.sources!=18||report.listeners!=1||report.maxMusicPlaying>1||report.maxParticlesAtStart>0||report.maxNumbersAtStart>0||report.pausedAfterRetry>0||report.settledOk!=runs||!report.coinsMatch||!report.settingsKept;
+            File.WriteAllText(Path.Combine(output,"sessions-report.json"),JsonUtility.ToJson(report,true));
+            Debug.Log($"U5 partidas seguidas: {runs} liquidadas {report.settledOk}, fuentes {report.sources}, escuchas {report.listeners}, música simultánea {report.maxMusicPlaying}, Calderilla {report.coinsStart}→{report.coinsEnd} (recibos {report.receipts}), memoria {report.memory}");
+            if(report.failed){Debug.LogError("U5: el ensayo de varias partidas seguidas no es correcto.");sessionsFailed=true;}
+            Game.BackToTitle();
         }
         // U5: señal real a la salida de la mezcla de Unity (medidor tras el compresor). Demuestra
         // que la música y los efectos llegan al dispositivo y que el silencio/volumen 0 los quitan;

@@ -116,6 +116,9 @@ pantallas uGUI técnicas (el arte final es U5).
 - **Audio (U5):** música chiptune original (normal e intensa con jefe o enjambre) y
   efectos sintetizados como en la web; volúmenes y silencio de Opciones; sin foco se
   silencia y se pausa. `visual` mide además la señal real de salida (`audio-report.json`).
+- **Efectos (U5):** partículas, números de daño, sacudida de cámara, destellos y
+  parpadeo del jugador como la web, gobernados por sus opciones; cámara con brazo que se
+  acorta contra el terreno y FOV por velocidad. Equivalencia en `docs/EQUIVALENCIA_U5.md`.
 - **Progreso permanente (U4):** se carga al arrancar; la partida usa el personaje
   desbloqueado seleccionado, los desbloqueos de armas y objetos y los usos 2 + extras.
   Al ganar o perder se liquida una sola vez (Calderilla del Caos y misiones, como la
