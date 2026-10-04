@@ -1,6 +1,6 @@
 # MAMPORRO en Unity
 
-> Estado vigente en [ESTADO_ACTUAL](../docs/ESTADO_ACTUAL.md): U1–U3 aprobados; aprobación manual U3 el 04/10/2026 ([cierre](../docs/PROGRESO_U3.md#checkpoint-al-terminar-u3)). [U4 autorizado para implementación el 04/10/2026](../docs/PROGRESO_U4.md); continuar por pasos verificables.
+> Estado vigente en [ESTADO_ACTUAL](../docs/ESTADO_ACTUAL.md): U1–U3 aprobados; aprobación manual U3 el 04/10/2026 ([cierre](../docs/PROGRESO_U3.md#checkpoint-al-terminar-u3)). [U4 implementado y verificado el 04/10/2026, pendiente de la prueba manual del autor](../docs/PROGRESO_U4.md#checkpoint-al-terminar-u4).
 
 ## Referencia U1 (aceptada por el autor)
 
@@ -93,14 +93,14 @@ Controles de U2 (sin conflictos con U1: en esta escena R, 1–4 y F5 de U1 no se
 
 Abre `Assets/Mamporro/U3/U3_Partida.unity`, o ejecuta
 `unity\Builds\U3\Mamporro-U3.exe`. Es la partida completa de la web aprobada
-sobre el mundo procedural, con pantallas técnicas (uGUI) en lugar de los menús
-finales de U4.
+sobre el mundo procedural, con el progreso permanente, menús y opciones de U4 en
+pantallas uGUI técnicas (el arte final es U5).
 
-- **Inicio:** Doña Remedios o Sir Baguette (con su pasiva), duración 5/10/15
+- **Jugar:** Doña Remedios o Sir Baguette (si está desbloqueado), duración 5/10/15
   minutos y semilla opcional (se normaliza como en la web; vacía = mapa actual).
   «Nuevo mapa» sortea otra semilla. La escena técnica arranca en `MAMPORRO`
   (`-u3-seed X` lo cambia).
-- **Importar progreso web (U4):** desde el inicio, «Importar progreso web» → elegir
+- **Importar progreso web (U4):** Opciones → «Importar progreso web» → elegir
   `mamporro-progreso.json` (ruta o «Examinar…») → «Revisar archivo» muestra el
   progreso guardado, el del archivo y los cambios → «Sustituir mi progreso» hace copia
   de seguridad y sustituye (nunca suma). Guardado en `Application.persistentDataPath/Progress`
@@ -129,7 +129,8 @@ finales de U4.
   baúl, tótem o armario), Ctrl con su opción, Esc (pausa: semilla, estadísticas,
   objetos, opciones y volver al inicio con confirmación). Cartas: 1–4/clic, R volver a tirar, X saltar, B descartar.
 - **Resultados:** victoria o derrota, tiempo, bajas, nivel, oro, baúles, daño por
-  arma y objetos; sin Calderilla (U4). Reintentar, nuevo mapa o volver al inicio.
+  arma y objetos, Calderilla del Caos ganada, misiones completadas y estado del
+  guardado (con reintento si falla). Reintentar, nuevo mapa o volver al inicio.
 - **Técnico:** F1 resolución interna 240/360/480, F2 dithering, F9 ajuste de
   vértices (cambian y guardan esas mismas opciones), F6 ventana 1080p/1440p, F8
   vuelve al inicio con el mismo mapa.
@@ -158,7 +159,8 @@ durante unos segundos. También exige diferencias de píxeles al activar/desacti
 el render de combate con cámara/simulación/viento inmóviles: detecta instancing
 ausente en la build. Es una comprobación visual, no una medida de rendimiento.
 
-`benchmark` ejecuta la build a pantalla completa (1920×1080 y 2560×1440) con
+`benchmark` ejecuta la build a pantalla completa en el monitor principal
+(`-monitor 1`; 1920×1080 y 2560×1440) con
 `-u3-benchmark`: una partida real (Remedios, 10 minutos, `MAMPORRO`, director
 activo, invulnerable de ensayo y siempre la primera carta) que avanza sin medir
 hasta 10 s antes de cada punto y mide 10 s + 30 s en los minutos 2, 5 y 9 y en
@@ -246,4 +248,4 @@ la horda provisional no garantiza el coste del futuro combate completo.
 - `Generated/`: escena, malla, datos y materiales originales con sus `.meta`.
 
 La web y `Docs/Reference/` permanecen intactos. U1 ya ha recibido revisión favorable del
-autor; U2 y U3 están aprobados. U4 está autorizado para implementación el 04/10/2026; continuar por pasos verificables.
+autor; U2 y U3 están aprobados. U4 está implementado y verificado (04/10/2026), pendiente de la prueba manual del autor.

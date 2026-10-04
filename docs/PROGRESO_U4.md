@@ -1,15 +1,15 @@
 # Checkpoint U4 — meta, UI, opciones y traslado de guardados
 
-Estado: **IMPLEMENTACIÓN AUTORIZADA Y EN CURSO desde el 04/10/2026.** Política de recuperación revisable y estricta aprobada por el autor. Contrato en [CONTRATO_GUARDADO_U4](CONTRATO_GUARDADO_U4.md). U3 aprobada manualmente como base funcional el mismo día; último cierre técnico previo: `83246ebfd873b0c5d23611a1d557f83096180217`.
+Estado: **IMPLEMENTADO Y VERIFICADO el 04/10/2026; pendiente de la prueba manual y la aprobación del autor** (implementación autorizada el 04/10/2026). Política de recuperación revisable y estricta aprobada por el autor. Contrato en [CONTRATO_GUARDADO_U4](CONTRATO_GUARDADO_U4.md). U3 aprobada manualmente como base funcional el mismo día; último cierre técnico previo: `83246ebfd873b0c5d23611a1d557f83096180217`.
 
 ## Cómo retomar
 
 - **Paso 1 publicado:** `fabaf2a64f5ff6c34d3592a25a6594f066130208`. Paso 2 en «Porta las reglas meta y la liquidación de U4»; localizar hash con `git log -1 --format="%H %s" -- unity/Assets/Mamporro/Core/MetaRules.cs`.
-- **Paso actual:** 9, cierre de U4 (sin empezar).
-- **Terminado:** pasos 1–8. Paso 4 `b734b49` («Exporta el progreso web para Unity»; guía en [EXPORTACION_U4](EXPORTACION_U4.md)). Paso 5 `86da4be` («Importa en Unity el progreso exportado desde la web»). Paso 6 `f266b94` («Conecta el progreso persistente con las partidas»). Paso 7 `823fc7b` («Añade los menús completos ES/EN de U4»). Paso 8 en «Completa las opciones y la pausa de U4» (hash: `git log -1 --format="%H %s" -- unity/Assets/Mamporro/U3/RunScreens.Options.cs`). Contrato `fabaf2a`, meta `dd994b8`, validador `d3927ff`; almacenamiento en «Guarda el progreso de U4 con copia y recuperación» (hash: `git log -1 --format="%H %s" -- unity/Assets/Mamporro/Persistence/ProgressStore.cs`). Último Edit Mode 367/367 y Play Mode 29/29 (paso 8, 04/10/2026), build Windows x64 Mono y visual de 19 capturas; web 232/232 del paso 4, sin cambios en `src/` desde `b734b49`.
-- **A medias:** ninguna pieza rota. El progreso gobierna ya la partida normal (carga, personaje, filtros, extras, misiones, liquidación única y guardado), con pantallas técnicas de inicio y resultados; menús completos ES/EN (paso 7) y las 14 opciones en el menú y la pausa (paso 8) hechos; falta el cierre (paso 9).
+- **Paso actual:** ninguno. U4 cerrado técnicamente (pasos 1–9); esperando la prueba manual del autor («Checkpoint al terminar U4»).
+- **Terminado:** pasos 1–9. Paso 4 `b734b49` («Exporta el progreso web para Unity»; guía en [EXPORTACION_U4](EXPORTACION_U4.md)). Paso 5 `86da4be` («Importa en Unity el progreso exportado desde la web»). Paso 6 `f266b94` («Conecta el progreso persistente con las partidas»). Paso 7 `823fc7b` («Añade los menús completos ES/EN de U4»). Paso 8 `dda95f0` («Completa las opciones y la pausa de U4»). Paso 9 en «Cierra U4 y prepara la prueba manual» (hash: `git log -1 --format="%H %s" -- docs/PROGRESO_U4.md`). Contrato `fabaf2a`, meta `dd994b8`, validador `d3927ff`; almacenamiento en «Guarda el progreso de U4 con copia y recuperación» (hash: `git log -1 --format="%H %s" -- unity/Assets/Mamporro/Persistence/ProgressStore.cs`). Regresión final del paso 9 (04/10/2026): web 232/232, contrato 5/5, verificador histórico y navegador real correctos, Edit Mode 367/367, Play Mode 29/29, build Windows x64 Mono, visual de 19 capturas y ensayo 8/8; sin cambios en `src/` desde `b734b49`.
+- **A medias:** ninguna pieza rota. El progreso gobierna ya la partida normal (carga, personaje, filtros, extras, misiones, liquidación única y guardado), con pantallas técnicas de inicio y resultados; menús completos ES/EN (paso 7), las 14 opciones en el menú y la pausa (paso 8) y cierre (paso 9) hechos.
 - **Sin commit a propósito:** siete ajustes Unity de «Cambios locales excluidos».
-- **Siguiente paso exacto:** paso 9, cierre de U4 sin funcionalidades nuevas: regresión completa (web, verificador histórico, Edit, Play, build, visual), recorrido QA, «Checkpoint al terminar U4» con commits, pruebas, rutas, limitaciones y la guía de prueba manual del autor (menús ES/EN, preparación, ambos personajes, tienda, ocho misiones, Calderilla, opciones, pausa, guardado/carga, cerrar y reabrir, exportación web, importación nueva, sobre guardado existente, cancelación, reimportación, recuperación/avisos, «Examinar…», victoria, derrota, debug y abandono sin premio, reintento). Después, detenerse.
+- **Siguiente paso exacto:** prueba manual del autor según «Instrucciones de prueba manual (autor)» del cierre. Corregir solo lo que encuentre. **No iniciar U5** hasta su aprobación.
 - **Autorización:** continuar los pasos 2–9 sin nuevas confirmaciones generales. Detenerse solo ante decisión nueva importante y, al terminar U4, para prueba manual del autor.
 
 Comprobación desde CMD:
@@ -76,7 +76,7 @@ Sustitución completa, nunca fusión: validar → informe → confirmar → back
 
 ## Plan propuesto por pasos/commits verificables
 
-Plan aprobado. Cada fila es una unidad coherente; dividir si tamaño o pruebas lo exigen. Pasos 1–8 terminados; paso 9 pendiente.
+Plan aprobado. Cada fila es una unidad coherente; dividir si tamaño o pruebas lo exigen. Pasos 1–9 terminados.
 
 | Paso | Resultado y límites | Verificación principal |
 |---|---|---|
@@ -96,7 +96,7 @@ Transferencia `mamporro.progress` v1 y persistencia `mamporro.unity-save` v1, co
 
 Las guardas actuales de `scripts/unity-reference*.mjs` prohíben cambios de `src/` y el baseline incluye hashes de fuentes. Al añadir el exportador, conservar esas guardas y comprobar la referencia sobre una instantánea aislada de la base aprobada; comprobar el exportador y la ausencia de cambios funcionales por separado sobre la rama actual. No afirmar que la web sigue byte a byte intacta ni relajar esperados para acomodar el exportador. Documentar el procedimiento reproducible al implementarlo.
 
-## Plan de pruebas de cierre (pendiente de ejecución)
+## Plan de pruebas de cierre (ejecutado: ver «Checkpoint al terminar U4»)
 
 - **Guardado/transferencia:** sin guardado; v1/v2/v3; futura; JSON corrupto; campos ausentes; tipos incorrectos; IDs desconocidos; negativos y extremos; parcial y todo desbloqueado; misiones parciales/completadas/recompensas reclamadas; mismo archivo dos veces; sin/con guardado Unity; cancelación; escritura fallida; copia y recuperación. Comparar campos compatibles antes/después, archivo original intacto y cero recompensas extra.
 - **Meta:** ocho misiones, precios/fórmulas exactos, personaje seleccionado bloqueado, extras máximos, desbloqueos en todos los caminos de ofertas/objetos, compra doble, saldo insuficiente, tomo de vida, trucos, callbacks/reload de resultados, abandono sin recompensa.
@@ -268,6 +268,62 @@ Conservar sin publicar ni restaurar:
 - **Árbol al terminar:** solo los siete ajustes Unity excluidos.
 - **Siguiente paso exacto:** paso 9 (ver «Cómo retomar»).
 
+### 04/10/2026 — paso 9: cierre de U4 — Claude Code
+
+- **Punto de partida:** `dda95f0be7c72891267d4672ee10f9f6591042df` (paso 8 publicado y verificado en remoto); solo los siete ajustes Unity excluidos.
+- **Trabajo:** sin funcionalidades nuevas. Regresión completa (web, contrato, verificador histórico, navegador real, Edit, Play, build, visual y ensayo), revisión de capturas, checkpoint de cierre con la guía de prueba manual y documentación de estado al día (README raíz y de Unity, ESTADO_ACTUAL, CONTINUIDAD_AGENTES). Único cambio de herramienta: el ensayo se lanza con `-monitor 1` (ver cierre).
+- **Pruebas ejecutadas:** ver «Checkpoint al terminar U4».
+- **Commit/push:** «Cierra U4 y prepara la prueba manual»; fetch previo y push normal si el remoto sigue en `dda95f0`.
+- **Árbol al terminar:** solo los siete ajustes Unity excluidos.
+- **Siguiente paso exacto:** prueba manual y aprobación del autor. No iniciar U5.
+
 ## Checkpoint al terminar U4
 
-Pendiente: U4 todavía no está completo. Completar al cerrar con commits, pruebas exactas/fecha/ruta, build, instrucciones manuales, límites y aprobación del autor. No marcarlo como verificado por haber aprobado U3.
+**Implementado y verificado el 04/10/2026; pendiente de la prueba manual y la aprobación del autor.** No iniciar U5 hasta esa aprobación.
+
+- **Commits de U4:** `799f284` (aprobación U3 y plan), `fabaf2a` (contrato y corpus), `dd994b8` (reglas meta), `d3927ff` (validación), `777bba8` (almacenamiento y recuperación), `b734b49` (exportación web), `86da4be` (importación Unity), `f266b94` (meta ↔ partida), `823fc7b` (menús ES/EN), `dda95f0` (opciones y pausa) y el commit de este cierre, «Cierra U4 y prepara la prueba manual».
+- **Qué hace U4:** progreso permanente equivalente a la web: Calderilla del Caos, tienda (4 compras, 3 mejoras de usos), 2 personajes, desbloqueos de armas y objetos aplicados a todas las ofertas, ocho misiones, liquidación única al ganar o perder (sin premio con trucos ni al abandonar), guardado seguro (`progress.json` + `progress.backup.json`, temporal, sustitución y relectura) con avisos y recuperación confirmada, menús ES/EN, las 14 opciones en el menú y la pausa, exportación web (`mamporro-progreso.json`) e importación en Unity que sustituye (nunca suma), con revisión previa, cancelación y copia de seguridad.
+- **Equivalencia y referencias:** `src/` solo cambia por el exportador (`b734b49`); `baseline.json`, `u2-combat.json`, `u3-world.json` y el corpus U4 sin cambios. El verificador histórico confirma U0, U2, U3 y U4 (8 guardados y 6 secuencias meta) contra la base aislada `0505b16`.
+- **Regresión final (04/10/2026, Europe/Madrid, sobre `dda95f0`):** `npm.cmd run typecheck` correcto; `npm.cmd test` **232/232**; `npm.cmd run build` correcto; `node --test scripts\u4-contract.test.mjs` **5/5** (16:51); `scripts\verify-historical-reference.ps1` correcto (16:52, instantánea `qa-results/reference-108c11e0167847eb86a518f7a17febe0`); navegador real (Vite + Edge con Playwright externo, 16:52): exportación ES y EN, 3 descargas por idioma con bytes repetidos, progreso sin cambios, exportación desde memoria y fallos avisados, y descargas **idénticas byte a byte** a `Exports/v3-partial.json` y `v3-all.json`; `scripts\u3.cmd edit` **367/367** (16:53, incluye las 8 transferencias web); `scripts\u3.cmd play` **29/29** (16:53); `scripts\u3.cmd build` correcta (16:55, Windows x64 Mono); `scripts\u3.cmd visual` **19 capturas** revisadas (16:55); `scripts\u3.cmd benchmark` **8/8 puntos** (17:02–17:08).
+- **Rendimiento (equipo del autor, mismas condiciones que U3):** 1920×1080 → min2 2660 FPS, min5 2247, min9 1972, enjambre (715–750 vivos) 1633 FPS, P95 0,49–0,81 ms; 2560×1440 → 2680/2239/1962/1621 FPS, P95 0,47–0,80 ms. Igual que U3: sin regresión. Una primera pasada se hizo a 1920×1080 en los dos puntos porque la build recordaba el monitor secundario (1080p); el lanzador fija ahora el principal (`-monitor 1`).
+- **Evidencias locales (no se publican):** `unity/TestResults/U4/final/` (XML/logs de Edit, Play, build y visual, logs y JSON del ensayo, 19 capturas), `unity/TestResults/U4/BrowserExport/`, `unity/TestResults/U4/step*-*` y `unity/TestResults/U3/` (última ejecución).
+- **Build:** `unity\Builds\U3\Mamporro-U3.exe` con toda su carpeta (nombre heredado de U3; producto «Mamporro U1»). Guardado real del autor: `%USERPROFILE%\AppData\LocalLow\Mamporro\Mamporro U1\Progress`; `-u4-save-dir <carpeta>` usa otra carpeta.
+- **Decisiones:** sin decisiones nuevas de diseño. Técnicas registradas en [DECISIONES](DECISIONES.md) («U4: decisiones técnicas de implementación de los pasos 7–8»).
+- **Limitaciones conocidas:** sin audio (volúmenes y silencio solo se guardan, U5); «Reducir partículas» y «Sacudidas de cámara» se guardan pero Unity aún no tiene partículas decorativas ni sacudidas; falta el parpadeo del jugador invulnerable; pantallas técnicas uGUI con la fuente integrada, sin el arte web; controles por pasos (−/+) en lugar de deslizadores; el diálogo nativo «Examinar…» y Alt+Tab real solo se han probado de forma indirecta (ruta escrita y `OnApplicationFocus`); la build conserva el nombre `Mamporro-U3.exe`.
+- **Cambios locales no publicados:** solo los siete ajustes Unity de «Cambios locales excluidos».
+
+### Instrucciones de prueba manual (autor)
+
+Con el Editor de Unity cerrado, desde la raíz en CMD. Para no tocar tu guardado real durante las pruebas destructivas, usa una carpeta de prueba (los pasos 1–13 pueden hacerse también sin ella):
+
+```cmd
+cd /d "C:\Users\bymar\Desktop\Varios\Proyectos\Mamporro-git"
+start "" "unity\Builds\U3\Mamporro-U3.exe" -monitor 1 -screen-fullscreen 0 -screen-width 1920 -screen-height 1080 -u4-save-dir "%TEMP%\MamporroU4Prueba"
+```
+
+Sin `-u4-save-dir` usa el guardado real. La build ya existe; si falta, `scripts\u3.cmd build` con el Editor cerrado. Alt+F4 cierra. Para empezar «desde cero» otra vez, cierra la build y borra solo la carpeta de prueba `%TEMP%\MamporroU4Prueba`. Opcional: `scripts\u3.cmd edit`, `play`, `build`, `visual` y `benchmark` repiten lo automático.
+
+1. **Primer arranque y menús ES/EN:** sin guardado, el idioma sigue al de Windows. Comprueba cabecera (Calderilla del Caos: 0, aviso «Sin progreso guardado…»), Inicio, Jugar, Personajes, Tienda, Misiones y Opciones; Volver; cambia Español/English en la cabecera y en Opciones: todo el texto visible cambia y se queda en la misma página.
+2. **Preparación y personajes:** Jugar muestra personaje, semilla (se normaliza), nuevo mapa, mapa actual, duración 5/10/15 y controles. Sir Baguette aparece bloqueado («Disponible en la tienda»); Remedios seleccionada.
+3. **Derrota normal y Calderilla:** juega una partida corta hasta morir. Resultados: Calderilla ganada con desglose (bajas, supervivencia, victoria, misiones), misión «Primera partida» completada y «Progreso guardado». Vuelve al inicio: el saldo coincide.
+4. **Cerrar y reabrir:** Alt+F4 y abre de nuevo con el mismo comando: saldo, misiones, idioma y opciones siguen.
+5. **Tienda y compras:** con saldo suficiente compra algo (Comprar · n); sin saldo aparece «Faltan n» desactivado; lo comprado pasa a «Desbloqueado» y no se cobra dos veces. Compra una mejora (Reroll/Saltar/Descartar: 80, 140, 220) y comprueba «n usos por partida» y «Máximo alcanzado» tras la tercera.
+6. **Ambos personajes:** compra a Sir Baguette, selecciónalo y juega: arma inicial Barra y escudo; vuelve a Remedios (Chancla). Usa R/X/B en una carta: los usos iniciales son 2 + mejoras y gastarlos no toca el progreso.
+7. **Ocho misiones:** en Misiones revisa barras, «n / objetivo», recompensa y desbloqueo. Completa alguna más (p. ej. bajas acumuladas, baúles, mesas camilla, desafío del tótem, nivel, victoria, ganar sin tomo de vida) y verifica que se cobra una sola vez y desbloquea su arma u objeto.
+8. **Victoria:** encuentra el armario, derrota a la Pelusa Madre sin usar F3: recibo con bono de victoria y misión correspondiente.
+9. **Partida debug sin recompensa:** abre F3 y usa una acción (p. ej. 7, oro). Al terminar: «Partida con trucos: sin calderilla ni progreso de misiones»; el saldo no cambia.
+10. **Abandono sin recompensa:** Esc → Volver al inicio → aviso de abandono; «Seguir aquí» vuelve a la pausa; «Abandonar partida» va al inicio sin Calderilla ni misiones.
+11. **Reintento/reinicio:** desde resultados, Reintentar y Nuevo mapa: partida limpia (vida, nivel, oro, usos), recibo anterior sin repetirse y sin duplicar premios.
+12. **Opciones del menú:** cambia las 14: idioma, sensibilidad (giro de cámara), resolución interna 240/360/480 (pixelado), temblor de vértices, dithering, Mostrar FPS (abajo a la derecha, distinto de F3), Ctrl para deslizarse (con «No» Ctrl no desliza; Shift/C siempre), destellos (rojo al recibir daño y blanco de enemigos golpeados), duración y volúmenes/silencio (se guardan; no hay sonido hasta U5). Cierra y reabre: siguen.
+13. **Pausa:** Esc → Opciones dentro de la pausa; cambia resolución y English: pausa, opciones, controles y HUD pasan a inglés; «Cerrar opciones» sigue en pausa hasta Continuar; el cronómetro no avanza. Alt+Tab durante la partida: se pausa; al volver sigue en pausa, con el cursor libre, hasta Continuar. F1/F2/F9 cambian y guardan esas mismas opciones.
+14. **Exportación web:** en otra consola, `npm.cmd run dev`, abre la web, Opciones → «Exportar progreso para Unity» → revisa la vista previa → «Descargar progreso» (`mamporro-progreso.json` en Descargas). Detalles en [EXPORTACION_U4](EXPORTACION_U4.md).
+15. **Importación con «Examinar…»:** en Unity, Opciones → «Importar progreso web» → «Examinar…» abre el diálogo de Windows (Descargas); elige el archivo; se revisa solo: progreso actual, el del archivo y los cambios. «Sustituir mi progreso»: se aplica sin reiniciar (saldo, desbloqueos, misiones, idioma y opciones).
+16. **Importación sobre un guardado existente:** con progreso Unity distinto, revisa el aviso de sustitución; confirma: sustituye (no suma) y deja copia `progress.backup.json` en la carpeta de guardado.
+17. **Cancelación:** revisa un archivo y pulsa «Cancelar»: nada cambia (saldo y archivo de guardado iguales).
+18. **Reimportación del mismo archivo:** vuelve a importar el mismo archivo: «contiene exactamente tu progreso guardado» y, al confirmar, «no se ha escrito nada»; ninguna Calderilla extra.
+19. **Recuperación y avisos (solo con la carpeta de prueba):** con la build cerrada, edita `progress.json` de la carpeta de prueba y rómpelo (p. ej. borra la última llave). Al abrir: aviso de copia de seguridad válida y botón «Confirmar recuperación»; hasta confirmarlo no se guarda nada; al confirmarlo vuelve el progreso de la copia. Rompe también la copia: aviso de guardado no válido, se juega con progreso inicial en memoria y los archivos no se tocan. Un archivo web roto o de versión desconocida se rechaza en la revisión sin cambiar nada.
+20. **Fuera de U4:** audio final, arte, animaciones, partículas y sacudidas son U5; no es un fallo que no suenen ni se vean.
+
+Anota fecha, monitor/resolución, semilla, duración, personaje y cualquier diferencia. La aprobación de esta prueba cierra U4; U5 no empieza antes.
+
+- **Aprobación del autor:** pendiente.

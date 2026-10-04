@@ -18,8 +18,10 @@ if($Action -eq 'benchmark') {
     foreach($size in @(@(1920,1080),@(2560,1440))) {
         $width=$size[0];$height=$size[1];$started=Get-Date
         $log=Join-Path $results "player-${width}x${height}.log"
-        # Ensayo gráfico explícitamente visible; no ocultar ni usar -nographics.
-        $process=Start-Process -FilePath $player -WorkingDirectory $project -ArgumentList "-screen-fullscreen 1 -window-mode exclusive -screen-width $width -screen-height $height -u3-benchmark -u3-output `"$results`" -u4-save-dir `"$(Join-Path $results BenchmarkSave)`" -logFile `"$log`"" -WindowStyle Normal -PassThru
+        # Ensayo gráfico explícitamente visible; no ocultar ni usar -nographics. Siempre en el
+        # monitor principal (-monitor 1): Unity recuerda el último monitor y en uno de 1080p
+        # el punto de 2560x1440 se haría a 1920x1080.
+        $process=Start-Process -FilePath $player -WorkingDirectory $project -ArgumentList "-monitor 1 -screen-fullscreen 1 -window-mode exclusive -screen-width $width -screen-height $height -u3-benchmark -u3-output `"$results`" -u4-save-dir `"$(Join-Path $results BenchmarkSave)`" -logFile `"$log`"" -WindowStyle Normal -PassThru
         if(!$process.WaitForExit(900000)){throw "El ensayo no terminó en 15 min: $log"}
         if($process.ExitCode -ne 0){throw "Build terminó con error: $log"}
         $reports=@(Get-ChildItem -LiteralPath $results -Filter "u3-${width}x${height}-*.json" | Where-Object {$_.LastWriteTime -ge $started})

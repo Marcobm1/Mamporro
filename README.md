@@ -1,6 +1,6 @@
 # MAMPORRO
 
-> Estado vigente: U1–U3 aprobados. U3 recibió aprobación manual el 04/10/2026. [Cierre U3](docs/PROGRESO_U3.md#checkpoint-al-terminar-u3). [U4 autorizado para implementación el 04/10/2026](docs/PROGRESO_U4.md); política de importación estricta aprobada. El contenido siguiente describe la web aprobada; [guía Unity](unity/README.md).
+> Estado vigente: U1–U3 aprobados. U3 recibió aprobación manual el 04/10/2026. [Cierre U3](docs/PROGRESO_U3.md#checkpoint-al-terminar-u3). [U4 implementado y verificado el 04/10/2026, pendiente de la prueba manual del autor](docs/PROGRESO_U4.md#checkpoint-al-terminar-u4). El contenido siguiente describe la web aprobada; [guía Unity](unity/README.md).
 
 Roguelike 3D de supervivencia contra hordas ("bullet heaven") con estética retro
 tipo PS1, hecho con Three.js + TypeScript + Vite. Todo el contenido (geometría,
@@ -85,7 +85,7 @@ En el menú principal web, abre **Opciones**, baja hasta **Exportar progreso par
 
 Incluye Calderilla, desbloqueos/compras, misiones, extras, selección, idioma y opciones compatibles. No guarda una partida activa ni modifica el progreso web. Si el almacenamiento está bloqueado, avisa y permite exportar el progreso cargado en memoria. Las recuperaciones secundarias se muestran antes de descargar; los errores críticos bloquean la exportación sin resetear datos.
 
-La interfaz de importación Unity llegará en el paso 5 de U4; el archivo ya es compatible con su validador. Guía técnica y comprobaciones reproducibles: [EXPORTACION_U4](docs/EXPORTACION_U4.md).
+En Unity se importa desde Opciones → «Importar progreso web» (revisión previa, sustitución con copia de seguridad, nunca suma). Guía técnica y comprobaciones reproducibles: [EXPORTACION_U4](docs/EXPORTACION_U4.md).
 
 ## Controles
 
@@ -680,7 +680,7 @@ npm run preview
 
 ## Migración a Unity y futuro del juego
 
-**Estado vigente (04/10/2026): U1–U3 aprobados; U4 autorizado para implementación el 04/10/2026.** Proyecto en
+**Estado vigente (04/10/2026): U1–U3 aprobados; U4 implementado y verificado, pendiente de la prueba manual del autor.** Proyecto en
 `unity/`, Editor 6000.6.3f1, Windows x64 Mono, URP 17.6.0 e Input System 1.20.0.
 La licencia, importación, compilación, escena en Play Mode y generación de build
 ya se han probado. [Instrucciones Unity](unity/README.md) y
