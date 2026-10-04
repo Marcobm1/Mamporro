@@ -13,6 +13,10 @@ namespace Mamporro.U3
     // 10 minutos, director activo). La simulación avanza sin medir hasta 10 s antes de cada
     // punto (minutos 2, 5 y 9 y enjambre final) y allí se miden 10 s de calentamiento y 30 s
     // con el juego completo dibujándose (mundo, combate y HUD). Mismo informe que U1/U2.
+    // U5: audio, partículas normales, números de daño y sacudida activos, contadores por
+    // fotograma para correlacionar los fotogramas lentos y dos perfiles (-u5-profile):
+    // «horda» (solo la Chancla, como U3: 300/500/750 vivos) y «armas» (cuatro armas desde el
+    // principio: proyectiles, aura, rayo y charcos a la vez, con menos enemigos vivos).
     public sealed class U3Benchmark : MonoBehaviour
     {
         public U3Game Game;
@@ -21,6 +25,11 @@ namespace Mamporro.U3
         static readonly string[] Names={"min2","min5","min9","enjambre"};
         static readonly double[] Starts={120,300,540,640};
         readonly double[] frames=new double[Capacity],ticks=new double[20000],cpu=new double[Capacity],gpu=new double[Capacity];
+        readonly int[] particles=new int[Capacity],numbers=new int[Capacity],voices=new int[Capacity],sounds=new int[Capacity],collections=new int[Capacity];
+        ProfilerRecorder gpuRecorder;int playedFrom,droppedFrom,lastPlayed,lastCollections,gcFrom;long heapFrom;
+        // Perfil «armas»: armas de ensayo junto a la Chancla (proyectiles, aura, rayo y charcos).
+        static readonly string[] BenchmarkWeapons={"naftalina","jersey","fregona"};
+        string profile="horda";
         readonly FrameTiming[] timing=new FrameTiming[1];
         ProfilerRecorder gc;long alloc;int gcSamples,n,nt,scenario,minEntities,maxEntities,maxProjectiles,maxEnemyShots,cards;
         double start,previous,first,measureFrom;long rendered;string output;bool captured,forwarding;
@@ -30,8 +39,13 @@ namespace Mamporro.U3
         {
             var args=Environment.GetCommandLineArgs();int i=Array.IndexOf(args,"-u3-output");
             output=i>=0&&i+1<args.Length?args[i+1]:Path.Combine(Application.persistentDataPath,"U3Benchmarks");Directory.CreateDirectory(output);
+            int pi=Array.IndexOf(args,"-u5-profile");if(pi>=0&&pi+1<args.Length&&args[pi+1]=="armas")profile="armas";
             gc=ProfilerRecorder.StartNew(ProfilerCategory.Memory,"GC Allocated In Frame");
+            // Solo en el diagnóstico Development: tiempo de GPU del perfilador, si Unity lo da.
+            gpuRecorder=ProfilerRecorder.StartNew(ProfilerCategory.Render,"GPU Frame Time");
             Game.Character=Catalog.Characters[0];Game.Minutes=10;Game.LoadWorld("MAMPORRO");Game.StartRun("");
+            if(profile=="armas")foreach(string id in BenchmarkWeapons)Game.Run.AddWeapon(id);
+            Game.Audio.SetFocused(true);
             // Invulnerabilidad de ensayo (como U2): sin ella la partida acabaría antes de medir.
             Game.Run.Invincible=true;Game.AutoChoose=true;Game.SetPaused(true);
             forwarding=true;scenario=0;Debug.Log("U3 benchmark: inicio");
@@ -58,6 +72,7 @@ namespace Mamporro.U3
             if(Game.Run.Time<target)return;
             forwarding=false;Route();Game.SetPaused(false);n=nt=gcSamples=0;alloc=0;captured=false;
             minEntities=int.MaxValue;maxEntities=maxProjectiles=maxEnemyShots=0;measureFrom=Game.Run.Time;
+            playedFrom=lastPlayed=Game.Audio.Played;droppedFrom=Game.Audio.Dropped;gcFrom=lastCollections=GC.CollectionCount(0);heapFrom=GC.GetTotalMemory(false);
             previous=start=Time.realtimeSinceStartupAsDouble;Debug.Log($"U3 benchmark: medida {Stage} desde t={measureFrom:F1} s");
         }
         // Tiempo de cada tick de lógica durante la medida (U3Game lo cronometra).
@@ -68,12 +83,14 @@ namespace Mamporro.U3
             if(forwarding||Game==null)return;
             Route();
             double now=Time.realtimeSinceStartupAsDouble,elapsed=now-start;
-            if(!captured&&elapsed>Warmup+3){captured=true;ScreenCapture.CaptureScreenshot(Path.Combine(output,$"u3-{UnityEngine.Screen.width}x{UnityEngine.Screen.height}-{Stage}.png"));}
+            if(!captured&&elapsed>Warmup+3){captured=true;ScreenCapture.CaptureScreenshot(Path.Combine(output,$"u3-{UnityEngine.Screen.width}x{UnityEngine.Screen.height}-{profile}-{Stage}.png"));}
             FrameTimingManager.CaptureFrameTimings();
             if(elapsed>=Warmup&&n<Capacity){
                 if(n==0){first=previous;rendered=Game.RenderedFrames;}
                 frames[n]=(now-previous)*1000;uint count=FrameTimingManager.GetLatestTimings(1,timing);
-                cpu[n]=count>0&&timing[0].cpuFrameTime>0?timing[0].cpuFrameTime:-1;gpu[n]=count>0&&timing[0].gpuFrameTime>0?timing[0].gpuFrameTime:-1;
+                cpu[n]=count>0&&timing[0].cpuFrameTime>0?timing[0].cpuFrameTime:-1;gpu[n]=count>0&&timing[0].gpuFrameTime>0?timing[0].gpuFrameTime:gpuRecorder.Valid&&gpuRecorder.LastValue>0?gpuRecorder.LastValue/1e6:-1;
+                int played=Game.Audio.Played,gcNow=GC.CollectionCount(0);
+                particles[n]=Game.Particles.Active;numbers[n]=Game.Numbers.Active;voices[n]=Game.Audio.ActiveVoices;sounds[n]=played-lastPlayed;collections[n]=gcNow-lastCollections;lastPlayed=played;lastCollections=gcNow;
                 if(gc.Valid){alloc+=gc.LastValue;gcSamples++;}n++;
                 var r=Game.Run;minEntities=Math.Min(minEntities,r.Enemies.Count);maxEntities=Math.Max(maxEntities,r.Enemies.Count);
                 maxProjectiles=Math.Max(maxProjectiles,r.Projectiles.Count);maxEnemyShots=Math.Max(maxEnemyShots,r.EnemyShots.Count);
@@ -92,6 +109,10 @@ namespace Mamporro.U3
         {
             var sorted=new double[n];Array.Copy(frames,sorted,n);Array.Sort(sorted);var sortedTicks=new double[nt];Array.Copy(ticks,sortedTicks,nt);Array.Sort(sortedTicks);
             int over=0;foreach(double ms in sorted)if(ms>1000.0/60)over++;
+            // Fotogramas lentos con lo que ocurría en ellos (índice:ms:partículas:números:voces:sonidos:recolecciones).
+            var slow=new StringBuilder();int listed=0;
+            for(int i=0;i<n&&listed<40;i++)if(frames[i]>1000.0/60){slow.Append(i).Append(':').Append(frames[i].ToString("F2",CultureInfo.InvariantCulture)).Append(':').Append(particles[i]).Append(':').Append(numbers[i]).Append(':').Append(voices[i]).Append(':').Append(sounds[i]).Append(':').Append(collections[i]).Append(' ');listed++;}
+            int pMax=0,nMax=0,vMax=0;double pSum=0;for(int i=0;i<n;i++){pMax=Math.Max(pMax,particles[i]);nMax=Math.Max(nMax,numbers[i]);vMax=Math.Max(vMax,voices[i]);pSum+=particles[i];}
             var s=Game.Session;var r=s.Combat;var target=Game.worldCamera.targetTexture;
             var report=new Report{unity=Application.unityVersion,cpu=SystemInfo.processorType,gpu=SystemInfo.graphicsDeviceName,graphics=SystemInfo.graphicsDeviceType.ToString(),ramMB=SystemInfo.systemMemorySize,
                 development=Debug.isDebugBuild,editor=Application.isEditor,outputWidth=UnityEngine.Screen.width,outputHeight=UnityEngine.Screen.height,internalWidth=target.width,internalHeight=Game.InternalHeight,
@@ -103,16 +124,20 @@ namespace Mamporro.U3
                 cpuMean=Mean(cpu,n),gpuMean=Mean(gpu,n,(now-first)*1000),gcBytesPerFrame=gcSamples>0?(double)alloc/gcSamples:-1,
                 memory=Profiler.GetTotalAllocatedMemoryLong(),reserved=Profiler.GetTotalReservedMemoryLong(),rendered=Game.RenderedFrames-rendered,
                 projectiles=r.Projectiles.Count,enemyShots=r.EnemyShots.Count,maxProjectiles=maxProjectiles,maxEnemyShots=maxEnemyShots,gems=r.Gems.Count,coins=r.Coins.Count,
-                kills=r.Kills,spawned=s.Spawned,effectsDropped=Game.CombatView.DroppedEffects,level=r.Level,cardsApplied=cards+Game.AutoChosen,gold=r.Gold,build=Build(r)};
+                kills=r.Kills,spawned=s.Spawned,effectsDropped=Game.CombatView.DroppedEffects,level=r.Level,cardsApplied=cards+Game.AutoChosen,gold=r.Gold,build=Build(r),
+                particlesMax=pMax,particlesMean=n>0?pSum/n:0,numbersMax=nMax,voicesMax=vMax,soundsPlayed=Game.Audio.Played-playedFrom,soundsDropped=Game.Audio.Dropped-droppedFrom,
+                gcCollections=GC.CollectionCount(0)-gcFrom,monoHeapFrom=heapFrom,monoHeapTo=GC.GetTotalMemory(false),slowFrames=slow.ToString(),
+                profile=profile,reducedParticles=Game.Settings.reducedParticles,cameraShake=Game.Settings.cameraShake,muted=Game.Settings.muted};
             report.validRender=report.rendered>=n*.9&&n<Capacity&&nt<ticks.Length;
-            string stem=$"u3-{UnityEngine.Screen.width}x{UnityEngine.Screen.height}-{Stage}-{DateTime.UtcNow:yyyyMMddTHHmmssfff}";
+            string stem=$"u3-{UnityEngine.Screen.width}x{UnityEngine.Screen.height}-{profile}-{Stage}-{DateTime.UtcNow:yyyyMMddTHHmmssfff}";
             File.WriteAllText(Path.Combine(output,stem+".json"),JsonUtility.ToJson(report,true));
-            var csv=new StringBuilder("frame,ms,cpu,gpu\n");
-            for(int i=0;i<n;i++)csv.Append(i).Append(',').Append(frames[i].ToString("R",CultureInfo.InvariantCulture)).Append(',').Append(cpu[i].ToString("R",CultureInfo.InvariantCulture)).Append(',').Append(gpu[i].ToString("R",CultureInfo.InvariantCulture)).Append('\n');
+            var csv=new StringBuilder("frame,ms,cpu,gpu,particles,numbers,voices,sounds,gc\n");
+            for(int i=0;i<n;i++)csv.Append(i).Append(',').Append(frames[i].ToString("R",CultureInfo.InvariantCulture)).Append(',').Append(cpu[i].ToString("R",CultureInfo.InvariantCulture)).Append(',').Append(gpu[i].ToString("R",CultureInfo.InvariantCulture))
+                .Append(',').Append(particles[i]).Append(',').Append(numbers[i]).Append(',').Append(voices[i]).Append(',').Append(sounds[i]).Append(',').Append(collections[i]).Append('\n');
             File.WriteAllText(Path.Combine(output,stem+".csv"),csv.ToString());
             csv.Clear().Append("tick,ms\n");for(int i=0;i<nt;i++)csv.Append(i).Append(',').Append(ticks[i].ToString("R",CultureInfo.InvariantCulture)).Append('\n');
             File.WriteAllText(Path.Combine(output,stem+"-ticks.csv"),csv.ToString());
-            Debug.Log($"U3 benchmark {Stage}: {report.meanFps:F1} FPS, P95 {report.p95:F2} ms, enemigos {minEntities}-{maxEntities}, validRender {report.validRender}");
+            Debug.Log($"U3 benchmark {profile} {Stage}: {report.meanFps:F1} FPS, P95 {report.p95:F2} ms, enemigos {minEntities}-{maxEntities}, partículas máx {pMax}, voces máx {vMax}, sonidos {report.soundsPlayed}/{report.soundsDropped}, >16,7 ms {over}, validRender {report.validRender}");
         }
         static string Build(CombatRun r)
         {
@@ -120,12 +145,13 @@ namespace Mamporro.U3
             foreach(var t in r.Tomes)b.Append("tomo ").Append(t.Def.id).Append(" Nv").Append(t.Level).Append("; ");
             foreach(var i in r.Items)b.Append(i.Def.id).Append(" ×").Append(i.Count).Append("; ");return b.ToString();
         }
-        void OnDestroy(){if(gc.Valid)gc.Dispose();}
+        void OnDestroy(){if(gc.Valid)gc.Dispose();if(gpuRecorder.Valid)gpuRecorder.Dispose();}
         [Serializable]sealed class Report
         {
             public string unity,cpu,gpu,graphics,quality,scenario;
             public string backend="Mono",seed="MAMPORRO",character="remedios",runMinutes="10";
-            public string conditions="Partida real con director: avance sin medir hasta 10 s antes del punto; 10 s calentamiento y 30 s de medida dibujando mundo, combate y HUD; invulnerable de ensayo; cartas: siempre la primera; circuito 8 s (2 s por lado); yaw 0 pitch 20; sin interactuables; sin guardado";
+            public string conditions="Partida real con director: avance sin medir hasta 10 s antes del punto; 10 s calentamiento y 30 s de medida dibujando mundo, combate, partículas, números de daño y HUD con audio activo; perfil «horda»: solo la Chancla; perfil «armas»: Chancla + Naftalina + Jersey + Fregona desde el inicio; invulnerable de ensayo; cartas: siempre la primera; circuito 8 s (2 s por lado); cámara web (yaw 0, inclinación 0,3 rad); sin interactuables; guardado propio del ensayo";
+            public string profile;public bool reducedParticles,cameraShake,muted;public int particlesMax,numbersMax,voicesMax,soundsPlayed,soundsDropped,gcCollections;public double particlesMean;public long monoHeapFrom,monoHeapTo;public string slowFrames;
             public string unavailable="-1: no disponible/anómalo. Memoria Unity al final, no pico/VRAM. GPU se invalida si supera toda la ventana. GC release puede no existir.";
             public string build;public bool development,editor,validRender,swarm;
             public int ramMB,outputWidth,outputHeight,internalWidth,internalHeight,vsync,fpsLimit,minEntities,maxEntities,entitiesAtEnd,frames,ticks,framesOverBudget,projectiles,enemyShots,maxProjectiles,maxEnemyShots,gems,coins,kills,spawned,effectsDropped,level,cardsApplied;

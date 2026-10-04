@@ -69,5 +69,16 @@ namespace Mamporro.Editor
             if(report.summary.result!=BuildResult.Succeeded)throw new BuildFailedException(report.summary.result.ToString());
             Debug.Log("U3 Windows x64 Mono: build correcta.");
         }
+        // U5: build de desarrollo solo para el diagnóstico (asignaciones/GC, memoria y GPU si el
+        // perfilador la da). En otra carpeta; nunca se usa para el rendimiento final. No cambia
+        // ningún ajuste del proyecto.
+        public static void BuildDevelopment()
+        {
+            if(PlayerSettings.GetScriptingBackend(NamedBuildTarget.Standalone)!=ScriptingImplementation.Mono2x)throw new BuildFailedException("U3 requiere Mono.");
+            Directory.CreateDirectory("Builds/U3Dev");
+            var report=BuildPipeline.BuildPlayer(new BuildPlayerOptions{scenes=new[]{ScenePath},locationPathName="Builds/U3Dev/Mamporro-U3.exe",target=BuildTarget.StandaloneWindows64,options=BuildOptions.Development});
+            if(report.summary.result!=BuildResult.Succeeded)throw new BuildFailedException(report.summary.result.ToString());
+            Debug.Log("U3 Windows x64 Mono (Development, diagnóstico): build correcta.");
+        }
     }
 }

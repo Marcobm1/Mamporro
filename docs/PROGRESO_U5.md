@@ -4,12 +4,12 @@ Estado: **IMPLEMENTACIÓN AUTORIZADA Y EN CURSO desde el 04/10/2026.** Plan apro
 
 ## Cómo retomar
 
-- **Punto de partida:** `3754e31` (U4 aprobada). Plan en `31711bf` («Registra la aprobación de U4 y planifica U5»). Paso 1 `e7c9933` («Porta la síntesis de audio y el presupuesto de voces de U5»). Paso 2 `6e154ec` («Añade el motor de audio de U5»). Paso 3 `85f7a1b` («Conecta los sucesos de la partida al sonido de U5»). Paso 4 `22821d0` («Añade las partículas decorativas de U5»). Paso 5 `1a7d744` («Añade los números de daño de U5»). Paso 6 en «Porta la cámara, la sacudida y los destellos de U5» (hash: `git log -1 --format="%H %s" -- unity/Assets/Mamporro/U3/RunRenderer.cs`).
-- **Paso actual:** 7, rendimiento representativo (sin empezar).
-- **Terminado:** pasos 1–6. Último Edit Mode 392/392, Play Mode 36/36, build y visual con medida de audio (04/10/2026).
+- **Punto de partida:** `3754e31` (U4 aprobada). Plan en `31711bf` («Registra la aprobación de U4 y planifica U5»). Paso 1 `e7c9933` («Porta la síntesis de audio y el presupuesto de voces de U5»). Paso 2 `6e154ec` («Añade el motor de audio de U5»). Paso 3 `85f7a1b` («Conecta los sucesos de la partida al sonido de U5»). Paso 4 `22821d0` («Añade las partículas decorativas de U5»). Paso 5 `1a7d744` («Añade los números de daño de U5»). Paso 6 `18718fb` («Porta la cámara, la sacudida y los destellos de U5»). Paso 7 en «Mide el rendimiento representativo de U5» (hash: `git log -1 --format="%H %s" -- unity/Assets/Mamporro/U3/U3Benchmark.cs`).
+- **Paso actual:** 8, sesiones, capturas y equivalencia (sin empezar).
+- **Terminado:** pasos 1–7. Último Edit Mode 392/392, Play Mode 36/36, build, visual con audio, ensayo 16/16 y diagnóstico Development 8/8 (04/10/2026).
 - **A medias:** nada.
 - **Sin commit a propósito:** siete ajustes Unity de «Cambios locales excluidos».
-- **Siguiente paso exacto:** paso 7: ampliar `U3Benchmark` (condiciones representativas: al empezar, armas simultáneas concedidas por QA; audio, partículas normales, números y sacudida activos) con contadores por punto: partículas activas, números, voces activas, sonidos concedidos/descartados, proyectiles propios/enemigos, gemas/monedas; registro de fotogramas > 16,67 ms con marca de lo que ocurrió (sucesos U5 del fotograma) para correlacionar picos; ensayo principal `scripts\u3.cmd benchmark` (build normal, 1920×1080 y 2560×1440, interna 360); pasada separada **diagnóstico Development** (build de desarrollo en otra carpeta, GC por fotograma con `ProfilerRecorder`, memoria y GPU con `FrameTimingManager` solo si da valores válidos; nunca mezclada con el ensayo principal).
+- **Siguiente paso exacto:** paso 8: `U3VisualCheck` con modo `-u5-screens es|en` (11 pantallas con la cámara de juego: inicio, preparación, tienda, misiones, opciones, partida, horda, jefe, cartas, pausa, resultados) lanzado a 1280×720 y 1920×1080 en ES y EN (44 capturas, revisarlas de verdad); la comprobación técnica actual sigue una vez a 1920×1080 (mundo sin interfaz, audio) y termina con varias partidas seguidas sin trucos (`sessions-report.json`: una liquidación por partida, 18 fuentes, una escucha, una música, sin partículas/números ni pausa arrastrados, opciones intactas, memoria); prueba Play de ciclo de tres partidas; `docs/EQUIVALENCIA_U5.md` (borrador ya escrito, sin publicar) con las cifras finales. El script preparado está en el registro de esta sesión (U3VisualCheck: `Screens`, `Sessions`; `U3Game.FaceTowards`; lanzador `visual`).
 - **Autorización:** pasos 1–9 seguidos, con checkpoint, pruebas, commit y push tras cada pieza. Detenerse solo ante una decisión nueva importante de diseño/arquitectura (o si el compresor propio resulta inestable, con latencia o coste inesperado) y al terminar U5.
 
 Comprobación desde CMD:
@@ -251,6 +251,39 @@ Conservar sin publicar ni restaurar:
 - **Commit/push:** «Porta la cámara, la sacudida y los destellos de U5»; fetch previo y push normal si el remoto sigue en `1a7d744`.
 - **Árbol al terminar:** solo los siete ajustes Unity excluidos.
 - **Siguiente paso exacto:** paso 7 (ver «Cómo retomar»).
+
+### 04/10/2026 — paso 7: rendimiento representativo — Claude Code
+
+- **Punto de partida:** `18718fb` (paso 6 publicado); solo los siete ajustes Unity excluidos.
+- **Trabajo:** `U3Benchmark`: dos perfiles (`-u5-profile`): **horda** (solo la Chancla, como U3: 300/500/750 vivos) y **armas** (Chancla + Naftalina + Jersey + Fregona desde el inicio: proyectiles, aura, rayo y charcos a la vez). Una primera pasada solo con cuatro armas dejó la horda en 50–69 enemigos en el minuto 5 (no representaba «300+»), por eso los dos perfiles. Audio, partículas normales, números y sacudida activos (opciones por defecto). Contadores por punto: partículas (máx./media), números, voces máximas, sonidos concedidos/descartados, recolecciones de GC (`GC.CollectionCount`, válido en build normal), montón Mono al empezar/terminar, y lista de fotogramas > 16,67 ms con partículas, números, voces, sonidos y recolecciones de ese fotograma; columnas nuevas en el CSV. GPU del perfilador (`GPU Frame Time`) solo si Unity la da. `U3Project.BuildDevelopment` (en `Builds/U3Dev`, sin tocar ajustes del proyecto) y acción `scripts\u3.cmd devdiag` (build de desarrollo y pasada a 1920×1080 en `TestResults/U3/DevDiag`, rotulada «diagnóstico Development»; el lanzador comprueba el tipo de build de cada informe). Cámara de ensayo: la web (inclinación 0,3 rad).
+- **Ensayo principal (build normal, 04/10/2026 18:53–19:04; Ryzen 7 7700X, RTX 4070 Ti SUPER, ~32 GB; pantalla completa exclusiva en el monitor principal, interna 360, VSync 0, FPS ilimitados, D3D11):**
+
+| Salida | Perfil | Punto | FPS | P95 ms | P99 ms | Máx. ms | > 16,67 ms | Vivos | Partículas máx. | Voces máx. | Sonidos conc./desc. |
+| --- | --- | --- | ---: | ---: | ---: | ---: | ---: | --- | ---: | ---: | --- |
+| 1920×1080 | horda | min2 | 2505 | 0,48 | 0,59 | 3,86 | 0 | 56–94 | 46 | 5 | 257/31 |
+| 1920×1080 | horda | min5 | 2045 | 0,63 | 0,90 | 3,67 | 0 | 284–307 | 105 | 6 | 494/239 |
+| 1920×1080 | horda | min9 | 1774 | 0,72 | 1,14 | 3,85 | 0 | 447–530 | 279 | 9 | 654/1000 |
+| 1920×1080 | horda | enjambre | 1340 | 1,17 | 1,67 | 4,86 | 0 | 715–750 | 1058 | 9 | 1317/8274 |
+| 1920×1080 | armas | min2 | 2491 | 0,48 | 0,61 | 4,03 | 0 | 12–20 | 123 | 8 | 556/122 |
+| 1920×1080 | armas | min5 | 2272 | 0,53 | 0,71 | 3,63 | 0 | 50–69 | 176 | 9 | 1003/1062 |
+| 1920×1080 | armas | min9 | 2087 | 0,57 | 0,77 | 6,38 | 0 | 59–145 | 433 | 12 | 1746/3113 |
+| 1920×1080 | armas | enjambre | 1481 | 0,87 | 1,10 | 12,51 | 0 | 311–419 | 1397 | 12 | 2328/24316 |
+| 2560×1440 | horda | min2 | 2485 | 0,49 | 0,60 | 6,37 | 0 | 56–94 | 46 | 4 | 261/27 |
+| 2560×1440 | horda | min5 | 2054 | 0,63 | 0,88 | 6,47 | 0 | 284–307 | 105 | 6 | 496/237 |
+| 2560×1440 | horda | min9 | 1792 | 0,71 | 1,13 | 6,83 | 0 | 447–530 | 278 | 8 | 657/997 |
+| 2560×1440 | horda | enjambre | 1353 | 1,12 | 1,66 | 7,74 | 0 | 715–750 | 1069 | 10 | 1307/8284 |
+| 2560×1440 | armas | min2 | 2474 | 0,48 | 0,61 | 6,46 | 0 | 12–20 | 123 | 8 | 556/122 |
+| 2560×1440 | armas | min5 | 2261 | 0,53 | 0,73 | 5,76 | 0 | 50–69 | 176 | 9 | 995/1070 |
+| 2560×1440 | armas | min9 | 2012 | 0,62 | 0,87 | 57,56 | 6 | 61–145 | 434 | 12 | 1600/3288 |
+| 2560×1440 | armas | enjambre | 1442 | 0,92 | 1,13 | 6,61 | 0 | 303–412 | 1221 | 13 | 2383/25549 |
+
+  Tick lógico medio 0,05–0,90 ms (máximo en el enjambre de 750); CPU 0,40–0,75 ms; memoria Unity ≈ 230–238 MiB; números de daño hasta el tope de 140 en el enjambre; proyectiles propios hasta 12 y pipas hasta 175 (horda, enjambre); gemas hasta 323. GPU «n/d» (−1) en la build normal, como se acordó. Recolecciones de GC: 380–810 en cada medida de 30 s (a más de 2000 FPS); el montón Mono queda estable (≈ 29–30 MiB al terminar cada punto).
+- **Picos:** el objetivo de 60 FPS se cumple con mucho margen. Solo 1 de los 16 puntos tiene fotogramas > 16,67 ms (2560×1440, armas, min9: 6 fotogramas, 18–58 ms); el mismo punto a 1920×1080 no tiene ninguno. Ninguno coincide con una recolección de GC ni con partículas, voces o sonidos altos (155–201 partículas, 0–6 voces, 0–4 sonidos). No se reproduce de forma sistemática; documentado sin optimización especulativa.
+- **Diagnóstico Development (build de desarrollo, 19:09–19:15, 1920×1080; no es rendimiento final):** asignaciones **≈ 9–15 KB por fotograma** (`GC Allocated In Frame`), GPU válida **0,14–0,22 ms** por fotograma (`GPU Frame Time`), CPU 0,49–0,94 ms, memoria Unity 144 MiB. Un fotograma de ~40 ms por punto a ≈ 3 s de medida coincide con la captura de pantalla del ensayo (`ScreenCapture` en desarrollo). Las asignaciones vienen de la presentación de U3 (cadenas del HUD con `CombatText.Format` y `StringBuilder` por fotograma, ya señaladas en el diagnóstico de picos de U3); los sistemas de U5 (síntesis, voces, compresor, partículas, números, sucesos) están probados sin asignaciones en Edit. A 60 FPS supondría ≈ 0,9 MB/s; no se optimiza en U5 sin evidencia de impacto.
+- **Pruebas ejecutadas:** `scripts\u3.cmd build` correcta; `scripts\u3.cmd benchmark` **16/16 puntos** (una pasada previa 8/8 solo con cuatro armas, descartada por poco representativa); `scripts\u3.cmd devdiag` **8/8** (una pasada previa a resolución errónea por un error del lanzador al desenrollar arrays en PowerShell; corregido). Evidencias en `unity/TestResults/U3/` y `unity/TestResults/U3/DevDiag/`.
+- **Commit/push:** «Mide el rendimiento representativo de U5»; fetch previo y push normal si el remoto sigue en `18718fb`.
+- **Árbol al terminar:** siete ajustes Unity excluidos y el borrador sin publicar de `docs/EQUIVALENCIA_U5.md` (paso 8).
+- **Siguiente paso exacto:** paso 8 (ver «Cómo retomar»).
 
 ## Checkpoint al terminar U5
 

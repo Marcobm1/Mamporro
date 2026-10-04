@@ -1,4 +1,4 @@
-param([ValidateSet('create','edit','play','build','visual','benchmark')][string]$Action='edit')
+param([ValidateSet('create','edit','play','build','visual','benchmark','devdiag')][string]$Action='edit')
 $ErrorActionPreference='Stop'
 $repo=Split-Path $PSScriptRoot -Parent
 $project=Join-Path $repo 'unity'
@@ -11,28 +11,44 @@ if($Action -eq 'edit') {
     node (Join-Path $repo 'scripts\u4-export-fixtures.mjs') | Tee-Object -FilePath $exportLog
     if($LASTEXITCODE -ne 0){throw 'Falló la preparación de transferencias web U4.'}
 }
-if($Action -eq 'benchmark') {
-    $player=Join-Path $project 'Builds\U3\Mamporro-U3.exe'
+if($Action -eq 'devdiag') {
+    # Diagnóstico Development (U5): build de desarrollo aparte, una pasada a 1920x1080. Sus FPS
+    # no son el rendimiento final; sirve para GC/asignaciones, memoria y GPU si es válida.
+    if(Get-Process Unity -ErrorAction SilentlyContinue){throw 'Hay un Editor abierto. Guarda y cierra la instancia antes de ejecutar batch.'}
+    $log=Join-Path $results 'devdiag-build.log'
+    $process=Start-Process -FilePath 'C:\Program Files\Unity\Hub\Editor\6000.6.3f1\Editor\Unity.exe' -ArgumentList "-batchmode -projectPath `"$project`" -logFile `"$log`" -quit -executeMethod Mamporro.Editor.U3Project.BuildDevelopment" -WorkingDirectory $project -WindowStyle Hidden -PassThru
+    $process.WaitForExit();if($process.ExitCode -ne 0){throw "Falló la build Development: $log"}
+}
+if($Action -in @('benchmark','devdiag')) {
+    $dev=$Action -eq 'devdiag'
+    $player=Join-Path $project $(if($dev){'Builds\U3Dev\Mamporro-U3.exe'}else{'Builds\U3\Mamporro-U3.exe'})
     if(!(Test-Path -LiteralPath $player)){throw 'Primero genera la build U3.'}
+    if($dev){$results=Join-Path $results 'DevDiag';New-Item -ItemType Directory -Force -Path $results | Out-Null}
     $summary=@()
-    foreach($size in @(@(1920,1080),@(2560,1440))) {
+    # Asignación directa: en PowerShell la salida de un bloque desenrolla los arrays anidados.
+    $sizes=@(@(1920,1080),@(2560,1440));if($dev){$sizes=@(,$sizes[0])}
+    foreach($size in $sizes) {
+    foreach($profile in @('horda','armas')) {
         $width=$size[0];$height=$size[1];$started=Get-Date
-        $log=Join-Path $results "player-${width}x${height}.log"
+        $log=Join-Path $results "player-${width}x${height}-$profile.log"
         # Ensayo gráfico explícitamente visible; no ocultar ni usar -nographics. Siempre en el
         # monitor principal (-monitor 1): Unity recuerda el último monitor y en uno de 1080p
         # el punto de 2560x1440 se haría a 1920x1080.
-        $process=Start-Process -FilePath $player -WorkingDirectory $project -ArgumentList "-monitor 1 -screen-fullscreen 1 -window-mode exclusive -screen-width $width -screen-height $height -u3-benchmark -u3-output `"$results`" -u4-save-dir `"$(Join-Path $results BenchmarkSave)`" -logFile `"$log`"" -WindowStyle Normal -PassThru
+        $process=Start-Process -FilePath $player -WorkingDirectory $project -ArgumentList "-monitor 1 -screen-fullscreen 1 -window-mode exclusive -screen-width $width -screen-height $height -u3-benchmark -u5-profile $profile -u3-output `"$results`" -u4-save-dir `"$(Join-Path $results BenchmarkSave)`" -logFile `"$log`"" -WindowStyle Normal -PassThru
         if(!$process.WaitForExit(900000)){throw "El ensayo no terminó en 15 min: $log"}
         if($process.ExitCode -ne 0){throw "Build terminó con error: $log"}
-        $reports=@(Get-ChildItem -LiteralPath $results -Filter "u3-${width}x${height}-*.json" | Where-Object {$_.LastWriteTime -ge $started})
+        $reports=@(Get-ChildItem -LiteralPath $results -Filter "u3-${width}x${height}-$profile-*.json" | Where-Object {$_.LastWriteTime -ge $started})
         if($reports.Count -ne 4){throw 'No se completaron los cuatro puntos (minutos 2, 5, 9 y enjambre).'}
         foreach($report in $reports){
             $data=Get-Content -Raw $report.FullName | ConvertFrom-Json
             if(!$data.validRender -or $data.outputWidth -ne $width -or $data.outputHeight -ne $height){throw "Render/resolución inválidos: $($report.Name)"}
-            $summary+=[pscustomobject]@{salida="${width}x${height}";punto=$data.scenario;fps=[math]::Round($data.meanFps,1);p95ms=[math]::Round($data.p95,2);p99ms=[math]::Round($data.p99,2);enemigos="$($data.minEntities)-$($data.maxEntities)";tickMs=[math]::Round($data.tickMean,3);gpuMs=[math]::Round($data.gpuMean,2)}
+            if($dev -ne [bool]$data.development){throw "Tipo de build inesperado en $($report.Name)"}
+            $summary+=[pscustomobject]@{salida="${width}x${height}";perfil=$profile;punto=$data.scenario;fps=[math]::Round($data.meanFps,1);p95ms=[math]::Round($data.p95,2);p99ms=[math]::Round($data.p99,2);max=[math]::Round($data.max,2);lentos=$data.framesOverBudget;enemigos="$($data.minEntities)-$($data.maxEntities)";particulas=$data.particlesMax;voces=$data.voicesMax;sonidos="$($data.soundsPlayed)/$($data.soundsDropped)";gc=$data.gcCollections;gcB=[math]::Round($data.gcBytesPerFrame,0);tickMs=[math]::Round($data.tickMean,3);gpuMs=[math]::Round($data.gpuMean,2)}
         }
     }
-    $summary | Format-Table -AutoSize | Out-String | Write-Output
+    }
+    if($dev){Write-Output 'DIAGNÓSTICO DEVELOPMENT: no es el rendimiento de la build final.'}
+    $summary | Format-Table -AutoSize | Out-String -Width 400 | Write-Output
 } elseif($Action -eq 'visual') {
     $player=Join-Path $project 'Builds\U3\Mamporro-U3.exe'
     if(!(Test-Path -LiteralPath $player)){throw 'Primero genera la build U3.'}
