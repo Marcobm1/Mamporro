@@ -11,7 +11,7 @@ Antes de modificar código o documentación, lee:
 1. [`docs/INSTRUCCIONES_PROYECTO.md`](docs/INSTRUCCIONES_PROYECTO.md).
 2. [`docs/ESTADO_ACTUAL.md`](docs/ESTADO_ACTUAL.md).
 3. [`docs/CONTINUIDAD_AGENTES.md`](docs/CONTINUIDAD_AGENTES.md).
-4. [`docs/PROGRESO_U4.md`](docs/PROGRESO_U4.md) (checkpoint vigente) y cierre aprobado en [`docs/PROGRESO_U3.md`](docs/PROGRESO_U3.md).
+4. [`docs/PROGRESO_U5.md`](docs/PROGRESO_U5.md) (checkpoint vigente) y cierres aprobados en [`docs/PROGRESO_U4.md`](docs/PROGRESO_U4.md) y [`docs/PROGRESO_U3.md`](docs/PROGRESO_U3.md).
 5. [`docs/DECISIONES.md`](docs/DECISIONES.md) y [`docs/ESPECIFICACION.md`](docs/ESPECIFICACION.md).
 6. [`docs/MIGRACION_UNITY.md`](docs/MIGRACION_UNITY.md).
 7. [`README.md`](README.md) y [`unity/README.md`](unity/README.md).
@@ -28,7 +28,7 @@ Las decisiones posteriores concretan o sustituyen la especificación original. L
 - Unity: proyecto real en `unity/`, Unity 6.6 `6000.6.3f1`, Windows x64 Mono, URP 17.6.0, Input System 1.20.0, uGUI 2.6.0, Test Framework 1.8.0.
 - U1: implementado en `abe0a9b7f0b8c53f478b91c870341999df2ea073`, checkpoint `eb691b595eb247118075368430d34ed0a95735d1`; build y pruebas automáticas correctas y **aprobación manual del autor posterior al checkpoint**.
 - U2: aprobado por el autor el 29/09/2026 (`docs/PROGRESO_U2.md`).
-- **U3 aprobada manualmente el 04/10/2026. U4 autorizado para implementación el 04/10/2026.** Continuar por pasos verificables (`docs/PROGRESO_U4.md`).
+- **U3 y U4 aprobadas manualmente el 04/10/2026** (último cierre técnico U4: `3754e31`). **U5 en planificación, no autorizado**: no programar hasta la respuesta del autor (`docs/PROGRESO_U5.md`).
 - Codex CLI ya está instalado/verificado; no repetir la instalación.
 - Codex y Claude Code trabajan por turnos. El último checkpoint publicado manda sobre recuerdos de sesiones anteriores.
 
@@ -45,19 +45,19 @@ Decisiones, plan y criterios: `docs/PROGRESO_U3.md`.
 ## Forma de trabajar
 
 1. Antes de editar, comprueba rama, `git status --short --branch`, últimos commits, remoto y cambios locales. Haz `git fetch origin`; si el árbol está limpio y solo falta avanzar, usa `git pull --ff-only`. Conserva cambios del autor, de Unity y del agente anterior; no uses `reset --hard`, `git clean`, checkout destructivo ni reclonado para «arreglar» un árbol sucio.
-2. Lee el último apartado de relevo en `docs/PROGRESO_U4.md`. No asumas que Codex terminó todo lo planeado ni repitas trabajo sin comprobar commits y estado.
-3. U4 está autorizado para implementación el 04/10/2026. El plan y la política de importación resuelta están en `docs/PROGRESO_U4.md`; continuar dentro del alcance autorizado.
+2. Lee el último apartado de relevo en `docs/PROGRESO_U5.md`. No asumas que Codex terminó todo lo planeado ni repitas trabajo sin comprobar commits y estado.
+3. U5 está en planificación: plan, auditoría y dudas en `docs/PROGRESO_U5.md`. No implementar sin autorización; cuando llegue, un paso verificable cada vez y no empezar U6 sin la aprobación manual de U5.
 4. Mantén la base web y `unity/Docs/Reference/` como referencia. Nunca uses `--write` o cambies valores esperados para hacer pasar un port incorrecto.
 5. Implementa por piezas verificables. Código en inglés; comentarios, documentación y commits en español. No nombres modelos de IA en código ni commits.
 6. Verifica lo que realmente ejecutes. Distingue pruebas unitarias, Edit Mode, Play Mode, build y benchmark; un benchmark de lógica no equivale a FPS reales.
-7. Actualiza `docs/PROGRESO_U4.md` cuando cambie el punto de continuación y siempre antes de ceder el turno a Codex. Actualiza `README.md`, `docs/DECISIONES.md`, `docs/ESTADO_ACTUAL.md` y demás documentación cuando cambie el estado global o haya decisiones permanentes.
+7. Actualiza `docs/PROGRESO_U5.md` cuando cambie el punto de continuación y siempre antes de ceder el turno a Codex. Actualiza `README.md`, `docs/DECISIONES.md`, `docs/ESTADO_ACTUAL.md` y demás documentación cuando cambie el estado global o haya decisiones permanentes.
 8. Commits pequeños que compilen y pasen sus pruebas por separado; push directo a la rama. Sin PR.
 9. Si la sesión/tokens se acercan al límite, no empieces una pieza nueva: deja lo terminado verificado, commit/push cuando sea seguro, documenta cualquier cambio local no publicado y escribe un `Siguiente paso exacto` para Codex o para la siguiente sesión.
-10. Al cerrar U4, resume cambios, pruebas reales, decisiones y limitaciones; detente para la prueba manual del autor. U3 ya fue aprobada.
+10. Al cerrar U5, resume cambios, pruebas reales, decisiones y limitaciones; detente para la prueba manual del autor. U3 y U4 ya fueron aprobadas.
 
 ## Relevo a Codex
 
-Antes de terminar una sesión con trabajo relevante, `docs/PROGRESO_U4.md` debe indicar:
+Antes de terminar una sesión con trabajo relevante, `docs/PROGRESO_U5.md` debe indicar:
 
 - que la sesión fue realizada con Claude Code;
 - objetivo concreto abordado;
@@ -124,6 +124,6 @@ U1 validó una escena técnica con 300/500/750/1000 entidades, salida 1920×1080
 
 ## Mejoras confirmadas para después de validar la migración
 
-Mundo/estructuras mayores; mesetas y rampas más marcadas; escalada libre por paredes sin imponer trepada breve ni resistencia sin consultarlo; inicio con menos enemigos y crecimiento progresivo; más oro **de partida** de enemigos según tiempo/dificultad; acabado retro más profesional; iconos/ilustraciones originales; más enemigos, armas, tomos y personajes. No introducir estas mejoras dentro de U2 salvo un prototipo aislado aprobado expresamente.
+Mundo/estructuras mayores; mesetas y rampas más marcadas; escalada libre por paredes sin imponer trepada breve ni resistencia sin consultarlo; inicio con menos enemigos pero más resistentes y crecimiento progresivo; más oro **de partida** de enemigos según tiempo/dificultad; acabado retro más profesional; iconos/ilustraciones originales; más enemigos, armas, tomos y personajes. No introducir estas mejoras dentro de U2 salvo un prototipo aislado aprobado expresamente.
 
 Cámara contra estructuras, mando/remapeo, métricas locales adicionales y servicios Steam siguen siendo propuestas/etapas futuras, no funciones ya terminadas.

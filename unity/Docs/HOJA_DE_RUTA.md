@@ -1,6 +1,6 @@
 # Mejoras de MAMPORRO en Unity
 
-> Estado vigente en [ESTADO_ACTUAL](../../docs/ESTADO_ACTUAL.md): U1–U3 aprobados; aprobación manual U3 el 04/10/2026. [U4 autorizado para implementación el 04/10/2026](../../docs/PROGRESO_U4.md); continuar por pasos verificables.
+> Estado vigente en [ESTADO_ACTUAL](../../docs/ESTADO_ACTUAL.md): U1–U4 aprobados; U4 aprobada manualmente el 04/10/2026. [U5 en planificación](../../docs/PROGRESO_U5.md), no autorizado. Las mejoras de esta hoja empiezan después de U6.
 
 **Historial — U1 autorizado el 29/09/2026 y posteriormente aceptado:** prototipo técnico de movimiento, imagen y horda;
 seguimiento en [PROGRESO_U1](../../docs/PROGRESO_U1.md). La escalada libre, mundo
@@ -27,8 +27,8 @@ presupone reproducirlos. MAMPORRO mantiene nombres, arte y diseño propios.
 | P0 | Movimiento más ágil; subir, bajar y escalar paredes | Escalada libre confirmada por el autor (no limitarla a una trepada breve), junto con rampas, salto, deslizamiento y transición a bordes. Concretar controles y superficies. | Recorrido completo sin atascos, cámara legible y control al aterrizar; no quedar a salvo indefinidamente de la horda. |
 | P0 | Mundo y estructuras más grandes | Medir recorridos y densidad de lugares interesantes; ampliar mapa y edificios con rutas por suelo, tejados y desniveles. | Explorar ofrece decisiones y recompensas; el tamaño no añade largos trayectos vacíos. |
 | P0 | Colinas más cuadradas y rampas | Terreno low-poly con mesetas y cambios de nivel más marcados, rampas conectadas y bajadas claras. No asumir que debe ser un mundo de vóxeles/cubos. | Rutas de subida/bajada identificables; jugador y enemigos navegan desniveles sin atravesar geometría. |
-| P0 | Menos enemigos al principio; aumento progresivo | Separar introducción, crecimiento, presión alta y enjambre. Ajustar aparición, variedad y vida por separado, con límites de densidad. | Primeros minutos dejan aprender y explorar; aumenta la presión de forma perceptible sin picos involuntarios. Probar 5/10/15 minutos. |
-| P1 | Más monedas | Más oro de los enemigos durante la partida, confirmado por el autor; aumentar la recompensa progresivamente con tiempo y dificultad. Revisar frecuencia y cantidad frente al precio de baúles. | Se abren más oportunidades de compra sin que todas sean automáticas; medir tiempo al primer baúl y baúles por partida. |
+| P0 | Menos enemigos al principio, pero más resistentes; aumento progresivo | Confirmado de nuevo tras probar U4 (04/10/2026): menos enemigos iniciales, individualmente más resistentes, y crecimiento progresivo de la cantidad. Separar introducción, crecimiento, presión alta y enjambre; ajustar aparición, variedad y vida por separado, con límites de densidad. Sin cifras fijadas (número, multiplicador de vida, curva ni tiempos). | Primeros minutos dejan aprender y explorar; aumenta la presión de forma perceptible sin picos involuntarios. Probar 5/10/15 minutos. |
+| P1 | Más oro de partida | Confirmado de nuevo tras probar U4: los enemigos sueltan demasiado poco oro **de partida** (no Calderilla del Caos). Bastante más oro, con cantidad/frecuencia que pueda crecer con tiempo y dificultad, y más oportunidades reales de abrir baúles. Revisar frecuencia y cantidad frente al precio de baúles; sin cambiar aún probabilidades, cantidades, precios ni curvas. | Se abren más oportunidades de compra sin que todas sean automáticas; medir tiempo al primer baúl y baúles por partida. |
 | P1 | Visual más profesional | Guía de arte: paleta, siluetas, iluminación, materiales, animaciones, composición y jerarquía del HUD. | Personaje, enemigos, proyectiles y recompensas se distinguen en movimiento y con horda; coherencia ES/EN y entre resoluciones. |
 | P1 | Imágenes para tomos, armas, etc. | Familia original de iconos para armas, tomos, objetos, personajes y recompensas. El autor autoriza ilustraciones e iconos originales en archivos; se amplía para Unity la restricción de todo por código. | Se reconoce cada elemento en cartas y HUD; rareza no depende solo del color; estilo coherente y legibilidad a tamaño pequeño. |
 | P2 | Más enemigos | Añadir roles distintos: enemigos que cierren rutas, obliguen a desplazarse o amenacen alturas, con avisos y debilidades. | Cada tipo cambia decisiones y tiene respuesta clara; no se limita a cambiar vida o color. |
@@ -78,7 +78,7 @@ Fuentes oficiales consultadas el 28/09/2026:
   poder evaluar después las rampas/escalada; cualquier variante de movimiento
   requiere su plan concreto y aceptación, conservando una escena de referencia.
 - **U2 aprobado por el autor:** núcleo y combate equivalentes en escenario controlado.
-- **U3 aprobado; U4 autorizado; U5–U6 futuros:** trasladar y validar los sistemas restantes. Las diferencias
+- **U3 y U4 aprobados; U5 en planificación; U6 futuro:** trasladar y validar los sistemas restantes. Las diferencias
   intencionadas se documentarán en vez de hacer pasar un cambio de diseño por
   un fallo del port. No ampliar el catálogo durante la migración.
 - **Después de la base Unity aprobada:** bloques P0, luego P1 y lotes pequeños P2.
@@ -110,3 +110,7 @@ U3 ha sido aprobada como base funcional. Las observaciones de presentación y di
 - Posterior expansión de enemigos, armas, tomos, personajes e iconos/ilustraciones originales, junto con las mejoras ya registradas.
 
 Megabonk sirve como referencia de escala, verticalidad y lectura espacial, manteniendo identidad, arte y diseño propios de MAMPORRO. No copiar arte, mapas, assets ni diseño exacto. Esta dirección no autoriza implementar las mejoras durante U4.
+
+## Ampliación tras aprobar U4 (04/10/2026)
+
+El autor confirma la dirección completa para después de terminar la migración (U6): mundo y estructuras notablemente mayores; terreno más rectangular/geométrico, grandes mesetas, rampas y más verticalidad; escalada libre; menos enemigos al inicio pero más resistentes, con aumento progresivo; más oro de partida; visual retro bastante más profesional; animaciones; arte e iconos originales; más enemigos, armas, tomos y personajes. Megabonk es referencia de escala, verticalidad, geometría/lectura espacial y agilidad, sin copiar arte, mapas, modelos, assets, contenido ni diseño exacto. Las cifras de balance se decidirán con pruebas en su bloque. U5 no las incluye.

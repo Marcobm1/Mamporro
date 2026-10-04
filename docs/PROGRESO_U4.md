@@ -1,15 +1,15 @@
 # Checkpoint U4 — meta, UI, opciones y traslado de guardados
 
-Estado: **IMPLEMENTADO Y VERIFICADO el 04/10/2026; pendiente de la prueba manual y la aprobación del autor** (implementación autorizada el 04/10/2026). Política de recuperación revisable y estricta aprobada por el autor. Contrato en [CONTRATO_GUARDADO_U4](CONTRATO_GUARDADO_U4.md). U3 aprobada manualmente como base funcional el mismo día; último cierre técnico previo: `83246ebfd873b0c5d23611a1d557f83096180217`.
+Estado: **IMPLEMENTADO, VERIFICADO Y APROBADO MANUALMENTE POR EL AUTOR el 04/10/2026.** Último cierre técnico: `3754e31be16904207fd2ee25340bfa1ca095f181`. Checkpoint vigente: [PROGRESO_U5](PROGRESO_U5.md). Política de recuperación revisable y estricta aprobada por el autor. Contrato en [CONTRATO_GUARDADO_U4](CONTRATO_GUARDADO_U4.md). U3 aprobada manualmente como base funcional el mismo día; último cierre técnico previo: `83246ebfd873b0c5d23611a1d557f83096180217`.
 
 ## Cómo retomar
 
 - **Paso 1 publicado:** `fabaf2a64f5ff6c34d3592a25a6594f066130208`. Paso 2 en «Porta las reglas meta y la liquidación de U4»; localizar hash con `git log -1 --format="%H %s" -- unity/Assets/Mamporro/Core/MetaRules.cs`.
-- **Paso actual:** ninguno. U4 cerrado técnicamente (pasos 1–9); esperando la prueba manual del autor («Checkpoint al terminar U4»).
+- **Paso actual:** ninguno. U4 cerrada (pasos 1–9) y aprobada por el autor el 04/10/2026.
 - **Terminado:** pasos 1–9. Paso 4 `b734b49` («Exporta el progreso web para Unity»; guía en [EXPORTACION_U4](EXPORTACION_U4.md)). Paso 5 `86da4be` («Importa en Unity el progreso exportado desde la web»). Paso 6 `f266b94` («Conecta el progreso persistente con las partidas»). Paso 7 `823fc7b` («Añade los menús completos ES/EN de U4»). Paso 8 `dda95f0` («Completa las opciones y la pausa de U4»). Paso 9 en «Cierra U4 y prepara la prueba manual» (hash: `git log -1 --format="%H %s" -- docs/PROGRESO_U4.md`). Contrato `fabaf2a`, meta `dd994b8`, validador `d3927ff`; almacenamiento en «Guarda el progreso de U4 con copia y recuperación» (hash: `git log -1 --format="%H %s" -- unity/Assets/Mamporro/Persistence/ProgressStore.cs`). Regresión final del paso 9 (04/10/2026): web 232/232, contrato 5/5, verificador histórico y navegador real correctos, Edit Mode 367/367, Play Mode 29/29, build Windows x64 Mono, visual de 19 capturas y ensayo 8/8; sin cambios en `src/` desde `b734b49`.
 - **A medias:** ninguna pieza rota. El progreso gobierna ya la partida normal (carga, personaje, filtros, extras, misiones, liquidación única y guardado), con pantallas técnicas de inicio y resultados; menús completos ES/EN (paso 7), las 14 opciones en el menú y la pausa (paso 8) y cierre (paso 9) hechos.
 - **Sin commit a propósito:** siete ajustes Unity de «Cambios locales excluidos».
-- **Siguiente paso exacto:** prueba manual del autor según «Instrucciones de prueba manual (autor)» del cierre. Corregir solo lo que encuentre. **No iniciar U5** hasta su aprobación.
+- **Siguiente paso exacto:** ninguno en U4. Continuar en [PROGRESO_U5](PROGRESO_U5.md) (U5 en planificación, no autorizado para implementación).
 - **Autorización:** continuar los pasos 2–9 sin nuevas confirmaciones generales. Detenerse solo ante decisión nueva importante y, al terminar U4, para prueba manual del autor.
 
 Comprobación desde CMD:
@@ -279,7 +279,7 @@ Conservar sin publicar ni restaurar:
 
 ## Checkpoint al terminar U4
 
-**Implementado y verificado el 04/10/2026; pendiente de la prueba manual y la aprobación del autor.** No iniciar U5 hasta esa aprobación.
+**Implementado y verificado el 04/10/2026; aprobado manualmente por el autor el 04/10/2026.** La build funciona correctamente para el alcance de U4.
 
 - **Commits de U4:** `799f284` (aprobación U3 y plan), `fabaf2a` (contrato y corpus), `dd994b8` (reglas meta), `d3927ff` (validación), `777bba8` (almacenamiento y recuperación), `b734b49` (exportación web), `86da4be` (importación Unity), `f266b94` (meta ↔ partida), `823fc7b` (menús ES/EN), `dda95f0` (opciones y pausa) y el commit de este cierre, «Cierra U4 y prepara la prueba manual».
 - **Qué hace U4:** progreso permanente equivalente a la web: Calderilla del Caos, tienda (4 compras, 3 mejoras de usos), 2 personajes, desbloqueos de armas y objetos aplicados a todas las ofertas, ocho misiones, liquidación única al ganar o perder (sin premio con trucos ni al abandonar), guardado seguro (`progress.json` + `progress.backup.json`, temporal, sustitución y relectura) con avisos y recuperación confirmada, menús ES/EN, las 14 opciones en el menú y la pausa, exportación web (`mamporro-progreso.json`) e importación en Unity que sustituye (nunca suma), con revisión previa, cancelación y copia de seguridad.
@@ -326,4 +326,6 @@ Sin `-u4-save-dir` usa el guardado real. La build ya existe; si falta, `scripts\
 
 Anota fecha, monitor/resolución, semilla, duración, personaje y cualquier diferencia. La aprobación de esta prueba cierra U4; U5 no empieza antes.
 
-- **Aprobación del autor:** pendiente.
+- **Aprobación del autor:** recibida el 04/10/2026 tras la prueba manual («U4 APROBADA MANUALMENTE»). Último cierre técnico `3754e31`.
+- **Observaciones del autor durante la prueba (no son fallos de U4):** dos mejoras futuras de balance (menos enemigos al inicio pero más resistentes, con crecimiento progresivo; más oro de partida), registradas en [DECISIONES](DECISIONES.md) y [HOJA_DE_RUTA](../unity/Docs/HOJA_DE_RUTA.md). No se implementan en U5 sin autorización expresa.
+- **Siguiente bloque:** U5 (audio, pulido y validación de equivalencia), en planificación; véase [PROGRESO_U5](PROGRESO_U5.md).

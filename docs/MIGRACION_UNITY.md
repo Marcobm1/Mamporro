@@ -1,6 +1,6 @@
 # Migración propuesta a Unity
 
-> Estado vigente en [ESTADO_ACTUAL](ESTADO_ACTUAL.md): U1–U3 aprobados; aprobación manual U3 el 04/10/2026. [U4 autorizado para implementación el 04/10/2026](PROGRESO_U4.md); política de importación estricta aprobada. Las autorizaciones antiguas que figuran debajo son históricas.
+> Estado vigente en [ESTADO_ACTUAL](ESTADO_ACTUAL.md): U1–U4 aprobados; [U4 aprobada manualmente el 04/10/2026](PROGRESO_U4.md#checkpoint-al-terminar-u4). [U5 en planificación](PROGRESO_U5.md), no autorizado. Las autorizaciones antiguas que figuran debajo son históricas.
 
 ## Historial de preparación (sustituido por el checkpoint U2)
 
@@ -147,9 +147,9 @@ JavaScript usa números de doble precisión y Unity suele usar `float` en geomet
 el ruido procedural y la física también pueden divergir. Definir tolerancias,
 conservar enteros/operaciones del RNG y no prometer mapas idénticos sin pruebas.
 
-### U4. Meta, UI, opciones y traslado de guardados
+### U4. Meta, UI, opciones y traslado de guardados — aprobado
 
-**04/10/2026:** implementación autorizada; contrato y corpus en el paso 1. Plan y criterios de seguridad en [PROGRESO_U4](PROGRESO_U4.md). Validar, respaldar y pedir sustitución explícita si existe guardado Unity; nunca fusionar progresos. Excepción web limitada al exportador, sin tocar reglas/balance ni las referencias congeladas.
+**04/10/2026:** implementada, verificada y aprobada manualmente por el autor (último cierre técnico `3754e31`). Contrato y corpus en el paso 1. Plan y criterios de seguridad en [PROGRESO_U4](PROGRESO_U4.md). Validar, respaldar y pedir sustitución explícita si existe guardado Unity; nunca fusionar progresos. Excepción web limitada al exportador, sin tocar reglas/balance ni las referencias congeladas.
 
 - Rehacer menú, preparación, personajes, tienda, ocho misiones y resultados ES/EN.
 - Portar las reglas de moneda, compras, desbloqueos y liquidación única.
@@ -164,6 +164,8 @@ conservar enteros/operaciones del RNG y no prometer mapas idénticos sin pruebas
 extra; todas las pantallas y opciones se usan en una build Windows real.
 
 ### U5. Audio, pulido y validación de equivalencia
+
+**04/10/2026:** siguiente bloque propuesto, en planificación; auditoría, plan por pasos y dudas en [PROGRESO_U5](PROGRESO_U5.md). No autorizado. No incluye las mejoras de balance pedidas tras U4 (menos enemigos iniciales más resistentes, más oro de partida), que van después de U6.
 
 - Portar síntesis y reproducción, presupuestos de voces/partículas, cámara y
   opciones de reducción de efectos; conservar avisos de combate legibles.

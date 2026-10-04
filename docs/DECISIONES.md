@@ -1,6 +1,6 @@
 # Decisiones acordadas
 
-**Estado actual:** U1–U3 aprobados; U3 aprobada manualmente el 04/10/2026. U4 autorizado para implementación el 04/10/2026; véase la última entrada y [PROGRESO_U4](PROGRESO_U4.md). Las autorizaciones anteriores son históricas.
+**Estado actual:** U1–U4 aprobados; U4 aprobada manualmente el 04/10/2026. U5 en planificación, no autorizado; véase la última entrada y [PROGRESO_U5](PROGRESO_U5.md). Las autorizaciones anteriores son históricas.
 
 Registro de lo que se ha decidido durante el desarrollo, además de la
 [especificación original](ESPECIFICACION.md). Cuando esto la concreta o la
@@ -621,3 +621,14 @@ Aceptadas por el autor las del paso 7; las del paso 8 las toma Claude Code dentr
 - **Atajos QA F1/F2/F9** (paso 8): cambian las mismas opciones guardadas (resolución interna, dithering, vértices), sin valores activos distintos de los guardados. F3, F6 y F8 no son opciones y siguen igual. Las pruebas usan carpetas temporales.
 - **Fallo al guardar una opción** (paso 8): el cambio se aplica solo en la sesión, se avisa y el último guardado válido no se toca, como la web sin almacenamiento. Las compras siguen sin aplicarse si no se guardan.
 - **Efectos pendientes de U5** (paso 8): volúmenes y silencio, «Reducir partículas» y «Sacudidas de cámara» se guardan y se muestran, pero Unity aún no tiene audio, partículas decorativas ni sacudidas que gobernar. Los destellos sí gobiernan los efectos existentes: el rojo del HUD y el blanco de enemigos golpeados.
+
+## Aprobación manual de U4 y mejoras futuras de balance (04/10/2026)
+
+Decisión del autor tras la prueba manual: **U4 aprobada** el 04/10/2026; la build funciona correctamente para su alcance. Último cierre técnico `3754e31`. U5 (audio, pulido y validación de equivalencia) pasa a ser el siguiente bloque propuesto; queda en planificación ([PROGRESO_U5](PROGRESO_U5.md)) y no está autorizado ni implementado.
+
+Dos mejoras de balance pedidas por el autor durante la prueba. **No son fallos de U4 y no se implementan en U5** salvo autorización expresa; se decidirán en el bloque posterior de balance mediante pruebas:
+
+- **Enemigos al principio:** menos enemigos al inicio de la partida, pero **más resistentes individualmente**; después, crecimiento progresivo de la cantidad. Objetivo: menos saturación en los primeros minutos y más espacio para explorar y aprender, sin que los enemigos iniciales sean irrelevantes. Sin cifras: no se fijan número de enemigos, multiplicador de vida, curva ni tiempos.
+- **Oro de partida:** los enemigos sueltan demasiado poco oro. Más adelante deben soltar bastante más, con cantidad/frecuencia que pueda crecer con el tiempo y la dificultad, y más oportunidades reales de abrir baúles. Es **oro de la partida, no Calderilla del Caos**. No cambiar todavía probabilidades, cantidades, precios ni curvas.
+
+Dirección futura completa confirmada para después de terminar la migración (U6): mundo y estructuras notablemente mayores; terreno más rectangular/geométrico con grandes mesetas, rampas y más verticalidad; escalada libre; menos enemigos al inicio y más resistentes, con aumento progresivo; más oro de partida; acabado retro bastante más profesional; animaciones; arte e iconos originales; más enemigos, armas, tomos y personajes. Megabonk es referencia de escala, verticalidad, lectura espacial/geometría y agilidad; no copiar arte, mapas, modelos, assets, contenido ni diseño exacto. MAMPORRO mantiene identidad propia.

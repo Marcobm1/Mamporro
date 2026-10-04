@@ -10,7 +10,7 @@ Codex y Claude Code trabajan por turnos sobre la misma rama. **No trabajan a la 
 1. [`docs/INSTRUCCIONES_PROYECTO.md`](docs/INSTRUCCIONES_PROYECTO.md) — reglas compartidas de trabajo.
 2. [`docs/ESTADO_ACTUAL.md`](docs/ESTADO_ACTUAL.md) — punto real de continuación.
 3. [`docs/CONTINUIDAD_AGENTES.md`](docs/CONTINUIDAD_AGENTES.md) — protocolo obligatorio de relevo Codex ↔ Claude Code.
-4. [`docs/PROGRESO_U4.md`](docs/PROGRESO_U4.md) — checkpoint vigente; implementación autorizada el 04/10/2026. Cierre aprobado de U3 en `docs/PROGRESO_U3.md`.
+4. [`docs/PROGRESO_U5.md`](docs/PROGRESO_U5.md) — checkpoint vigente; U5 en planificación, no autorizado. Cierres aprobados de U3 y U4 en `docs/PROGRESO_U3.md` y `docs/PROGRESO_U4.md`.
 5. [`docs/DECISIONES.md`](docs/DECISIONES.md) — decisiones históricas; las posteriores prevalecen.
 6. [`docs/MIGRACION_UNITY.md`](docs/MIGRACION_UNITY.md) — plan U0–U6.
 7. [`README.md`](README.md) y [`unity/README.md`](unity/README.md) — uso de la web y del proyecto Unity.
@@ -23,7 +23,7 @@ Codex y Claude Code trabajan por turnos sobre la misma rama. **No trabajan a la 
 - U0 preparado y conservado como referencia.
 - **U1 implementado, probado por el autor y aprobado el 29/09/2026.** Implementación publicada en `abe0a9b7f0b8c53f478b91c870341999df2ea073`; checkpoint publicado en `eb691b595eb247118075368430d34ed0a95735d1`.
 - U2 aprobado por el autor el 29/09/2026.
-- **U3 aprobada manualmente el 04/10/2026. U4 autorizado para implementación el 04/10/2026.** Continuar por pasos verificables según el checkpoint. Plan y checkpoint en `docs/PROGRESO_U4.md`.
+- **U3 y U4 aprobadas manualmente el 04/10/2026** (último cierre técnico U4: `3754e31`). **U5 en planificación, no autorizado**: plan y dudas en `docs/PROGRESO_U5.md`.
 - Unity confirmado: 6.6 / `6000.6.3f1`, Windows x64 Mono, URP 17.6.0, Input System 1.20.0, uGUI 2.6.0 y Test Framework 1.8.0.
 - Codex CLI ya está instalado y verificado en el equipo del autor. No vuelvas a tratar su instalación como pendiente.
 
@@ -42,12 +42,12 @@ Si el árbol está limpio y el remoto va por delante, actualiza solo con `git pu
 
 Conserva cualquier cambio local. El cierre de U1 registró cambios posteriores generados por Unity fuera de los commits publicados; **no uses `reset --hard`, `clean`, force-push ni reclonado para ocultarlos**. Si hay conflicto real con el trabajo de U2, informa y resuélvelo sin borrar trabajo del autor o de Claude Code.
 
-Comprueba en `docs/PROGRESO_U4.md` el último relevo antes de editar. No supongas que el agente anterior completó todo lo que tenía previsto.
+Comprueba en `docs/PROGRESO_U5.md` el último relevo antes de editar. No supongas que el agente anterior completó todo lo que tenía previsto.
 
 ## Al terminar o ceder el turno
 
-Antes de que termine la sesión de Codex, actualiza `docs/PROGRESO_U4.md` con lo realmente hecho, pruebas ejecutadas, commits/push, cambios locales pendientes, limitaciones y el **siguiente paso exacto** para Claude Code o para la siguiente sesión de Codex.
+Antes de que termine la sesión de Codex, actualiza `docs/PROGRESO_U5.md` con lo realmente hecho, pruebas ejecutadas, commits/push, cambios locales pendientes, limitaciones y el **siguiente paso exacto** para Claude Code o para la siguiente sesión de Codex.
 
 Si una pieza está completa y verificable, haz commit pequeño y push antes del relevo. No crees un commit roto solo para transferir contexto. Si queda trabajo local no publicable, descríbelo con precisión y no lo borres.
 
-Trabaja un bloque cada vez. No abras Pull Request salvo petición expresa. Los commits van en español, pequeños y verificables. U4 está autorizado: avanzar por pasos verificables y actualizar su checkpoint. No empezar mejoras posmigración ni servicios Steam.
+Trabaja un bloque cada vez. No abras Pull Request salvo petición expresa. Los commits van en español, pequeños y verificables. U5 está en planificación: no implementarlo sin autorización; después, pasos verificables y checkpoint tras cada uno; no empezar U6 sin la aprobación manual de U5. No empezar mejoras posmigración ni servicios Steam.

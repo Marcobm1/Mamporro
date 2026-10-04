@@ -1,6 +1,6 @@
 # MAMPORRO
 
-> Estado vigente: U1–U3 aprobados. U3 recibió aprobación manual el 04/10/2026. [Cierre U3](docs/PROGRESO_U3.md#checkpoint-al-terminar-u3). [U4 implementado y verificado el 04/10/2026, pendiente de la prueba manual del autor](docs/PROGRESO_U4.md#checkpoint-al-terminar-u4). El contenido siguiente describe la web aprobada; [guía Unity](unity/README.md).
+> Estado vigente: U1–U3 aprobados. U3 recibió aprobación manual el 04/10/2026. [Cierre U3](docs/PROGRESO_U3.md#checkpoint-al-terminar-u3). [U4 aprobada manualmente el 04/10/2026](docs/PROGRESO_U4.md#checkpoint-al-terminar-u4). [U5 en planificación](docs/PROGRESO_U5.md). El contenido siguiente describe la web aprobada; [guía Unity](unity/README.md).
 
 Roguelike 3D de supervivencia contra hordas ("bullet heaven") con estética retro
 tipo PS1, hecho con Three.js + TypeScript + Vite. Todo el contenido (geometría,
@@ -680,11 +680,11 @@ npm run preview
 
 ## Migración a Unity y futuro del juego
 
-**Estado vigente (04/10/2026): U1–U3 aprobados; U4 implementado y verificado, pendiente de la prueba manual del autor.** Proyecto en
+**Estado vigente (04/10/2026): U1–U4 aprobados; U5 (audio, pulido y equivalencia) en planificación, no autorizado.** Proyecto en
 `unity/`, Editor 6000.6.3f1, Windows x64 Mono, URP 17.6.0 e Input System 1.20.0.
 La licencia, importación, compilación, escena en Play Mode y generación de build
 ya se han probado. [Instrucciones Unity](unity/README.md) y
-[plan y checkpoint actual](docs/PROGRESO_U4.md). El historial de U0 se conserva en
+[plan y checkpoint actual](docs/PROGRESO_U5.md). El historial de U0 se conserva en
 los documentos de decisiones y referencia.
 
 Los seis hitos web están aprobados. Destino inicial Unity: **Windows de

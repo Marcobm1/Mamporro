@@ -42,4 +42,4 @@ APIs contrastadas: [File.Replace](https://learn.microsoft.com/en-us/dotnet/api/s
 
 `ProgressFileTests`: 5 casos sobre archivos reales en un directorio temporal único. Cubren guardar/cargar/backup/recuperación, exclusión y límite de lectura, rutas y creación exclusiva, importar dos veces conservando original y backup, y principal bloqueado por otra apertura. La limpieza comprueba directorio absoluto y prefijo antes de eliminar exclusivamente el directorio de esa prueba.
 
-Resultados, comandos, fechas y rutas de evidencia en [PROGRESO_U4](PROGRESO_U4.md). La integración con aplicación/menús y la prueba manual final de U4 siguen pendientes.
+Resultados, comandos, fechas y rutas de evidencia en [PROGRESO_U4](PROGRESO_U4.md). Integración con aplicación/menús completada; U4 aprobada manualmente el 04/10/2026.
