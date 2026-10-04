@@ -4,12 +4,12 @@ Estado: **IMPLEMENTACIÓN AUTORIZADA Y EN CURSO desde el 04/10/2026.** Plan apro
 
 ## Cómo retomar
 
-- **Punto de partida:** `3754e31` (U4 aprobada). Plan en `31711bf` («Registra la aprobación de U4 y planifica U5»). Paso 1 `e7c9933` («Porta la síntesis de audio y el presupuesto de voces de U5»). Paso 2 `6e154ec` («Añade el motor de audio de U5»). Paso 3 `85f7a1b` («Conecta los sucesos de la partida al sonido de U5»). Paso 4 `22821d0` («Añade las partículas decorativas de U5»). Paso 5 en «Añade los números de daño de U5» (hash: `git log -1 --format="%H %s" -- unity/Assets/Mamporro/Core/Effects/DamageNumbers.cs`).
-- **Paso actual:** 6, cámara, sacudida y destellos (sin empezar).
-- **Terminado:** pasos 1–5. Último Edit Mode 392/392, Play Mode 35/35, build y visual con medida de audio (04/10/2026).
+- **Punto de partida:** `3754e31` (U4 aprobada). Plan en `31711bf` («Registra la aprobación de U4 y planifica U5»). Paso 1 `e7c9933` («Porta la síntesis de audio y el presupuesto de voces de U5»). Paso 2 `6e154ec` («Añade el motor de audio de U5»). Paso 3 `85f7a1b` («Conecta los sucesos de la partida al sonido de U5»). Paso 4 `22821d0` («Añade las partículas decorativas de U5»). Paso 5 `1a7d744` («Añade los números de daño de U5»). Paso 6 en «Porta la cámara, la sacudida y los destellos de U5» (hash: `git log -1 --format="%H %s" -- unity/Assets/Mamporro/U3/RunRenderer.cs`).
+- **Paso actual:** 7, rendimiento representativo (sin empezar).
+- **Terminado:** pasos 1–6. Último Edit Mode 392/392, Play Mode 36/36, build y visual con medida de audio (04/10/2026).
 - **A medias:** nada.
 - **Sin commit a propósito:** siete ajustes Unity de «Cambios locales excluidos».
-- **Siguiente paso exacto:** paso 6: `CameraRig` de la web en `U3Game.LateUpdate` (brazo de 6,2 m recorrido en pasos contra el terreno con margen 0,35 y mínimo 1,1, acercamiento inmediato y recuperación suave `damp(4)`; pivote 1,9/1,2 con `damp(8)` al deslizarse; FOV 70 + 12 × exceso de velocidad con `damp(4)`; sacudida: trauma 0–1, desplazamiento ±trauma²·0,3 m, decae 2,5/s, desactivada y a 0 sin la opción; golpe recibido 0,45, aparición del jefe 0,8, culetazo 1 cerca (< 2,5 radios) o 0,4, bata 0,7); escala de destello de enemigos élite 0,6 y jefe 0,3; parpadeo del jugador a 16 Hz mientras es invulnerable, sujeto a «Destellos de daño»; leer `src/render/CameraRig.ts` y `src/data/config.ts` (`CAMERA_CONFIG`).
+- **Siguiente paso exacto:** paso 7: ampliar `U3Benchmark` (condiciones representativas: al empezar, armas simultáneas concedidas por QA; audio, partículas normales, números y sacudida activos) con contadores por punto: partículas activas, números, voces activas, sonidos concedidos/descartados, proyectiles propios/enemigos, gemas/monedas; registro de fotogramas > 16,67 ms con marca de lo que ocurrió (sucesos U5 del fotograma) para correlacionar picos; ensayo principal `scripts\u3.cmd benchmark` (build normal, 1920×1080 y 2560×1440, interna 360); pasada separada **diagnóstico Development** (build de desarrollo en otra carpeta, GC por fotograma con `ProfilerRecorder`, memoria y GPU con `FrameTimingManager` solo si da valores válidos; nunca mezclada con el ensayo principal).
 - **Autorización:** pasos 1–9 seguidos, con checkpoint, pruebas, commit y push tras cada pieza. Detenerse solo ante una decisión nueva importante de diseño/arquitectura (o si el compresor propio resulta inestable, con latencia o coste inesperado) y al terminar U5.
 
 Comprobación desde CMD:
@@ -240,6 +240,17 @@ Conservar sin publicar ni restaurar:
 - **Commit/push:** «Añade los números de daño de U5»; fetch previo y push normal si el remoto sigue en `22821d0`.
 - **Árbol al terminar:** solo los siete ajustes Unity excluidos.
 - **Siguiente paso exacto:** paso 6 (ver «Cómo retomar»).
+
+### 04/10/2026 — paso 6: cámara, sacudida y destellos — Claude Code
+
+- **Punto de partida:** `1a7d744` (paso 5 publicado); solo los siete ajustes Unity excluidos.
+- **Trabajo:** `U3Game.UpdateCamera` = `CameraRig.update` web: brazo de 6,2 m recorrido en 16 pasos desde el pivote; si el terreno (con margen 0,35) lo corta, la cámara se acerca de golpe (mínimo 1,1 m) y se aleja con `damp(4)`; suelo bajo la cámara; pivote 1,9 m (1,2 al deslizarse) suavizado con `damp(8)`; FOV 70 + 12 × exceso de velocidad sobre la normal con `damp(4)`; mirada a pivote + dirección. Inclinación y límites web (−0,3 rad al empezar, −1,25…0,55 rad, −0,22 en el menú con `damp(2)`); antes eran 20° y −25…70°. Sacudida (`Shake`): trauma 0–1, desplazamiento ±trauma²·0,3 m con aleatoriedad visual propia, decae 2,5/s; golpe recibido 0,45, aparición del jefe 0,8, culetazo 1 a menos de 2,5 radios (0,4 más lejos), bata 0,7; sin «Sacudidas de cámara» no acumula y el trauma vuelve a 0. Destellos: escala web en enemigos (élite 0,6, jefe 0,3) sobre el umbral del destello blanco; parpadeo del jugador invulnerable a 16 Hz; ambos, y el rojo del HUD, solo con «Destellos de daño». Telegrafiados sin cambios (no dependen de ninguna opción). La cámara solo choca con el terreno, como la web; no hay cámara nueva contra estructuras.
+- **Limitación:** el destello del jefe en la web es una mezcla del 30 % con blanco; con la paleta fija del render de combate, 0,3 no supera el umbral y el jefe no destella en blanco. Se documenta como diferencia menor de presentación.
+- **Pruebas nuevas:** Play (1, `CameraArmFovShakeAndFlashesFollowTheWebAndTheOptions`): inclinación inicial y límites web, brazo de 6,2 m; trauma 0,45 al recibir un golpe y su caída; opción desactivada (trauma 0, sin acumular) y tope 1; brazo acortado contra el terreno al mirar arriba (≥ 1,1) y recuperación gradual; FOV ≈ 82 a gran velocidad; parpadeo con la opción y ninguno sin ella, sin destello rojo.
+- **Pruebas ejecutadas (04/10/2026):** `scripts\u3.cmd edit` **392/392**; `scripts\u3.cmd play` **36/36** (una pasada 35/36 por un signo del ratón en la propia prueba); `scripts\u3.cmd build` correcta; `scripts\u3.cmd visual` 19 capturas + audio correcto; cámara de juego revisada en «reinicio».
+- **Commit/push:** «Porta la cámara, la sacudida y los destellos de U5»; fetch previo y push normal si el remoto sigue en `1a7d744`.
+- **Árbol al terminar:** solo los siete ajustes Unity excluidos.
+- **Siguiente paso exacto:** paso 7 (ver «Cómo retomar»).
 
 ## Checkpoint al terminar U5
 

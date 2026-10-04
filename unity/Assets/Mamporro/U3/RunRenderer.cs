@@ -46,7 +46,8 @@ namespace Mamporro.U3
             float alpha=session.Paused?1:Mathf.Clamp01((Time.time-Time.fixedTime)/Time.fixedDeltaTime);
             for(int i=0;i<e.Count;i++){
                 var d=e.Def(i);Vector3 p=new Vector3(Mathf.Lerp(e.Px[i],e.X[i],alpha),Mathf.Lerp(e.Py[i],e.Y[i],alpha),Mathf.Lerp(e.Pz[i],e.Z[i],alpha));
-                var rot=Quaternion.Euler(0,e.Heading[i]*Mathf.Rad2Deg,0);int color=session.Settings.flashes&&e.Flash[i]>.3f?10:e.Type[i];
+                var rot=Quaternion.Euler(0,e.Heading[i]*Mathf.Rad2Deg,0);// Destello blanco al recibir un golpe (escala web: élite 0,6, jefe 0,3), solo con «Destellos de daño».
+                float flash=e.Flash[i]*(d.behavior=="boss"?.3f:d.behavior=="charger"?.6f:1f);int color=session.Settings.flashes&&flash>.3f?10:e.Type[i];
                 Box(color,p+Vector3.up*(float)d.height*.5f,new Vector3((float)d.radius*1.7f,(float)d.height,(float)d.radius*1.5f),rot);
                 Box(10,p+Vector3.up*(float)d.height*.75f+rot*Vector3.back*(float)d.radius*.7f,new Vector3((float)d.radius*.8f,.12f,.12f),rot);
                 // Telegrafiado (RunView.ts): embestida de la rata durante su preparación.

@@ -57,15 +57,15 @@ namespace Mamporro.U3
                     int special=Special(f.Code);audio.Play(special==2?blast:death);
                     Particles.Burst(f.X,f.Y+Catalog.Enemies[f.Code].height*.5,f.Z,special==2?80:special==1?24:12,Debris[f.Code],5,.14,.7,2);break;}
                 case FeedbackKind.EnemySpawned:Particles.Burst(f.X,f.Y+.2,f.Z,5,Dust,1.8,.28,.5,0,-1);break;
-                case FeedbackKind.PlayerHit:audio.Play(hurt);Numbers.Spawn(p.X,p.Y+2,p.Z,f.Value,-1);break;
+                case FeedbackKind.PlayerHit:audio.Play(hurt);game.Shake(.45f);Numbers.Spawn(p.X,p.Y+2,p.Z,f.Value,-1);break;
                 case FeedbackKind.EnemyShot:Particles.Burst(f.X,f.Y,f.Z,3,PipaColors,1.5,.08,.35);break;
                 case FeedbackKind.LevelUp:audio.Play(level);Particles.Burst(p.X,p.Y+1,p.Z,24,LevelColors,4,.12,.9,3,6);break;
                 case FeedbackKind.Shield:audio.Play(shield);Particles.Burst(p.X,p.Y+1,p.Z,18,ShieldColors,3,.14,.45);break;
                 case FeedbackKind.ItemGained:audio.Play(reward);break;
                 case FeedbackKind.ChestOpened:audio.Play(reward);Particles.Burst(f.X,f.Y,f.Z,26,ChestColors,4,.12,.9,4,8);break;
-                case FeedbackKind.BossSpawned:audio.Play(boss);Particles.Burst(f.X,f.Y+1,f.Z,60,BossColors,7,.4,1.4,3,3);break;
+                case FeedbackKind.BossSpawned:audio.Play(boss);game.Shake(.8f);Particles.Burst(f.X,f.Y+1,f.Z,60,BossColors,7,.4,1.4,3,3);break;
                 case FeedbackKind.BossSlam:
-                    audio.Play(blast);
+                    audio.Play(blast);game.Shake(Math.Sqrt((p.X-f.X)*(p.X-f.X)+(p.Z-f.Z)*(p.Z-f.Z))<f.Radius*2.5?1f:.4f);
                     for(int k=0;k<20;k++){double a=k/20.0*Math.PI*2;Particles.Burst(f.X+Math.Cos(a)*f.Radius*.8,f.Y+.2,f.Z+Math.Sin(a)*f.Radius*.8,2,SlamColors,3,.35,.9,2,4);}
                     break;
                 case FeedbackKind.Explosion:
@@ -75,7 +75,7 @@ namespace Mamporro.U3
                     for(int k=1;k<=5;k++){double t=k/6.0,arc=Math.Sin(t*Math.PI)*.8;Particles.Burst(f.X+(f.X2-f.X)*t,f.Y+(f.Y2-f.Y)*t+arc,f.Z+(f.Z2-f.Z)*t,1,PearlColors,.2,.13,.35,0,0);}
                     break;
                 case FeedbackKind.Revive:
-                    audio.Play(shield);
+                    audio.Play(shield);game.Shake(.7f);
                     for(int k=0;k<28;k++){double a=k/28.0*Math.PI*2;Particles.Burst(f.X+Math.Cos(a)*1.2,f.Y+.8,f.Z+Math.Sin(a)*1.2,2,ReviveColors,f.Radius*1.2,.16,.7,1,0);}
                     break;
             }

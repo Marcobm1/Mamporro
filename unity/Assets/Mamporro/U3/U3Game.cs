@@ -141,7 +141,7 @@ namespace Mamporro.U3
         PlayerIntent intent;
         // E pulsada desde el último tick (se usa una vez, como input.wasPressed de la web).
         bool interactPressed;
-        float yaw,pitch=20,textTimer;
+        float yaw,pitch=DefaultPitch,textTimer;
         int previousWidth,previousHeight;
         Vector3 previousPosition,currentPosition;
         readonly Stopwatch logicWatch=new Stopwatch(),renderWatch=new Stopwatch();
@@ -260,7 +260,7 @@ namespace Mamporro.U3
         public void ResetPlayer()
         {
             var hf=World.Heightfield;Body.PlaceAt(0,hf.HeightAt(0,0),0);Body.Facing=0;
-            currentPosition=previousPosition=WebSpace.ToUnity(Body.X,Body.Y,Body.Z);yaw=0;pitch=20;intent=default;
+            currentPosition=previousPosition=WebSpace.ToUnity(Body.X,Body.Y,Body.Z);yaw=0;pitch=DefaultPitch;intent=default;SnapCamera();
             ScriptedIntent=null;Session.SyncPlayer();
         }
 
@@ -425,7 +425,7 @@ namespace Mamporro.U3
         public void Look(Vector2 delta)
         {
             float k=LookDegreesPerPixel*(float)Settings.mouseSensitivity;
-            yaw+=delta.x*k;pitch=Mathf.Clamp(pitch-delta.y*k,-25,70);
+            yaw+=delta.x*k;pitch=Mathf.Clamp(pitch-delta.y*k,MinPitch,MaxPitch);
         }
 
         // Panel F3 (Game.updateStats): rendimiento, jugador, semilla, entidades, partida y director.
@@ -468,22 +468,65 @@ namespace Mamporro.U3
 
         void LateUpdate()
         {
-            // En el inicio la cámara gira despacio alrededor del punto de salida (TITLE_ORBIT_SPEED).
-            if(State==Screen.Title&&!FreeCamera){yaw+=Time.unscaledDeltaTime*.12f*Mathf.Rad2Deg;Body.Facing=WebYaw;}
+            // En el inicio la cámara gira despacio alrededor del punto de salida (TITLE_ORBIT_SPEED)
+            // y baja suavemente hasta su inclinación de menú (−0,22 rad web).
+            if(State==Screen.Title&&!FreeCamera){yaw+=Time.unscaledDeltaTime*.12f*Mathf.Rad2Deg;pitch=Mathf.Lerp(pitch,TitlePitch,Damp(2,Time.unscaledDeltaTime));Body.Facing=WebYaw;}
             var p=Vector3.Lerp(previousPosition,currentPosition,Paused?1:(Time.time-Time.fixedTime)/Time.fixedDeltaTime);
             avatar.position=p;
             // facing de la web: 0 = mirando hacia -Z web (= +Z de Unity).
             avatar.rotation=Quaternion.Euler(0,-(float)Body.Facing*Mathf.Rad2Deg,0);
             avatar.localScale=Body.Sliding?new Vector3(1,.6f,1.35f):Vector3.one;
+            // Parpadeo mientras es invulnerable tras un golpe (16 Hz), solo con «Destellos de daño».
+            bool visible=!Settings.flashes||Session==null||Run.Invulnerable<=0||Mathf.FloorToInt(Time.unscaledTime*16)%2==0;
+            if(avatar.gameObject.activeSelf!=visible)avatar.gameObject.SetActive(visible);
             CombatView.Draw();
             if(FreeCamera){Renderer.FollowCamera(worldCamera);DrawEffects();return;}
-            var pivot=p+Vector3.up*(Body.Sliding?1.2f:1.9f);
-            var rotation=Quaternion.Euler(pitch,yaw,0);
-            var cameraPos=pivot-rotation*Vector3.forward*6.2f;
-            // Como la web: la cámara solo choca con el terreno.
-            if(World!=null)cameraPos.y=Mathf.Max(cameraPos.y,(float)World.Heightfield.HeightAt(cameraPos.x,-cameraPos.z)+.35f);
-            worldCamera.transform.SetPositionAndRotation(cameraPos,Quaternion.LookRotation(pivot-cameraPos));
+            UpdateCamera(p,Time.unscaledDeltaTime);
             Renderer.FollowCamera(worldCamera);DrawEffects();
+        }
+
+        // ------------------------------------------------------------ cámara (CameraRig.ts)
+        // Inclinación en grados de Unity (positiva = hacia abajo) = −pitch web: límites −1,25…0,55
+        // rad, −0,3 al empezar y −0,22 en el menú.
+        public const float MinPitch=-.55f*Mathf.Rad2Deg,MaxPitch=1.25f*Mathf.Rad2Deg,DefaultPitch=.3f*Mathf.Rad2Deg,TitlePitch=.22f*Mathf.Rad2Deg;
+        const float ArmLength=6.2f,ArmMinimum=1.1f,PivotHeight=1.9f,PivotSliding=1.2f,CollisionMargin=.35f;const int CollisionSteps=16;
+        float armDistance=ArmLength,pivotHeight=PivotHeight,fovExtra,trauma;
+        readonly System.Random shakeRandom=new System.Random(0x5ac);
+        public float Trauma=>trauma;
+        public float ArmDistance=>armDistance;
+        public float FovExtra=>fovExtra;
+        static float Damp(float lambda,float dt)=>1-Mathf.Exp(-lambda*dt);
+        // Sacudida (CameraRig.shake): trauma acumulado 0–1; sin la opción no hay nada.
+        public void Shake(float amount){if(!Settings.cameraShake)return;trauma=Mathf.Min(1,trauma+amount);}
+        // Colocación directa al empezar una partida (CameraRig.snap).
+        void SnapCamera(){armDistance=ArmLength;}
+        void UpdateCamera(Vector3 player,float dt)
+        {
+            if(!Settings.cameraShake)trauma=0;
+            // El pivote baja al deslizarse, con suavizado.
+            pivotHeight=Mathf.Lerp(pivotHeight,Body.Sliding?PivotSliding:PivotHeight,Damp(8,dt));
+            var pivot=player+Vector3.up*pivotHeight;var dir=Quaternion.Euler(pitch,yaw,0)*Vector3.forward;
+            // Brazo recorrido en 16 pasos desde el jugador: si el terreno lo corta, la cámara se acerca
+            // de golpe (mínimo 1,1 m) y vuelve a alejarse con suavidad. Solo choca con el terreno, como la web.
+            float allowed=ArmLength,step=ArmLength/CollisionSteps;
+            if(World!=null)for(int i=1;i<=CollisionSteps;i++){
+                var probe=pivot-dir*(step*i);
+                if((float)World.Heightfield.HeightAt(probe.x,-probe.z)+CollisionMargin>probe.y){allowed=Mathf.Max(ArmMinimum,step*i-step);break;}
+            }
+            armDistance=allowed<armDistance?allowed:Mathf.Lerp(armDistance,allowed,Damp(4,dt));
+            var cameraPos=pivot-dir*armDistance;
+            if(World!=null)cameraPos.y=Mathf.Max(cameraPos.y,(float)World.Heightfield.HeightAt(cameraPos.x,-cameraPos.z)+CollisionMargin);
+            if(trauma>0){
+                float s=trauma*trauma*.3f;
+                cameraPos+=new Vector3((float)(shakeRandom.NextDouble()*2-1)*s,(float)(shakeRandom.NextDouble()*2-1)*s,(float)(shakeRandom.NextDouble()*2-1)*s);
+                trauma=Mathf.Max(0,trauma-dt*2.5f);
+            }
+            worldCamera.transform.SetPositionAndRotation(cameraPos,Quaternion.LookRotation(pivot+dir-cameraPos));
+            // Sensación de velocidad: el FOV se abre al superar la velocidad normal.
+            float moveSpeed=(float)(Tuning.PlayerBaseMoveSpeed*(Session!=null?Run.Stats[Stat.moveSpeed]:1));
+            float over=Mathf.Clamp01(((float)Body.HorizontalSpeed-moveSpeed)/(moveSpeed*1.5f));
+            fovExtra=Mathf.Lerp(fovExtra,over*(float)Tuning.CameraFovBoost,Damp(4,dt));
+            worldCamera.fieldOfView=(float)Tuning.CameraFov+fovExtra;
         }
         // Partículas y números de daño (tras colocar la cámara: los números miran a ella). Solo se
         // mueven jugando; en pausa, cartas o resultados quedan quietos, como la web.
