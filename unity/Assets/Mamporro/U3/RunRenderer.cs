@@ -67,10 +67,12 @@ namespace Mamporro.U3
                 if(w.Def.behavior=="orbit"&&s.Active){int n=(int)w[WStat.count];for(int j=0;j<n;j++){double a=s.Angle+j*System.Math.PI*2/n;Vector3 p=new Vector3((float)(r.Player.X+System.Math.Cos(a)*2.3*w[WStat.area]),(float)r.Player.Y+1,(float)(r.Player.Z+System.Math.Sin(a)*2.3*w[WStat.area]));Box(10,p,Vector3.one*(float)(.5*(.5+.5*w[WStat.area])));}}
                 if(w.Def.behavior=="trail")for(int j=0;j<s.Count;j++)Box(11,new Vector3(s.X[j],s.Y[j]+.035f,s.Z[j]),new Vector3(s.Radius[j]*1.7f,.04f,s.Radius[j]*1.7f));
             }
+            // Efectos de armas de WeaponEffects.ts (aura, barrazo, rayo). Desde U5, baúl, escudo, bata,
+            // culetazo, olla y perla son partículas (RunFeedback), como en la web, no anillos.
             for(int i=0;i<effectCount;i++){
                 var f=effects[i];var p=new Vector3((float)f.X,(float)f.Y+.1f,(float)f.Z);
-                if(f.Kind=="chain"||f.Kind=="pearl")Line(f.Kind=="chain"?11:10,p,new Vector3((float)f.X2,(float)f.Y2,(float)f.Z2),.1f);
-                else Ring(f.Kind=="aura"?7:f.Kind=="arc"?8:9,p,(float)f.Radius,(float)f.Angle*Mathf.Rad2Deg+180,f.Kind=="arc"?150:360);
+                if(f.Kind=="chain")Line(11,p,new Vector3((float)f.X2,(float)f.Y2,(float)f.Z2),.1f);
+                else if(f.Kind=="aura"||f.Kind=="arc")Ring(f.Kind=="aura"?7:8,p,(float)f.Radius,(float)f.Angle*Mathf.Rad2Deg+180,f.Kind=="arc"?150:360);
             }
             for(int mat=0;mat<Materials;mat++)for(int offset=0;offset<counts[mat];offset+=1023){int n=Mathf.Min(1023,counts[mat]-offset);DrawnInstances+=n;System.Array.Copy(matrices[mat],offset,chunk,0,n);
                 var rp=new RenderParams(materials[mat]){camera=session.worldCamera,shadowCastingMode=ShadowCastingMode.Off,receiveShadows=false,worldBounds=new Bounds(new Vector3(0,80,0),new Vector3(340,200,340))};Graphics.RenderMeshInstanced(rp,session.CombatMesh,0,chunk,n);}

@@ -4,12 +4,12 @@ Estado: **IMPLEMENTACIÓN AUTORIZADA Y EN CURSO desde el 04/10/2026.** Plan apro
 
 ## Cómo retomar
 
-- **Punto de partida:** `3754e31` (U4 aprobada). Plan en `31711bf` («Registra la aprobación de U4 y planifica U5»). Paso 1 `e7c9933` («Porta la síntesis de audio y el presupuesto de voces de U5»). Paso 2 `6e154ec` («Añade el motor de audio de U5»). Paso 3 en «Conecta los sucesos de la partida al sonido de U5» (hash: `git log -1 --format="%H %s" -- unity/Assets/Mamporro/Core/CombatFeedback.cs`).
-- **Paso actual:** 4, partículas (sin empezar).
-- **Terminado:** pasos 1–3. Último Edit Mode 383/383, Play Mode 33/33, build y visual con medida de audio (04/10/2026).
+- **Punto de partida:** `3754e31` (U4 aprobada). Plan en `31711bf` («Registra la aprobación de U4 y planifica U5»). Paso 1 `e7c9933` («Porta la síntesis de audio y el presupuesto de voces de U5»). Paso 2 `6e154ec` («Añade el motor de audio de U5»). Paso 3 `85f7a1b` («Conecta los sucesos de la partida al sonido de U5»). Paso 4 en «Añade las partículas decorativas de U5» (hash: `git log -1 --format="%H %s" -- unity/Assets/Mamporro/Core/Effects/Particles.cs`).
+- **Paso actual:** 5, números de daño (sin empezar).
+- **Terminado:** pasos 1–4. Último Edit Mode 388/388, Play Mode 34/34, build y visual con medida de audio (04/10/2026).
 - **A medias:** nada.
 - **Sin commit a propósito:** siete ajustes Unity de «Cambios locales excluidos».
-- **Siguiente paso exacto:** paso 4: `Core` `ParticleBudget` (256/1500; reducido 64/400 y ⌈25 %⌉) con las pruebas de `ParticleBudget.test.ts`; `U3/Particles` (arrays por campo para 1500, `Rng("efectos").Derive("particulas")` visual, ráfagas de `Particles.burst`: ángulo, velocidad 0,3–1, vy 0,2–1·0,8 + lift, vida ×0,7–1,2, tamaño ×0,6–1,3, gravedad 18 por defecto, giro, color de la lista; llenas → se reutiliza una al azar; actualización: vida, gravedad, giro 6/s, escala que se apaga en el último tercio), dibujo `RenderMeshInstanced` con color por instancia (`_InstanceColor` de `RetroWorld`); todas las ráfagas de `RunView` en `RunFeedback` (crítico 3, muerte 12/24/80, aparición 5, nivel 24, escudo 18, baúl 26 en lugar del anillo, pipa 3, jefe 60, culetazo 20×2, olla 14+6, perla 5, bata 28×2, barrazo 4, rayo 3/enemigo, naftalina 3/pulso, fregona ≤3) con los colores de la paleta web; opción reducida al momento; limpieza en cada partida.
+- **Siguiente paso exacto:** paso 5: números de daño (`DamageNumbers.ts`): atlas con los glifos `0123456789!` de la fuente pixelada web (`src/ui/font/glyphs`, celdas 7×9, contorno negro de 1 píxel), hasta 140 números de 6 caracteres, vida 0,75 s, quads orientados a la cámara e instanciados, dibujados en la textura interna; daño normal, crítico (color/tamaño por nivel) y daño recibido por el jugador (`PlayerHit`, nivel −1); emitidos desde `RunFeedback` (`Hit`, `PlayerHit`); limpieza por partida, quietos en pausa; RNG visual `Rng("efectos").Derive("numeros")`.
 - **Autorización:** pasos 1–9 seguidos, con checkpoint, pruebas, commit y push tras cada pieza. Detenerse solo ante una decisión nueva importante de diseño/arquitectura (o si el compresor propio resulta inestable, con latencia o coste inesperado) y al terminar U5.
 
 Comprobación desde CMD:
@@ -220,6 +220,16 @@ Conservar sin publicar ni restaurar:
 - **Commit/push:** «Conecta los sucesos de la partida al sonido de U5»; fetch previo y push normal si el remoto sigue en `6e154ec`.
 - **Árbol al terminar:** solo los siete ajustes Unity excluidos.
 - **Siguiente paso exacto:** paso 4 (ver «Cómo retomar»).
+
+### 04/10/2026 — paso 4: partículas — Claude Code
+
+- **Punto de partida:** `85f7a1b` (paso 3 publicado); solo los siete ajustes Unity excluidos.
+- **Trabajo:** `Core/Effects/Particles.cs` (puro): `ParticleBudget` (256/1500; reducido 64/400 y ⌈25 %⌉ de cada ráfaga) y `ParticleField` (arrays por campo para 1500, ráfagas como `Particles.burst`: dirección, velocidad 0,3–1, subida 0,2–1 ×0,8 + impulso, vida ×0,7–1,2, tamaño ×0,6–1,3, gravedad 18 por defecto, giro; reutiliza una al azar si está lleno; actualización con gravedad, giro 6/s y encogimiento en el último tercio; reducir recorta al momento). `U3/ParticleRenderer.cs`: cubos instanciados con color por instancia (`_InstanceColor` de `RetroWorld`, el material de combate ya incluido en la build) en lotes de 1023, buffers fijos. `RunFeedback`: todas las ráfagas de `RunView` con colores de la paleta y restos de cada enemigo de la web (crítico, muerte 12/24/80, aparición, pipa, nivel, escudo, baúl, aparición del jefe, culetazo, olla con humo, perla, bata) y, desde los efectos de armas, migas del barrazo, chispas del rayo, vapores de la naftalina y burbujas de la fregona (RNG visual «efectos/armas» y «efectos/particulas»). Se mueven solo jugando (en pausa, cartas y resultados quedan quietas, como la web); cada partida empieza sin partículas. **Diferencia de presentación retirada:** baúl, escudo, bata, culetazo, olla y perla ya no se dibujan como anillos/líneas (eran sustitutos de U3); como en la web, son partículas. Los telegrafiados no cambian. Partículas iluminadas por el shader del mundo (la web las dibuja sin luz): colores algo más apagados en sombra.
+- **Pruebas nuevas:** Edit (5, `ParticleTests`): las dos pruebas de `ParticleBudget.test.ts` y la de ⌈25 %⌉; campo con límites, recorte al reducir, vidas, colores y escala; movimiento, pausa con dt 0 y encogimiento; aleatoriedad visual determinista y sin asignaciones. Play (1, `U5EffectsSceneTests`): partida real con horda (partículas presentes y todas dibujadas), ráfaga enorme ≤ 256 nuevas, pausa quieta, opción reducida ≤ 400 al momento y guardada, nueva partida vacía.
+- **Pruebas ejecutadas (04/10/2026):** `scripts\u3.cmd edit` **388/388**; `scripts\u3.cmd play` **34/34**; `scripts\u3.cmd build` correcta; `scripts\u3.cmd visual` 19 capturas + audio correcto; en «combate» se ven las partículas en la build.
+- **Commit/push:** «Añade las partículas decorativas de U5»; fetch previo y push normal si el remoto sigue en `85f7a1b`.
+- **Árbol al terminar:** solo los siete ajustes Unity excluidos.
+- **Siguiente paso exacto:** paso 5 (ver «Cómo retomar»).
 
 ## Checkpoint al terminar U5
 
