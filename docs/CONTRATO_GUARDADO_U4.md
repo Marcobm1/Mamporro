@@ -49,7 +49,7 @@ Informe: `ValidationResult { candidate: ProgressDto|null, issues[], canConfirm }
 
 Opciones ausentes/incorrectas recuperables con defecto e informe por campo; no clamp de importación (por ejemplo sensibilidad 99 → 1, no 3). Esto difiere deliberadamente del saneamiento permisivo web y protege la transferencia sin modificar el juego web. Al crear/exportar se pasa el idioma actual válido de la aplicación; al importar, el idioma Unity actual válido. Conservar un `language` válido del archivo. El contexto explícito forma parte de cada caso de prueba, nunca depende del sistema donde corre el test.
 
-Contenedor `settings` ausente: todos sus campos opcionales se completan y reportan. Contenedor presente que no sea objeto: rechazo estructural, no ocultarlo como catorce opciones ausentes. Un ajuste de v2/v3 presente en v1 se conserva si es válido, igual que `parseSave` de la base.
+Contenedor `settings` ausente o que no sea objeto: todos sus campos opcionales se completan con defaults y se informa del contenedor sustituido. La meta válida no se rechaza por opciones rotas; no hay datos de propiedad ni moneda dentro de `settings`. Un ajuste de v2/v3 presente en v1 se conserva si es válido, igual que `parseSave` de la base.
 
 ## IDs persistentes exactos y campos derivados
 

@@ -1259,14 +1259,18 @@
         ]
       },
       "expected": {
-        "outcome": "fatal",
+        "outcome": "recovery",
         "issues": [
           {
             "path": "/settings",
-            "code": "value.invalid",
-            "action": "reject"
+            "code": "option.default",
+            "action": "default"
           }
-        ]
+        ],
+        "candidate": {
+          "base": "v3-partial",
+          "edits": []
+        }
       }
     },
     {
@@ -1284,14 +1288,18 @@
         ]
       },
       "expected": {
-        "outcome": "fatal",
+        "outcome": "recovery",
         "issues": [
           {
             "path": "/settings",
-            "code": "value.invalid",
-            "action": "reject"
+            "code": "option.default",
+            "action": "default"
           }
-        ]
+        ],
+        "candidate": {
+          "base": "v3-partial",
+          "edits": []
+        }
       }
     },
     {

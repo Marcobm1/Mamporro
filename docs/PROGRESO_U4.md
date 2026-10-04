@@ -4,12 +4,12 @@ Estado: **IMPLEMENTACIÓN AUTORIZADA Y EN CURSO desde el 04/10/2026.** Política
 
 ## Cómo retomar
 
-- **Punto de partida publicado:** `799f28415599d24f784ade4a0312b7000a664ba8`. Paso 1 en «Define el contrato y congela el corpus de progreso de U4»; localizar hash con `git log -1 --format="%H %s" -- scripts/u4-reference.mjs`.
-- **Paso actual:** 2, meta y liquidación pura C#; todavía no implementado.
-- **Terminado:** paso 1, contrato de tres formatos, DTO normalizado, invariantes, límites, migraciones, corpus web congelado y corpus contractual. Ver registro de sesión para pruebas reales.
+- **Paso 1 publicado:** `fabaf2a64f5ff6c34d3592a25a6594f066130208`. Paso 2 en «Porta las reglas meta y la liquidación de U4»; localizar hash con `git log -1 --format="%H %s" -- unity/Assets/Mamporro/Core/MetaRules.cs`.
+- **Paso actual:** 3, validación/migración estricta y persistencia Unity; no iniciado.
+- **Terminado:** pasos 1–2: contrato/corpus y DTO/reglas meta C# puras sobre estado válido. Edit Mode 184/184, Play Mode 17/17 y build Windows x64 Mono correctos en esta sesión. Ver registro para comandos, fecha y rutas.
 - **A medias:** ninguna pieza de runtime. No existe aún exportador, importador ni persistencia Unity U4.
 - **Sin commit a propósito:** siete ajustes Unity de «Cambios locales excluidos».
-- **Siguiente paso exacto:** portar meta y liquidación puras C# desde `src/systems/meta.ts` y consumir `u4-progress.json` en pruebas independientes. No reproducir los clamps permisivos web en el futuro importador.
+- **Siguiente paso exacto:** paso 3: parser acotado y validador/migraciones puros que ejecuten los 94 casos contractuales; después servicio de archivo temporal/backup/sustitución/verificación con tests IO separados. No deserializar entrada externa directamente con JsonUtility ni reutilizar los clamps de números de partida para importación.
 - **Autorización:** continuar los pasos 2–9 sin nuevas confirmaciones generales. Detenerse solo ante decisión nueva importante y, al terminar U4, para prueba manual del autor.
 
 Comprobación desde CMD:
@@ -76,7 +76,7 @@ Sustitución completa, nunca fusión: validar → informe → confirmar → back
 
 ## Plan propuesto por pasos/commits verificables
 
-Plan aprobado. Cada fila es una unidad coherente; dividir si tamaño o pruebas lo exigen. Paso 1 terminado; pasos 2–9 pendientes.
+Plan aprobado. Cada fila es una unidad coherente; dividir si tamaño o pruebas lo exigen. Pasos 1–2 terminados; pasos 3–9 pendientes.
 
 | Paso | Resultado y límites | Verificación principal |
 |---|---|---|
@@ -143,6 +143,23 @@ Conservar sin publicar ni restaurar:
 - **Commit/push:** «Define el contrato y congela el corpus de progreso de U4», fetch previo, push normal y comprobación del HEAD remoto. Hash consultable por `git log -1 --format="%H %s" -- scripts/u4-reference.mjs`.
 - **Árbol/exclusiones:** únicamente los siete ajustes Unity deliberadamente excluidos tras publicar esta pieza. Ningún código a medias.
 - **Siguiente paso exacto:** paso 2, DTO y reglas meta C# puras con pruebas contra las secuencias congeladas; después persistencia. No hace falta nueva autorización.
+
+### 04/10/2026 — paso 2: reglas meta puras y liquidación — Codex
+
+- **Punto de partida:** `fabaf2a64f5ff6c34d3592a25a6594f066130208`, paso 1 publicado; siete ajustes Unity excluidos conservados.
+- **Trabajo:** DTO C# de progreso/opciones/meta, defaults ES/EN, compras, selección desbloqueada, extras, ocho misiones, recibo y liquidación equivalentes a la web, protección de última partida/debug e instantáneas de filtros. Sin IO, sin UnityEngine en el núcleo y sin conectar todavía a la escena.
+- **Archivos principales:** `Core/ProgressData.cs`, `Core/MetaRules.cs`, `Tests/Core/MetaProgressTests.cs` y sus metas, dentro de ensamblados existentes.
+- **Pruebas nuevas:** 17 casos Edit Mode: seis secuencias web congeladas (cada operación, recibo y estado), defaults ES/EN, catálogo meta contra U0, selección, tres extras, filtros copiados y ofertas de armas, independencia de estados, extremos de números internos de partida y duplicación tras roundtrip del DTO. Abandono se representa como ausencia de liquidación igual que Game web; su flujo real en escena y persistencia se probará en pasos 3/6.
+- **Aclaración contractual:** un contenedor `settings` mal formado es secundario y recuperable con defaults/informe, sin rechazar meta válida. Corregidos explícitamente esos dos casos en el corpus de política antes de implementar el validador; no se usaron resultados C# ni se modificó el corpus de resultados web. Coincide con la política del autor de no rechazar progreso por opciones rotas.
+- **Pruebas ejecutadas el 04/10/2026, Europe/Madrid:** `scripts\u3.cmd edit`: **184/184**, XML 02:17:01–02:17:12 (17 nuevas + 167 anteriores). `scripts\u3.cmd play`: **17/17**, XML 02:18:11–02:19:16. Originales `unity/TestResults/U3/edit.xml` y `play.xml`; copias de evidencia y logs en `unity/TestResults/U4/step2-edit.xml/.log`, `step2-play.xml/.log`.
+- **Build:** `scripts\u3.cmd build`, **Windows x64 Mono correcta**, `unity/Builds/U3/Mamporro-U3.exe`; log copiado a `unity/TestResults/U4/step2-build.log`. No es una build de UI U4 ni prueba manual nueva.
+- **Contrato:** `node --test scripts/u4-contract.test.mjs`, **5/5** después de aclarar los dos casos de opciones; `unity/TestResults/U4/contract.log`.
+- **Incidencia de entorno:** primera ejecución Edit Mode dentro del sandbox salió con 198 por acceso a licencia; relanzada con acceso al entorno local. Una pasada intermedia pasó 183/183; se añadió después la prueba de roundtrip y la final pasó 184/184.
+- **Comprobaciones:** diff de web y referencias U0/U2/U3/`u4-progress.json` sin cambios; `git diff --cached --check` correcto. Referencias web verificadas en paso 1 de esta misma sesión, sin cambios posteriores de fuentes. No se ejecutó visual: no cambian escena ni render.
+- **Commit/push:** «Porta las reglas meta y la liquidación de U4», fetch previo, push normal y verificación del remoto. Hash consultable por la ruta de MetaRules indicada en «Cómo retomar».
+- **Estado/exclusiones:** no hay runtime a medias; solo siete ajustes Unity excluidos tras publicar. Núcleo nuevo opera sobre DTO válido de fábrica o del futuro validador: **no es un importador ni un saneador de entrada externa**.
+- **Pendientes:** validación estricta, migraciones y IO reales (paso 3), exportación/importación (4–5), conexión completa de filtros/recompensas/abandono a sesión (6), menús/opciones (7–8), cierre/manual (9).
+- **Siguiente paso exacto:** implementar el parser/validador puro del paso 3 según contrato, hacer pasar el corpus sin modificar esperados para acomodar el port y seguir con persistencia. No requiere nueva autorización.
 
 ## Checkpoint al terminar U4
 
