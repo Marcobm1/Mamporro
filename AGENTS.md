@@ -23,7 +23,7 @@ Codex y Claude Code trabajan por turnos sobre la misma rama. **No trabajan a la 
 - U0 preparado y conservado como referencia.
 - **U1 implementado, probado por el autor y aprobado el 29/09/2026.** Implementación publicada en `abe0a9b7f0b8c53f478b91c870341999df2ea073`; checkpoint publicado en `eb691b595eb247118075368430d34ed0a95735d1`.
 - U2 aprobado por el autor el 29/09/2026.
-- **U3 y U4 aprobadas manualmente el 04/10/2026** (último cierre técnico U4: `3754e31`). **U5 autorizado el 04/10/2026**: plan y avance en `docs/PROGRESO_U5.md`.
+- **U3 y U4 aprobadas manualmente el 04/10/2026** (último cierre técnico U4: `3754e31`). **U5 implementado y verificado el 04/10/2026, pendiente de la prueba manual del autor** (`docs/PROGRESO_U5.md`).
 - Unity confirmado: 6.6 / `6000.6.3f1`, Windows x64 Mono, URP 17.6.0, Input System 1.20.0, uGUI 2.6.0 y Test Framework 1.8.0.
 - Codex CLI ya está instalado y verificado en el equipo del autor. No vuelvas a tratar su instalación como pendiente.
 
@@ -50,4 +50,4 @@ Antes de que termine la sesión de Codex, actualiza `docs/PROGRESO_U5.md` con lo
 
 Si una pieza está completa y verificable, haz commit pequeño y push antes del relevo. No crees un commit roto solo para transferir contexto. Si queda trabajo local no publicable, descríbelo con precisión y no lo borres.
 
-Trabaja un bloque cada vez. No abras Pull Request salvo petición expresa. Los commits van en español, pequeños y verificables. U5 está autorizado: pasos verificables y checkpoint tras cada uno; no empezar U6 sin la aprobación manual de U5. No empezar mejoras posmigración ni servicios Steam.
+Trabaja un bloque cada vez. No abras Pull Request salvo petición expresa. Los commits van en español, pequeños y verificables. U5 está pendiente de la prueba manual del autor; no empezar U6 sin la aprobación manual de U5. No empezar mejoras posmigración ni servicios Steam.

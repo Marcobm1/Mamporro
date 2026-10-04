@@ -1,5 +1,7 @@
 # Equivalencia Unity ↔ web aprobada — validación final de U5
 
+Estado: U5 implementado y verificado el 04/10/2026, pendiente de la prueba manual del autor.
+
 Referencia: web aprobada `0505b1690656d15188860157612455639820fe1f` (hito 6) y referencias congeladas en `unity/Docs/Reference/` (`baseline.json`, `u2-combat.json`, `u3-world.json`, corpus U4). Base Unity: U1–U4 aprobadas; U5 implementado en `docs/PROGRESO_U5.md`. Este documento clasifica, por sistemas, qué es **equivalente**, qué es una **diferencia intencionada**, qué **limitación** se acepta y qué se **aplaza** al rediseño posterior a U6. No exige identidad píxel a píxel: lo importante son reglas, feedback, legibilidad, funcionalidad, opciones, audio, progresión, guardado, controles y experiencia.
 
 ## Cómo se ha comprobado
@@ -11,6 +13,7 @@ Referencia: web aprobada `0505b1690656d15188860157612455639820fe1f` (hito 6) y r
 
 | Sistema | Estado | Evidencia |
 | --- | --- | --- |
+| Varias partidas seguidas | Sin estado arrastrado ni progreso duplicado | 5 partidas en la build (`sessions-report.json`) y 3 en Play Mode |
 | RNG, fórmulas, catálogo, textos ES/EN | Equivalente | `ReferenceTests`, `CatalogReferenceTests` contra `baseline.json` |
 | Combate (armas, enemigos, proyectiles, pasivas, tomos, objetos) | Equivalente | `u2-combat.json` (U2) |
 | Mundo procedural, director, oleadas, élites, enjambre, interactuables, jefe y victoria | Equivalente (tolerancias documentadas en U3) | `u3-world.json`, cuatro partidas completas idénticas en la cronología de los primeros 120 s |
@@ -59,7 +62,7 @@ Referencia: web aprobada `0505b1690656d15188860157612455639820fe1f` (hito 6) y r
 
 ## Rendimiento
 
-Objetivo: 60 FPS con margen en el equipo de referencia (Ryzen 7 7700X, RTX 4070 Ti SUPER, ~32 GB). Cifras, condiciones y diagnóstico en `PROGRESO_U5.md` («Rendimiento»). Los miles de FPS medidos solo indican margen.
+Objetivo: 60 FPS con margen en el equipo de referencia (Ryzen 7 7700X, RTX 4070 Ti SUPER, ~32 GB). **Cumplido con mucho margen** en la build normal con audio, partículas, números y sacudida: enjambre de 715–750 vivos a ≈ 1350 FPS (P99 1,7 ms) y cuatro armas simultáneas a ≈ 1440–1470 FPS en el enjambre, a 1920×1080 y 2560×1440; fotogramas > 16,67 ms solo aislados (2560×1440, cuatro armas). Diagnóstico Development aparte: 9–15 KB por fotograma (HUD de U3) y GPU 0,14–0,27 ms. Cifras completas en `PROGRESO_U5.md` («Checkpoint al terminar U5» y paso 7). Los miles de FPS solo indican margen.
 
 ## Aplazado a después de U6 (no son fallos de la migración)
 

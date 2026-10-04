@@ -1,15 +1,15 @@
 # Checkpoint U5 — audio, pulido y validación de equivalencia
 
-Estado: **IMPLEMENTACIÓN AUTORIZADA Y EN CURSO desde el 04/10/2026.** Plan aprobado por el autor con las 11 dudas resueltas («Resolución del autor»). U4 aprobada manualmente el 04/10/2026; último cierre técnico `3754e31be16904207fd2ee25340bfa1ca095f181`. No iniciar U6 sin la aprobación manual de U5.
+Estado: **IMPLEMENTADO Y VERIFICADO el 04/10/2026; pendiente de la prueba manual (con escucha) y la aprobación del autor** (implementación autorizada el 04/10/2026). Plan aprobado por el autor con las 11 dudas resueltas («Resolución del autor»). U4 aprobada manualmente el 04/10/2026; último cierre técnico `3754e31be16904207fd2ee25340bfa1ca095f181`. No iniciar U6 sin la aprobación manual de U5.
 
 ## Cómo retomar
 
-- **Punto de partida:** `3754e31` (U4 aprobada). Plan en `31711bf` («Registra la aprobación de U4 y planifica U5»). Paso 1 `e7c9933` («Porta la síntesis de audio y el presupuesto de voces de U5»). Paso 2 `6e154ec` («Añade el motor de audio de U5»). Paso 3 `85f7a1b` («Conecta los sucesos de la partida al sonido de U5»). Paso 4 `22821d0` («Añade las partículas decorativas de U5»). Paso 5 `1a7d744` («Añade los números de daño de U5»). Paso 6 `18718fb` («Porta la cámara, la sacudida y los destellos de U5»). Paso 7 `20265be` («Mide el rendimiento representativo de U5»). Paso 8 en «Valida sesiones, capturas ES/EN y equivalencia de U5» (hash: `git log -1 --format="%H %s" -- docs/EQUIVALENCIA_U5.md`).
-- **Paso actual:** 9, cierre de U5 (sin empezar).
-- **Terminado:** pasos 1–8. Último Edit Mode 392/392, Play Mode 37/37, build, visual (19 técnicas + 44 ES/EN, audio y 5 partidas seguidas), ensayo 16/16 y diagnóstico Development 8/8 (04/10/2026).
+- **Punto de partida:** `3754e31` (U4 aprobada). Plan en `31711bf` («Registra la aprobación de U4 y planifica U5»). Paso 1 `e7c9933` («Porta la síntesis de audio y el presupuesto de voces de U5»). Paso 2 `6e154ec` («Añade el motor de audio de U5»). Paso 3 `85f7a1b` («Conecta los sucesos de la partida al sonido de U5»). Paso 4 `22821d0` («Añade las partículas decorativas de U5»). Paso 5 `1a7d744` («Añade los números de daño de U5»). Paso 6 `18718fb` («Porta la cámara, la sacudida y los destellos de U5»). Paso 7 `20265be` («Mide el rendimiento representativo de U5»). Paso 8 `45cd35a` («Valida sesiones, capturas ES/EN y equivalencia de U5»). Paso 9 en «Cierra U5 y prepara la prueba manual» (hash: `git log -1 --format="%H %s" -- docs/PROGRESO_U5.md`).
+- **Paso actual:** ninguno. U5 cerrado técnicamente (pasos 1–9); esperando la prueba manual del autor («Checkpoint al terminar U5»).
+- **Terminado:** pasos 1–9. Regresión final (04/10/2026): web 232/232, contrato 5/5, verificador histórico, Edit 392/392, Play 37/37, build, visual (audio, 5 partidas seguidas, 19 + 44 capturas), ensayo 16/16 y diagnóstico Development 8/8.
 - **A medias:** nada.
 - **Sin commit a propósito:** siete ajustes Unity de «Cambios locales excluidos».
-- **Siguiente paso exacto:** paso 9, cierre sin funcionalidades nuevas: regresión completa (web typecheck/test/build, contrato, verificador histórico, Edit, Play, build, visual, ensayo y diagnóstico Development sobre la build final), «Checkpoint al terminar U5» con commits, cifras, rutas, limitaciones y **guía de prueba manual con escucha** (música, efectos, mezcla, volúmenes, silencio, pausa, Alt+Tab, jefe/enjambre, varias partidas, auriculares ↔ altavoces, cámara, sacudida, partículas, números, destellos); estado al día en README, ESTADO_ACTUAL, DECISIONES, MIGRACION y continuidad. Después, detenerse; no iniciar U6.
+- **Siguiente paso exacto:** prueba manual del autor según «Instrucciones de prueba manual (autor)» del cierre; corregir solo lo que encuentre. **No iniciar U6** hasta su aprobación.
 - **Autorización:** pasos 1–9 seguidos, con checkpoint, pruebas, commit y push tras cada pieza. Detenerse solo ante una decisión nueva importante de diseño/arquitectura (o si el compresor propio resulta inestable, con latencia o coste inesperado) y al terminar U5.
 
 Comprobación desde CMD:
@@ -297,6 +297,58 @@ Conservar sin publicar ni restaurar:
 - **Árbol al terminar:** solo los siete ajustes Unity excluidos.
 - **Siguiente paso exacto:** paso 9 (ver «Cómo retomar»).
 
+### 04/10/2026 — paso 9: cierre de U5 — Claude Code
+
+- **Punto de partida:** `45cd35a` (paso 8 publicado); solo los siete ajustes Unity excluidos.
+- **Trabajo:** sin funcionalidades nuevas. Regresión completa sobre la versión final, ensayo y diagnóstico Development repetidos, evidencias en `unity/TestResults/U5/final/`, checkpoint de cierre con la guía de prueba manual con escucha, cifras finales en [EQUIVALENCIA_U5](EQUIVALENCIA_U5.md) y estado al día (README raíz y de Unity, ESTADO_ACTUAL, DECISIONES, MIGRACION_UNITY, HOJA_DE_RUTA, CLAUDE, AGENTS, CONTINUIDAD, INSTRUCCIONES). Correcciones de texto en el README de Unity (el arte final no es U5; partículas y sacudidas ya existen) y descripción de `visual`, `benchmark` y `devdiag`.
+- **Pruebas ejecutadas:** ver «Checkpoint al terminar U5». En la comprobación visual final, el ensayo de partidas seguidas reutilizó el guardado de la comprobación anterior (misión «primera partida» ya cobrada): 5/5 liquidadas con recibos de 0 y Calderilla 30 → 30, sin duplicados.
+- **Commit/push:** «Cierra U5 y prepara la prueba manual»; fetch previo y push normal si el remoto sigue en `45cd35a`.
+- **Árbol al terminar:** solo los siete ajustes Unity excluidos.
+- **Siguiente paso exacto:** prueba manual y aprobación del autor. No iniciar U6.
+
 ## Checkpoint al terminar U5
 
-Pendiente: U5 en implementación.
+**Implementado y verificado el 04/10/2026; pendiente de la prueba manual (con escucha) y la aprobación del autor.** No iniciar U6 antes.
+
+- **Commits de U5:** `31711bf` (aprobación U4 y plan), `e7c9933` (síntesis y voces), `6e154ec` (motor de audio), `85f7a1b` (sucesos y sonidos), `22821d0` (partículas), `1a7d744` (números de daño), `18718fb` (cámara, sacudida y destellos), `20265be` (rendimiento), `45cd35a` (sesiones, capturas y equivalencia) y el de este cierre, «Cierra U5 y prepara la prueba manual».
+- **Qué hace U5:** audio original equivalente a la web (20 efectos y 2 músicas sintetizados en C#, iguales a la referencia congelada; 16 voces con 4 reservadas; modos de música; volúmenes y silencio; compresor propio aproximado; silencio sin foco; cambio de dispositivo); sucesos de la partida como observadores puros; partículas con el presupuesto web y su opción reducida; números de daño; cámara web (brazo, pivote, FOV) con sacudida y su opción; destellos y parpadeo del jugador con su opción; equivalencia documentada en [EQUIVALENCIA_U5](EQUIVALENCIA_U5.md).
+- **Referencias intactas:** `src/` sin cambios desde `b734b49`; `unity/Docs/Reference/` sin cambios desde `3754e31`; el verificador histórico confirma U0/U2/U3/U4.
+- **Regresión final (04/10/2026, Europe/Madrid, sobre `45cd35a`):** `npm.cmd run typecheck` correcto; `npm.cmd test` **232/232**; `npm.cmd run build` correcto; `node --test scripts\u4-contract.test.mjs` **5/5**; `scripts\verify-historical-reference.ps1` correcto (19:29, `qa-results/reference-4a35b0ae0777426d915eb39a4431b8bb`); `scripts\u3.cmd edit` **392/392** (19:29); `scripts\u3.cmd play` **37/37** (19:30); `scripts\u3.cmd build` correcta (19:32); `scripts\u3.cmd visual` correcta (19:32): audio medido (menú RMS 0,0117, silencio 0, sin música 0, efecto 0,0519, pico 0,114), 5 partidas seguidas correctas, 19 capturas técnicas + **44 ES/EN**; `scripts\u3.cmd benchmark` **16/16** (19:35–19:46); `scripts\u3.cmd devdiag` **8/8** (19:46–19:52).
+- **Rendimiento final (build normal; Ryzen 7 7700X, RTX 4070 Ti SUPER, ~32 GB; pantalla completa exclusiva, interna 360, VSync 0, FPS ilimitados; audio, partículas, números y sacudida activos):** perfil horda (solo Chancla) 1920×1080 → min2 2457, min5 2036 (284–307 vivos), min9 1793 (447–530), enjambre 1357 FPS (715–750 vivos, P95 1,13 ms, P99 1,70 ms, máx. 4,08 ms); 2560×1440 → 2477 / 2040 / 1779 / 1347 FPS. Perfil armas (cuatro armas) 1920×1080 → 2493 / 2261 / 2072 / 1473 FPS; 2560×1440 → 2476 / 2264 / 2085 / 1438 FPS. Ningún fotograma > 16,67 ms en 14 de 16 puntos; 2560×1440 armas: 2 en min9 (≤ 30,8 ms) y 1 en el enjambre (41,9 ms), sin recolección de GC ni voces altas en esos fotogramas, igual que en la pasada del paso 7 (solo en ese perfil y resolución, no sistemático). Voces máximas 13 de 16; partículas hasta ≈ 1400; números hasta el tope de 140. Objetivo de 60 FPS cumplido con mucho margen; GPU «n/d» en la build normal.
+- **Diagnóstico Development (no es rendimiento final):** 9–15 KB asignados por fotograma (presentación de U3: cadenas del HUD), GPU 0,14–0,27 ms, memoria Unity 144 MiB; un fotograma de ~40 ms por punto coincide con la captura de pantalla del ensayo.
+- **Evidencias locales (no se publican):** `unity/TestResults/U5/final/` (XML/logs, `audio-report.json`, `sessions-report.json`, 16 JSON del ensayo con logs, `devdiag/`, `visual/` con las 19 + 44 capturas), `unity/TestResults/U5/` y `unity/TestResults/U3/` (última ejecución).
+- **Build:** `unity\Builds\U3\Mamporro-U3.exe` con toda su carpeta (nombre y producto «Mamporro U1» sin cambiar hasta U6). Build de desarrollo solo para el diagnóstico en `unity\Builds\U3Dev\`.
+- **Decisiones:** las del autor del 04/10/2026 (foco, inicio del audio, compresor, cámara, números, parpadeo, medidas, capturas, nombre) en [DECISIONES](DECISIONES.md). Técnicas propias, documentadas en el registro: dos perfiles de ensayo, sacudida a cero al empezar cada partida, sombreador de números en `Resources`, partículas con el shader del mundo.
+- **Limitaciones conocidas:** compresor aproximado (no idéntico al navegador); partículas iluminadas por el shader del mundo (la web las dibuja sin luz); el jefe no destella en blanco (paleta fija del render de combate); a 360 de altura interna los números de daño ocupan pocos píxeles (como en la web); asignaciones por fotograma heredadas del HUD de U3; fotogramas lentos aislados en 2560×1440 con cuatro armas; GPU sin dato en la build normal; Alt+Tab real, cambio de dispositivo y calidad del sonido solo se comprueban a mano; presentación técnica (cajas, avatar provisional, fuente integrada) hasta después de U6.
+- **Cambios locales no publicados:** solo los siete ajustes Unity de «Cambios locales excluidos».
+
+### Instrucciones de prueba manual (autor)
+
+Con el Editor de Unity cerrado, desde la raíz en CMD. Usa auriculares o altavoces a un volumen cómodo; el audio arranca con la música del menú. Para no tocar tu guardado real, usa la carpeta de prueba (sin `-u4-save-dir` se usa el real):
+
+```cmd
+cd /d "C:\Users\bymar\Desktop\Varios\Proyectos\Mamporro-git"
+start "" "unity\Builds\U3\Mamporro-U3.exe" -monitor 1 -screen-fullscreen 0 -screen-width 1920 -screen-height 1080 -u4-save-dir "%TEMP%\MamporroU5Prueba"
+```
+
+La build ya existe; si falta, `scripts\u3.cmd build` con el Editor cerrado. Alt+F4 cierra. Opcional: `scripts\u3.cmd edit`, `play`, `visual`, `benchmark` y `devdiag` repiten lo automático (los dos últimos abren la build a pantalla completa durante varios minutos).
+
+1. **Música del menú:** suena al arrancar, sin pulsar nada, a volumen moderado (65 %). Al pasar por los botones de los menús, cada clic suena («ui»); al comprar algo en la Tienda suena la recompensa.
+2. **Música de partida e intensa:** Jugar: la música sube al volumen normal. Invoca al jefe (F3 y 6) o llega al enjambre (F3 y 3 varias veces): cambia al arreglo intenso **sin perder el compás**. Al pausar vuelve el arreglo normal muy atenuado (25 %).
+3. **Efectos de combate:** cada arma suena al disparar (Chancla, Barra con Baguette; prueba otras con cartas), golpes y críticos, muertes, recoger XP y oro, golpe recibido, subida de nivel, escudo de Baguette, baúl y objeto, jefe, culetazo, olla y bata. Valora la mezcla: con horda (F3 y 4) no debe saturar ni distorsionar, y las señales importantes (golpe recibido, nivel, jefe) deben oírse por encima.
+4. **Volúmenes y silencio:** Opciones (menú y pausa): volumen de música y de efectos a 0 y de vuelta, y «Silenciar audio»; el cambio es inmediato y se conserva al cerrar y reabrir.
+5. **Pausa:** Esc: música atenuada, la partida y las partículas quedan quietas; Continuar devuelve el volumen normal.
+6. **Alt+Tab:** jugando, cambia a otra ventana: la partida se pausa y **todo** se silencia. Al volver: sigue en pausa, la música vuelve al 25 % y no suena ninguna ráfaga de efectos acumulados; el cursor queda libre hasta Continuar.
+7. **Auriculares ↔ altavoces:** con la build abierta, cambia el dispositivo de salida de Windows: el sonido debe continuar en el nuevo (música y efectos) sin cerrar el juego.
+8. **Resultados:** al ganar o perder suena victoria o derrota; los efectos pendientes se cortan.
+9. **Varias partidas seguidas:** Reintentar y Nuevo mapa varias veces y Volver al inicio: nunca dos músicas a la vez, sin efectos o partículas de la partida anterior, sin pausa arrastrada y con la Calderilla sumada una sola vez por partida.
+10. **Partículas:** restos al morir enemigos (más con la rata élite y muchos con el jefe), polvo al aparecer, chispas del rayo (Jersey), vapores de la Naftalina, burbujas de la Fregona, migas del barrazo, baúl, nivel, escudo, culetazo, olla y bata. Con «Reducir partículas» hay bastantes menos, al momento.
+11. **Números de daño:** blancos al golpear, amarillos con «!» en críticos (naranja «!!» supercrítico), rojos sobre ti al recibir daño; suben y se desvanecen; quietos en pausa.
+12. **Cámara:** al mirar hacia arriba o pegarte a una ladera la cámara se acerca y luego se aleja suavemente; al deslizarte baja el punto de mira; al ir muy rápido (deslizando cuesta abajo) se abre el campo de visión.
+13. **Sacudida:** al recibir un golpe, aparecer el jefe, su culetazo (fuerte cerca, suave lejos) y la bata. Con «Sacudidas de cámara» desactivada no hay ninguna. Valora si te parece demasiado fuerte (valores de la web, sin rebalancear).
+14. **Destellos:** al recibir daño, destello rojo de la pantalla y el personaje parpadea mientras es invulnerable; los enemigos golpeados destellan en blanco. Con «Destellos de daño» desactivado no hay ninguno de los tres, pero las franjas y círculos de aviso de la rata y del jefe siguen visibles.
+15. **Español e inglés:** repite algún punto con English: textos de pausa, opciones, resultados y avisos sin restos del otro idioma.
+
+Anota fecha, dispositivo de audio, resolución y cualquier diferencia. La aprobación de esta prueba cierra U5; U6 no empieza antes.
+
+- **Aprobación del autor:** pendiente.

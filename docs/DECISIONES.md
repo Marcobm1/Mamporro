@@ -1,6 +1,6 @@
 # Decisiones acordadas
 
-**Estado actual:** U1–U4 aprobados; U4 aprobada manualmente el 04/10/2026. U5 autorizado e implementándose desde el 04/10/2026; véase la última entrada y [PROGRESO_U5](PROGRESO_U5.md). Las autorizaciones anteriores son históricas.
+**Estado actual:** U1–U4 aprobados; U4 aprobada manualmente el 04/10/2026. U5 implementado y verificado el 04/10/2026, pendiente de la prueba manual del autor; véase [PROGRESO_U5](PROGRESO_U5.md) y [EQUIVALENCIA_U5](EQUIVALENCIA_U5.md). Las autorizaciones anteriores son históricas.
 
 Registro de lo que se ha decidido durante el desarrollo, además de la
 [especificación original](ESPECIFICACION.md). Cuando esto la concreta o la

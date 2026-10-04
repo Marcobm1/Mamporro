@@ -20,7 +20,7 @@ El repositorio es la memoria compartida. Una decisión, prueba, limitación o si
 2. `docs/INSTRUCCIONES_PROYECTO.md`.
 3. `docs/ESTADO_ACTUAL.md`.
 4. Este archivo, `docs/CONTINUIDAD_AGENTES.md`.
-5. El checkpoint del bloque vigente, actualmente `docs/PROGRESO_U5.md` (U5 autorizado el 04/10/2026; U4 aprobada el mismo día).
+5. El checkpoint del bloque vigente, actualmente `docs/PROGRESO_U5.md` (U5 implementado y verificado el 04/10/2026, pendiente de prueba manual; U4 aprobada el mismo día).
 6. `docs/DECISIONES.md` y el resto de documentación indicada por el checkpoint.
 
 Después comprobar desde CMD:
@@ -133,5 +133,5 @@ A fecha 04/10/2026:
 - U1 está cerrado y aprobado.
 - U2 está aprobado y cerrado.
 - U3 aprobada manualmente el 04/10/2026; último cierre técnico previo: `83246ebfd873b0c5d23611a1d557f83096180217`.
-- U4 aprobada manualmente el 04/10/2026 (último cierre técnico `3754e31`). U5 autorizado el 04/10/2026: pasos 1–9 verificables; no iniciar U6 sin aprobación manual de U5.
+- U4 aprobada manualmente el 04/10/2026 (último cierre técnico `3754e31`). U5 implementado y verificado el 04/10/2026, pendiente de la prueba manual del autor; no iniciar U6 sin su aprobación.
 - Codex CLI y Claude Code trabajan por turnos. Leer `docs/PROGRESO_U5.md` y los cierres de U3 y U4, auditar el árbol y continuar desde el checkpoint; conservar los siete ajustes locales Unity excluidos.

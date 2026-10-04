@@ -1,6 +1,6 @@
 # MAMPORRO en Unity
 
-> Estado vigente en [ESTADO_ACTUAL](../docs/ESTADO_ACTUAL.md): U1–U3 aprobados; aprobación manual U3 el 04/10/2026 ([cierre](../docs/PROGRESO_U3.md#checkpoint-al-terminar-u3)). [U4 aprobada manualmente el 04/10/2026](../docs/PROGRESO_U4.md#checkpoint-al-terminar-u4). [U5 autorizado y en implementación](../docs/PROGRESO_U5.md).
+> Estado vigente en [ESTADO_ACTUAL](../docs/ESTADO_ACTUAL.md): U1–U3 aprobados; aprobación manual U3 el 04/10/2026 ([cierre](../docs/PROGRESO_U3.md#checkpoint-al-terminar-u3)). [U4 aprobada manualmente el 04/10/2026](../docs/PROGRESO_U4.md#checkpoint-al-terminar-u4). [U5 implementado y verificado, pendiente de la prueba manual del autor](../docs/PROGRESO_U5.md#checkpoint-al-terminar-u5).
 
 ## Referencia U1 (aceptada por el autor)
 
@@ -94,7 +94,7 @@ Controles de U2 (sin conflictos con U1: en esta escena R, 1–4 y F5 de U1 no se
 Abre `Assets/Mamporro/U3/U3_Partida.unity`, o ejecuta
 `unity\Builds\U3\Mamporro-U3.exe`. Es la partida completa de la web aprobada
 sobre el mundo procedural, con el progreso permanente, menús y opciones de U4 en
-pantallas uGUI técnicas (el arte final es U5).
+pantallas uGUI técnicas, y audio y efectos de U5 (el arte final llega después de U6).
 
 - **Jugar:** Doña Remedios o Sir Baguette (si está desbloqueado), duración 5/10/15
   minutos y semilla opcional (se normaliza como en la web; vacía = mapa actual).
@@ -111,8 +111,7 @@ pantallas uGUI técnicas (el arte final es U5).
   sensibilidad, resolución interna 240/360/480, temblor de vértices, dithering,
   FPS, reducir partículas, sacudidas, destellos, Ctrl para deslizarse, duración
   (solo en el menú), volúmenes y silencio. Se aplican al momento y se guardan con el
-  progreso. Volúmenes, partículas y sacudidas solo se guardan: el audio, las
-  partículas decorativas y las sacudidas llegan en U5.
+  progreso; desde U5 todas tienen efecto (volúmenes, partículas, sacudidas y destellos).
 - **Audio (U5):** música chiptune original (normal e intensa con jefe o enjambre) y
   efectos sintetizados como en la web; volúmenes y silencio de Opciones; sin foco se
   silencia y se pausa. `visual` mide además la señal real de salida (`audio-report.json`).
@@ -163,7 +162,10 @@ combate con HUD, interactuables, telegrafiado, pausa, opciones en pausa, cartas,
 reinicio. Comprueba que sean nuevas y contengan imagen; abre una ventana visible
 durante unos segundos. También exige diferencias de píxeles al activar/desactivar
 el render de combate con cámara/simulación/viento inmóviles: detecta instancing
-ausente en la build. Es una comprobación visual, no una medida de rendimiento.
+ausente en la build. Es una comprobación visual, no una medida de rendimiento. Desde U5 mide además
+la señal de audio real (`audio-report.json`), termina con cinco partidas seguidas sin
+trucos (`sessions-report.json`) y abre la build cuatro veces más para las 11 pantallas
+en español e inglés a 1280×720 y 1920×1080 (`Visual/<idioma>-<ancho>x<alto>/`, 44 capturas).
 
 `benchmark` ejecuta la build a pantalla completa en el monitor principal
 (`-monitor 1`; 1920×1080 y 2560×1440) con
@@ -171,7 +173,13 @@ ausente en la build. Es una comprobación visual, no una medida de rendimiento.
 activo, invulnerable de ensayo y siempre la primera carta) que avanza sin medir
 hasta 10 s antes de cada punto y mide 10 s + 30 s en los minutos 2, 5 y 9 y en
 el enjambre (desde los 640 s). Escribe JSON y CSV por punto (`u3-<ancho>x<alto>-<punto>-*.json`)
-con FPS, P95/P99, CPU/GPU, GC, ticks y `validRender`, y muestra un resumen.
+con FPS, P95/P99, CPU/GPU, GC, ticks y `validRender`, y muestra un resumen. Desde U5:
+dos perfiles por resolución (`-u5-profile horda|armas`: solo la Chancla o cuatro armas),
+audio, partículas, números y sacudida activos, y contadores de partículas, números,
+voces, sonidos y recolecciones, con el detalle de cada fotograma > 16,67 ms.
+`scripts\u3.cmd devdiag` genera una build de desarrollo aparte (`Builds/U3Dev`) y hace
+una pasada a 1920×1080 en `TestResults/U3/DevDiag` («diagnóstico Development»:
+asignaciones, memoria y GPU si es válida; no es rendimiento final).
 XML, logs, informes y capturas quedan en `unity/TestResults/U3/`; builds y
 capturas no se publican. `scripts\u3.cmd create` regenera deliberadamente solo la
 escena U3; no hace falta para jugar.
@@ -254,4 +262,4 @@ la horda provisional no garantiza el coste del futuro combate completo.
 - `Generated/`: escena, malla, datos y materiales originales con sus `.meta`.
 
 La web y `Docs/Reference/` permanecen intactos. U1 ya ha recibido revisión favorable del
-autor; U2 y U3 están aprobados. U4 está aprobada por el autor (04/10/2026). U5 está autorizado y en implementación.
+autor; U2 y U3 están aprobados. U4 está aprobada por el autor (04/10/2026). U5 está implementado y verificado (04/10/2026), pendiente de la prueba manual del autor.
