@@ -1,16 +1,16 @@
 # Checkpoint U6 — adoptar Unity como versión principal
 
-Estado: **SOLO PLANIFICACIÓN AUTORIZADA, 04/10/2026. IMPLEMENTACIÓN NO AUTORIZADA.** U1–U5 aprobados; aprobación manual U5 registrada en `4fcbcdf7707f4b22594164ae27552e62629228ac` y publicada. Último cierre técnico U5: `5ef42b6083ea15251308dcebac60cb851ca766ea`. Este documento es una propuesta, no trabajo implementado ni una aprobación de cambios de configuración.
+Estado: **AUTORIZADO Y EN CURSO, 04/10/2026.** U1–U5 aprobados; aprobación manual U5 registrada en `4fcbcdf7707f4b22594164ae27552e62629228ac` y publicada. Último cierre técnico U5: `5ef42b6083ea15251308dcebac60cb851ca766ea`. Plan y decisiones aprobados. Solo se autoriza publicar productName, preservando las demás diferencias locales de configuración.
 
 ## Cómo retomar
 
 - **Punto de partida:** cierre/aprobación U5 publicado en `4fcbcdf`; plan U6 en «Prepara el plan de adopción de Unity para U6» (hash: `git log -1 --format="%H %s" -- docs/PROGRESO_U6.md`).
-- **Paso actual:** esperar respuesta del autor al plan y a las dos decisiones al final. No programar U6 todavía.
+- **Paso actual:** paso 1 terminado; siguiente, paso 2 (transición segura del guardado).
 - **Terminado:** migración funcional U1–U5 aprobada; contrato/transferencia/meta, partida completa, audio y feedback. Falta la adopción y entrega de U6, no reimplementar esos sistemas.
-- **A medias:** nada de runtime. Solo documentación de planificación en este hito.
+- **A medias:** nada de runtime. Entrada Unity y guía web documentadas; B0 registrado como futuro.
 - **Sin publicar deliberadamente:** los siete ajustes Unity enumerados debajo; no restaurarlos ni incluirlos para limpiar Git.
 - **Pruebas de esta preparación:** únicamente auditoría Git, lectura de documentación/código, revisión de Markdown y comparación SHA-256 de los excluidos. No se han repetido suites, build, visual ni benchmark.
-- **Siguiente paso exacto:** recibir decisión sobre destino de la web e identidad de entrega/protección de configuración; registrar la autorización de implementación. Después comenzar el paso 1 propuesto, sin ampliar alcance.
+- **Siguiente paso exacto:** implementar y probar la transición del progreso histórico con revisión y confirmación reutilizando U4, antes de cambiar productName. Usar solo carpetas temporales; overrides QA aíslan el progreso real.
 
 Comprobación CMD:
 
@@ -47,18 +47,18 @@ Conservar las pruebas existentes como regresión. La aceptación de U6 será de 
 | `unity/Assets/Mamporro/U3/U3_Partida.unity` | Conservar ruta/GUID y señalarla como escena principal | No renombrar ensamblados/carpetas U1–U5 por estética; evitar referencias rotas |
 | `U3Project.Build`, `Builds/U3/Mamporro-U3.exe` | Entrada de entrega estable, propuesta `unity/Builds/Windows/MAMPORRO.exe`; lanzador público claro | Conservar comandos QA U1/U2/U3 y su compatibilidad; no prometer comando nuevo antes de crearlo |
 | `Builds/U3Dev` | Seguir separada y rotulada diagnóstico Development | Nunca distribuirla como la build normal ni mezclar medidas |
-| `companyName: Mamporro`, `productName: Mamporro U1`, `bundleVersion: 1.0` | Mantener empresa y versión existentes; proponer producto `MAMPORRO` | Cambio de producto sujeto a decisión 2 y a migración probada; no inventar identificador de plataforma/Steam |
+| `companyName: Mamporro`, `productName: Mamporro U1`, `bundleVersion: 1.0` | Mantener empresa y versión existentes; proponer producto `MAMPORRO` | Cambio mínimo de producto autorizado, sujeto a migración probada; no inventar identificador de plataforma/Steam |
 | `applicationIdentifier: {}` | Sin cambio por defecto para esta entrega Windows | No añadir configuración móvil ni servicios |
-| `Application.persistentDataPath/Progress` | Ruta estable bajo la nueva identidad, si se aprueba | En Windows, ubicación histórica esperada `%USERPROFILE%\AppData\LocalLow\Mamporro\Mamporro U1\Progress`; nueva propuesta `...\MAMPORRO\Progress`. Comprobar rutas reales de build, no asumir migración automática |
+| `Application.persistentDataPath/Progress` | Ruta estable bajo la nueva identidad aprobada | En Windows, ubicación histórica esperada `%USERPROFILE%\AppData\LocalLow\Mamporro\Mamporro U1\Progress`; nueva propuesta `...\MAMPORRO\Progress`. Comprobar rutas reales de build, no asumir migración automática |
 | `-u4-save-dir`, override de pruebas | Conservar compatibilidad y aislamiento | Si hay override, no explorar ni migrar el guardado real |
 | F3 y acciones de debug | Mantener decisiones existentes: no recompensas con trucos | U6 no elimina debug ya aprobado; atajos históricos QA documentados |
-| Siete ajustes locales excluidos | Intactos en esta preparación | No publicar nube/organización ni whitespace. Cualquier excepción futura limitada a identidad necesita decisión expresa |
+| Siete ajustes locales excluidos | Intactos en esta preparación | No publicar nube/organización ni whitespace. Excepción expresa: únicamente productName |
 
 Revisión basada en `U3Project.cs`, `U3Game.SaveDirectory`, `ProjectSettings.asset`, scripts actuales y checkpoints. No se ha probado todavía un mecanismo nuevo de identidad/build.
 
 ## Web histórica y estructura
 
-Propuesta: conservar web y exportador como referencia ejecutable en el mismo repositorio, sin evolución del gameplay ni nuevas publicaciones automáticas. Mantener `src/`, paquete/lockfile, scripts y documentos históricos; crear una guía web específica al reorganizar README. No hay workflow `.github` versionado que demuestre una publicación web actual: su destino público requiere la decisión 1, no se presupone que exista hosting.
+Decisi?n aprobada: conservar web y exportador como referencia ejecutable en el mismo repositorio, sin evolución del gameplay ni nuevas publicaciones automáticas. Mantener `src/`, paquete/lockfile, scripts y documentos históricos; crear una guía web específica al reorganizar README. No hay workflow `.github` versionado que demuestre una publicación web actual: no se desplegará ni retirará hosting ni se preparará una nueva publicación.
 
 - Referencia funcional inmutable: `0505b1690656d15188860157612455639820fe1f`.
 - Web con exportador: `b734b49` como base de comparación de `src/` documentada en U5; registrar el hash completo en la guía antes de cerrar U6.
@@ -68,7 +68,7 @@ Propuesta: conservar web y exportador como referencia ejecutable en el mismo rep
 
 ## Continuidad del guardado ante cambio de identidad
 
-Si se aprueba renombrar el producto, implementar y probar primero la transición. Reutilizar `ProgressValidator.Stored`, `ProgressStore`, informes y confirmación existentes; no un segundo parser ni una copia ciega.
+Renombrado aprobado: implementar y probar primero la transición. Reutilizar `ProgressValidator.Stored`, `ProgressStore`, informes y confirmación existentes; no un segundo parser ni una copia ciega.
 
 1. Resolver ruta actual y ruta histórica de forma explícita; un override QA excluye búsqueda del guardado real.
 2. Si existe destino válido, cargarlo sin mezclar ni sustituirlo automáticamente por el antiguo. Si es corrupto, aplicar recuperación/backup existente sin convertirlo silenciosamente en progreso nuevo.
@@ -76,12 +76,12 @@ Si se aprueba renombrar el producto, implementar y probar primero la transición
 4. Si el autor elige sustituir un destino existente, usar backup, preparación inmutable, escritura/verificación y recuperación de U4. No sumar moneda, desbloqueos, extras ni recompensas.
 5. Repetición, rechazo, fallo de escritura, origen corrupto/backup y dos directorios presentes deben quedar cubiertos. No liquidar partidas durante migración. No cambiar el formato `mamporro.unity-save` v1 si no cambia su esquema.
 
-Esta política aplica acuerdos existentes de validación y sustitución; no se vuelve a preguntar si se permite fusionar, porque está prohibido. El nombre/ruta final y la autorización limitada sobre configuración sí siguen pendientes.
+Esta política aplica acuerdos existentes de validación y sustitución; no se vuelve a preguntar si se permite fusionar, porque está prohibido. Nombre/ruta final y excepción limitada de configuración aprobados el 04/10/2026.
 
-## Pasos propuestos y commits verificables
+## Pasos autorizados y commits verificables
 
 1. **Entrada principal y referencia web:** README Unity primero, guía web recuperable, Editor `6000.6.3f1`, paquetes fijados, escena principal, comandos vigentes, diferencias aceptadas. Revisar enlaces y ejecutar el verificador histórico si se cambia su uso o preparación. Sin reescribir gameplay.
-2. **Transición del guardado:** implementar solo si se renombra identidad; pruebas puras y de archivos temporales separadas, rutas antigua/nueva y confirmación en menú; nunca probar contra el progreso personal del autor. Cerrar antes de cambiar la identidad efectiva.
+2. **Transición del guardado:** implementar antes de renombrar identidad; pruebas puras y de archivos temporales separadas, rutas antigua/nueva y confirmación en menú; nunca probar contra el progreso personal del autor. Cerrar antes de cambiar la identidad efectiva.
 3. **Identidad y build de entrega:** nombre/ruta acordados, lanzador estable y compatibilidad QA; ajuste mínimo autorizado de producto, si corresponde. Revisar explícitamente que los siete ajustes locales no se incorporan. Build Windows x64 Mono normal, sin Development. Si no puede aislarse la configuración autorizada, detenerse antes de alterar excluidos.
 4. **Paquete reproducible:** carpeta completa/ZIP local con datos y DLL, manifiesto, instrucciones y limitaciones; no empaquetar saves, logs personales, cachés, credenciales ni carpetas de desarrollo. Comprobar arranque desde otra carpeta, incluso con espacios.
 5. **Regresión de entrega:** ejecutar pruebas pertinentes y comprobaciones de build/guardado/nombres, capturas y sesiones. Registrar comandos, fecha, rutas, resultados exactos y fallos. Repetir benchmark solo si cambia runtime/rendimiento o aparece una regresión; el cambio de nombre no justifica por sí solo un nuevo ensayo largo.
@@ -129,20 +129,28 @@ Rendimiento U5 histórico: picos finales 30,8 y 41,9 ms en el perfil/resolución
 
 Menos enemigos iniciales, más resistentes individualmente y crecimiento progresivo; bastante más oro **de partida**, no Calderilla; mundo/estructuras mayores, mesetas/rampas/verticalidad, escalada, arte retro profesional, animaciones/feedback adicionales, ilustraciones/iconos originales y expansión de contenido. Sin cantidades ni multiplicadores/curvas nuevos. Cámara contra estructuras, mando/remapeo, métricas adicionales, Steam, telemetría externa, assets de terceros, compras y publicación comercial quedan fuera. No alterar referencias ni la web para ocultar divergencias.
 
-## Decisiones del autor pendientes — una sola tanda
+## Decisiones del autor resueltas — 04/10/2026
 
-1. **Destino web:** ¿conservarla como referencia ejecutable con exportador dentro del repositorio, congelada y sin nueva publicación web (recomendado), o mantener también una edición web publicada? Si existe publicación que quieras conservar, indicar su destino; no desplegar ni retirar nada por inferencia.
-2. **Identidad de entrega:** ¿usar `MAMPORRO.exe`, producto `MAMPORRO`, empresa `Mamporro` y ruta `Builds/Windows`, con revisión/copia segura del progreso histórico? Recomendado. Esto requiere autorizar para U6 únicamente el cambio versionado de `productName` si se implementa en `ProjectSettings.asset`, conservando fuera los ajustes locales existentes. Alternativa sin esa excepción: normalizar ejecutable/ruta y conservar por ahora producto/ruta de guardado históricos. En esta tarea ninguno de los siete archivos se toca.
+1. Web ejecutable y exportador conservados, congelados como referencia histórica; sin evolución de gameplay, nueva publicación ni acciones sobre servicios externos.
+2. `MAMPORRO.exe`, producto `MAMPORRO`, empresa existente `Mamporro`, builds normales `unity/Builds/Windows`, Development separada. Únicamente se autoriza publicar la línea productName; todas las otras diferencias locales se conservan fuera del índice. Transición revisable del progreso primero, sin fusión, pérdida del original ni acceso al progreso real desde QA.
 
-No hay otras decisiones bloqueantes identificadas. Backend Mono, Editor/paquetes, IDs, formatos, sustitución sin fusión, F3 y límites de alcance ya están resueltos.
+No hay decisiones bloqueantes pendientes. [B0 Blender](BLENDER_B0.md) solo documentado como futuro; no forma parte de U6 ni está autorizado para implementación.
 
 ## Cambios locales excluidos
 
-Conservar sin publicar/restaurar: `unity/Assets/Mamporro/Generated/RetroPipeline.asset`, `unity/Assets/UniversalRenderPipelineGlobalSettings.asset`, `unity/ProjectSettings/GraphicsSettings.asset`, `unity/ProjectSettings/ProjectAuditorSettings.asset`, `unity/ProjectSettings/ProjectSettings.asset`, `unity/ProjectSettings/PackageManagerSettings.asset` y `unity/ProjectSettings/URPProjectSettings.asset` (los dos últimos sin seguimiento).
+Conservar sin publicar/restaurar: `unity/Assets/Mamporro/Generated/RetroPipeline.asset`, `unity/Assets/UniversalRenderPipelineGlobalSettings.asset`, `unity/ProjectSettings/GraphicsSettings.asset`, `unity/ProjectSettings/ProjectAuditorSettings.asset`, `unity/ProjectSettings/ProjectSettings.asset` (excepto exclusivamente productName autorizado), `unity/ProjectSettings/PackageManagerSettings.asset` y `unity/ProjectSettings/URPProjectSettings.asset` (los dos últimos sin seguimiento).
 
-## Registro de sesión — 04/10/2026, Codex
+## Registro de planificación — 04/10/2026, Codex
 
-- U5 aprobado y publicado en `4fcbcdf7707f4b22594164ae27552e62629228ac`, remoto comprobado. Preparación U6 exclusivamente documental según alcance oficial y código real de build/rutas; entradas de continuidad apuntan a este plan.
-- Comprobaciones: Git, diff Markdown/índice, referencias y `src/` sin cambios; siete excluidos con SHA-256 idénticos antes/después. Sin suites nuevas ni build/benchmark.
-- Commit del plan: «Prepara el plan de adopción de Unity para U6», fetch/push normal si remoto conserva el cierre anterior y verificación del HEAD. Localizar hash por este archivo.
-- Pendiente: respuesta del autor a las dos decisiones y autorización de implementación. No hay código U6 a medias. U6 no está implementado ni terminado.
+- U5 aprobado y publicado en `4fcbcdf7707f4b22594164ae27552e62629228ac`. Plan U6 publicado en `09d5d80b091711894837f86606a506b455092a6b`.
+- Auditoría Git, diff documental y siete huellas excluidas; sin suites ni build nuevas. Las dos decisiones entonces pendientes ya están aprobadas.
+
+## Sesión 04/10/2026 — paso 1, entrada principal (Codex)
+
+- Punto de partida: `09d5d80b091711894837f86606a506b455092a6b`, local/remoto coincidentes tras fetch. Solo siete ajustes excluidos preexistentes.
+- Autorización: pasos 1–6 y ambas decisiones resueltas por el autor; aprobación manual final todavía necesaria.
+- Trabajo: README principal Unity; guía web histórica recuperable separada, sin modificar src ni referencias. Continuidad y estados vigentes actualizados. Objetivos completos B0 en BLENDER_B0 y enlaces desde hoja de ruta/decisiones; no instalación ni scripts Blender.
+- Verificación: revisión de diff y enlaces locales; comparación de siete SHA-256 excluidos y ausencia de cambios en src/referencias. Sin suites ni build nuevas, porque esta pieza solo cambia documentación y no modifica verificadores.
+- Commit: «Establece Unity como entrada principal y registra B0» (localizar SHA en git log de este archivo). Publicación: fetch y push normal tras comprobar el remoto; verificar HEAD remoto antes de continuar.
+- Estado final previsto: únicamente los siete ajustes excluidos, sin runtime a medias. No se ha tocado productName.
+- Siguiente paso: transición segura de guardado con pruebas en carpetas temporales.

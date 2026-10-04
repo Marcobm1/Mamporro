@@ -1,5 +1,15 @@
 # Decisiones acordadas
 
+## U6 autorizado y B0 Blender futuro (04/10/2026)
+
+El autor autoriza consecutivamente los pasos 1–6 de U6; no repetir permisos generales. Web ejecutable congelada con exportador en el repositorio, sin gameplay nuevo ni publicación/despliegue web. Unity pasa a principal. Identidad aprobada: `MAMPORRO.exe`, producto `MAMPORRO`, empresa `Mamporro` (ya existente), build normal en `unity/Builds/Windows`, Development separado.
+
+Excepción mínima: versionar únicamente `productName: Mamporro U1` → `productName: MAMPORRO` en `ProjectSettings.asset`; el resto de diferencias locales y los otros seis archivos excluidos siguen protegidos. Aislar y comprobar el diff antes/después; detenerse si no puede hacerse sin pérdida/publicación accidental. Probar primero transición del guardado, sin tocar el personal: validación y revisión U4, confirmación, backup/escritura/verificación, sin fusión ni duplicación, original intacto y override QA totalmente aislado.
+
+B0 — Spike Blender / pipeline de assets 3D queda confirmado como **trabajo futuro documentado**, después de cerrar y aprobar U6, no como implementación actual. Objetivos canónicos en [BLENDER_B0](BLENDER_B0.md) y hoja de ruta. Referencia prevista por el autor Blender 5.2.2 LTS, instalación no comprobada; verificar ruta/versión en CMD al empezar B0. `.blend → FBX → Unity`, automatización background/Python, separación VisualRoot/lógica, comparación medida de animación masiva, binarios/LFS solo tras medir y arte original con revisión humana. Sin instalación/plugins/assets de terceros ni telemetría ahora.
+
+Al terminar U6, detenerse para prueba manual; no iniciar B0, balance ni otra mejora posmigración.
+
 ## Aprobación manual de U5 y preparación de U6 (04/10/2026)
 
 El autor comunica que la prueba manual ha ido bien y **aprueba U5**. Último cierre técnico previo: `5ef42b6083ea15251308dcebac60cb851ca766ea`. La aprobación es global; no se inventan mediciones nuevas ni resultados individuales de dispositivos. Las diferencias y limitaciones de `EQUIVALENCIA_U5.md` se conservan como parte de la base aprobada, sin reabrir funciones ya portadas.

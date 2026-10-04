@@ -14,6 +14,12 @@ de las peticiones del autor.
 
 ## Dirección del juego acordada
 
+### B0 posterior a U6 — pipeline 3D Blender
+
+Objetivos confirmados el 04/10/2026, **solo documentación futura**: después del cierre y aprobación manual de U6, proponer un spike aislado antes de adoptar un pipeline artístico completo. Blender para producción 3D; Unity conserva simulación, colliders, procedural y arquitectura de hordas. Dirección a validar: `.blend → exportación automatizada → FBX → Unity`, sin importar `.blend` directamente en producción.
+
+Referencia prevista por el autor: Blender 5.2.2 LTS; versión/ruta reales se comprobarán en Windows al comenzar B0, no ahora. Spike mínimo con enemigo común, avatar con rig/animación, pieza modular, exportación/reimportación y horda 300/500/750 cuando proceda. Comparar estrategias de animación masiva sin dar por elegido un Animator/SkinnedMeshRenderer individual por enemigo. Medir binarios antes de proponer LFS. Convenciones, automatización prevista, VisualRoot, límites y autoría en [BLENDER_B0](../../docs/BLENDER_B0.md). No hay scripts Blender funcionales ni autorización de implementación dentro de U6.
+
 Juego de escritorio para una futura publicación en Steam/plataformas similares.
 Conservar humor e identidad propios, supervivencia contra hordas, progresión y
 estética retro. Megabonk sirve de referencia expresada por el autor para escala,
@@ -78,7 +84,7 @@ Fuentes oficiales consultadas el 28/09/2026:
   poder evaluar después las rampas/escalada; cualquier variante de movimiento
   requiere su plan concreto y aceptación, conservando una escena de referencia.
 - **U2 aprobado por el autor:** núcleo y combate equivalentes en escenario controlado.
-- **U3–U5 aprobados; U6 en planificación:** trasladar y validar los sistemas restantes. Las diferencias
+- **U3–U5 aprobados; U6 autorizado y en curso:** trasladar y validar los sistemas restantes. Las diferencias
   intencionadas se documentarán en vez de hacer pasar un cambio de diseño por
   un fallo del port. No ampliar el catálogo durante la migración.
 - **Después de la base Unity aprobada:** bloques P0, luego P1 y lotes pequeños P2.
