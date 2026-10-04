@@ -11,7 +11,7 @@ Antes de modificar código o documentación, lee:
 1. [`docs/INSTRUCCIONES_PROYECTO.md`](docs/INSTRUCCIONES_PROYECTO.md).
 2. [`docs/ESTADO_ACTUAL.md`](docs/ESTADO_ACTUAL.md).
 3. [`docs/CONTINUIDAD_AGENTES.md`](docs/CONTINUIDAD_AGENTES.md).
-4. [`docs/PROGRESO_U4.md`](docs/PROGRESO_U4.md) (planificación vigente) y cierre aprobado en [`docs/PROGRESO_U3.md`](docs/PROGRESO_U3.md).
+4. [`docs/PROGRESO_U4.md`](docs/PROGRESO_U4.md) (checkpoint vigente) y cierre aprobado en [`docs/PROGRESO_U3.md`](docs/PROGRESO_U3.md).
 5. [`docs/DECISIONES.md`](docs/DECISIONES.md) y [`docs/ESPECIFICACION.md`](docs/ESPECIFICACION.md).
 6. [`docs/MIGRACION_UNITY.md`](docs/MIGRACION_UNITY.md).
 7. [`README.md`](README.md) y [`unity/README.md`](unity/README.md).
@@ -28,7 +28,7 @@ Las decisiones posteriores concretan o sustituyen la especificación original. L
 - Unity: proyecto real en `unity/`, Unity 6.6 `6000.6.3f1`, Windows x64 Mono, URP 17.6.0, Input System 1.20.0, uGUI 2.6.0, Test Framework 1.8.0.
 - U1: implementado en `abe0a9b7f0b8c53f478b91c870341999df2ea073`, checkpoint `eb691b595eb247118075368430d34ed0a95735d1`; build y pruebas automáticas correctas y **aprobación manual del autor posterior al checkpoint**.
 - U2: aprobado por el autor el 29/09/2026 (`docs/PROGRESO_U2.md`).
-- **U3 aprobada manualmente el 04/10/2026. U4 autorizado solo para planificación.** No implementar hasta la siguiente respuesta del autor (`docs/PROGRESO_U4.md`).
+- **U3 aprobada manualmente el 04/10/2026. U4 autorizado para implementación el 04/10/2026.** Continuar por pasos verificables (`docs/PROGRESO_U4.md`).
 - Codex CLI ya está instalado/verificado; no repetir la instalación.
 - Codex y Claude Code trabajan por turnos. El último checkpoint publicado manda sobre recuerdos de sesiones anteriores.
 
@@ -46,7 +46,7 @@ Decisiones, plan y criterios: `docs/PROGRESO_U3.md`.
 
 1. Antes de editar, comprueba rama, `git status --short --branch`, últimos commits, remoto y cambios locales. Haz `git fetch origin`; si el árbol está limpio y solo falta avanzar, usa `git pull --ff-only`. Conserva cambios del autor, de Unity y del agente anterior; no uses `reset --hard`, `git clean`, checkout destructivo ni reclonado para «arreglar» un árbol sucio.
 2. Lee el último apartado de relevo en `docs/PROGRESO_U4.md`. No asumas que Codex terminó todo lo planeado ni repitas trabajo sin comprobar commits y estado.
-3. U4 está autorizado solo para planificación. El plan y las dudas agrupadas están en `docs/PROGRESO_U4.md`; esperar la siguiente respuesta del autor antes de programar.
+3. U4 está autorizado para implementación el 04/10/2026. El plan y la política de importación resuelta están en `docs/PROGRESO_U4.md`; continuar dentro del alcance autorizado.
 4. Mantén la base web y `unity/Docs/Reference/` como referencia. Nunca uses `--write` o cambies valores esperados para hacer pasar un port incorrecto.
 5. Implementa por piezas verificables. Código en inglés; comentarios, documentación y commits en español. No nombres modelos de IA en código ni commits.
 6. Verifica lo que realmente ejecutes. Distingue pruebas unitarias, Edit Mode, Play Mode, build y benchmark; un benchmark de lógica no equivale a FPS reales.

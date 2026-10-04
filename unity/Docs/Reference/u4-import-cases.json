@@ -1,0 +1,2273 @@
+{
+  "formatVersion": 1,
+  "policyDate": "2026-10-04",
+  "reference": "u4-progress.json",
+  "notes": "Expectativas contractuales del autor; no son resultados de sanitizeMeta ni de un importador ya implementado. Las recetas de IO se probarán por separado.",
+  "cases": [
+    {
+      "id": "v1-earliest",
+      "language": "es",
+      "input": {
+        "base": "v1-earliest",
+        "encoding": "web",
+        "edits": []
+      },
+      "expected": {
+        "outcome": "recovery",
+        "issues": [
+          {
+            "path": "/version",
+            "code": "web.migrate",
+            "action": "migrate"
+          }
+        ],
+        "candidate": {
+          "base": "v1-earliest",
+          "edits": []
+        }
+      }
+    },
+    {
+      "id": "v1-options",
+      "language": "es",
+      "input": {
+        "base": "v1-options",
+        "encoding": "web",
+        "edits": []
+      },
+      "expected": {
+        "outcome": "recovery",
+        "issues": [
+          {
+            "path": "/version",
+            "code": "web.migrate",
+            "action": "migrate"
+          }
+        ],
+        "candidate": {
+          "base": "v1-options",
+          "edits": []
+        }
+      }
+    },
+    {
+      "id": "v2-partial",
+      "language": "es",
+      "input": {
+        "base": "v2-partial",
+        "encoding": "web",
+        "edits": []
+      },
+      "expected": {
+        "outcome": "recovery",
+        "issues": [
+          {
+            "path": "/version",
+            "code": "web.migrate",
+            "action": "migrate"
+          }
+        ],
+        "candidate": {
+          "base": "v2-partial",
+          "edits": []
+        }
+      }
+    },
+    {
+      "id": "v3-partial",
+      "language": "es",
+      "input": {
+        "base": "v3-partial",
+        "encoding": "web",
+        "edits": []
+      },
+      "expected": {
+        "outcome": "valid",
+        "issues": [],
+        "candidate": {
+          "base": "v3-partial",
+          "edits": []
+        }
+      }
+    },
+    {
+      "id": "v3-missions",
+      "language": "es",
+      "input": {
+        "base": "v3-missions",
+        "encoding": "web",
+        "edits": []
+      },
+      "expected": {
+        "outcome": "valid",
+        "issues": [],
+        "candidate": {
+          "base": "v3-missions",
+          "edits": []
+        }
+      }
+    },
+    {
+      "id": "v3-all",
+      "language": "es",
+      "input": {
+        "base": "v3-all",
+        "encoding": "web",
+        "edits": []
+      },
+      "expected": {
+        "outcome": "valid",
+        "issues": [],
+        "candidate": {
+          "base": "v3-all",
+          "edits": []
+        }
+      }
+    },
+    {
+      "id": "transfer-complete",
+      "language": "es",
+      "input": {
+        "base": "v3-partial",
+        "encoding": "transfer",
+        "edits": []
+      },
+      "expected": {
+        "outcome": "valid",
+        "issues": [],
+        "candidate": {
+          "base": "v3-partial",
+          "edits": []
+        }
+      }
+    },
+    {
+      "id": "transfer-origin-v1-is-already-normalized",
+      "language": "es",
+      "input": {
+        "base": "v3-partial",
+        "encoding": "transfer",
+        "edits": [
+          {
+            "op": "replace",
+            "path": "/source/saveVersion",
+            "value": 1
+          }
+        ]
+      },
+      "expected": {
+        "outcome": "valid",
+        "issues": [],
+        "candidate": {
+          "base": "v3-partial",
+          "edits": []
+        }
+      }
+    },
+    {
+      "id": "unity-complete",
+      "language": "es",
+      "input": {
+        "base": "v3-partial",
+        "encoding": "unity",
+        "edits": []
+      },
+      "expected": {
+        "outcome": "valid",
+        "issues": [],
+        "candidate": {
+          "base": "v3-partial",
+          "edits": []
+        }
+      }
+    },
+    {
+      "id": "new-local",
+      "language": "es",
+      "input": {
+        "recipe": {
+          "kind": "no-local-save"
+        }
+      },
+      "expected": {
+        "outcome": "valid",
+        "issues": [],
+        "candidate": {
+          "base": "new-es",
+          "edits": []
+        }
+      }
+    },
+    {
+      "id": "empty",
+      "language": "es",
+      "input": {
+        "raw": ""
+      },
+      "expected": {
+        "outcome": "fatal",
+        "issues": [
+          {
+            "path": "/",
+            "code": "input.invalid",
+            "action": "reject"
+          }
+        ]
+      }
+    },
+    {
+      "id": "corrupt",
+      "language": "es",
+      "input": {
+        "raw": "{broken"
+      },
+      "expected": {
+        "outcome": "fatal",
+        "issues": [
+          {
+            "path": "/",
+            "code": "input.invalid",
+            "action": "reject"
+          }
+        ]
+      }
+    },
+    {
+      "id": "root-array",
+      "language": "es",
+      "input": {
+        "raw": "[]"
+      },
+      "expected": {
+        "outcome": "fatal",
+        "issues": [
+          {
+            "path": "/",
+            "code": "input.invalid",
+            "action": "reject"
+          }
+        ]
+      }
+    },
+    {
+      "id": "root-null",
+      "language": "es",
+      "input": {
+        "raw": "null"
+      },
+      "expected": {
+        "outcome": "fatal",
+        "issues": [
+          {
+            "path": "/",
+            "code": "input.invalid",
+            "action": "reject"
+          }
+        ]
+      }
+    },
+    {
+      "id": "no-version",
+      "language": "es",
+      "input": {
+        "raw": "{}"
+      },
+      "expected": {
+        "outcome": "fatal",
+        "issues": [
+          {
+            "path": "/",
+            "code": "input.invalid",
+            "action": "reject"
+          }
+        ]
+      }
+    },
+    {
+      "id": "version-string",
+      "language": "es",
+      "input": {
+        "raw": "{\"version\":\"3\"}"
+      },
+      "expected": {
+        "outcome": "fatal",
+        "issues": [
+          {
+            "path": "/",
+            "code": "input.invalid",
+            "action": "reject"
+          }
+        ]
+      }
+    },
+    {
+      "id": "future",
+      "language": "es",
+      "input": {
+        "raw": "{\"version\":999}"
+      },
+      "expected": {
+        "outcome": "fatal",
+        "issues": [
+          {
+            "path": "/",
+            "code": "input.invalid",
+            "action": "reject"
+          }
+        ]
+      }
+    },
+    {
+      "id": "negative-version",
+      "language": "es",
+      "input": {
+        "raw": "{\"version\":-1}"
+      },
+      "expected": {
+        "outcome": "fatal",
+        "issues": [
+          {
+            "path": "/",
+            "code": "input.invalid",
+            "action": "reject"
+          }
+        ]
+      }
+    },
+    {
+      "id": "fraction-version",
+      "language": "es",
+      "input": {
+        "raw": "{\"version\":2.5}"
+      },
+      "expected": {
+        "outcome": "fatal",
+        "issues": [
+          {
+            "path": "/",
+            "code": "input.invalid",
+            "action": "reject"
+          }
+        ]
+      }
+    },
+    {
+      "id": "duplicate-key",
+      "language": "es",
+      "input": {
+        "raw": "{\"version\":3,\"version\":1}"
+      },
+      "expected": {
+        "outcome": "fatal",
+        "issues": [
+          {
+            "path": "/",
+            "code": "input.invalid",
+            "action": "reject"
+          }
+        ]
+      }
+    },
+    {
+      "id": "infinity-token",
+      "language": "es",
+      "input": {
+        "raw": "{\"version\":Infinity}"
+      },
+      "expected": {
+        "outcome": "fatal",
+        "issues": [
+          {
+            "path": "/",
+            "code": "input.invalid",
+            "action": "reject"
+          }
+        ]
+      }
+    },
+    {
+      "id": "nan-token",
+      "language": "es",
+      "input": {
+        "raw": "{\"version\":NaN}"
+      },
+      "expected": {
+        "outcome": "fatal",
+        "issues": [
+          {
+            "path": "/",
+            "code": "input.invalid",
+            "action": "reject"
+          }
+        ]
+      }
+    },
+    {
+      "id": "missing--meta",
+      "language": "es",
+      "input": {
+        "base": "v3-partial",
+        "encoding": "web",
+        "edits": [
+          {
+            "op": "remove",
+            "path": "/meta"
+          }
+        ]
+      },
+      "expected": {
+        "outcome": "fatal",
+        "issues": [
+          {
+            "path": "/meta",
+            "code": "progress.required",
+            "action": "reject"
+          }
+        ]
+      }
+    },
+    {
+      "id": "missing--meta-coins",
+      "language": "es",
+      "input": {
+        "base": "v3-partial",
+        "encoding": "web",
+        "edits": [
+          {
+            "op": "remove",
+            "path": "/meta/coins"
+          }
+        ]
+      },
+      "expected": {
+        "outcome": "fatal",
+        "issues": [
+          {
+            "path": "/meta/coins",
+            "code": "progress.required",
+            "action": "reject"
+          }
+        ]
+      }
+    },
+    {
+      "id": "missing--meta-characters",
+      "language": "es",
+      "input": {
+        "base": "v3-partial",
+        "encoding": "web",
+        "edits": [
+          {
+            "op": "remove",
+            "path": "/meta/characters"
+          }
+        ]
+      },
+      "expected": {
+        "outcome": "fatal",
+        "issues": [
+          {
+            "path": "/meta/characters",
+            "code": "progress.required",
+            "action": "reject"
+          }
+        ]
+      }
+    },
+    {
+      "id": "missing--meta-weapons",
+      "language": "es",
+      "input": {
+        "base": "v3-partial",
+        "encoding": "web",
+        "edits": [
+          {
+            "op": "remove",
+            "path": "/meta/weapons"
+          }
+        ]
+      },
+      "expected": {
+        "outcome": "fatal",
+        "issues": [
+          {
+            "path": "/meta/weapons",
+            "code": "progress.required",
+            "action": "reject"
+          }
+        ]
+      }
+    },
+    {
+      "id": "missing--meta-items",
+      "language": "es",
+      "input": {
+        "base": "v3-partial",
+        "encoding": "web",
+        "edits": [
+          {
+            "op": "remove",
+            "path": "/meta/items"
+          }
+        ]
+      },
+      "expected": {
+        "outcome": "fatal",
+        "issues": [
+          {
+            "path": "/meta/items",
+            "code": "progress.required",
+            "action": "reject"
+          }
+        ]
+      }
+    },
+    {
+      "id": "missing--meta-extras",
+      "language": "es",
+      "input": {
+        "base": "v3-partial",
+        "encoding": "web",
+        "edits": [
+          {
+            "op": "remove",
+            "path": "/meta/extras"
+          }
+        ]
+      },
+      "expected": {
+        "outcome": "fatal",
+        "issues": [
+          {
+            "path": "/meta/extras",
+            "code": "progress.required",
+            "action": "reject"
+          }
+        ]
+      }
+    },
+    {
+      "id": "missing--meta-missions",
+      "language": "es",
+      "input": {
+        "base": "v3-partial",
+        "encoding": "web",
+        "edits": [
+          {
+            "op": "remove",
+            "path": "/meta/missions"
+          }
+        ]
+      },
+      "expected": {
+        "outcome": "fatal",
+        "issues": [
+          {
+            "path": "/meta/missions",
+            "code": "progress.required",
+            "action": "reject"
+          }
+        ]
+      }
+    },
+    {
+      "id": "missing--meta-completed",
+      "language": "es",
+      "input": {
+        "base": "v3-partial",
+        "encoding": "web",
+        "edits": [
+          {
+            "op": "remove",
+            "path": "/meta/completed"
+          }
+        ]
+      },
+      "expected": {
+        "outcome": "fatal",
+        "issues": [
+          {
+            "path": "/meta/completed",
+            "code": "progress.required",
+            "action": "reject"
+          }
+        ]
+      }
+    },
+    {
+      "id": "missing--meta-lastRun",
+      "language": "es",
+      "input": {
+        "base": "v3-partial",
+        "encoding": "web",
+        "edits": [
+          {
+            "op": "remove",
+            "path": "/meta/lastRun"
+          }
+        ]
+      },
+      "expected": {
+        "outcome": "fatal",
+        "issues": [
+          {
+            "path": "/meta/lastRun",
+            "code": "progress.required",
+            "action": "reject"
+          }
+        ]
+      }
+    },
+    {
+      "id": "missing--meta-selected",
+      "language": "es",
+      "input": {
+        "base": "v3-partial",
+        "encoding": "web",
+        "edits": [
+          {
+            "op": "remove",
+            "path": "/meta/selected"
+          }
+        ]
+      },
+      "expected": {
+        "outcome": "fatal",
+        "issues": [
+          {
+            "path": "/meta/selected",
+            "code": "progress.required",
+            "action": "reject"
+          }
+        ]
+      }
+    },
+    {
+      "id": "missing--meta-extras-rerolls",
+      "language": "es",
+      "input": {
+        "base": "v3-partial",
+        "encoding": "web",
+        "edits": [
+          {
+            "op": "remove",
+            "path": "/meta/extras/rerolls"
+          }
+        ]
+      },
+      "expected": {
+        "outcome": "fatal",
+        "issues": [
+          {
+            "path": "/meta/extras/rerolls",
+            "code": "progress.required",
+            "action": "reject"
+          }
+        ]
+      }
+    },
+    {
+      "id": "missing--meta-missions-kills",
+      "language": "es",
+      "input": {
+        "base": "v3-partial",
+        "encoding": "web",
+        "edits": [
+          {
+            "op": "remove",
+            "path": "/meta/missions/kills"
+          }
+        ]
+      },
+      "expected": {
+        "outcome": "fatal",
+        "issues": [
+          {
+            "path": "/meta/missions/kills",
+            "code": "progress.required",
+            "action": "reject"
+          }
+        ]
+      }
+    },
+    {
+      "id": "invalid--meta-coins-0",
+      "language": "es",
+      "input": {
+        "base": "v3-partial",
+        "encoding": "web",
+        "edits": [
+          {
+            "op": "replace",
+            "path": "/meta/coins",
+            "value": -1
+          }
+        ]
+      },
+      "expected": {
+        "outcome": "fatal",
+        "issues": [
+          {
+            "path": "/meta/coins",
+            "code": "value.invalid",
+            "action": "reject"
+          }
+        ]
+      }
+    },
+    {
+      "id": "invalid--meta-coins-1",
+      "language": "es",
+      "input": {
+        "base": "v3-partial",
+        "encoding": "web",
+        "edits": [
+          {
+            "op": "replace",
+            "path": "/meta/coins",
+            "value": 1000000001
+          }
+        ]
+      },
+      "expected": {
+        "outcome": "fatal",
+        "issues": [
+          {
+            "path": "/meta/coins",
+            "code": "value.invalid",
+            "action": "reject"
+          }
+        ]
+      }
+    },
+    {
+      "id": "invalid--meta-coins-2",
+      "language": "es",
+      "input": {
+        "base": "v3-partial",
+        "encoding": "web",
+        "edits": [
+          {
+            "op": "replace",
+            "path": "/meta/coins",
+            "value": 1.5
+          }
+        ]
+      },
+      "expected": {
+        "outcome": "fatal",
+        "issues": [
+          {
+            "path": "/meta/coins",
+            "code": "value.invalid",
+            "action": "reject"
+          }
+        ]
+      }
+    },
+    {
+      "id": "invalid--meta-coins-3",
+      "language": "es",
+      "input": {
+        "base": "v3-partial",
+        "encoding": "web",
+        "edits": [
+          {
+            "op": "replace",
+            "path": "/meta/coins",
+            "value": "100"
+          }
+        ]
+      },
+      "expected": {
+        "outcome": "fatal",
+        "issues": [
+          {
+            "path": "/meta/coins",
+            "code": "value.invalid",
+            "action": "reject"
+          }
+        ]
+      }
+    },
+    {
+      "id": "invalid--meta-coins-4",
+      "language": "es",
+      "input": {
+        "base": "v3-partial",
+        "encoding": "web",
+        "edits": [
+          {
+            "op": "replace",
+            "path": "/meta/coins",
+            "value": null
+          }
+        ]
+      },
+      "expected": {
+        "outcome": "fatal",
+        "issues": [
+          {
+            "path": "/meta/coins",
+            "code": "value.invalid",
+            "action": "reject"
+          }
+        ]
+      }
+    },
+    {
+      "id": "invalid--meta-extras-rerolls-0",
+      "language": "es",
+      "input": {
+        "base": "v3-partial",
+        "encoding": "web",
+        "edits": [
+          {
+            "op": "replace",
+            "path": "/meta/extras/rerolls",
+            "value": -1
+          }
+        ]
+      },
+      "expected": {
+        "outcome": "fatal",
+        "issues": [
+          {
+            "path": "/meta/extras/rerolls",
+            "code": "value.invalid",
+            "action": "reject"
+          }
+        ]
+      }
+    },
+    {
+      "id": "invalid--meta-extras-rerolls-1",
+      "language": "es",
+      "input": {
+        "base": "v3-partial",
+        "encoding": "web",
+        "edits": [
+          {
+            "op": "replace",
+            "path": "/meta/extras/rerolls",
+            "value": 4
+          }
+        ]
+      },
+      "expected": {
+        "outcome": "fatal",
+        "issues": [
+          {
+            "path": "/meta/extras/rerolls",
+            "code": "value.invalid",
+            "action": "reject"
+          }
+        ]
+      }
+    },
+    {
+      "id": "invalid--meta-extras-rerolls-2",
+      "language": "es",
+      "input": {
+        "base": "v3-partial",
+        "encoding": "web",
+        "edits": [
+          {
+            "op": "replace",
+            "path": "/meta/extras/rerolls",
+            "value": 0.5
+          }
+        ]
+      },
+      "expected": {
+        "outcome": "fatal",
+        "issues": [
+          {
+            "path": "/meta/extras/rerolls",
+            "code": "value.invalid",
+            "action": "reject"
+          }
+        ]
+      }
+    },
+    {
+      "id": "invalid--meta-extras-rerolls-3",
+      "language": "es",
+      "input": {
+        "base": "v3-partial",
+        "encoding": "web",
+        "edits": [
+          {
+            "op": "replace",
+            "path": "/meta/extras/rerolls",
+            "value": "2"
+          }
+        ]
+      },
+      "expected": {
+        "outcome": "fatal",
+        "issues": [
+          {
+            "path": "/meta/extras/rerolls",
+            "code": "value.invalid",
+            "action": "reject"
+          }
+        ]
+      }
+    },
+    {
+      "id": "invalid--meta-missions-kills-0",
+      "language": "es",
+      "input": {
+        "base": "v3-partial",
+        "encoding": "web",
+        "edits": [
+          {
+            "op": "replace",
+            "path": "/meta/missions/kills",
+            "value": -1
+          }
+        ]
+      },
+      "expected": {
+        "outcome": "fatal",
+        "issues": [
+          {
+            "path": "/meta/missions/kills",
+            "code": "value.invalid",
+            "action": "reject"
+          }
+        ]
+      }
+    },
+    {
+      "id": "invalid--meta-missions-kills-1",
+      "language": "es",
+      "input": {
+        "base": "v3-partial",
+        "encoding": "web",
+        "edits": [
+          {
+            "op": "replace",
+            "path": "/meta/missions/kills",
+            "value": 1001
+          }
+        ]
+      },
+      "expected": {
+        "outcome": "fatal",
+        "issues": [
+          {
+            "path": "/meta/missions/kills",
+            "code": "value.invalid",
+            "action": "reject"
+          }
+        ]
+      }
+    },
+    {
+      "id": "invalid--meta-missions-kills-2",
+      "language": "es",
+      "input": {
+        "base": "v3-partial",
+        "encoding": "web",
+        "edits": [
+          {
+            "op": "replace",
+            "path": "/meta/missions/kills",
+            "value": 1.5
+          }
+        ]
+      },
+      "expected": {
+        "outcome": "fatal",
+        "issues": [
+          {
+            "path": "/meta/missions/kills",
+            "code": "value.invalid",
+            "action": "reject"
+          }
+        ]
+      }
+    },
+    {
+      "id": "invalid--meta-lastRun-0",
+      "language": "es",
+      "input": {
+        "base": "v3-partial",
+        "encoding": "web",
+        "edits": [
+          {
+            "op": "replace",
+            "path": "/meta/lastRun",
+            "value": null
+          }
+        ]
+      },
+      "expected": {
+        "outcome": "fatal",
+        "issues": [
+          {
+            "path": "/meta/lastRun",
+            "code": "value.invalid",
+            "action": "reject"
+          }
+        ]
+      }
+    },
+    {
+      "id": "invalid--meta-lastRun-1",
+      "language": "es",
+      "input": {
+        "base": "v3-partial",
+        "encoding": "web",
+        "edits": [
+          {
+            "op": "replace",
+            "path": "/meta/lastRun",
+            "value": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+          }
+        ]
+      },
+      "expected": {
+        "outcome": "fatal",
+        "issues": [
+          {
+            "path": "/meta/lastRun",
+            "code": "value.invalid",
+            "action": "reject"
+          }
+        ]
+      }
+    },
+    {
+      "id": "invalid--meta-selected-0",
+      "language": "es",
+      "input": {
+        "base": "v3-partial",
+        "encoding": "web",
+        "edits": [
+          {
+            "op": "replace",
+            "path": "/meta/selected",
+            "value": "unknown"
+          }
+        ]
+      },
+      "expected": {
+        "outcome": "fatal",
+        "issues": [
+          {
+            "path": "/meta/selected",
+            "code": "value.invalid",
+            "action": "reject"
+          }
+        ]
+      }
+    },
+    {
+      "id": "invalid--meta-selected-1",
+      "language": "es",
+      "input": {
+        "base": "v3-partial",
+        "encoding": "web",
+        "edits": [
+          {
+            "op": "replace",
+            "path": "/meta/selected",
+            "value": "baguette"
+          }
+        ]
+      },
+      "expected": {
+        "outcome": "fatal",
+        "issues": [
+          {
+            "path": "/meta/selected",
+            "code": "value.invalid",
+            "action": "reject"
+          }
+        ]
+      }
+    },
+    {
+      "id": "invalid--meta-characters-0",
+      "language": "es",
+      "input": {
+        "base": "v3-partial",
+        "encoding": "web",
+        "edits": [
+          {
+            "op": "replace",
+            "path": "/meta/characters",
+            "value": null
+          }
+        ]
+      },
+      "expected": {
+        "outcome": "fatal",
+        "issues": [
+          {
+            "path": "/meta/characters",
+            "code": "value.invalid",
+            "action": "reject"
+          }
+        ]
+      }
+    },
+    {
+      "id": "invalid--meta-characters-1",
+      "language": "es",
+      "input": {
+        "base": "v3-partial",
+        "encoding": "web",
+        "edits": [
+          {
+            "op": "replace",
+            "path": "/meta/characters",
+            "value": [
+              7
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "outcome": "fatal",
+        "issues": [
+          {
+            "path": "/meta/characters",
+            "code": "value.invalid",
+            "action": "reject"
+          }
+        ]
+      }
+    },
+    {
+      "id": "invalid--meta-characters-2",
+      "language": "es",
+      "input": {
+        "base": "v3-partial",
+        "encoding": "web",
+        "edits": [
+          {
+            "op": "replace",
+            "path": "/meta/characters",
+            "value": []
+          }
+        ]
+      },
+      "expected": {
+        "outcome": "fatal",
+        "issues": [
+          {
+            "path": "/meta/characters",
+            "code": "value.invalid",
+            "action": "reject"
+          }
+        ]
+      }
+    },
+    {
+      "id": "invalid--meta-weapons-0",
+      "language": "es",
+      "input": {
+        "base": "v3-partial",
+        "encoding": "web",
+        "edits": [
+          {
+            "op": "replace",
+            "path": "/meta/weapons",
+            "value": []
+          }
+        ]
+      },
+      "expected": {
+        "outcome": "fatal",
+        "issues": [
+          {
+            "path": "/meta/weapons",
+            "code": "value.invalid",
+            "action": "reject"
+          }
+        ]
+      }
+    },
+    {
+      "id": "invalid--meta-completed-0",
+      "language": "es",
+      "input": {
+        "base": "v3-partial",
+        "encoding": "web",
+        "edits": [
+          {
+            "op": "replace",
+            "path": "/meta/completed",
+            "value": null
+          }
+        ]
+      },
+      "expected": {
+        "outcome": "fatal",
+        "issues": [
+          {
+            "path": "/meta/completed",
+            "code": "value.invalid",
+            "action": "reject"
+          }
+        ]
+      }
+    },
+    {
+      "id": "invalid--meta-completed-1",
+      "language": "es",
+      "input": {
+        "base": "v3-partial",
+        "encoding": "web",
+        "edits": [
+          {
+            "op": "replace",
+            "path": "/meta/completed",
+            "value": [
+              9
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "outcome": "fatal",
+        "issues": [
+          {
+            "path": "/meta/completed",
+            "code": "value.invalid",
+            "action": "reject"
+          }
+        ]
+      }
+    },
+    {
+      "id": "invalid--settings-0",
+      "language": "es",
+      "input": {
+        "base": "v3-partial",
+        "encoding": "web",
+        "edits": [
+          {
+            "op": "replace",
+            "path": "/settings",
+            "value": null
+          }
+        ]
+      },
+      "expected": {
+        "outcome": "fatal",
+        "issues": [
+          {
+            "path": "/settings",
+            "code": "value.invalid",
+            "action": "reject"
+          }
+        ]
+      }
+    },
+    {
+      "id": "invalid--settings-1",
+      "language": "es",
+      "input": {
+        "base": "v3-partial",
+        "encoding": "web",
+        "edits": [
+          {
+            "op": "replace",
+            "path": "/settings",
+            "value": []
+          }
+        ]
+      },
+      "expected": {
+        "outcome": "fatal",
+        "issues": [
+          {
+            "path": "/settings",
+            "code": "value.invalid",
+            "action": "reject"
+          }
+        ]
+      }
+    },
+    {
+      "id": "v1-with-meta",
+      "language": "es",
+      "input": {
+        "base": "v1-options",
+        "encoding": "web",
+        "edits": [
+          {
+            "op": "replace",
+            "path": "/meta",
+            "value": {
+              "coins": 50
+            }
+          }
+        ]
+      },
+      "expected": {
+        "outcome": "fatal",
+        "issues": [
+          {
+            "path": "/meta",
+            "code": "version.conflict",
+            "action": "reject"
+          }
+        ]
+      }
+    },
+    {
+      "id": "mission-target-unclaimed",
+      "language": "es",
+      "input": {
+        "base": "v3-partial",
+        "encoding": "web",
+        "edits": [
+          {
+            "op": "replace",
+            "path": "/meta/missions/kills",
+            "value": 1000
+          }
+        ]
+      },
+      "expected": {
+        "outcome": "fatal",
+        "issues": [
+          {
+            "path": "/meta/completed",
+            "code": "mission.conflict",
+            "action": "reject"
+          }
+        ]
+      }
+    },
+    {
+      "id": "claimed-mission-below-target",
+      "language": "es",
+      "input": {
+        "base": "v3-partial",
+        "encoding": "web",
+        "edits": [
+          {
+            "op": "replace",
+            "path": "/meta/missions/first",
+            "value": 0
+          }
+        ]
+      },
+      "expected": {
+        "outcome": "fatal",
+        "issues": [
+          {
+            "path": "/meta/missions/first",
+            "code": "mission.conflict",
+            "action": "reject"
+          }
+        ]
+      }
+    },
+    {
+      "id": "claimed-without-unlock",
+      "language": "es",
+      "input": {
+        "base": "v3-all",
+        "encoding": "web",
+        "edits": [
+          {
+            "op": "replace",
+            "path": "/meta/weapons",
+            "value": [
+              "chancla",
+              "naftalina",
+              "barra",
+              "dentaduras",
+              "jersey"
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "outcome": "fatal",
+        "issues": [
+          {
+            "path": "/meta/weapons",
+            "code": "unlock.conflict",
+            "action": "reject"
+          }
+        ]
+      }
+    },
+    {
+      "id": "transfer-invalid--format",
+      "language": "es",
+      "input": {
+        "base": "v3-partial",
+        "encoding": "transfer",
+        "edits": [
+          {
+            "op": "replace",
+            "path": "/format",
+            "value": "other"
+          }
+        ]
+      },
+      "expected": {
+        "outcome": "fatal",
+        "issues": [
+          {
+            "path": "/format",
+            "code": "format.invalid",
+            "action": "reject"
+          }
+        ]
+      }
+    },
+    {
+      "id": "transfer-invalid--version",
+      "language": "es",
+      "input": {
+        "base": "v3-partial",
+        "encoding": "transfer",
+        "edits": [
+          {
+            "op": "replace",
+            "path": "/version",
+            "value": 2
+          }
+        ]
+      },
+      "expected": {
+        "outcome": "fatal",
+        "issues": [
+          {
+            "path": "/version",
+            "code": "format.invalid",
+            "action": "reject"
+          }
+        ]
+      }
+    },
+    {
+      "id": "transfer-invalid--source-saveVersion",
+      "language": "es",
+      "input": {
+        "base": "v3-partial",
+        "encoding": "transfer",
+        "edits": [
+          {
+            "op": "replace",
+            "path": "/source/saveVersion",
+            "value": 99
+          }
+        ]
+      },
+      "expected": {
+        "outcome": "fatal",
+        "issues": [
+          {
+            "path": "/source/saveVersion",
+            "code": "format.invalid",
+            "action": "reject"
+          }
+        ]
+      }
+    },
+    {
+      "id": "transfer-invalid--source-platform",
+      "language": "es",
+      "input": {
+        "base": "v3-partial",
+        "encoding": "transfer",
+        "edits": [
+          {
+            "op": "replace",
+            "path": "/source/platform",
+            "value": "other"
+          }
+        ]
+      },
+      "expected": {
+        "outcome": "fatal",
+        "issues": [
+          {
+            "path": "/source/platform",
+            "code": "format.invalid",
+            "action": "reject"
+          }
+        ]
+      }
+    },
+    {
+      "id": "transfer-missing-version",
+      "language": "es",
+      "input": {
+        "base": "v3-partial",
+        "encoding": "transfer",
+        "edits": [
+          {
+            "op": "remove",
+            "path": "/version"
+          }
+        ]
+      },
+      "expected": {
+        "outcome": "fatal",
+        "issues": [
+          {
+            "path": "/version",
+            "code": "format.required",
+            "action": "reject"
+          }
+        ]
+      }
+    },
+    {
+      "id": "unity-future",
+      "language": "es",
+      "input": {
+        "base": "v3-partial",
+        "encoding": "unity",
+        "edits": [
+          {
+            "op": "replace",
+            "path": "/version",
+            "value": 2
+          }
+        ]
+      },
+      "expected": {
+        "outcome": "fatal",
+        "issues": [
+          {
+            "path": "/version",
+            "code": "format.invalid",
+            "action": "reject"
+          }
+        ]
+      }
+    },
+    {
+      "id": "option-invalid-mouseSensitivity",
+      "language": "es",
+      "input": {
+        "base": "v3-partial",
+        "encoding": "web",
+        "edits": [
+          {
+            "op": "replace",
+            "path": "/settings/mouseSensitivity",
+            "value": 99
+          }
+        ]
+      },
+      "expected": {
+        "outcome": "recovery",
+        "issues": [
+          {
+            "path": "/settings/mouseSensitivity",
+            "code": "option.default",
+            "action": "default"
+          }
+        ],
+        "candidate": {
+          "base": "v3-partial",
+          "edits": [
+            {
+              "op": "replace",
+              "path": "/settings/mouseSensitivity",
+              "value": 1
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "option-invalid-musicVolume",
+      "language": "es",
+      "input": {
+        "base": "v3-partial",
+        "encoding": "web",
+        "edits": [
+          {
+            "op": "replace",
+            "path": "/settings/musicVolume",
+            "value": -1
+          }
+        ]
+      },
+      "expected": {
+        "outcome": "recovery",
+        "issues": [
+          {
+            "path": "/settings/musicVolume",
+            "code": "option.default",
+            "action": "default"
+          }
+        ],
+        "candidate": {
+          "base": "v3-partial",
+          "edits": [
+            {
+              "op": "replace",
+              "path": "/settings/musicVolume",
+              "value": 0.5
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "option-invalid-effectsVolume",
+      "language": "es",
+      "input": {
+        "base": "v3-partial",
+        "encoding": "web",
+        "edits": [
+          {
+            "op": "replace",
+            "path": "/settings/effectsVolume",
+            "value": "loud"
+          }
+        ]
+      },
+      "expected": {
+        "outcome": "recovery",
+        "issues": [
+          {
+            "path": "/settings/effectsVolume",
+            "code": "option.default",
+            "action": "default"
+          }
+        ],
+        "candidate": {
+          "base": "v3-partial",
+          "edits": [
+            {
+              "op": "replace",
+              "path": "/settings/effectsVolume",
+              "value": 0.7
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "option-invalid-language",
+      "language": "es",
+      "input": {
+        "base": "v3-partial",
+        "encoding": "web",
+        "edits": [
+          {
+            "op": "replace",
+            "path": "/settings/language",
+            "value": "fr"
+          }
+        ]
+      },
+      "expected": {
+        "outcome": "recovery",
+        "issues": [
+          {
+            "path": "/settings/language",
+            "code": "option.default",
+            "action": "default"
+          }
+        ],
+        "candidate": {
+          "base": "v3-partial",
+          "edits": [
+            {
+              "op": "replace",
+              "path": "/settings/language",
+              "value": "es"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "option-invalid-renderHeight",
+      "language": "es",
+      "input": {
+        "base": "v3-partial",
+        "encoding": "web",
+        "edits": [
+          {
+            "op": "replace",
+            "path": "/settings/renderHeight",
+            "value": 720
+          }
+        ]
+      },
+      "expected": {
+        "outcome": "recovery",
+        "issues": [
+          {
+            "path": "/settings/renderHeight",
+            "code": "option.default",
+            "action": "default"
+          }
+        ],
+        "candidate": {
+          "base": "v3-partial",
+          "edits": [
+            {
+              "op": "replace",
+              "path": "/settings/renderHeight",
+              "value": 360
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "option-invalid-runMinutes",
+      "language": "es",
+      "input": {
+        "base": "v3-partial",
+        "encoding": "web",
+        "edits": [
+          {
+            "op": "replace",
+            "path": "/settings/runMinutes",
+            "value": 30
+          }
+        ]
+      },
+      "expected": {
+        "outcome": "recovery",
+        "issues": [
+          {
+            "path": "/settings/runMinutes",
+            "code": "option.default",
+            "action": "default"
+          }
+        ],
+        "candidate": {
+          "base": "v3-partial",
+          "edits": [
+            {
+              "op": "replace",
+              "path": "/settings/runMinutes",
+              "value": 10
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "option-invalid-flashes",
+      "language": "es",
+      "input": {
+        "base": "v3-partial",
+        "encoding": "web",
+        "edits": [
+          {
+            "op": "replace",
+            "path": "/settings/flashes",
+            "value": "false"
+          }
+        ]
+      },
+      "expected": {
+        "outcome": "recovery",
+        "issues": [
+          {
+            "path": "/settings/flashes",
+            "code": "option.default",
+            "action": "default"
+          }
+        ],
+        "candidate": {
+          "base": "v3-partial",
+          "edits": [
+            {
+              "op": "replace",
+              "path": "/settings/flashes",
+              "value": true
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "option-invalid-muted",
+      "language": "es",
+      "input": {
+        "base": "v3-partial",
+        "encoding": "web",
+        "edits": [
+          {
+            "op": "replace",
+            "path": "/settings/muted",
+            "value": 1
+          }
+        ]
+      },
+      "expected": {
+        "outcome": "recovery",
+        "issues": [
+          {
+            "path": "/settings/muted",
+            "code": "option.default",
+            "action": "default"
+          }
+        ],
+        "candidate": {
+          "base": "v3-partial",
+          "edits": [
+            {
+              "op": "replace",
+              "path": "/settings/muted",
+              "value": false
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "option-missing",
+      "language": "es",
+      "input": {
+        "base": "v3-partial",
+        "encoding": "web",
+        "edits": [
+          {
+            "op": "remove",
+            "path": "/settings/musicVolume"
+          }
+        ]
+      },
+      "expected": {
+        "outcome": "recovery",
+        "issues": [
+          {
+            "path": "/settings/musicVolume",
+            "code": "option.default",
+            "action": "default"
+          }
+        ],
+        "candidate": {
+          "base": "v3-partial",
+          "edits": []
+        }
+      }
+    },
+    {
+      "id": "settings-missing",
+      "language": "es",
+      "input": {
+        "base": "v3-partial",
+        "encoding": "web",
+        "edits": [
+          {
+            "op": "remove",
+            "path": "/settings"
+          }
+        ]
+      },
+      "expected": {
+        "outcome": "recovery",
+        "issues": [
+          {
+            "path": "/settings",
+            "code": "option.default",
+            "action": "default"
+          }
+        ],
+        "candidate": {
+          "base": "v3-partial",
+          "edits": []
+        }
+      }
+    },
+    {
+      "id": "unknown-id",
+      "language": "es",
+      "input": {
+        "base": "v3-partial",
+        "encoding": "web",
+        "edits": [
+          {
+            "op": "replace",
+            "path": "/meta/characters",
+            "value": [
+              "remedios",
+              "future"
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "outcome": "recovery",
+        "issues": [
+          {
+            "path": "/meta/characters/1",
+            "code": "id.unknown",
+            "action": "exclude"
+          }
+        ],
+        "candidate": {
+          "base": "v3-partial",
+          "edits": []
+        }
+      }
+    },
+    {
+      "id": "duplicate-id",
+      "language": "es",
+      "input": {
+        "base": "v3-partial",
+        "encoding": "web",
+        "edits": [
+          {
+            "op": "replace",
+            "path": "/meta/characters",
+            "value": [
+              "remedios",
+              "remedios"
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "outcome": "recovery",
+        "issues": [
+          {
+            "path": "/meta/characters/1",
+            "code": "id.duplicate",
+            "action": "exclude"
+          }
+        ],
+        "candidate": {
+          "base": "v3-partial",
+          "edits": []
+        }
+      }
+    },
+    {
+      "id": "unknown-field",
+      "language": "es",
+      "input": {
+        "base": "v3-partial",
+        "encoding": "web",
+        "edits": [
+          {
+            "op": "replace",
+            "path": "/futureOption",
+            "value": 42
+          }
+        ]
+      },
+      "expected": {
+        "outcome": "recovery",
+        "issues": [
+          {
+            "path": "/futureOption",
+            "code": "field.unknown",
+            "action": "exclude"
+          }
+        ],
+        "candidate": {
+          "base": "v3-partial",
+          "edits": []
+        }
+      }
+    },
+    {
+      "id": "unknown-mission-field",
+      "language": "es",
+      "input": {
+        "base": "v3-partial",
+        "encoding": "web",
+        "edits": [
+          {
+            "op": "replace",
+            "path": "/meta/missions/future",
+            "value": 123
+          }
+        ]
+      },
+      "expected": {
+        "outcome": "recovery",
+        "issues": [
+          {
+            "path": "/meta/missions/future",
+            "code": "field.unknown",
+            "action": "exclude"
+          }
+        ],
+        "candidate": {
+          "base": "v3-partial",
+          "edits": []
+        }
+      }
+    },
+    {
+      "id": "unknown-completed-id",
+      "language": "es",
+      "input": {
+        "base": "v3-partial",
+        "encoding": "web",
+        "edits": [
+          {
+            "op": "replace",
+            "path": "/meta/completed",
+            "value": [
+              "first",
+              "future"
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "outcome": "recovery",
+        "issues": [
+          {
+            "path": "/meta/completed/1",
+            "code": "id.unknown",
+            "action": "exclude"
+          }
+        ],
+        "candidate": {
+          "base": "v3-partial",
+          "edits": []
+        }
+      }
+    },
+    {
+      "id": "import-repeat",
+      "language": "es",
+      "input": {
+        "recipe": {
+          "kind": "repeat-transfer",
+          "base": "v3-partial",
+          "count": 2
+        }
+      },
+      "expected": {
+        "outcome": "valid",
+        "issues": [],
+        "candidate": {
+          "base": "v3-partial",
+          "edits": []
+        }
+      }
+    },
+    {
+      "id": "limit-utf8-bytes",
+      "language": "es",
+      "input": {
+        "recipe": {
+          "kind": "utf8-bytes",
+          "limit": 262144,
+          "amount": 262145
+        }
+      },
+      "expected": {
+        "outcome": "fatal",
+        "issues": [
+          {
+            "path": "/",
+            "code": "input.limit",
+            "action": "reject"
+          }
+        ]
+      }
+    },
+    {
+      "id": "limit-depth",
+      "language": "es",
+      "input": {
+        "recipe": {
+          "kind": "depth",
+          "limit": 16,
+          "amount": 17
+        }
+      },
+      "expected": {
+        "outcome": "fatal",
+        "issues": [
+          {
+            "path": "/",
+            "code": "input.limit",
+            "action": "reject"
+          }
+        ]
+      }
+    },
+    {
+      "id": "limit-nodes",
+      "language": "es",
+      "input": {
+        "recipe": {
+          "kind": "nodes",
+          "limit": 4096,
+          "amount": 4097
+        }
+      },
+      "expected": {
+        "outcome": "fatal",
+        "issues": [
+          {
+            "path": "/",
+            "code": "input.limit",
+            "action": "reject"
+          }
+        ]
+      }
+    },
+    {
+      "id": "limit-object-properties",
+      "language": "es",
+      "input": {
+        "recipe": {
+          "kind": "object-properties",
+          "limit": 128,
+          "amount": 129
+        }
+      },
+      "expected": {
+        "outcome": "fatal",
+        "issues": [
+          {
+            "path": "/",
+            "code": "input.limit",
+            "action": "reject"
+          }
+        ]
+      }
+    },
+    {
+      "id": "limit-array-elements",
+      "language": "es",
+      "input": {
+        "recipe": {
+          "kind": "array-elements",
+          "limit": 128,
+          "amount": 129
+        }
+      },
+      "expected": {
+        "outcome": "fatal",
+        "issues": [
+          {
+            "path": "/",
+            "code": "input.limit",
+            "action": "reject"
+          }
+        ]
+      }
+    },
+    {
+      "id": "limit-string-units",
+      "language": "es",
+      "input": {
+        "recipe": {
+          "kind": "string-units",
+          "limit": 1024,
+          "amount": 1025
+        }
+      },
+      "expected": {
+        "outcome": "fatal",
+        "issues": [
+          {
+            "path": "/",
+            "code": "input.limit",
+            "action": "reject"
+          }
+        ]
+      }
+    },
+    {
+      "id": "limit-id-units",
+      "language": "es",
+      "input": {
+        "recipe": {
+          "kind": "id-units",
+          "limit": 64,
+          "amount": 65
+        }
+      },
+      "expected": {
+        "outcome": "fatal",
+        "issues": [
+          {
+            "path": "/",
+            "code": "input.limit",
+            "action": "reject"
+          }
+        ]
+      }
+    },
+    {
+      "id": "utf8-invalid",
+      "language": "es",
+      "input": {
+        "recipe": {
+          "kind": "invalid-utf8",
+          "bytes": [
+            255
+          ]
+        }
+      },
+      "expected": {
+        "outcome": "fatal",
+        "issues": [
+          {
+            "path": "/",
+            "code": "input.encoding",
+            "action": "reject"
+          }
+        ]
+      }
+    },
+    {
+      "id": "numeric-overflow",
+      "language": "es",
+      "input": {
+        "recipe": {
+          "kind": "numeric-token",
+          "path": "/meta/coins",
+          "token": "1e400",
+          "base": "v3-partial"
+        }
+      },
+      "expected": {
+        "outcome": "fatal",
+        "issues": [
+          {
+            "path": "/meta/coins",
+            "code": "value.invalid",
+            "action": "reject"
+          }
+        ]
+      }
+    },
+    {
+      "id": "utf8-bom",
+      "language": "es",
+      "input": {
+        "recipe": {
+          "kind": "utf8-bom",
+          "base": "v3-partial"
+        }
+      },
+      "expected": {
+        "outcome": "valid",
+        "issues": [],
+        "candidate": {
+          "base": "v3-partial",
+          "edits": []
+        }
+      }
+    }
+  ]
+}

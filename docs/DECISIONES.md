@@ -1,6 +1,6 @@
 # Decisiones acordadas
 
-**Estado actual:** U1–U3 aprobados; U3 aprobada manualmente el 04/10/2026. U4 autorizado solo para planificación; véase la última entrada y [PROGRESO_U4](PROGRESO_U4.md). Las autorizaciones anteriores son históricas.
+**Estado actual:** U1–U3 aprobados; U3 aprobada manualmente el 04/10/2026. U4 autorizado para implementación el 04/10/2026; véase la última entrada y [PROGRESO_U4](PROGRESO_U4.md). Las autorizaciones anteriores son históricas.
 
 Registro de lo que se ha decidido durante el desarrollo, además de la
 [especificación original](ESPECIFICACION.md). Cuando esto la concreta o la
@@ -602,3 +602,12 @@ Excepción acotada a `src/`: U4 necesita exportación JSON validada del progreso
 **Las seis propuestas técnicas anteriores no se consideran confirmadas individualmente.** Clasificación recomendada: HoldWhileChoosing, márgenes ya existentes y metodología del ensayo pueden cerrarse como registro técnico; mapa fijo y pausa sin opciones son provisionales sustituidos en U4; presentación técnica se pule en U5. Ninguna necesita una decisión bloqueante para U4. No ampliar tolerancias.
 
 Dirección futura confirmada: después de terminar y aprobar U4–U6, bloques separados para mundo y estructuras considerablemente mayores; terreno rectangular/geométrico, grandes mesetas, cambios de altura, rampas y verticalidad; escalada libre; acabado retro profesional y animaciones de jugador, enemigos, ataques, impactos, muertes, jefe y mundo; después expansión de contenido e iconos/ilustraciones originales. Megabonk es referencia de escala, verticalidad y lectura espacial, sin copiar arte, mapas, assets ni diseño exacto. No ejecutar estas mejoras todavía.
+
+
+## U4 autorizado para implementación y política estricta de transferencia (04/10/2026)
+
+Decisión del autor: plan U4 aprobado, pasos 1–9 autorizados sin confirmación entre piezas. Recuperación revisable solo cuando es inequívoca; errores críticos ambiguos, JSON ilegible y versiones desconocidas fatales. Candidato normalizado e informe en memoria antes de escribir. Mostrar conservación, exclusiones, defaults y motivos. Sin clamps silenciosos ni progreso inventado.
+
+Validar → vista previa → confirmar → backup del guardado actual → escritura segura → relectura y validación. Sustitución completa, nunca fusión; original exportado intacto; importación repetida sin recompensas. Probar temporal, backup y recuperación; no afirmar atomicidad sin garantía real. Separar tests puros de IO. Las seis propuestas U3 mantienen su clasificación, sin exigir confirmación individual.
+
+Concreción técnica del paso 1 (Codex, dentro del plan autorizado): tres formatos separados; transferencia `mamporro.progress` v1 y persistencia `mamporro.unity-save` v1, DTO explícito y adaptadores web v1/v2/v3. Límites defensivos y reglas reales diferenciados. Detalle y corpus en [CONTRATO_GUARDADO_U4](CONTRATO_GUARDADO_U4.md). No modifica reglas web ni referencias previas.

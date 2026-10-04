@@ -1,6 +1,6 @@
 # Checkpoint U3 — mundo y partida completa equivalentes
 
-Estado: **IMPLEMENTADO, VERIFICADO Y APROBADO MANUALMENTE por el autor el 04/10/2026 como base funcional de la migración.** U4 autorizado solo para planificación; implementación pendiente de la siguiente respuesta del autor. Continuidad en [PROGRESO_U4](PROGRESO_U4.md).
+Estado: **IMPLEMENTADO, VERIFICADO Y APROBADO MANUALMENTE por el autor el 04/10/2026 como base funcional de la migración.** U4 autorizado para implementación el 04/10/2026. Continuidad en [PROGRESO_U4](PROGRESO_U4.md).
 
 Este archivo es el **checkpoint vivo de continuidad entre Codex CLI y Claude Code** mientras U3 siga activo. Debe actualizarse después de cada paso completado y siempre antes de un relevo de herramienta. Protocolo: [`CONTINUIDAD_AGENTES.md`](CONTINUIDAD_AGENTES.md); reglas comunes: [`INSTRUCCIONES_PROYECTO.md`](INSTRUCCIONES_PROYECTO.md).
 
@@ -12,7 +12,7 @@ Este archivo es el **checkpoint vivo de continuidad entre Codex CLI y Claude Cod
 - **A medias:** nada. Las seis propuestas técnicas en `DECISIONES.md` no han recibido confirmación individual; su clasificación para U4 está en `PROGRESO_U4.md`.
 - **Revalidación del relevo, 04/10/2026:** Edit Mode 167/167, Play Mode 17/17 y verificadores U0/U2/U3 correctos, sin cambios de código. Cierre publicado; diagnóstico de CSV completado sin atribuir causa a los picos ni aplicar una corrección especulativa.
 - **Sin commit a propósito:** `unity/ProjectSettings/ProjectSettings.asset` (configuración local de nube), `ProjectAuditorSettings.asset`, `PackageManagerSettings.asset` y `URPProjectSettings.asset`: no publicar. También se conservan fuera del índice los cambios de espacios/EOL de `RetroPipeline.asset`, `UniversalRenderPipelineGlobalSettings.asset` y `GraphicsSettings.asset` (el autor confirmó el 03/10/2026 que se tratan igual). No limpiar ni restaurar estos archivos automáticamente.
-- **Siguiente paso exacto:** revisar el plan y la única duda de importación de `PROGRESO_U4.md`; esperar la siguiente respuesta del autor antes de implementar U4.
+- **Siguiente paso exacto:** continuar U4 según `PROGRESO_U4.md`; plan y política de importación ya aprobados.
 
 Comprobar el estado desde CMD:
 
@@ -482,4 +482,4 @@ Opcional: `scripts\u3.cmd edit`, `scripts\u3.cmd play`, `scripts\u3.cmd visual` 
 La prueba manual del autor aprueba U3 como base funcional. No equivale a confirmar individualmente las seis propuestas técnicas.
 
 - **Aprobación del autor:** recibida el 04/10/2026.
-- **Siguiente bloque:** U4 (meta, UI, opciones y traslado de guardados), autorizado solo para planificación. Implementación pendiente de la siguiente respuesta del autor; véase `PROGRESO_U4.md`.
+- **Siguiente bloque:** U4 (meta, UI, opciones y traslado de guardados), autorizado para implementación el 04/10/2026; véase `PROGRESO_U4.md`.

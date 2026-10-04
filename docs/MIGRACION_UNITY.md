@@ -1,6 +1,6 @@
 # Migración propuesta a Unity
 
-> Estado vigente en [ESTADO_ACTUAL](ESTADO_ACTUAL.md): U1–U3 aprobados; aprobación manual U3 el 04/10/2026. [U4 autorizado solo para planificación](PROGRESO_U4.md); implementación pendiente de la siguiente respuesta del autor. Las autorizaciones antiguas que figuran debajo son históricas.
+> Estado vigente en [ESTADO_ACTUAL](ESTADO_ACTUAL.md): U1–U3 aprobados; aprobación manual U3 el 04/10/2026. [U4 autorizado para implementación el 04/10/2026](PROGRESO_U4.md); política de importación estricta aprobada. Las autorizaciones antiguas que figuran debajo son históricas.
 
 ## Historial de preparación (sustituido por el checkpoint U2)
 
@@ -149,7 +149,7 @@ conservar enteros/operaciones del RNG y no prometer mapas idénticos sin pruebas
 
 ### U4. Meta, UI, opciones y traslado de guardados
 
-**04/10/2026:** solo planificación autorizada. Plan y criterios de seguridad en [PROGRESO_U4](PROGRESO_U4.md). Validar, respaldar y pedir sustitución explícita si existe guardado Unity; nunca fusionar progresos. Excepción web limitada al exportador, sin tocar reglas/balance ni las referencias congeladas.
+**04/10/2026:** implementación autorizada; contrato y corpus en el paso 1. Plan y criterios de seguridad en [PROGRESO_U4](PROGRESO_U4.md). Validar, respaldar y pedir sustitución explícita si existe guardado Unity; nunca fusionar progresos. Excepción web limitada al exportador, sin tocar reglas/balance ni las referencias congeladas.
 
 - Rehacer menú, preparación, personajes, tienda, ocho misiones y resultados ES/EN.
 - Portar las reglas de moneda, compras, desbloqueos y liquidación única.

@@ -1,0 +1,2743 @@
+{
+  "formatVersion": 1,
+  "baseCommit": "0505b1690656d15188860157612455639820fe1f",
+  "sourceHashes": {
+    "src/save/schema.ts": "f0e2be6e05fab3428a59ff6be8991ce828cb3a24ee3bbfdd858514e8f6da732e",
+    "src/systems/meta.ts": "60572222d3569c3b12e502a7deedd5f1c71d394b63003fa7a9516207a34a2692",
+    "src/data/meta.ts": "22aace3c567a240ab6813f3c3fa09bbca26925d130ed904ff15818de43a312f6",
+    "src/data/items.ts": "b7209773ef82a7887d60401ba97bde44d30c4f1e89540de9413a7e8dbdc00bba",
+    "src/data/weapons.ts": "d7c46947cf7c8d3eec844b8152dce2943c94f0c586752e9a516749124961f32a",
+    "src/data/characters.ts": "64c0639e582f942999b060e2e3e30687b72c346db7a9114d8dc66694227835f4",
+    "src/core/Game.ts": "7b21574a0c550df0ae1974635ce567de755c10631b30e2b35e444d4ac9b02ae6",
+    "package-lock.json": "43ad887c8a4cbc92a6c12da5fd28f6a4ebf76c731b64214c2584659eab708ff7"
+  },
+  "scenarios": [
+    {
+      "id": "defeat-repeat-victory-repeat",
+      "initial": {
+        "coins": 0,
+        "selected": "remedios",
+        "characters": [
+          "remedios"
+        ],
+        "weapons": [
+          "chancla",
+          "naftalina",
+          "barra",
+          "dentaduras"
+        ],
+        "items": [
+          "gafas",
+          "zapatillas",
+          "termo",
+          "cojin",
+          "lupa",
+          "loteria",
+          "rulos",
+          "monedero"
+        ],
+        "extras": {
+          "rerolls": 0,
+          "skips": 0,
+          "banishes": 0
+        },
+        "missions": {
+          "first": 0,
+          "kills": 0,
+          "chests": 0,
+          "shrines": 0,
+          "challenge": 0,
+          "level": 0,
+          "victory": 0,
+          "noLife": 0
+        },
+        "completed": [],
+        "lastRun": ""
+      },
+      "steps": [
+        {
+          "operation": {
+            "kind": "settle",
+            "run": {
+              "id": "one",
+              "cheated": false,
+              "time": 300,
+              "kills": 400,
+              "chests": 3,
+              "shrines": 1,
+              "challenges": 0,
+              "level": 15,
+              "victory": false,
+              "usedLifeTome": false
+            }
+          },
+          "result": {
+            "kills": 20,
+            "survival": 20,
+            "victory": 0,
+            "missions": 30,
+            "total": 70,
+            "completed": [
+              "first"
+            ]
+          },
+          "state": {
+            "coins": 70,
+            "selected": "remedios",
+            "characters": [
+              "remedios"
+            ],
+            "weapons": [
+              "chancla",
+              "naftalina",
+              "barra",
+              "dentaduras"
+            ],
+            "items": [
+              "gafas",
+              "zapatillas",
+              "termo",
+              "cojin",
+              "lupa",
+              "loteria",
+              "rulos",
+              "monedero"
+            ],
+            "extras": {
+              "rerolls": 0,
+              "skips": 0,
+              "banishes": 0
+            },
+            "missions": {
+              "first": 1,
+              "kills": 400,
+              "chests": 3,
+              "shrines": 1,
+              "challenge": 0,
+              "level": 15,
+              "victory": 0,
+              "noLife": 0
+            },
+            "completed": [
+              "first"
+            ],
+            "lastRun": "one"
+          }
+        },
+        {
+          "operation": {
+            "kind": "settle",
+            "run": {
+              "id": "one",
+              "cheated": false,
+              "time": 300,
+              "kills": 400,
+              "chests": 3,
+              "shrines": 1,
+              "challenges": 0,
+              "level": 15,
+              "victory": false,
+              "usedLifeTome": false
+            }
+          },
+          "result": {
+            "kills": 0,
+            "survival": 0,
+            "victory": 0,
+            "missions": 0,
+            "total": 0,
+            "completed": []
+          },
+          "state": {
+            "coins": 70,
+            "selected": "remedios",
+            "characters": [
+              "remedios"
+            ],
+            "weapons": [
+              "chancla",
+              "naftalina",
+              "barra",
+              "dentaduras"
+            ],
+            "items": [
+              "gafas",
+              "zapatillas",
+              "termo",
+              "cojin",
+              "lupa",
+              "loteria",
+              "rulos",
+              "monedero"
+            ],
+            "extras": {
+              "rerolls": 0,
+              "skips": 0,
+              "banishes": 0
+            },
+            "missions": {
+              "first": 1,
+              "kills": 400,
+              "chests": 3,
+              "shrines": 1,
+              "challenge": 0,
+              "level": 15,
+              "victory": 0,
+              "noLife": 0
+            },
+            "completed": [
+              "first"
+            ],
+            "lastRun": "one"
+          }
+        },
+        {
+          "operation": {
+            "kind": "settle",
+            "run": {
+              "id": "two",
+              "cheated": false,
+              "time": 300,
+              "kills": 600,
+              "chests": 7,
+              "shrines": 2,
+              "challenges": 1,
+              "level": 20,
+              "victory": true,
+              "usedLifeTome": false
+            }
+          },
+          "result": {
+            "kills": 30,
+            "survival": 20,
+            "victory": 60,
+            "missions": 420,
+            "total": 530,
+            "completed": [
+              "kills",
+              "chests",
+              "shrines",
+              "challenge",
+              "level",
+              "victory",
+              "noLife"
+            ]
+          },
+          "state": {
+            "coins": 600,
+            "selected": "remedios",
+            "characters": [
+              "remedios"
+            ],
+            "weapons": [
+              "chancla",
+              "naftalina",
+              "barra",
+              "dentaduras",
+              "fregona"
+            ],
+            "items": [
+              "gafas",
+              "zapatillas",
+              "termo",
+              "cojin",
+              "lupa",
+              "loteria",
+              "rulos",
+              "monedero",
+              "perlas",
+              "bata"
+            ],
+            "extras": {
+              "rerolls": 0,
+              "skips": 0,
+              "banishes": 0
+            },
+            "missions": {
+              "first": 1,
+              "kills": 1000,
+              "chests": 10,
+              "shrines": 3,
+              "challenge": 1,
+              "level": 20,
+              "victory": 1,
+              "noLife": 1
+            },
+            "completed": [
+              "first",
+              "kills",
+              "chests",
+              "shrines",
+              "challenge",
+              "level",
+              "victory",
+              "noLife"
+            ],
+            "lastRun": "two"
+          }
+        },
+        {
+          "operation": {
+            "kind": "settle",
+            "run": {
+              "id": "two",
+              "cheated": false,
+              "time": 300,
+              "kills": 400,
+              "chests": 3,
+              "shrines": 1,
+              "challenges": 0,
+              "level": 15,
+              "victory": true,
+              "usedLifeTome": false
+            }
+          },
+          "result": {
+            "kills": 0,
+            "survival": 0,
+            "victory": 0,
+            "missions": 0,
+            "total": 0,
+            "completed": []
+          },
+          "state": {
+            "coins": 600,
+            "selected": "remedios",
+            "characters": [
+              "remedios"
+            ],
+            "weapons": [
+              "chancla",
+              "naftalina",
+              "barra",
+              "dentaduras",
+              "fregona"
+            ],
+            "items": [
+              "gafas",
+              "zapatillas",
+              "termo",
+              "cojin",
+              "lupa",
+              "loteria",
+              "rulos",
+              "monedero",
+              "perlas",
+              "bata"
+            ],
+            "extras": {
+              "rerolls": 0,
+              "skips": 0,
+              "banishes": 0
+            },
+            "missions": {
+              "first": 1,
+              "kills": 1000,
+              "chests": 10,
+              "shrines": 3,
+              "challenge": 1,
+              "level": 20,
+              "victory": 1,
+              "noLife": 1
+            },
+            "completed": [
+              "first",
+              "kills",
+              "chests",
+              "shrines",
+              "challenge",
+              "level",
+              "victory",
+              "noLife"
+            ],
+            "lastRun": "two"
+          }
+        }
+      ]
+    },
+    {
+      "id": "debug-abandon-empty-id",
+      "initial": {
+        "coins": 31,
+        "selected": "remedios",
+        "characters": [
+          "remedios"
+        ],
+        "weapons": [
+          "chancla",
+          "naftalina",
+          "barra",
+          "dentaduras"
+        ],
+        "items": [
+          "gafas",
+          "zapatillas",
+          "termo",
+          "cojin",
+          "lupa",
+          "loteria",
+          "rulos",
+          "monedero"
+        ],
+        "extras": {
+          "rerolls": 0,
+          "skips": 0,
+          "banishes": 0
+        },
+        "missions": {
+          "first": 0,
+          "kills": 0,
+          "chests": 0,
+          "shrines": 0,
+          "challenge": 0,
+          "level": 0,
+          "victory": 0,
+          "noLife": 0
+        },
+        "completed": [],
+        "lastRun": ""
+      },
+      "steps": [
+        {
+          "operation": {
+            "kind": "settle",
+            "run": {
+              "id": "one",
+              "cheated": true,
+              "time": 300,
+              "kills": 400,
+              "chests": 3,
+              "shrines": 1,
+              "challenges": 0,
+              "level": 15,
+              "victory": true,
+              "usedLifeTome": false
+            }
+          },
+          "result": {
+            "kills": 0,
+            "survival": 0,
+            "victory": 0,
+            "missions": 0,
+            "total": 0,
+            "completed": []
+          },
+          "state": {
+            "coins": 31,
+            "selected": "remedios",
+            "characters": [
+              "remedios"
+            ],
+            "weapons": [
+              "chancla",
+              "naftalina",
+              "barra",
+              "dentaduras"
+            ],
+            "items": [
+              "gafas",
+              "zapatillas",
+              "termo",
+              "cojin",
+              "lupa",
+              "loteria",
+              "rulos",
+              "monedero"
+            ],
+            "extras": {
+              "rerolls": 0,
+              "skips": 0,
+              "banishes": 0
+            },
+            "missions": {
+              "first": 0,
+              "kills": 0,
+              "chests": 0,
+              "shrines": 0,
+              "challenge": 0,
+              "level": 0,
+              "victory": 0,
+              "noLife": 0
+            },
+            "completed": [],
+            "lastRun": ""
+          }
+        },
+        {
+          "operation": {
+            "kind": "abandon"
+          },
+          "result": null,
+          "state": {
+            "coins": 31,
+            "selected": "remedios",
+            "characters": [
+              "remedios"
+            ],
+            "weapons": [
+              "chancla",
+              "naftalina",
+              "barra",
+              "dentaduras"
+            ],
+            "items": [
+              "gafas",
+              "zapatillas",
+              "termo",
+              "cojin",
+              "lupa",
+              "loteria",
+              "rulos",
+              "monedero"
+            ],
+            "extras": {
+              "rerolls": 0,
+              "skips": 0,
+              "banishes": 0
+            },
+            "missions": {
+              "first": 0,
+              "kills": 0,
+              "chests": 0,
+              "shrines": 0,
+              "challenge": 0,
+              "level": 0,
+              "victory": 0,
+              "noLife": 0
+            },
+            "completed": [],
+            "lastRun": ""
+          }
+        },
+        {
+          "operation": {
+            "kind": "settle",
+            "run": {
+              "id": "",
+              "cheated": false,
+              "time": 300,
+              "kills": 400,
+              "chests": 3,
+              "shrines": 1,
+              "challenges": 0,
+              "level": 15,
+              "victory": false,
+              "usedLifeTome": false
+            }
+          },
+          "result": {
+            "kills": 0,
+            "survival": 0,
+            "victory": 0,
+            "missions": 0,
+            "total": 0,
+            "completed": []
+          },
+          "state": {
+            "coins": 31,
+            "selected": "remedios",
+            "characters": [
+              "remedios"
+            ],
+            "weapons": [
+              "chancla",
+              "naftalina",
+              "barra",
+              "dentaduras"
+            ],
+            "items": [
+              "gafas",
+              "zapatillas",
+              "termo",
+              "cojin",
+              "lupa",
+              "loteria",
+              "rulos",
+              "monedero"
+            ],
+            "extras": {
+              "rerolls": 0,
+              "skips": 0,
+              "banishes": 0
+            },
+            "missions": {
+              "first": 0,
+              "kills": 0,
+              "chests": 0,
+              "shrines": 0,
+              "challenge": 0,
+              "level": 0,
+              "victory": 0,
+              "noLife": 0
+            },
+            "completed": [],
+            "lastRun": ""
+          }
+        }
+      ]
+    },
+    {
+      "id": "victory-life-tome",
+      "initial": {
+        "coins": 0,
+        "selected": "remedios",
+        "characters": [
+          "remedios"
+        ],
+        "weapons": [
+          "chancla",
+          "naftalina",
+          "barra",
+          "dentaduras"
+        ],
+        "items": [
+          "gafas",
+          "zapatillas",
+          "termo",
+          "cojin",
+          "lupa",
+          "loteria",
+          "rulos",
+          "monedero"
+        ],
+        "extras": {
+          "rerolls": 0,
+          "skips": 0,
+          "banishes": 0
+        },
+        "missions": {
+          "first": 0,
+          "kills": 0,
+          "chests": 0,
+          "shrines": 0,
+          "challenge": 0,
+          "level": 0,
+          "victory": 0,
+          "noLife": 0
+        },
+        "completed": [],
+        "lastRun": ""
+      },
+      "steps": [
+        {
+          "operation": {
+            "kind": "settle",
+            "run": {
+              "id": "one",
+              "cheated": false,
+              "time": 300,
+              "kills": 400,
+              "chests": 3,
+              "shrines": 1,
+              "challenges": 0,
+              "level": 15,
+              "victory": true,
+              "usedLifeTome": true
+            }
+          },
+          "result": {
+            "kills": 20,
+            "survival": 20,
+            "victory": 60,
+            "missions": 110,
+            "total": 210,
+            "completed": [
+              "first",
+              "victory"
+            ]
+          },
+          "state": {
+            "coins": 210,
+            "selected": "remedios",
+            "characters": [
+              "remedios"
+            ],
+            "weapons": [
+              "chancla",
+              "naftalina",
+              "barra",
+              "dentaduras"
+            ],
+            "items": [
+              "gafas",
+              "zapatillas",
+              "termo",
+              "cojin",
+              "lupa",
+              "loteria",
+              "rulos",
+              "monedero"
+            ],
+            "extras": {
+              "rerolls": 0,
+              "skips": 0,
+              "banishes": 0
+            },
+            "missions": {
+              "first": 1,
+              "kills": 400,
+              "chests": 3,
+              "shrines": 1,
+              "challenge": 0,
+              "level": 15,
+              "victory": 1,
+              "noLife": 0
+            },
+            "completed": [
+              "first",
+              "victory"
+            ],
+            "lastRun": "one"
+          }
+        }
+      ]
+    },
+    {
+      "id": "insufficient-and-repeated",
+      "initial": {
+        "coins": 220,
+        "selected": "remedios",
+        "characters": [
+          "remedios"
+        ],
+        "weapons": [
+          "chancla",
+          "naftalina",
+          "barra",
+          "dentaduras"
+        ],
+        "items": [
+          "gafas",
+          "zapatillas",
+          "termo",
+          "cojin",
+          "lupa",
+          "loteria",
+          "rulos",
+          "monedero"
+        ],
+        "extras": {
+          "rerolls": 0,
+          "skips": 0,
+          "banishes": 0
+        },
+        "missions": {
+          "first": 0,
+          "kills": 0,
+          "chests": 0,
+          "shrines": 0,
+          "challenge": 0,
+          "level": 0,
+          "victory": 0,
+          "noLife": 0
+        },
+        "completed": [],
+        "lastRun": ""
+      },
+      "steps": [
+        {
+          "operation": {
+            "kind": "purchase",
+            "id": "unknown"
+          },
+          "result": false,
+          "state": {
+            "coins": 220,
+            "selected": "remedios",
+            "characters": [
+              "remedios"
+            ],
+            "weapons": [
+              "chancla",
+              "naftalina",
+              "barra",
+              "dentaduras"
+            ],
+            "items": [
+              "gafas",
+              "zapatillas",
+              "termo",
+              "cojin",
+              "lupa",
+              "loteria",
+              "rulos",
+              "monedero"
+            ],
+            "extras": {
+              "rerolls": 0,
+              "skips": 0,
+              "banishes": 0
+            },
+            "missions": {
+              "first": 0,
+              "kills": 0,
+              "chests": 0,
+              "shrines": 0,
+              "challenge": 0,
+              "level": 0,
+              "victory": 0,
+              "noLife": 0
+            },
+            "completed": [],
+            "lastRun": ""
+          }
+        },
+        {
+          "operation": {
+            "kind": "purchase",
+            "id": "baguette"
+          },
+          "result": true,
+          "state": {
+            "coins": 0,
+            "selected": "remedios",
+            "characters": [
+              "remedios",
+              "baguette"
+            ],
+            "weapons": [
+              "chancla",
+              "naftalina",
+              "barra",
+              "dentaduras"
+            ],
+            "items": [
+              "gafas",
+              "zapatillas",
+              "termo",
+              "cojin",
+              "lupa",
+              "loteria",
+              "rulos",
+              "monedero"
+            ],
+            "extras": {
+              "rerolls": 0,
+              "skips": 0,
+              "banishes": 0
+            },
+            "missions": {
+              "first": 0,
+              "kills": 0,
+              "chests": 0,
+              "shrines": 0,
+              "challenge": 0,
+              "level": 0,
+              "victory": 0,
+              "noLife": 0
+            },
+            "completed": [],
+            "lastRun": ""
+          }
+        },
+        {
+          "operation": {
+            "kind": "purchase",
+            "id": "baguette"
+          },
+          "result": false,
+          "state": {
+            "coins": 0,
+            "selected": "remedios",
+            "characters": [
+              "remedios",
+              "baguette"
+            ],
+            "weapons": [
+              "chancla",
+              "naftalina",
+              "barra",
+              "dentaduras"
+            ],
+            "items": [
+              "gafas",
+              "zapatillas",
+              "termo",
+              "cojin",
+              "lupa",
+              "loteria",
+              "rulos",
+              "monedero"
+            ],
+            "extras": {
+              "rerolls": 0,
+              "skips": 0,
+              "banishes": 0
+            },
+            "missions": {
+              "first": 0,
+              "kills": 0,
+              "chests": 0,
+              "shrines": 0,
+              "challenge": 0,
+              "level": 0,
+              "victory": 0,
+              "noLife": 0
+            },
+            "completed": [],
+            "lastRun": ""
+          }
+        },
+        {
+          "operation": {
+            "kind": "purchase",
+            "id": "jersey"
+          },
+          "result": false,
+          "state": {
+            "coins": 0,
+            "selected": "remedios",
+            "characters": [
+              "remedios",
+              "baguette"
+            ],
+            "weapons": [
+              "chancla",
+              "naftalina",
+              "barra",
+              "dentaduras"
+            ],
+            "items": [
+              "gafas",
+              "zapatillas",
+              "termo",
+              "cojin",
+              "lupa",
+              "loteria",
+              "rulos",
+              "monedero"
+            ],
+            "extras": {
+              "rerolls": 0,
+              "skips": 0,
+              "banishes": 0
+            },
+            "missions": {
+              "first": 0,
+              "kills": 0,
+              "chests": 0,
+              "shrines": 0,
+              "challenge": 0,
+              "level": 0,
+              "victory": 0,
+              "noLife": 0
+            },
+            "completed": [],
+            "lastRun": ""
+          }
+        },
+        {
+          "operation": {
+            "kind": "extra",
+            "action": "skips"
+          },
+          "result": false,
+          "state": {
+            "coins": 0,
+            "selected": "remedios",
+            "characters": [
+              "remedios",
+              "baguette"
+            ],
+            "weapons": [
+              "chancla",
+              "naftalina",
+              "barra",
+              "dentaduras"
+            ],
+            "items": [
+              "gafas",
+              "zapatillas",
+              "termo",
+              "cojin",
+              "lupa",
+              "loteria",
+              "rulos",
+              "monedero"
+            ],
+            "extras": {
+              "rerolls": 0,
+              "skips": 0,
+              "banishes": 0
+            },
+            "missions": {
+              "first": 0,
+              "kills": 0,
+              "chests": 0,
+              "shrines": 0,
+              "challenge": 0,
+              "level": 0,
+              "victory": 0,
+              "noLife": 0
+            },
+            "completed": [],
+            "lastRun": ""
+          }
+        }
+      ]
+    },
+    {
+      "id": "reward-boundaries-and-cap",
+      "initial": {
+        "coins": 999999995,
+        "selected": "remedios",
+        "characters": [
+          "remedios"
+        ],
+        "weapons": [
+          "chancla",
+          "naftalina",
+          "barra",
+          "dentaduras"
+        ],
+        "items": [
+          "gafas",
+          "zapatillas",
+          "termo",
+          "cojin",
+          "lupa",
+          "loteria",
+          "rulos",
+          "monedero"
+        ],
+        "extras": {
+          "rerolls": 0,
+          "skips": 0,
+          "banishes": 0
+        },
+        "missions": {
+          "first": 0,
+          "kills": 0,
+          "chests": 0,
+          "shrines": 0,
+          "challenge": 0,
+          "level": 0,
+          "victory": 0,
+          "noLife": 0
+        },
+        "completed": [],
+        "lastRun": ""
+      },
+      "steps": [
+        {
+          "operation": {
+            "kind": "settle",
+            "run": {
+              "id": "one",
+              "cheated": false,
+              "time": 14.9,
+              "kills": 19,
+              "chests": 0,
+              "shrines": 0,
+              "challenges": 0,
+              "level": 1,
+              "victory": false,
+              "usedLifeTome": false
+            }
+          },
+          "result": {
+            "kills": 0,
+            "survival": 0,
+            "victory": 0,
+            "missions": 30,
+            "total": 30,
+            "completed": [
+              "first"
+            ]
+          },
+          "state": {
+            "coins": 1000000000,
+            "selected": "remedios",
+            "characters": [
+              "remedios"
+            ],
+            "weapons": [
+              "chancla",
+              "naftalina",
+              "barra",
+              "dentaduras"
+            ],
+            "items": [
+              "gafas",
+              "zapatillas",
+              "termo",
+              "cojin",
+              "lupa",
+              "loteria",
+              "rulos",
+              "monedero"
+            ],
+            "extras": {
+              "rerolls": 0,
+              "skips": 0,
+              "banishes": 0
+            },
+            "missions": {
+              "first": 1,
+              "kills": 19,
+              "chests": 0,
+              "shrines": 0,
+              "challenge": 0,
+              "level": 1,
+              "victory": 0,
+              "noLife": 0
+            },
+            "completed": [
+              "first"
+            ],
+            "lastRun": "one"
+          }
+        },
+        {
+          "operation": {
+            "kind": "settle",
+            "run": {
+              "id": "edge",
+              "cheated": false,
+              "time": 15,
+              "kills": 20,
+              "chests": 3,
+              "shrines": 1,
+              "challenges": 0,
+              "level": 15,
+              "victory": false,
+              "usedLifeTome": false
+            }
+          },
+          "result": {
+            "kills": 1,
+            "survival": 1,
+            "victory": 0,
+            "missions": 0,
+            "total": 2,
+            "completed": []
+          },
+          "state": {
+            "coins": 1000000000,
+            "selected": "remedios",
+            "characters": [
+              "remedios"
+            ],
+            "weapons": [
+              "chancla",
+              "naftalina",
+              "barra",
+              "dentaduras"
+            ],
+            "items": [
+              "gafas",
+              "zapatillas",
+              "termo",
+              "cojin",
+              "lupa",
+              "loteria",
+              "rulos",
+              "monedero"
+            ],
+            "extras": {
+              "rerolls": 0,
+              "skips": 0,
+              "banishes": 0
+            },
+            "missions": {
+              "first": 1,
+              "kills": 39,
+              "chests": 3,
+              "shrines": 1,
+              "challenge": 0,
+              "level": 15,
+              "victory": 0,
+              "noLife": 0
+            },
+            "completed": [
+              "first"
+            ],
+            "lastRun": "edge"
+          }
+        },
+        {
+          "operation": {
+            "kind": "settle",
+            "run": {
+              "id": "long",
+              "cheated": false,
+              "time": 10000,
+              "kills": 0,
+              "chests": 3,
+              "shrines": 1,
+              "challenges": 0,
+              "level": 15,
+              "victory": false,
+              "usedLifeTome": false
+            }
+          },
+          "result": {
+            "kills": 0,
+            "survival": 60,
+            "victory": 0,
+            "missions": 0,
+            "total": 60,
+            "completed": []
+          },
+          "state": {
+            "coins": 1000000000,
+            "selected": "remedios",
+            "characters": [
+              "remedios"
+            ],
+            "weapons": [
+              "chancla",
+              "naftalina",
+              "barra",
+              "dentaduras"
+            ],
+            "items": [
+              "gafas",
+              "zapatillas",
+              "termo",
+              "cojin",
+              "lupa",
+              "loteria",
+              "rulos",
+              "monedero"
+            ],
+            "extras": {
+              "rerolls": 0,
+              "skips": 0,
+              "banishes": 0
+            },
+            "missions": {
+              "first": 1,
+              "kills": 39,
+              "chests": 6,
+              "shrines": 2,
+              "challenge": 0,
+              "level": 15,
+              "victory": 0,
+              "noLife": 0
+            },
+            "completed": [
+              "first"
+            ],
+            "lastRun": "long"
+          }
+        }
+      ]
+    },
+    {
+      "id": "all-purchases-extras-and-missions",
+      "initial": {
+        "coins": 5000,
+        "selected": "remedios",
+        "characters": [
+          "remedios"
+        ],
+        "weapons": [
+          "chancla",
+          "naftalina",
+          "barra",
+          "dentaduras"
+        ],
+        "items": [
+          "gafas",
+          "zapatillas",
+          "termo",
+          "cojin",
+          "lupa",
+          "loteria",
+          "rulos",
+          "monedero"
+        ],
+        "extras": {
+          "rerolls": 0,
+          "skips": 0,
+          "banishes": 0
+        },
+        "missions": {
+          "first": 0,
+          "kills": 0,
+          "chests": 0,
+          "shrines": 0,
+          "challenge": 0,
+          "level": 0,
+          "victory": 0,
+          "noLife": 0
+        },
+        "completed": [],
+        "lastRun": ""
+      },
+      "steps": [
+        {
+          "operation": {
+            "kind": "purchase",
+            "id": "baguette"
+          },
+          "result": true,
+          "state": {
+            "coins": 4780,
+            "selected": "remedios",
+            "characters": [
+              "remedios",
+              "baguette"
+            ],
+            "weapons": [
+              "chancla",
+              "naftalina",
+              "barra",
+              "dentaduras"
+            ],
+            "items": [
+              "gafas",
+              "zapatillas",
+              "termo",
+              "cojin",
+              "lupa",
+              "loteria",
+              "rulos",
+              "monedero"
+            ],
+            "extras": {
+              "rerolls": 0,
+              "skips": 0,
+              "banishes": 0
+            },
+            "missions": {
+              "first": 0,
+              "kills": 0,
+              "chests": 0,
+              "shrines": 0,
+              "challenge": 0,
+              "level": 0,
+              "victory": 0,
+              "noLife": 0
+            },
+            "completed": [],
+            "lastRun": ""
+          }
+        },
+        {
+          "operation": {
+            "kind": "purchase",
+            "id": "jersey"
+          },
+          "result": true,
+          "state": {
+            "coins": 4640,
+            "selected": "remedios",
+            "characters": [
+              "remedios",
+              "baguette"
+            ],
+            "weapons": [
+              "chancla",
+              "naftalina",
+              "barra",
+              "dentaduras",
+              "jersey"
+            ],
+            "items": [
+              "gafas",
+              "zapatillas",
+              "termo",
+              "cojin",
+              "lupa",
+              "loteria",
+              "rulos",
+              "monedero"
+            ],
+            "extras": {
+              "rerolls": 0,
+              "skips": 0,
+              "banishes": 0
+            },
+            "missions": {
+              "first": 0,
+              "kills": 0,
+              "chests": 0,
+              "shrines": 0,
+              "challenge": 0,
+              "level": 0,
+              "victory": 0,
+              "noLife": 0
+            },
+            "completed": [],
+            "lastRun": ""
+          }
+        },
+        {
+          "operation": {
+            "kind": "purchase",
+            "id": "baraja"
+          },
+          "result": true,
+          "state": {
+            "coins": 4480,
+            "selected": "remedios",
+            "characters": [
+              "remedios",
+              "baguette"
+            ],
+            "weapons": [
+              "chancla",
+              "naftalina",
+              "barra",
+              "dentaduras",
+              "jersey"
+            ],
+            "items": [
+              "gafas",
+              "zapatillas",
+              "termo",
+              "cojin",
+              "lupa",
+              "loteria",
+              "rulos",
+              "monedero",
+              "baraja"
+            ],
+            "extras": {
+              "rerolls": 0,
+              "skips": 0,
+              "banishes": 0
+            },
+            "missions": {
+              "first": 0,
+              "kills": 0,
+              "chests": 0,
+              "shrines": 0,
+              "challenge": 0,
+              "level": 0,
+              "victory": 0,
+              "noLife": 0
+            },
+            "completed": [],
+            "lastRun": ""
+          }
+        },
+        {
+          "operation": {
+            "kind": "purchase",
+            "id": "olla"
+          },
+          "result": true,
+          "state": {
+            "coins": 4300,
+            "selected": "remedios",
+            "characters": [
+              "remedios",
+              "baguette"
+            ],
+            "weapons": [
+              "chancla",
+              "naftalina",
+              "barra",
+              "dentaduras",
+              "jersey"
+            ],
+            "items": [
+              "gafas",
+              "zapatillas",
+              "termo",
+              "cojin",
+              "lupa",
+              "loteria",
+              "rulos",
+              "monedero",
+              "baraja",
+              "olla"
+            ],
+            "extras": {
+              "rerolls": 0,
+              "skips": 0,
+              "banishes": 0
+            },
+            "missions": {
+              "first": 0,
+              "kills": 0,
+              "chests": 0,
+              "shrines": 0,
+              "challenge": 0,
+              "level": 0,
+              "victory": 0,
+              "noLife": 0
+            },
+            "completed": [],
+            "lastRun": ""
+          }
+        },
+        {
+          "operation": {
+            "kind": "extra",
+            "action": "rerolls"
+          },
+          "result": true,
+          "state": {
+            "coins": 4220,
+            "selected": "remedios",
+            "characters": [
+              "remedios",
+              "baguette"
+            ],
+            "weapons": [
+              "chancla",
+              "naftalina",
+              "barra",
+              "dentaduras",
+              "jersey"
+            ],
+            "items": [
+              "gafas",
+              "zapatillas",
+              "termo",
+              "cojin",
+              "lupa",
+              "loteria",
+              "rulos",
+              "monedero",
+              "baraja",
+              "olla"
+            ],
+            "extras": {
+              "rerolls": 1,
+              "skips": 0,
+              "banishes": 0
+            },
+            "missions": {
+              "first": 0,
+              "kills": 0,
+              "chests": 0,
+              "shrines": 0,
+              "challenge": 0,
+              "level": 0,
+              "victory": 0,
+              "noLife": 0
+            },
+            "completed": [],
+            "lastRun": ""
+          }
+        },
+        {
+          "operation": {
+            "kind": "extra",
+            "action": "rerolls"
+          },
+          "result": true,
+          "state": {
+            "coins": 4080,
+            "selected": "remedios",
+            "characters": [
+              "remedios",
+              "baguette"
+            ],
+            "weapons": [
+              "chancla",
+              "naftalina",
+              "barra",
+              "dentaduras",
+              "jersey"
+            ],
+            "items": [
+              "gafas",
+              "zapatillas",
+              "termo",
+              "cojin",
+              "lupa",
+              "loteria",
+              "rulos",
+              "monedero",
+              "baraja",
+              "olla"
+            ],
+            "extras": {
+              "rerolls": 2,
+              "skips": 0,
+              "banishes": 0
+            },
+            "missions": {
+              "first": 0,
+              "kills": 0,
+              "chests": 0,
+              "shrines": 0,
+              "challenge": 0,
+              "level": 0,
+              "victory": 0,
+              "noLife": 0
+            },
+            "completed": [],
+            "lastRun": ""
+          }
+        },
+        {
+          "operation": {
+            "kind": "extra",
+            "action": "rerolls"
+          },
+          "result": true,
+          "state": {
+            "coins": 3860,
+            "selected": "remedios",
+            "characters": [
+              "remedios",
+              "baguette"
+            ],
+            "weapons": [
+              "chancla",
+              "naftalina",
+              "barra",
+              "dentaduras",
+              "jersey"
+            ],
+            "items": [
+              "gafas",
+              "zapatillas",
+              "termo",
+              "cojin",
+              "lupa",
+              "loteria",
+              "rulos",
+              "monedero",
+              "baraja",
+              "olla"
+            ],
+            "extras": {
+              "rerolls": 3,
+              "skips": 0,
+              "banishes": 0
+            },
+            "missions": {
+              "first": 0,
+              "kills": 0,
+              "chests": 0,
+              "shrines": 0,
+              "challenge": 0,
+              "level": 0,
+              "victory": 0,
+              "noLife": 0
+            },
+            "completed": [],
+            "lastRun": ""
+          }
+        },
+        {
+          "operation": {
+            "kind": "extra",
+            "action": "rerolls"
+          },
+          "result": false,
+          "state": {
+            "coins": 3860,
+            "selected": "remedios",
+            "characters": [
+              "remedios",
+              "baguette"
+            ],
+            "weapons": [
+              "chancla",
+              "naftalina",
+              "barra",
+              "dentaduras",
+              "jersey"
+            ],
+            "items": [
+              "gafas",
+              "zapatillas",
+              "termo",
+              "cojin",
+              "lupa",
+              "loteria",
+              "rulos",
+              "monedero",
+              "baraja",
+              "olla"
+            ],
+            "extras": {
+              "rerolls": 3,
+              "skips": 0,
+              "banishes": 0
+            },
+            "missions": {
+              "first": 0,
+              "kills": 0,
+              "chests": 0,
+              "shrines": 0,
+              "challenge": 0,
+              "level": 0,
+              "victory": 0,
+              "noLife": 0
+            },
+            "completed": [],
+            "lastRun": ""
+          }
+        },
+        {
+          "operation": {
+            "kind": "extra",
+            "action": "skips"
+          },
+          "result": true,
+          "state": {
+            "coins": 3780,
+            "selected": "remedios",
+            "characters": [
+              "remedios",
+              "baguette"
+            ],
+            "weapons": [
+              "chancla",
+              "naftalina",
+              "barra",
+              "dentaduras",
+              "jersey"
+            ],
+            "items": [
+              "gafas",
+              "zapatillas",
+              "termo",
+              "cojin",
+              "lupa",
+              "loteria",
+              "rulos",
+              "monedero",
+              "baraja",
+              "olla"
+            ],
+            "extras": {
+              "rerolls": 3,
+              "skips": 1,
+              "banishes": 0
+            },
+            "missions": {
+              "first": 0,
+              "kills": 0,
+              "chests": 0,
+              "shrines": 0,
+              "challenge": 0,
+              "level": 0,
+              "victory": 0,
+              "noLife": 0
+            },
+            "completed": [],
+            "lastRun": ""
+          }
+        },
+        {
+          "operation": {
+            "kind": "extra",
+            "action": "skips"
+          },
+          "result": true,
+          "state": {
+            "coins": 3640,
+            "selected": "remedios",
+            "characters": [
+              "remedios",
+              "baguette"
+            ],
+            "weapons": [
+              "chancla",
+              "naftalina",
+              "barra",
+              "dentaduras",
+              "jersey"
+            ],
+            "items": [
+              "gafas",
+              "zapatillas",
+              "termo",
+              "cojin",
+              "lupa",
+              "loteria",
+              "rulos",
+              "monedero",
+              "baraja",
+              "olla"
+            ],
+            "extras": {
+              "rerolls": 3,
+              "skips": 2,
+              "banishes": 0
+            },
+            "missions": {
+              "first": 0,
+              "kills": 0,
+              "chests": 0,
+              "shrines": 0,
+              "challenge": 0,
+              "level": 0,
+              "victory": 0,
+              "noLife": 0
+            },
+            "completed": [],
+            "lastRun": ""
+          }
+        },
+        {
+          "operation": {
+            "kind": "extra",
+            "action": "skips"
+          },
+          "result": true,
+          "state": {
+            "coins": 3420,
+            "selected": "remedios",
+            "characters": [
+              "remedios",
+              "baguette"
+            ],
+            "weapons": [
+              "chancla",
+              "naftalina",
+              "barra",
+              "dentaduras",
+              "jersey"
+            ],
+            "items": [
+              "gafas",
+              "zapatillas",
+              "termo",
+              "cojin",
+              "lupa",
+              "loteria",
+              "rulos",
+              "monedero",
+              "baraja",
+              "olla"
+            ],
+            "extras": {
+              "rerolls": 3,
+              "skips": 3,
+              "banishes": 0
+            },
+            "missions": {
+              "first": 0,
+              "kills": 0,
+              "chests": 0,
+              "shrines": 0,
+              "challenge": 0,
+              "level": 0,
+              "victory": 0,
+              "noLife": 0
+            },
+            "completed": [],
+            "lastRun": ""
+          }
+        },
+        {
+          "operation": {
+            "kind": "extra",
+            "action": "skips"
+          },
+          "result": false,
+          "state": {
+            "coins": 3420,
+            "selected": "remedios",
+            "characters": [
+              "remedios",
+              "baguette"
+            ],
+            "weapons": [
+              "chancla",
+              "naftalina",
+              "barra",
+              "dentaduras",
+              "jersey"
+            ],
+            "items": [
+              "gafas",
+              "zapatillas",
+              "termo",
+              "cojin",
+              "lupa",
+              "loteria",
+              "rulos",
+              "monedero",
+              "baraja",
+              "olla"
+            ],
+            "extras": {
+              "rerolls": 3,
+              "skips": 3,
+              "banishes": 0
+            },
+            "missions": {
+              "first": 0,
+              "kills": 0,
+              "chests": 0,
+              "shrines": 0,
+              "challenge": 0,
+              "level": 0,
+              "victory": 0,
+              "noLife": 0
+            },
+            "completed": [],
+            "lastRun": ""
+          }
+        },
+        {
+          "operation": {
+            "kind": "extra",
+            "action": "banishes"
+          },
+          "result": true,
+          "state": {
+            "coins": 3340,
+            "selected": "remedios",
+            "characters": [
+              "remedios",
+              "baguette"
+            ],
+            "weapons": [
+              "chancla",
+              "naftalina",
+              "barra",
+              "dentaduras",
+              "jersey"
+            ],
+            "items": [
+              "gafas",
+              "zapatillas",
+              "termo",
+              "cojin",
+              "lupa",
+              "loteria",
+              "rulos",
+              "monedero",
+              "baraja",
+              "olla"
+            ],
+            "extras": {
+              "rerolls": 3,
+              "skips": 3,
+              "banishes": 1
+            },
+            "missions": {
+              "first": 0,
+              "kills": 0,
+              "chests": 0,
+              "shrines": 0,
+              "challenge": 0,
+              "level": 0,
+              "victory": 0,
+              "noLife": 0
+            },
+            "completed": [],
+            "lastRun": ""
+          }
+        },
+        {
+          "operation": {
+            "kind": "extra",
+            "action": "banishes"
+          },
+          "result": true,
+          "state": {
+            "coins": 3200,
+            "selected": "remedios",
+            "characters": [
+              "remedios",
+              "baguette"
+            ],
+            "weapons": [
+              "chancla",
+              "naftalina",
+              "barra",
+              "dentaduras",
+              "jersey"
+            ],
+            "items": [
+              "gafas",
+              "zapatillas",
+              "termo",
+              "cojin",
+              "lupa",
+              "loteria",
+              "rulos",
+              "monedero",
+              "baraja",
+              "olla"
+            ],
+            "extras": {
+              "rerolls": 3,
+              "skips": 3,
+              "banishes": 2
+            },
+            "missions": {
+              "first": 0,
+              "kills": 0,
+              "chests": 0,
+              "shrines": 0,
+              "challenge": 0,
+              "level": 0,
+              "victory": 0,
+              "noLife": 0
+            },
+            "completed": [],
+            "lastRun": ""
+          }
+        },
+        {
+          "operation": {
+            "kind": "extra",
+            "action": "banishes"
+          },
+          "result": true,
+          "state": {
+            "coins": 2980,
+            "selected": "remedios",
+            "characters": [
+              "remedios",
+              "baguette"
+            ],
+            "weapons": [
+              "chancla",
+              "naftalina",
+              "barra",
+              "dentaduras",
+              "jersey"
+            ],
+            "items": [
+              "gafas",
+              "zapatillas",
+              "termo",
+              "cojin",
+              "lupa",
+              "loteria",
+              "rulos",
+              "monedero",
+              "baraja",
+              "olla"
+            ],
+            "extras": {
+              "rerolls": 3,
+              "skips": 3,
+              "banishes": 3
+            },
+            "missions": {
+              "first": 0,
+              "kills": 0,
+              "chests": 0,
+              "shrines": 0,
+              "challenge": 0,
+              "level": 0,
+              "victory": 0,
+              "noLife": 0
+            },
+            "completed": [],
+            "lastRun": ""
+          }
+        },
+        {
+          "operation": {
+            "kind": "extra",
+            "action": "banishes"
+          },
+          "result": false,
+          "state": {
+            "coins": 2980,
+            "selected": "remedios",
+            "characters": [
+              "remedios",
+              "baguette"
+            ],
+            "weapons": [
+              "chancla",
+              "naftalina",
+              "barra",
+              "dentaduras",
+              "jersey"
+            ],
+            "items": [
+              "gafas",
+              "zapatillas",
+              "termo",
+              "cojin",
+              "lupa",
+              "loteria",
+              "rulos",
+              "monedero",
+              "baraja",
+              "olla"
+            ],
+            "extras": {
+              "rerolls": 3,
+              "skips": 3,
+              "banishes": 3
+            },
+            "missions": {
+              "first": 0,
+              "kills": 0,
+              "chests": 0,
+              "shrines": 0,
+              "challenge": 0,
+              "level": 0,
+              "victory": 0,
+              "noLife": 0
+            },
+            "completed": [],
+            "lastRun": ""
+          }
+        },
+        {
+          "operation": {
+            "kind": "settle",
+            "run": {
+              "id": "one",
+              "cheated": false,
+              "time": 300,
+              "kills": 1000,
+              "chests": 10,
+              "shrines": 3,
+              "challenges": 1,
+              "level": 20,
+              "victory": true,
+              "usedLifeTome": false
+            }
+          },
+          "result": {
+            "kills": 50,
+            "survival": 20,
+            "victory": 60,
+            "missions": 450,
+            "total": 580,
+            "completed": [
+              "first",
+              "kills",
+              "chests",
+              "shrines",
+              "challenge",
+              "level",
+              "victory",
+              "noLife"
+            ]
+          },
+          "state": {
+            "coins": 3560,
+            "selected": "remedios",
+            "characters": [
+              "remedios",
+              "baguette"
+            ],
+            "weapons": [
+              "chancla",
+              "naftalina",
+              "barra",
+              "dentaduras",
+              "jersey",
+              "fregona"
+            ],
+            "items": [
+              "gafas",
+              "zapatillas",
+              "termo",
+              "cojin",
+              "lupa",
+              "loteria",
+              "rulos",
+              "monedero",
+              "baraja",
+              "olla",
+              "perlas",
+              "bata"
+            ],
+            "extras": {
+              "rerolls": 3,
+              "skips": 3,
+              "banishes": 3
+            },
+            "missions": {
+              "first": 1,
+              "kills": 1000,
+              "chests": 10,
+              "shrines": 3,
+              "challenge": 1,
+              "level": 20,
+              "victory": 1,
+              "noLife": 1
+            },
+            "completed": [
+              "first",
+              "kills",
+              "chests",
+              "shrines",
+              "challenge",
+              "level",
+              "victory",
+              "noLife"
+            ],
+            "lastRun": "one"
+          }
+        }
+      ]
+    }
+  ],
+  "saves": [
+    {
+      "id": "new-es",
+      "language": "es",
+      "raw": null,
+      "result": {
+        "data": {
+          "version": 3,
+          "settings": {
+            "musicVolume": 0.5,
+            "effectsVolume": 0.7,
+            "muted": false,
+            "reducedParticles": false,
+            "cameraShake": true,
+            "flashes": true,
+            "language": "es",
+            "mouseSensitivity": 1,
+            "renderHeight": 360,
+            "vertexSnap": true,
+            "dithering": true,
+            "slideWithCtrl": false,
+            "showFps": false,
+            "runMinutes": 10
+          },
+          "meta": {
+            "coins": 0,
+            "selected": "remedios",
+            "characters": [
+              "remedios"
+            ],
+            "weapons": [
+              "chancla",
+              "naftalina",
+              "barra",
+              "dentaduras"
+            ],
+            "items": [
+              "gafas",
+              "zapatillas",
+              "termo",
+              "cojin",
+              "lupa",
+              "loteria",
+              "rulos",
+              "monedero"
+            ],
+            "extras": {
+              "rerolls": 0,
+              "skips": 0,
+              "banishes": 0
+            },
+            "missions": {
+              "first": 0,
+              "kills": 0,
+              "chests": 0,
+              "shrines": 0,
+              "challenge": 0,
+              "level": 0,
+              "victory": 0,
+              "noLife": 0
+            },
+            "completed": [],
+            "lastRun": ""
+          }
+        },
+        "status": "new"
+      }
+    },
+    {
+      "id": "new-en",
+      "language": "en",
+      "raw": null,
+      "result": {
+        "data": {
+          "version": 3,
+          "settings": {
+            "musicVolume": 0.5,
+            "effectsVolume": 0.7,
+            "muted": false,
+            "reducedParticles": false,
+            "cameraShake": true,
+            "flashes": true,
+            "language": "en",
+            "mouseSensitivity": 1,
+            "renderHeight": 360,
+            "vertexSnap": true,
+            "dithering": true,
+            "slideWithCtrl": false,
+            "showFps": false,
+            "runMinutes": 10
+          },
+          "meta": {
+            "coins": 0,
+            "selected": "remedios",
+            "characters": [
+              "remedios"
+            ],
+            "weapons": [
+              "chancla",
+              "naftalina",
+              "barra",
+              "dentaduras"
+            ],
+            "items": [
+              "gafas",
+              "zapatillas",
+              "termo",
+              "cojin",
+              "lupa",
+              "loteria",
+              "rulos",
+              "monedero"
+            ],
+            "extras": {
+              "rerolls": 0,
+              "skips": 0,
+              "banishes": 0
+            },
+            "missions": {
+              "first": 0,
+              "kills": 0,
+              "chests": 0,
+              "shrines": 0,
+              "challenge": 0,
+              "level": 0,
+              "victory": 0,
+              "noLife": 0
+            },
+            "completed": [],
+            "lastRun": ""
+          }
+        },
+        "status": "new"
+      }
+    },
+    {
+      "id": "v1-earliest",
+      "language": "es",
+      "raw": "{\"version\":1,\"settings\":{\"language\":\"es\"}}",
+      "result": {
+        "data": {
+          "version": 3,
+          "settings": {
+            "musicVolume": 0.5,
+            "effectsVolume": 0.7,
+            "muted": false,
+            "reducedParticles": false,
+            "cameraShake": true,
+            "flashes": true,
+            "language": "es",
+            "mouseSensitivity": 1,
+            "renderHeight": 360,
+            "vertexSnap": true,
+            "dithering": true,
+            "slideWithCtrl": false,
+            "showFps": false,
+            "runMinutes": 10
+          },
+          "meta": {
+            "coins": 0,
+            "selected": "remedios",
+            "characters": [
+              "remedios"
+            ],
+            "weapons": [
+              "chancla",
+              "naftalina",
+              "barra",
+              "dentaduras"
+            ],
+            "items": [
+              "gafas",
+              "zapatillas",
+              "termo",
+              "cojin",
+              "lupa",
+              "loteria",
+              "rulos",
+              "monedero"
+            ],
+            "extras": {
+              "rerolls": 0,
+              "skips": 0,
+              "banishes": 0
+            },
+            "missions": {
+              "first": 0,
+              "kills": 0,
+              "chests": 0,
+              "shrines": 0,
+              "challenge": 0,
+              "level": 0,
+              "victory": 0,
+              "noLife": 0
+            },
+            "completed": [],
+            "lastRun": ""
+          }
+        },
+        "status": "migrated"
+      }
+    },
+    {
+      "id": "v1-options",
+      "language": "es",
+      "raw": "{\"version\":1,\"settings\":{\"language\":\"en\",\"mouseSensitivity\":2,\"renderHeight\":240,\"vertexSnap\":false,\"dithering\":true,\"slideWithCtrl\":true,\"showFps\":true,\"runMinutes\":5}}",
+      "result": {
+        "data": {
+          "version": 3,
+          "settings": {
+            "musicVolume": 0.5,
+            "effectsVolume": 0.7,
+            "muted": false,
+            "reducedParticles": false,
+            "cameraShake": true,
+            "flashes": true,
+            "language": "en",
+            "mouseSensitivity": 2,
+            "renderHeight": 240,
+            "vertexSnap": false,
+            "dithering": true,
+            "slideWithCtrl": true,
+            "showFps": true,
+            "runMinutes": 5
+          },
+          "meta": {
+            "coins": 0,
+            "selected": "remedios",
+            "characters": [
+              "remedios"
+            ],
+            "weapons": [
+              "chancla",
+              "naftalina",
+              "barra",
+              "dentaduras"
+            ],
+            "items": [
+              "gafas",
+              "zapatillas",
+              "termo",
+              "cojin",
+              "lupa",
+              "loteria",
+              "rulos",
+              "monedero"
+            ],
+            "extras": {
+              "rerolls": 0,
+              "skips": 0,
+              "banishes": 0
+            },
+            "missions": {
+              "first": 0,
+              "kills": 0,
+              "chests": 0,
+              "shrines": 0,
+              "challenge": 0,
+              "level": 0,
+              "victory": 0,
+              "noLife": 0
+            },
+            "completed": [],
+            "lastRun": ""
+          }
+        },
+        "status": "migrated"
+      }
+    },
+    {
+      "id": "v2-partial",
+      "language": "es",
+      "raw": "{\"version\":2,\"settings\":{\"musicVolume\":0.25,\"effectsVolume\":0.3,\"muted\":true,\"language\":\"en\",\"mouseSensitivity\":2,\"renderHeight\":480,\"vertexSnap\":false,\"dithering\":false,\"slideWithCtrl\":true,\"showFps\":true,\"runMinutes\":15},\"meta\":{\"coins\":70,\"selected\":\"remedios\",\"characters\":[\"remedios\"],\"weapons\":[\"chancla\",\"naftalina\",\"barra\",\"dentaduras\"],\"items\":[\"gafas\",\"zapatillas\",\"termo\",\"cojin\",\"lupa\",\"loteria\",\"rulos\",\"monedero\"],\"extras\":{\"rerolls\":0,\"skips\":0,\"banishes\":0},\"missions\":{\"first\":1,\"kills\":400,\"chests\":3,\"shrines\":1,\"challenge\":0,\"level\":15,\"victory\":0,\"noLife\":0},\"completed\":[\"first\"],\"lastRun\":\"one\"}}",
+      "result": {
+        "data": {
+          "version": 3,
+          "settings": {
+            "musicVolume": 0.25,
+            "effectsVolume": 0.3,
+            "muted": true,
+            "reducedParticles": false,
+            "cameraShake": true,
+            "flashes": true,
+            "language": "en",
+            "mouseSensitivity": 2,
+            "renderHeight": 480,
+            "vertexSnap": false,
+            "dithering": false,
+            "slideWithCtrl": true,
+            "showFps": true,
+            "runMinutes": 15
+          },
+          "meta": {
+            "coins": 70,
+            "selected": "remedios",
+            "characters": [
+              "remedios"
+            ],
+            "weapons": [
+              "chancla",
+              "naftalina",
+              "barra",
+              "dentaduras"
+            ],
+            "items": [
+              "gafas",
+              "zapatillas",
+              "termo",
+              "cojin",
+              "lupa",
+              "loteria",
+              "rulos",
+              "monedero"
+            ],
+            "extras": {
+              "rerolls": 0,
+              "skips": 0,
+              "banishes": 0
+            },
+            "missions": {
+              "first": 1,
+              "kills": 400,
+              "chests": 3,
+              "shrines": 1,
+              "challenge": 0,
+              "level": 15,
+              "victory": 0,
+              "noLife": 0
+            },
+            "completed": [
+              "first"
+            ],
+            "lastRun": "one"
+          }
+        },
+        "status": "migrated"
+      }
+    },
+    {
+      "id": "v3-partial",
+      "language": "es",
+      "raw": "{\"version\":3,\"settings\":{\"musicVolume\":0.5,\"effectsVolume\":0.7,\"muted\":false,\"reducedParticles\":false,\"cameraShake\":true,\"flashes\":true,\"language\":\"es\",\"mouseSensitivity\":1,\"renderHeight\":360,\"vertexSnap\":true,\"dithering\":true,\"slideWithCtrl\":false,\"showFps\":false,\"runMinutes\":10},\"meta\":{\"coins\":70,\"selected\":\"remedios\",\"characters\":[\"remedios\"],\"weapons\":[\"chancla\",\"naftalina\",\"barra\",\"dentaduras\"],\"items\":[\"gafas\",\"zapatillas\",\"termo\",\"cojin\",\"lupa\",\"loteria\",\"rulos\",\"monedero\"],\"extras\":{\"rerolls\":0,\"skips\":0,\"banishes\":0},\"missions\":{\"first\":1,\"kills\":400,\"chests\":3,\"shrines\":1,\"challenge\":0,\"level\":15,\"victory\":0,\"noLife\":0},\"completed\":[\"first\"],\"lastRun\":\"one\"}}",
+      "result": {
+        "data": {
+          "version": 3,
+          "settings": {
+            "musicVolume": 0.5,
+            "effectsVolume": 0.7,
+            "muted": false,
+            "reducedParticles": false,
+            "cameraShake": true,
+            "flashes": true,
+            "language": "es",
+            "mouseSensitivity": 1,
+            "renderHeight": 360,
+            "vertexSnap": true,
+            "dithering": true,
+            "slideWithCtrl": false,
+            "showFps": false,
+            "runMinutes": 10
+          },
+          "meta": {
+            "coins": 70,
+            "selected": "remedios",
+            "characters": [
+              "remedios"
+            ],
+            "weapons": [
+              "chancla",
+              "naftalina",
+              "barra",
+              "dentaduras"
+            ],
+            "items": [
+              "gafas",
+              "zapatillas",
+              "termo",
+              "cojin",
+              "lupa",
+              "loteria",
+              "rulos",
+              "monedero"
+            ],
+            "extras": {
+              "rerolls": 0,
+              "skips": 0,
+              "banishes": 0
+            },
+            "missions": {
+              "first": 1,
+              "kills": 400,
+              "chests": 3,
+              "shrines": 1,
+              "challenge": 0,
+              "level": 15,
+              "victory": 0,
+              "noLife": 0
+            },
+            "completed": [
+              "first"
+            ],
+            "lastRun": "one"
+          }
+        },
+        "status": "ok"
+      }
+    },
+    {
+      "id": "v3-missions",
+      "language": "es",
+      "raw": "{\"version\":3,\"settings\":{\"musicVolume\":0.5,\"effectsVolume\":0.7,\"muted\":false,\"reducedParticles\":false,\"cameraShake\":true,\"flashes\":true,\"language\":\"es\",\"mouseSensitivity\":1,\"renderHeight\":360,\"vertexSnap\":true,\"dithering\":true,\"slideWithCtrl\":false,\"showFps\":false,\"runMinutes\":10},\"meta\":{\"coins\":600,\"selected\":\"remedios\",\"characters\":[\"remedios\"],\"weapons\":[\"chancla\",\"naftalina\",\"barra\",\"dentaduras\",\"fregona\"],\"items\":[\"gafas\",\"zapatillas\",\"termo\",\"cojin\",\"lupa\",\"loteria\",\"rulos\",\"monedero\",\"perlas\",\"bata\"],\"extras\":{\"rerolls\":0,\"skips\":0,\"banishes\":0},\"missions\":{\"first\":1,\"kills\":1000,\"chests\":10,\"shrines\":3,\"challenge\":1,\"level\":20,\"victory\":1,\"noLife\":1},\"completed\":[\"first\",\"kills\",\"chests\",\"shrines\",\"challenge\",\"level\",\"victory\",\"noLife\"],\"lastRun\":\"two\"}}",
+      "result": {
+        "data": {
+          "version": 3,
+          "settings": {
+            "musicVolume": 0.5,
+            "effectsVolume": 0.7,
+            "muted": false,
+            "reducedParticles": false,
+            "cameraShake": true,
+            "flashes": true,
+            "language": "es",
+            "mouseSensitivity": 1,
+            "renderHeight": 360,
+            "vertexSnap": true,
+            "dithering": true,
+            "slideWithCtrl": false,
+            "showFps": false,
+            "runMinutes": 10
+          },
+          "meta": {
+            "coins": 600,
+            "selected": "remedios",
+            "characters": [
+              "remedios"
+            ],
+            "weapons": [
+              "chancla",
+              "naftalina",
+              "barra",
+              "dentaduras",
+              "fregona"
+            ],
+            "items": [
+              "gafas",
+              "zapatillas",
+              "termo",
+              "cojin",
+              "lupa",
+              "loteria",
+              "rulos",
+              "perlas",
+              "monedero",
+              "bata"
+            ],
+            "extras": {
+              "rerolls": 0,
+              "skips": 0,
+              "banishes": 0
+            },
+            "missions": {
+              "first": 1,
+              "kills": 1000,
+              "chests": 10,
+              "shrines": 3,
+              "challenge": 1,
+              "level": 20,
+              "victory": 1,
+              "noLife": 1
+            },
+            "completed": [
+              "first",
+              "kills",
+              "chests",
+              "shrines",
+              "challenge",
+              "level",
+              "victory",
+              "noLife"
+            ],
+            "lastRun": "two"
+          }
+        },
+        "status": "ok"
+      }
+    },
+    {
+      "id": "v3-all",
+      "language": "es",
+      "raw": "{\"version\":3,\"settings\":{\"musicVolume\":0.5,\"effectsVolume\":0.7,\"muted\":false,\"reducedParticles\":false,\"cameraShake\":true,\"flashes\":true,\"language\":\"en\",\"mouseSensitivity\":1,\"renderHeight\":360,\"vertexSnap\":true,\"dithering\":true,\"slideWithCtrl\":false,\"showFps\":false,\"runMinutes\":10},\"meta\":{\"coins\":3560,\"selected\":\"baguette\",\"characters\":[\"remedios\",\"baguette\"],\"weapons\":[\"chancla\",\"naftalina\",\"barra\",\"dentaduras\",\"jersey\",\"fregona\"],\"items\":[\"gafas\",\"zapatillas\",\"termo\",\"cojin\",\"lupa\",\"loteria\",\"rulos\",\"monedero\",\"baraja\",\"olla\",\"perlas\",\"bata\"],\"extras\":{\"rerolls\":3,\"skips\":3,\"banishes\":3},\"missions\":{\"first\":1,\"kills\":1000,\"chests\":10,\"shrines\":3,\"challenge\":1,\"level\":20,\"victory\":1,\"noLife\":1},\"completed\":[\"first\",\"kills\",\"chests\",\"shrines\",\"challenge\",\"level\",\"victory\",\"noLife\"],\"lastRun\":\"one\"}}",
+      "result": {
+        "data": {
+          "version": 3,
+          "settings": {
+            "musicVolume": 0.5,
+            "effectsVolume": 0.7,
+            "muted": false,
+            "reducedParticles": false,
+            "cameraShake": true,
+            "flashes": true,
+            "language": "en",
+            "mouseSensitivity": 1,
+            "renderHeight": 360,
+            "vertexSnap": true,
+            "dithering": true,
+            "slideWithCtrl": false,
+            "showFps": false,
+            "runMinutes": 10
+          },
+          "meta": {
+            "coins": 3560,
+            "selected": "baguette",
+            "characters": [
+              "remedios",
+              "baguette"
+            ],
+            "weapons": [
+              "chancla",
+              "naftalina",
+              "barra",
+              "dentaduras",
+              "jersey",
+              "fregona"
+            ],
+            "items": [
+              "gafas",
+              "zapatillas",
+              "termo",
+              "cojin",
+              "lupa",
+              "loteria",
+              "rulos",
+              "perlas",
+              "monedero",
+              "baraja",
+              "olla",
+              "bata"
+            ],
+            "extras": {
+              "rerolls": 3,
+              "skips": 3,
+              "banishes": 3
+            },
+            "missions": {
+              "first": 1,
+              "kills": 1000,
+              "chests": 10,
+              "shrines": 3,
+              "challenge": 1,
+              "level": 20,
+              "victory": 1,
+              "noLife": 1
+            },
+            "completed": [
+              "first",
+              "kills",
+              "chests",
+              "shrines",
+              "challenge",
+              "level",
+              "victory",
+              "noLife"
+            ],
+            "lastRun": "one"
+          }
+        },
+        "status": "ok"
+      }
+    }
+  ]
+}

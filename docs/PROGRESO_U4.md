@@ -1,16 +1,16 @@
 # Checkpoint U4 — meta, UI, opciones y traslado de guardados
 
-Estado: **PLANIFICACIÓN AUTORIZADA el 04/10/2026. IMPLEMENTACIÓN NO INICIADA.** Esperar la siguiente respuesta del autor antes de programar U4. U3 aprobada manualmente como base funcional el mismo día; último cierre técnico previo: `83246ebfd873b0c5d23611a1d557f83096180217`.
+Estado: **IMPLEMENTACIÓN AUTORIZADA Y EN CURSO desde el 04/10/2026.** Política de recuperación revisable y estricta aprobada por el autor. Contrato en [CONTRATO_GUARDADO_U4](CONTRATO_GUARDADO_U4.md). U3 aprobada manualmente como base funcional el mismo día; último cierre técnico previo: `83246ebfd873b0c5d23611a1d557f83096180217`.
 
 ## Cómo retomar
 
-- **Último punto técnico publicado:** `83246eb` (U3). Este plan y su aprobación manual se publican en el commit «Registra la aprobación de U3 y prepara el plan de U4»; localizar su hash con `git log -1 --format="%H %s" -- docs/PROGRESO_U4.md`.
-- **Paso actual:** 0, auditoría y planificación. No hay runtime U4 implementado.
-- **Terminado:** auditoría Git; lectura del guardado, migraciones, meta, tienda, misiones, opciones, i18n y selección web; inventario Unity reutilizable; cierre documental de U3 y plan siguiente.
-- **A medias:** ninguna pieza de código. Pendiente de respuesta del autor: autorización de implementación y política de importación parcialmente inválida descrita abajo.
-- **Sin commit a propósito:** los siete ajustes Unity listados en «Cambios locales excluidos». No restaurar ni publicar.
-- **Siguiente paso exacto:** leer la respuesta del autor y registrar la política de importación. Solo entonces comenzar el paso 1. Auditar Git de nuevo y conservar cualquier WIP nuevo antes de editar.
-- **No confundir pruebas históricas con nuevas:** U3 registró 167/167 Edit Mode y 17/17 Play Mode. Esta sesión documental no ha ejecutado Unity, build, navegador ni pruebas web.
+- **Punto de partida publicado:** `799f28415599d24f784ade4a0312b7000a664ba8`. Paso 1 en «Define el contrato y congela el corpus de progreso de U4»; localizar hash con `git log -1 --format="%H %s" -- scripts/u4-reference.mjs`.
+- **Paso actual:** 2, meta y liquidación pura C#; todavía no implementado.
+- **Terminado:** paso 1, contrato de tres formatos, DTO normalizado, invariantes, límites, migraciones, corpus web congelado y corpus contractual. Ver registro de sesión para pruebas reales.
+- **A medias:** ninguna pieza de runtime. No existe aún exportador, importador ni persistencia Unity U4.
+- **Sin commit a propósito:** siete ajustes Unity de «Cambios locales excluidos».
+- **Siguiente paso exacto:** portar meta y liquidación puras C# desde `src/systems/meta.ts` y consumir `u4-progress.json` en pruebas independientes. No reproducir los clamps permisivos web en el futuro importador.
+- **Autorización:** continuar los pasos 2–9 sin nuevas confirmaciones generales. Detenerse solo ante decisión nueva importante y, al terminar U4, para prueba manual del autor.
 
 Comprobación desde CMD:
 
@@ -68,15 +68,15 @@ Excepción web autorizada para U4: modificar `src/` solo para exportación JSON 
 
 Las propuestas 1, 2 y 5 pueden cerrarse como registro técnico tal cual; 3, 4 y 6 tienen sustitución prevista. La aprobación funcional de U3 no se registra como aceptación individual de estas seis propuestas. No es necesario resolverlas para planificar U4.
 
-## Única duda de comportamiento previa a implementación
+## Política resuelta por el autor — 04/10/2026
 
-Para un JSON de versión admitida que mezcle progreso válido con tipos/valores inválidos o IDs desconocidos: **¿rechazar la importación entera, o permitir recuperar lo compatible tras mostrar cada corrección/exclusión y pedir confirmación explícita?**
+Recuperar solo lo inequívoco. Producir candidato normalizado e informe en memoria antes de escribir. Mostrar qué se conserva/excluye/sustituye y por qué; confirmar explícitamente. JSON ilegible, formato/versión desconocidos y corrupción crítica ambigua son fatales. Opciones inválidas/ausentes e IDs desconocidos en colecciones extensibles permiten recuperación informada. No clamps, saldos inventados, compras inferidas ni suposiciones sobre recompensas cobradas.
 
-Recomendación: recuperación revisable y explícita; cancelar mantiene el guardado Unity intacto. Nunca importar silenciosamente el saneamiento de la web. JSON ilegible o versión futura se rechazan, conservando el archivo original; sin inventar recompensas para datos ambiguos. La elección determina validación, vista previa y pruebas. No hay más dudas de diseño bloqueantes identificadas.
+Sustitución completa, nunca fusión: validar → informe → confirmar → backup → escritura segura → relectura/validación → éxito. Original exportado intacto; importación repetida no concede nada. Temporal/backup/recuperación se probarán con fallos IO; no prometer atomicidad sin garantías verificadas. Contrato preciso: [CONTRATO_GUARDADO_U4](CONTRATO_GUARDADO_U4.md).
 
 ## Plan propuesto por pasos/commits verificables
 
-Cada fila es una unidad coherente; dividir si tamaño o pruebas lo exigen. No implementada todavía.
+Plan aprobado. Cada fila es una unidad coherente; dividir si tamaño o pruebas lo exigen. Paso 1 terminado; pasos 2–9 pendientes.
 
 | Paso | Resultado y límites | Verificación principal |
 |---|---|---|
@@ -90,11 +90,9 @@ Cada fila es una unidad coherente; dividir si tamaño o pruebas lo exigen. No im
 | 8. Opciones y pausa | Aplicar/persistir opciones equivalentes, idioma inmediato, entrada y render; conservar opciones de audio para U5 sin implementar audio final. | Play y build: límites, cambio en pausa, foco, recarga, ES/EN sin textos obsoletos. Documentar efectos todavía dependientes de U5. |
 | 9. Cierre U4 | Regresión completa, build Windows x64 Mono, recorrido manual preparado, resultados/rutas exactos y limitaciones. | Pruebas descritas abajo; publicar checkpoint y detenerse para prueba/aprobación del autor. |
 
-## Exportación/importación propuesta, sin formato definitivo aún
+## Exportación/importación — contrato fijado en el paso 1
 
-Los datos reales revisados permiten diseñar el contrato en el paso 1. Propuesta: transporte JSON identificable y versionado que contenga el progreso compatible; conservar versiones de origen y separar validación del transporte, migración de save y reglas meta. Admitir casos v1/v2/v3 mediante adaptadores explícitos; concretar si el lector recibe también sus JSON originales además del exportado. No confiar solo en una extensión de archivo ni usar deserialización que convierta tipos incorrectos silenciosamente.
-
-Exportar una instantánea coherente del progreso web; no tocar el archivo descargado después. Importar como sustitución validada, nunca como suma. Respaldar el guardado Unity existente antes de confirmar/escribir; si falla la copia o escritura, abortar conservando el anterior y explicar cómo recuperar. Repetir el mismo archivo no concede moneda ni desbloqueos extra. La UI indica consecuencias y cancelación. No guardar una partida activa como parte de la transferencia.
+Transferencia `mamporro.progress` v1 y persistencia `mamporro.unity-save` v1, con DTO de progreso normalizado; adaptador explícito de JSON web v1/v2/v3. Versión de origen no vuelve a migrar un DTO ya normalizado. Contrato, invariantes y política fatal/recuperable en [CONTRATO_GUARDADO_U4](CONTRATO_GUARDADO_U4.md).
 
 Las guardas actuales de `scripts/unity-reference*.mjs` prohíben cambios de `src/` y el baseline incluye hashes de fuentes. Al añadir el exportador, conservar esas guardas y comprobar la referencia sobre una instantánea aislada de la base aprobada; comprobar el exportador y la ausencia de cambios funcionales por separado sobre la rama actual. No afirmar que la web sigue byte a byte intacta ni relajar esperados para acomodar el exportador. Documentar el procedimiento reproducible al implementarlo.
 
@@ -130,6 +128,21 @@ Conservar sin publicar ni restaurar:
 - **Árbol al entregar:** únicamente los siete ajustes Unity deliberadamente excluidos tras publicar la documentación.
 - **Limitaciones:** picos U3 aislados de 62–106 ms en el minuto 5, causa no aislada; no bloquean. Presentación técnica aprobada como base; mejoras posteriores, no regresiones.
 - **Pendiente/siguiente paso exacto:** esperar respuesta del autor a este plan y a la única pregunta; no implementar U4 todavía.
+
+### 04/10/2026 — paso 1: contrato y corpus — Codex
+
+- **Punto de partida:** local/remoto `799f28415599d24f784ade4a0312b7000a664ba8`; ahead 0 / behind 0, mismos siete ajustes locales Unity.
+- **Trabajo:** contrastados esquemas históricos v1 (`5cee530`/`496f9bc`), v2 (`fde8438`) y v3 (`bba95a5`); contrato de tres formatos, 14 opciones, IDs persistentes exactos, campos obligatorios/opcionales/derivados, invariantes, errores y presupuestos de entrada. DTO definido como contrato lógico; clases C# llegarán con paso 2.
+- **Corpus:** `u4-progress.json`, 8 guardados y 6 secuencias meta generados una sola vez desde la web aprobada; `u4-import-cases.json`, 94 casos contractuales según la política estricta del autor. No cambiar esperados desde C#.
+- **Archivos principales:** `CONTRATO_GUARDADO_U4.md`, ambos corpus nuevos, `scripts/u4-reference.mjs`, `scripts/u4-contract.test.mjs`; documentos vigentes actualizados a implementación autorizada. Sin cambios de `src/`, runtime ni referencias anteriores.
+- **Decisiones del autor:** recuperación revisable e inequívoca, crítica ambigua fatal; normalizar/informar sin IO; confirmar antes de backup/sustitución/verificación; nunca fusionar ni liquidar al importar. Registradas en `DECISIONES.md`.
+- **Pruebas realmente ejecutadas (04/10/2026):** `node --test scripts/u4-contract.test.mjs`: **5/5**, 94 casos revisados estructuralmente, log `unity/TestResults/U4/contract.log`. `node scripts/u4-reference.mjs`: **8/8 guardados y 6/6 secuencias** coinciden, log `unity/TestResults/U4/reference.log`. `--export-once` se usó únicamente para la creación inicial del nuevo corpus web.
+- **Referencias ejecutadas:** `node scripts/unity-reference.mjs`, `node scripts/unity-reference-u2.mjs`, `node scripts/unity-reference-u3.mjs`: **correctas**, salida en consola. Hubo avisos de puerto HMR compartido al verificarlas simultáneamente; finalizaron con código 0 y coincidencia completa. Preferir secuencial en futuras verificaciones Vite.
+- **Otras verificaciones:** `git diff --check` acotado a la pieza correcto; `git diff --exit-code 0505b1690656d15188860157612455639820fe1f -- src` sin diferencias; U0/U2/U3 congeladas sin diferencias.
+- **Pendientes:** tests del importador/persistencia aún no existen; las cinco pruebas actuales solo validan contrato/corpus. No se ejecutaron Unity Edit/Play/build/visual en este paso sin cambios C#.
+- **Commit/push:** «Define el contrato y congela el corpus de progreso de U4», fetch previo, push normal y comprobación del HEAD remoto. Hash consultable por `git log -1 --format="%H %s" -- scripts/u4-reference.mjs`.
+- **Árbol/exclusiones:** únicamente los siete ajustes Unity deliberadamente excluidos tras publicar esta pieza. Ningún código a medias.
+- **Siguiente paso exacto:** paso 2, DTO y reglas meta C# puras con pruebas contra las secuencias congeladas; después persistencia. No hace falta nueva autorización.
 
 ## Checkpoint al terminar U4
 
