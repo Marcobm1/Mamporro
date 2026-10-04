@@ -10,7 +10,7 @@ namespace Mamporro.U3
     // Pantallas técnicas de U3 en uGUI: inicio (personaje, duración y semilla), pausa
     // (semilla, estadísticas y objetos, como UI.buildPause de la web, sin las opciones
     // guardadas) y resultados (UI.buildResults sin la Calderilla ni las misiones, que son U4).
-    public sealed class RunScreens : MonoBehaviour
+    public sealed partial class RunScreens : MonoBehaviour
     {
         U3Game game;Font font;
         GameObject pause;Text pauseSeed,pauseStats,pauseItems,pauseControls;
@@ -44,7 +44,7 @@ namespace Mamporro.U3
             pauseControls=Label(Content(pause),Controls(),24,TextAnchor.UpperLeft,new Vector2(.68f,.06f),new Vector2(.95f,.68f));
             Button(Content(pause),CombatText.Get("pause.backToTitle"),new Vector2(.68f,.76f),new Vector2(.95f,.84f),()=>game.BackToTitle());
             pause.SetActive(false);
-            BuildTitle(canvasObject.transform);BuildResults(canvasObject.transform);
+            BuildTitle(canvasObject.transform);BuildResults(canvasObject.transform);BuildImport(canvasObject.transform);
         }
 
         // ------------------------------------------------------------ inicio
@@ -70,7 +70,9 @@ namespace Mamporro.U3
             Button(Content(title),CombatText.Get("title.play"),new Vector2(.05f,.12f),new Vector2(.34f,.24f),()=>game.StartRun(seedInput.text));
             Label(Content(title),CombatText.Get("title.clickHint"),22,TextAnchor.MiddleLeft,new Vector2(.36f,.12f),new Vector2(.68f,.24f)).color=Hex("#a49cc0");
             Label(Content(title),CombatText.Get("controls.title"),26,TextAnchor.UpperLeft,new Vector2(.7f,.66f),new Vector2(.95f,.72f)).color=Hex("#a49cc0");
-            Label(Content(title),Controls(),24,TextAnchor.UpperLeft,new Vector2(.7f,.06f),new Vector2(.95f,.66f));
+            Label(Content(title),Controls(),24,TextAnchor.UpperLeft,new Vector2(.7f,.27f),new Vector2(.95f,.66f));
+            // U4: importación del progreso exportado desde la web (paso 5).
+            Button(Content(title),CombatText.Get("import.open"),new Vector2(.7f,.12f),new Vector2(.95f,.24f),()=>ShowImport(true));
             title.SetActive(false);
         }
         public void ShowTitle(bool visible){if(visible)PaintTitle();if(title.activeSelf!=visible)title.SetActive(visible);}

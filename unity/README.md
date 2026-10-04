@@ -100,6 +100,11 @@ finales de U4.
   minutos y semilla opcional (se normaliza como en la web; vacía = mapa actual).
   «Nuevo mapa» sortea otra semilla. La escena técnica arranca en `MAMPORRO`
   (`-u3-seed X` lo cambia).
+- **Importar progreso web (U4):** desde el inicio, «Importar progreso web» → elegir
+  `mamporro-progreso.json` (ruta o «Examinar…») → «Revisar archivo» muestra el
+  progreso guardado, el del archivo y los cambios → «Sustituir mi progreso» hace copia
+  de seguridad y sustituye (nunca suma). Guardado en `Application.persistentDataPath/Progress`
+  (`-u4-save-dir` lo cambia). La partida aún no usa ese progreso (paso 6 de U4).
 - **Partida:** director de la web (tabla y curva de aparición, seis oleadas,
   Rata de Gimnasio cada 2 minutos de dificultad, enjambre final hasta 750 vivos),
   14 baúles con precio creciente, 3 mesas camilla (bendiciones), 2 tótems de
@@ -129,8 +134,9 @@ scripts\u3.cmd visual
 scripts\u3.cmd benchmark
 ```
 
-`visual` ejecuta la build con `-u3-visual-check -u3-output` y genera trece capturas
-en `unity/TestResults/U3/Visual/`: inicio, vista alta, casa, templo, granja, pozo,
+`visual` ejecuta la build con `-u3-visual-check -u3-output` y genera catorce capturas
+en `unity/TestResults/U3/Visual/`: inicio, importación revisada (con un guardado
+propio dentro de la carpeta de salida), vista alta, casa, templo, granja, pozo,
 combate con HUD, interactuables, telegrafiado, pausa, cartas, resultados y
 reinicio. Comprueba que sean nuevas y contengan imagen; abre una ventana visible
 durante unos segundos. También exige diferencias de píxeles al activar/desactivar

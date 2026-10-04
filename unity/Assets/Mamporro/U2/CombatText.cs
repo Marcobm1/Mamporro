@@ -16,7 +16,8 @@ namespace Mamporro.U2
         public static void Load()
         {
             if(entries.Count>0)return;
-            foreach(string file in new[]{"WebText","U2Text"})foreach(var e in JsonUtility.FromJson<Data>(Resources.Load<TextAsset>(file).text).entries)entries[e.key]=e;
+            // U4Text (textos del importador U4) es opcional: las escenas U1–U2 no lo necesitan.
+            foreach(string file in new[]{"WebText","U2Text","U4Text"}){var asset=Resources.Load<TextAsset>(file);if(asset==null&&file=="U4Text")continue;foreach(var e in JsonUtility.FromJson<Data>(asset.text).entries)entries[e.key]=e;}
         }
         public static string Get(string key){Load();return entries.TryGetValue(key,out var e)?English?e.en:e.es:key;}
         // Como format() de la web: sustituye {nombre}; los nombres que no se pasan se dejan tal cual.

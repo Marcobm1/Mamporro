@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using Mamporro.Core;
+using Mamporro.Persistence;
 using Mamporro.U2;
 using Unity.Profiling;
 using UnityEngine;
@@ -56,6 +57,22 @@ namespace Mamporro.U3
         public bool HideInterface;
         // Ensayo de rendimiento: las cartas se resuelven solas con la primera, sin pantalla.
         public bool AutoChoose;
+        // U4: carpeta del progreso persistente. Las pruebas la sustituyen por una temporal propia
+        // (nunca el guardado del autor); -u4-save-dir permite lo mismo en la build.
+        public static string SaveDirectoryOverride;
+        public string SaveDirectory
+        {
+            get
+            {
+                if(!string.IsNullOrEmpty(SaveDirectoryOverride))return SaveDirectoryOverride;
+                var args=Environment.GetCommandLineArgs();int i=Array.IndexOf(args,"-u4-save-dir");
+                return i>=0&&i+1<args.Length?args[i+1]:System.IO.Path.Combine(Application.persistentDataPath,"Progress");
+            }
+        }
+        // Idioma actual de la aplicación para los valores por defecto del progreso.
+        public string Language=>CombatText.English?"en":"es";
+        // Un importador por revisión: el plan preparado pertenece a su almacenamiento.
+        public ProgressImporter CreateImporter()=>new ProgressImporter(new ProgressStore(new ProgressFiles(SaveDirectory),Language),Language);
         public int AutoChosen {get;private set;}
         U3Benchmark benchmark;
         public bool DebugVisible {get;private set;}
@@ -216,6 +233,7 @@ namespace Mamporro.U3
             bool playing=State==Screen.Playing&&!Session.Finished&&!HideInterface;
             Hud.Show(playing);
             Screens.ShowTitle(State==Screen.Title&&!HideInterface);
+            if(Screens.ImportVisible&&(State!=Screen.Title||HideInterface))Screens.ShowImport(false);
             if(HideInterface&&Screens.ResultsVisible)Screens.ShowResults(false);
             bool pause=playing&&Paused&&!Cards.Visible;
             if(pause!=Screens.PauseVisible)Screens.ShowPause(pause);

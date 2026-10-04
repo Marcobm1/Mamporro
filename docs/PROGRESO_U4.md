@@ -5,11 +5,11 @@ Estado: **IMPLEMENTACIÓN AUTORIZADA Y EN CURSO desde el 04/10/2026.** Política
 ## Cómo retomar
 
 - **Paso 1 publicado:** `fabaf2a64f5ff6c34d3592a25a6594f066130208`. Paso 2 en «Porta las reglas meta y la liquidación de U4»; localizar hash con `git log -1 --format="%H %s" -- unity/Assets/Mamporro/Core/MetaRules.cs`.
-- **Paso actual:** 5, importación Unity del archivo exportado (sin empezar).
-- **Terminado:** pasos 1–4. Paso 4 en «Exporta el progreso web para Unity» (hash: `git log -1 --format="%H %s" -- src/save/exportProgress.ts`); guía en [EXPORTACION_U4](EXPORTACION_U4.md). Contrato `fabaf2a`, meta `dd994b8`, validador `d3927ff`; almacenamiento en «Guarda el progreso de U4 con copia y recuperación» (hash: `git log -1 --format="%H %s" -- unity/Assets/Mamporro/Persistence/ProgressStore.cs`). Último Edit Mode 317/317 y Play Mode 17/17 (paso 4, 04/10/2026 11:53–11:54); web 232/232, typecheck y build web correctos; descarga real ES/EN en Edge.
-- **A medias:** ninguna pieza rota. Persistencia probada como servicio, aún no conectada a aplicación/menús. Existe la exportación web; no existe todavía la UI de importación Unity.
+- **Paso actual:** 6, conexión meta ↔ partida (sin empezar).
+- **Terminado:** pasos 1–5. Paso 4 `b734b49` («Exporta el progreso web para Unity»; guía en [EXPORTACION_U4](EXPORTACION_U4.md)). Paso 5 en «Importa en Unity el progreso exportado desde la web» (hash: `git log -1 --format="%H %s" -- unity/Assets/Mamporro/Persistence/ProgressImport.cs`). Contrato `fabaf2a`, meta `dd994b8`, validador `d3927ff`; almacenamiento en «Guarda el progreso de U4 con copia y recuperación» (hash: `git log -1 --format="%H %s" -- unity/Assets/Mamporro/Persistence/ProgressStore.cs`). Último Edit Mode 340/340 y Play Mode 18/18 (paso 5, 04/10/2026), build Windows x64 Mono y visual de 14 capturas; web 232/232 del paso 4 sin cambios web posteriores.
+- **A medias:** ninguna pieza rota. Importación conectada a la pantalla de inicio técnica (guardado en `Application.persistentDataPath/Progress`); la partida todavía no lee ni liquida ese progreso (paso 6).
 - **Sin commit a propósito:** siete ajustes Unity de «Cambios locales excluidos».
-- **Siguiente paso exacto:** paso 5, importación Unity: servicio de aplicación sin UnityEngine que lea el archivo elegido con el límite de 256 KiB, llame a `ProgressValidator.Import`, prepare con `ProgressStore.Prepare` sobre la instantánea cargada, muestre informe/vista previa y solo tras confirmar ejecute `Confirm` (backup, sustitución, relectura); cancelación sin escritura, importación repetida sin cambios, sin fusionar ni liquidar. UI técnica uGUI mínima en la escena U3 para elegir archivo, revisar y confirmar; los menús completos son el paso 7.
+- **Siguiente paso exacto:** paso 6, conexión meta ↔ partida: cargar el progreso con `ProgressStore.Load` al arrancar (estados `review`/`backup`/`invalid`/`unavailable` con aviso, sin reset silencioso), selección y filtros de armas/objetos desde `MetaRules` en `Offers.Generate`/`Replace`/`RollItem`, extras iniciales (`2 + extras`), seguimiento de tomo de vida, recibo y liquidación única al terminar con guardado mediante `Prepare`/`Confirm`; debug y abandono sin premio. Las escenas QA y las pruebas de referencia mantienen el catálogo completo. Usar `U3Game.SaveDirectoryOverride` en todas las pruebas de escena que toquen progreso.
 - **Autorización:** continuar los pasos 2–9 sin nuevas confirmaciones generales. Detenerse solo ante decisión nueva importante y, al terminar U4, para prueba manual del autor.
 
 Comprobación desde CMD:
@@ -76,7 +76,7 @@ Sustitución completa, nunca fusión: validar → informe → confirmar → back
 
 ## Plan propuesto por pasos/commits verificables
 
-Plan aprobado. Cada fila es una unidad coherente; dividir si tamaño o pruebas lo exigen. Pasos 1–4 terminados; pasos 5–9 pendientes.
+Plan aprobado. Cada fila es una unidad coherente; dividir si tamaño o pruebas lo exigen. Pasos 1–5 terminados; pasos 6–9 pendientes.
 
 | Paso | Resultado y límites | Verificación principal |
 |---|---|---|
@@ -202,6 +202,20 @@ Conservar sin publicar ni restaurar:
 - **Commit/push:** «Exporta el progreso web para Unity»; fetch previo y push normal si el remoto sigue en `777bba8`.
 - **Árbol al terminar:** solo los siete ajustes Unity excluidos.
 - **Siguiente paso exacto:** paso 5 (ver «Cómo retomar»).
+
+### 04/10/2026 — paso 5: importación Unity — Claude Code
+
+- **Punto de partida:** `b734b49500644fd2296e5213909bb1ff872e694d` (paso 4 publicado y verificado en remoto); siete ajustes Unity excluidos conservados.
+- **Trabajo:** `Persistence/ProgressImport.cs` (sin UnityEngine): `ProgressImporter.ReadExternal` lee el archivo elegido en solo lectura (`FileShare.ReadWrite`, nunca lo modifica) con el límite de 256 KiB; `Review` = `ProgressValidator.Import` → `ProgressStore.Load` → `ProgressStore.Prepare` y devuelve `ImportReview` (informe, progreso actual, progreso del archivo, `Unchanged` y error); `Confirm` delega en `ProgressStore.Confirm` (backup, temporal, sustitución, relectura, rollback). Cancelar no escribe; el plan se consume una vez; una revisión con error no se confirma. No hay segundo parser, validador ni sistema de persistencia. UI técnica en la pantalla de inicio (`U3/RunScreens.Import.cs`): «Importar progreso web» → ruta (sugerida en Descargas con `mamporro-progreso.json`) y «Examinar…» con el diálogo nativo de Windows (`U3/NativeFileDialog.cs`, `comdlg32`), «Revisar archivo», resumen del progreso guardado y del archivo, cambios al importar (sin las entradas conservadas, que se cuentan), aviso de sustitución sin suma o de archivo idéntico, «Sustituir mi progreso», «Cancelar» y «Volver». Textos ES/EN en `U3/Resources/U4Text.json`, cargado de forma opcional por `CombatText`. El almacenamiento no se toca hasta abrir la importación; carpeta `Application.persistentDataPath/Progress`, sustituible con `U3Game.SaveDirectoryOverride` (pruebas) o `-u4-save-dir` (build). Fuera del inicio la importación se cierra.
+- **Archivos:** `Persistence/ProgressImport.cs`, `U3/RunScreens.Import.cs`, `U3/NativeFileDialog.cs`, `U3/Resources/U4Text.json` (nuevos); `U3/RunScreens.cs` (parcial, botón), `U3/U3Game.cs`, `U3/U3VisualCheck.cs`, `U3/Mamporro.U3.asmdef`, `U2/CombatText.cs` (carga opcional de `U4Text`), `Tests/PlayMode/Mamporro.PlayTests.asmdef`, `scripts/u3.ps1` (lista visual); pruebas `Tests/Persistence/ProgressImportTests.cs` y `Tests/PlayMode/U4ImportSceneTests.cs`.
+- **Pruebas nuevas:** 23 Edit Mode con archivos reales en un directorio temporal propio: guardados web v1/v2/v3 del corpus importados exactamente; transferencia v1 sin volver a migrar; cinco fatales (transferencia v2, web v99, JSON roto, vacío, formato desconocido) sin escritura; ausente/vacío/demasiado grande/directorio como error de lectura; corrupción crítica (Calderilla negativa, selección desconocida) rechazada; opción inválida informada y normalizada (default, sin clamp); cancelación sin archivos; misma importación dos veces con el mismo progreso, sin suma ni rotación de copia; sustitución completa con backup (saldo y desbloqueos del archivo, no unión); vista previa obsoleta rechazada; fallos de escritura/publicación en tres puntos conservando el último progreso válido; plan de un solo uso, `lastRun` conservado y sin cobro de misiones. Una Play Mode: inicio → importar → revisar/cancelar/confirmar/reimportar/inválido/ausente, archivo externo intacto, cierre al empezar partida y comprobación de que el guardado real (`persistentDataPath/Progress`) no se crea ni se toca.
+- **Pruebas ejecutadas (04/10/2026, Europe/Madrid):** `scripts\u3.cmd edit` **340/340** (incluye `u4-export-fixtures.mjs`); `scripts\u3.cmd play` **18/18** (12:05–12:06); `scripts\u3.cmd build` correcta (Windows x64 Mono); `scripts\u3.cmd visual` **14 capturas** (nueva «importar» con un guardado propio dentro de la carpeta de salida). Evidencias en `unity/TestResults/U3/` (XML, logs, `Visual/`) y copias `unity/TestResults/U4/step5-*`.
+- **Incidencia:** en la primera pasada visual la captura «importar» mostró un fotograma de partida aunque el flujo seguía en el inicio; se añadió un registro de estado y la segunda pasada (12:08) registró `estado=Title panel=True` y la imagen correcta. No se ha aislado la causa de aquella captura (posible captura asíncrona de otro fotograma); el registro se conserva en `U3VisualCheck`.
+- **No ejecutado:** web (sin cambios en `src/`), verificador histórico (sin cambios web ni de referencias), selección real con el diálogo nativo (modal; queda para la prueba manual).
+- **Decisiones nuevas:** ninguna de diseño. Técnicas: diálogo nativo de Windows por P/Invoke (Unity no tiene uno en ejecución) con ruta editable como alternativa; textos del importador en un recurso propio.
+- **Commit/push:** «Importa en Unity el progreso exportado desde la web»; fetch previo y push normal si el remoto sigue en `b734b49`.
+- **Árbol al terminar:** solo los siete ajustes Unity excluidos.
+- **Siguiente paso exacto:** paso 6 (ver «Cómo retomar»).
 
 ## Checkpoint al terminar U4
 

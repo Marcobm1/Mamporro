@@ -10,7 +10,7 @@ namespace Mamporro.U3
     public sealed class U3VisualCheck : MonoBehaviour
     {
         public U3Game Game;
-        public static readonly string[] Names={"inicio","vista-alta","sitio-house","sitio-temple","sitio-farm","sitio-well","combate","interactuables","telegrafiado","pausa","cartas","resultados","reinicio"};
+        public static readonly string[] Names={"inicio","importar","vista-alta","sitio-house","sitio-temple","sitio-farm","sitio-well","combate","interactuables","telegrafiado","pausa","cartas","resultados","reinicio"};
         IEnumerator Start()
         {
             string output=Path.Combine(Application.persistentDataPath,"U3Visual");
@@ -19,6 +19,17 @@ namespace Mamporro.U3
             Directory.CreateDirectory(output);
             yield return new WaitForSecondsRealtime(1);
             yield return Capture(output,"inicio");
+            // Importación U4 revisada (sin confirmar) con un guardado propio dentro de la salida.
+            U3Game.SaveDirectoryOverride=Path.Combine(output,"ImportSave");
+            var sample=Mamporro.Core.Progress.ProgressDto.New("es");sample.meta.coins=1234;sample.meta.characters=new[]{"remedios","baguette"};
+            string samplePath=Path.Combine(output,"mamporro-progreso.json");
+            File.WriteAllText(samplePath,Mamporro.Core.Progress.ProgressJson.Stringify(Mamporro.Core.Progress.ProgressTree.Object("format","mamporro.progress","version",1,
+                "source",Mamporro.Core.Progress.ProgressTree.Object("platform","web","saveVersion",3),"progress",Mamporro.Core.Progress.ProgressTree.From(sample))));
+            Game.Screens.ShowImport(true);Game.Screens.ImportPath=samplePath;Game.Screens.ReviewImport();
+            Debug.Log($"U3 visual importar antes: estado={Game.State} panel={Game.Screens.ImportVisible} inicio={Game.Screens.TitleVisible} puede={Game.Screens.ImportCanConfirm} msg={Game.Screens.ImportMessage}");
+            yield return Capture(output,"importar");
+            Debug.Log($"U3 visual importar después: estado={Game.State} panel={Game.Screens.ImportVisible} inicio={Game.Screens.TitleVisible}");
+            Game.Screens.ShowImport(false);U3Game.SaveDirectoryOverride=null;
             // Mundo sin interfaz: vista desde lo alto y junto a un sitio de cada tipo.
             var world=Game.World;Game.HideInterface=true;
             yield return Look(output,"vista-alta",new Vector3(0,45,-55),new Vector3(0,5,10));

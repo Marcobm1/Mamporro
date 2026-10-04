@@ -42,7 +42,7 @@ if($Action -eq 'benchmark') {
     if(!$process.WaitForExit(180000)){throw "La comprobación visual no terminó en 180 s: $log"}
     if($process.ExitCode -ne 0){throw "Build terminó con error: $log"}
     Add-Type -AssemblyName System.Drawing
-    foreach($name in @('inicio','vista-alta','sitio-house','sitio-temple','sitio-farm','sitio-well','combate','interactuables','telegrafiado','pausa','cartas','resultados','reinicio')) {
+    foreach($name in @('inicio','importar','vista-alta','sitio-house','sitio-temple','sitio-farm','sitio-well','combate','interactuables','telegrafiado','pausa','cartas','resultados','reinicio')) {
         $capture=Get-Item -LiteralPath (Join-Path $visual "$name.png")
         if($capture.LastWriteTime -lt $started -or $capture.Length -eq 0){throw "Captura ausente o antigua: $name"}
         $bitmap=[System.Drawing.Bitmap]::FromFile($capture.FullName)
@@ -52,7 +52,7 @@ if($Action -eq 'benchmark') {
             if($colors.Count -lt 16){throw "Captura sin imagen útil: $name"}
         } finally {$bitmap.Dispose()}
     }
-    Write-Output 'visual : 13 capturas nuevas (no es un ensayo de rendimiento)'
+    Write-Output 'visual : 14 capturas nuevas (no es un ensayo de rendimiento)'
 } else {
     if(Get-Process Unity -ErrorAction SilentlyContinue){throw 'Hay un Editor abierto. Guarda y cierra la instancia antes de ejecutar batch.'}
     $log=Join-Path $results "$Action.log"
