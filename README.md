@@ -1,6 +1,6 @@
 # MAMPORRO
 
-> Estado vigente: U1–U3 aprobados. U3 recibió aprobación manual el 04/10/2026. [Cierre U3](docs/PROGRESO_U3.md#checkpoint-al-terminar-u3). [U4 aprobada manualmente el 04/10/2026](docs/PROGRESO_U4.md#checkpoint-al-terminar-u4). [U5 implementado y verificado, pendiente de la prueba manual del autor](docs/PROGRESO_U5.md#checkpoint-al-terminar-u5). El contenido siguiente describe la web aprobada; [guía Unity](unity/README.md).
+> Estado vigente: U1–U3 aprobados. U3 recibió aprobación manual el 04/10/2026. [Cierre U3](docs/PROGRESO_U3.md#checkpoint-al-terminar-u3). [U4 aprobada manualmente el 04/10/2026](docs/PROGRESO_U4.md#checkpoint-al-terminar-u4). [U5 aprobado manualmente el 04/10/2026](docs/PROGRESO_U5.md#checkpoint-al-terminar-u5). El contenido siguiente describe la web aprobada; [guía Unity](unity/README.md).
 
 Roguelike 3D de supervivencia contra hordas ("bullet heaven") con estética retro
 tipo PS1, hecho con Three.js + TypeScript + Vite. Todo el contenido (geometría,
@@ -680,7 +680,7 @@ npm run preview
 
 ## Migración a Unity y futuro del juego
 
-**Estado vigente (04/10/2026): U1–U4 aprobados; U5 (audio, pulido y equivalencia) implementado y verificado, pendiente de la prueba manual del autor.** Proyecto en
+**Estado vigente (04/10/2026): U1–U5 aprobados; U5 recibió aprobación manual del autor. U6 solo en planificación, aún sin autorización de implementación.** Proyecto en
 `unity/`, Editor 6000.6.3f1, Windows x64 Mono, URP 17.6.0 e Input System 1.20.0.
 La licencia, importación, compilación, escena en Play Mode y generación de build
 ya se han probado. [Instrucciones Unity](unity/README.md) y
@@ -689,7 +689,7 @@ los documentos de decisiones y referencia.
 
 Los seis hitos web están aprobados. Destino inicial Unity: **Windows de
 escritorio**, con futura publicación en Steam y plataformas similares. El
-progreso compatible se conservará mediante el importador de un bloque posterior.
+progreso compatible ya se traslada mediante el exportador web y el importador Unity implementados y aprobados en U4 (validación, vista previa, backup y sustitución; nunca fusión).
 
 - [Plan U0–U6](docs/MIGRACION_UNITY.md).
 - [Estado de la preparación y referencia](unity/Docs/U0_REFERENCIA.md).
@@ -699,10 +699,10 @@ progreso compatible se conservará mediante el importador de un bloque posterior
 
 `unity/` contiene el proyecto abrible en Hub y conserva documentación y referencias.
 La base web se conserva en el commit `0505b16`. Para comprobar
-catálogo, RNG, fórmulas, guardados y medios de referencia desde CMD:
+catálogo, RNG, fórmulas, guardados y medios históricos desde CMD, usar una instantánea aislada de la base aprobada. El exportador de U4 es la única excepción web; no relajar las guardas ni regenerar referencias:
 
 ```cmd
-node scripts\unity-reference.mjs
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts\verify-historical-reference.ps1
 ```
 
 ### Automatización de navegador del hito 6

@@ -1,15 +1,15 @@
 # Checkpoint U5 — audio, pulido y validación de equivalencia
 
-Estado: **IMPLEMENTADO Y VERIFICADO el 04/10/2026; pendiente de la prueba manual (con escucha) y la aprobación del autor** (implementación autorizada el 04/10/2026). Plan aprobado por el autor con las 11 dudas resueltas («Resolución del autor»). U4 aprobada manualmente el 04/10/2026; último cierre técnico `3754e31be16904207fd2ee25340bfa1ca095f181`. No iniciar U6 sin la aprobación manual de U5.
+Estado: **IMPLEMENTADO, VERIFICADO Y APROBADO MANUALMENTE POR EL AUTOR el 04/10/2026** (implementación autorizada el 04/10/2026). Plan aprobado por el autor con las 11 dudas resueltas («Resolución del autor»). U4 aprobada manualmente el 04/10/2026; último cierre técnico `3754e31be16904207fd2ee25340bfa1ca095f181`. U6 autorizado solo para planificación; no implementar sin aprobación expresa de su plan.
 
 ## Cómo retomar
 
-- **Punto de partida:** `3754e31` (U4 aprobada). Plan en `31711bf` («Registra la aprobación de U4 y planifica U5»). Paso 1 `e7c9933` («Porta la síntesis de audio y el presupuesto de voces de U5»). Paso 2 `6e154ec` («Añade el motor de audio de U5»). Paso 3 `85f7a1b` («Conecta los sucesos de la partida al sonido de U5»). Paso 4 `22821d0` («Añade las partículas decorativas de U5»). Paso 5 `1a7d744` («Añade los números de daño de U5»). Paso 6 `18718fb` («Porta la cámara, la sacudida y los destellos de U5»). Paso 7 `20265be` («Mide el rendimiento representativo de U5»). Paso 8 `45cd35a` («Valida sesiones, capturas ES/EN y equivalencia de U5»). Paso 9 en «Cierra U5 y prepara la prueba manual» (hash: `git log -1 --format="%H %s" -- docs/PROGRESO_U5.md`).
-- **Paso actual:** ninguno. U5 cerrado técnicamente (pasos 1–9); esperando la prueba manual del autor («Checkpoint al terminar U5»).
+- **Punto de partida:** `3754e31` (U4 aprobada). Plan en `31711bf` («Registra la aprobación de U4 y planifica U5»). Paso 1 `e7c9933` («Porta la síntesis de audio y el presupuesto de voces de U5»). Paso 2 `6e154ec` («Añade el motor de audio de U5»). Paso 3 `85f7a1b` («Conecta los sucesos de la partida al sonido de U5»). Paso 4 `22821d0` («Añade las partículas decorativas de U5»). Paso 5 `1a7d744` («Añade los números de daño de U5»). Paso 6 `18718fb` («Porta la cámara, la sacudida y los destellos de U5»). Paso 7 `20265be` («Mide el rendimiento representativo de U5»). Paso 8 `45cd35a` («Valida sesiones, capturas ES/EN y equivalencia de U5»). Paso 9 publicado en `5ef42b6083ea15251308dcebac60cb851ca766ea` («Cierra U5 y prepara la prueba manual»).
+- **Paso actual:** ninguno. U5 cerrado y aprobado manualmente. Último cierre técnico previo a la aprobación: `5ef42b6083ea15251308dcebac60cb851ca766ea`.
 - **Terminado:** pasos 1–9. Regresión final (04/10/2026): web 232/232, contrato 5/5, verificador histórico, Edit 392/392, Play 37/37, build, visual (audio, 5 partidas seguidas, 19 + 44 capturas), ensayo 16/16 y diagnóstico Development 8/8.
 - **A medias:** nada.
 - **Sin commit a propósito:** siete ajustes Unity de «Cambios locales excluidos».
-- **Siguiente paso exacto:** prueba manual del autor según «Instrucciones de prueba manual (autor)» del cierre; corregir solo lo que encuentre. **No iniciar U6** hasta su aprobación.
+- **Siguiente paso exacto:** preparar el plan de U6 y reunir sus decisiones pendientes; esperar respuesta del autor antes de implementar. La aprobación de U5 no autoriza implementar U6.
 - **Autorización:** pasos 1–9 seguidos, con checkpoint, pruebas, commit y push tras cada pieza. Detenerse solo ante una decisión nueva importante de diseño/arquitectura (o si el compresor propio resulta inestable, con latencia o coste inesperado) y al terminar U5.
 
 Comprobación desde CMD:
@@ -308,7 +308,17 @@ Conservar sin publicar ni restaurar:
 
 ## Checkpoint al terminar U5
 
-**Implementado y verificado el 04/10/2026; pendiente de la prueba manual (con escucha) y la aprobación del autor.** No iniciar U6 antes.
+### 04/10/2026 — aprobación manual y cierre documental — Codex
+
+- **Punto de partida:** `5ef42b6083ea15251308dcebac60cb851ca766ea`, local/remoto iguales tras fetch; únicamente siete ajustes Unity excluidos.
+- **Decisión del autor:** prueba manual satisfactoria y U5 aprobado. No se desglosan casos de escucha/dispositivos que el autor no haya detallado. U6 solo en planificación; implementación requiere aprobación expresa de su plan.
+- **Trabajo:** actualización documental de aprobación/continuidad/equivalencia; README corregido: importación ya implementada en U4 y verificación histórica mediante instantánea aislada. Sin cambios de código, configuración ni referencias.
+- **Verificaciones de esta sesión:** auditoría Git, lectura de documentación y código de rutas/build, revisión de diff Markdown y `git diff --cached --check`; conservación de los siete archivos excluidos comprobada mediante SHA-256. Sin nuevas suites, build, benchmark o prueba manual propia. Los resultados automáticos inferiores son históricos del cierre técnico.
+- **Commit/push:** «Registra la aprobación manual de U5», fetch previo, push normal y comprobación del remoto; localizar hash con `git log --all --format="%H %s" --grep="Registra la aprobación manual de U5"`.
+- **Estado al entregar:** solo siete ajustes locales excluidos; ningún WIP de runtime. Las limitaciones aceptadas no bloquean la planificación.
+- **Siguiente paso:** documentar el plan U6, presentar sus decisiones al autor y detenerse antes de implementar.
+
+**Implementado, verificado y aprobado manualmente por el autor el 04/10/2026.** Cierre técnico previo: `5ef42b6083ea15251308dcebac60cb851ca766ea`. U6 solo en planificación, pendiente de autorización expresa para implementar.
 
 - **Commits de U5:** `31711bf` (aprobación U4 y plan), `e7c9933` (síntesis y voces), `6e154ec` (motor de audio), `85f7a1b` (sucesos y sonidos), `22821d0` (partículas), `1a7d744` (números de daño), `18718fb` (cámara, sacudida y destellos), `20265be` (rendimiento), `45cd35a` (sesiones, capturas y equivalencia) y el de este cierre, «Cierra U5 y prepara la prueba manual».
 - **Qué hace U5:** audio original equivalente a la web (20 efectos y 2 músicas sintetizados en C#, iguales a la referencia congelada; 16 voces con 4 reservadas; modos de música; volúmenes y silencio; compresor propio aproximado; silencio sin foco; cambio de dispositivo); sucesos de la partida como observadores puros; partículas con el presupuesto web y su opción reducida; números de daño; cámara web (brazo, pivote, FOV) con sacudida y su opción; destellos y parpadeo del jugador con su opción; equivalencia documentada en [EQUIVALENCIA_U5](EQUIVALENCIA_U5.md).
@@ -351,4 +361,4 @@ La build ya existe; si falta, `scripts\u3.cmd build` con el Editor cerrado. Alt+
 
 Anota fecha, dispositivo de audio, resolución y cualquier diferencia. La aprobación de esta prueba cierra U5; U6 no empieza antes.
 
-- **Aprobación del autor:** pendiente.
+- **Aprobación del autor:** recibida el 04/10/2026: «La prueba manual de U5 ha ido bien». Aprobación global del hito; no se inventa un informe individual de dispositivos o casos no detallados por el autor.

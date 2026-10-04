@@ -1,6 +1,6 @@
 # Mejoras de MAMPORRO en Unity
 
-> Estado vigente en [ESTADO_ACTUAL](../../docs/ESTADO_ACTUAL.md): U1–U4 aprobados; U4 aprobada manualmente el 04/10/2026. [U5 implementado y verificado, pendiente de la prueba manual](../../docs/PROGRESO_U5.md). Las mejoras de esta hoja empiezan después de U6.
+> Estado vigente en [ESTADO_ACTUAL](../../docs/ESTADO_ACTUAL.md): U1–U4 aprobados; U4 aprobada manualmente el 04/10/2026. [U5 aprobado manualmente el 04/10/2026](../../docs/PROGRESO_U5.md). Las mejoras de esta hoja empiezan después de U6.
 
 **Historial — U1 autorizado el 29/09/2026 y posteriormente aceptado:** prototipo técnico de movimiento, imagen y horda;
 seguimiento en [PROGRESO_U1](../../docs/PROGRESO_U1.md). La escalada libre, mundo
@@ -78,7 +78,7 @@ Fuentes oficiales consultadas el 28/09/2026:
   poder evaluar después las rampas/escalada; cualquier variante de movimiento
   requiere su plan concreto y aceptación, conservando una escena de referencia.
 - **U2 aprobado por el autor:** núcleo y combate equivalentes en escenario controlado.
-- **U3 y U4 aprobados; U5 pendiente de prueba manual; U6 futuro:** trasladar y validar los sistemas restantes. Las diferencias
+- **U3–U5 aprobados; U6 en planificación:** trasladar y validar los sistemas restantes. Las diferencias
   intencionadas se documentarán en vez de hacer pasar un cambio de diseño por
   un fallo del port. No ampliar el catálogo durante la migración.
 - **Después de la base Unity aprobada:** bloques P0, luego P1 y lotes pequeños P2.

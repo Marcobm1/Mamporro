@@ -30,7 +30,7 @@ Al iniciar una sesión, leer en este orden:
 
 1. `docs/ESTADO_ACTUAL.md`.
 2. `docs/CONTINUIDAD_AGENTES.md`.
-3. El checkpoint del bloque vigente (`docs/PROGRESO_U5.md`: U5 implementado y verificado, pendiente de prueba manual).
+3. El checkpoint del bloque vigente (`docs/PROGRESO_U5.md`: U5 aprobado manualmente; siguiente tarea: planificación U6).
 4. `docs/DECISIONES.md` y cualquier continuación posterior indicada por el estado actual.
 5. `docs/ESPECIFICACION.md` como especificación histórica de partida.
 6. `docs/MIGRACION_UNITY.md`.
@@ -110,11 +110,11 @@ Mantener la web recuperable y no alterarla para ocultar diferencias de Unity. Ve
 
 ## Unity y migración
 
-U0 conserva referencia reproducible. U1 creó y validó el proyecto técnico y fue aprobado manualmente por el autor el 29/09/2026. U2 fue aprobado por el autor el 29/09/2026. **U3 y U4 aprobadas manualmente el 04/10/2026.** U5 está implementado y verificado (04/10/2026), pendiente de la prueba manual del autor según `docs/PROGRESO_U5.md`.
+U0 conserva referencia reproducible. U1 creó y validó el proyecto técnico y fue aprobado manualmente por el autor el 29/09/2026. U2 fue aprobado por el autor el 29/09/2026. **U3 y U4 aprobadas manualmente el 04/10/2026.** U5 está aprobado manualmente por el autor (04/10/2026), según `docs/PROGRESO_U5.md`.
 
 Durante el port, conservar IDs, reglas, datos, traducciones y progresión compatible. No rebalancear ni añadir contenido nuevo para «mejorar» mientras se valida equivalencia, salvo autorización expresa.
 
-La transferencia futura de guardado debe conservar de forma compatible moneda meta, desbloqueos, misiones, usos extra, selección y opciones equivalentes. No se guardan partidas activas. Validar formatos, evitar duplicaciones, proteger el original y no sumar dos guardados automáticamente.
+La transferencia de guardado implementada en U4 debe conservar de forma compatible moneda meta, desbloqueos, misiones, usos extra, selección y opciones equivalentes. No se guardan partidas activas. Validar formatos, evitar duplicaciones, proteger el original y no sumar dos guardados automáticamente.
 
 ## Mejoras confirmadas para después de validar la base Unity
 

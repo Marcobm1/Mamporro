@@ -1,6 +1,14 @@
 # Decisiones acordadas
 
-**Estado actual:** U1–U4 aprobados; U4 aprobada manualmente el 04/10/2026. U5 implementado y verificado el 04/10/2026, pendiente de la prueba manual del autor; véase [PROGRESO_U5](PROGRESO_U5.md) y [EQUIVALENCIA_U5](EQUIVALENCIA_U5.md). Las autorizaciones anteriores son históricas.
+## Aprobación manual de U5 y preparación de U6 (04/10/2026)
+
+El autor comunica que la prueba manual ha ido bien y **aprueba U5**. Último cierre técnico previo: `5ef42b6083ea15251308dcebac60cb851ca766ea`. La aprobación es global; no se inventan mediciones nuevas ni resultados individuales de dispositivos. Las diferencias y limitaciones de `EQUIVALENCIA_U5.md` se conservan como parte de la base aprobada, sin reabrir funciones ya portadas.
+
+U6 queda autorizado **solo para planificación**. Presentar alcance, pasos y decisiones importantes y esperar respuesta antes de implementar. Las mejoras de balance, mundo, escalada, arte/animación y contenido siguen después del cierre de la migración. Sin cifras nuevas; más oro significa oro de partida, no Calderilla. Cámara contra estructuras, mando/remapeo, métricas adicionales y Steam no pasan automáticamente a U6.
+
+Los picos finales conservados son 30,8 y 41,9 ms; 58 ms corresponde a una pasada anterior. Los benchmarks solo describen sus condiciones medidas, no rendimiento universal. En esta aprobación no se repiten suites ni se modifica runtime.
+
+**Estado actual:** U1–U4 aprobados; U4 aprobada manualmente el 04/10/2026. U5 aprobado manualmente por el autor el 04/10/2026; U6 solo en planificación; véase [PROGRESO_U5](PROGRESO_U5.md) y [EQUIVALENCIA_U5](EQUIVALENCIA_U5.md). Las autorizaciones anteriores son históricas.
 
 Registro de lo que se ha decidido durante el desarrollo, además de la
 [especificación original](ESPECIFICACION.md). Cuando esto la concreta o la

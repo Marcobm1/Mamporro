@@ -1,6 +1,6 @@
 # Migración propuesta a Unity
 
-> Estado vigente en [ESTADO_ACTUAL](ESTADO_ACTUAL.md): U1–U4 aprobados; [U4 aprobada manualmente el 04/10/2026](PROGRESO_U4.md#checkpoint-al-terminar-u4). [U5 implementado y verificado el 04/10/2026](PROGRESO_U5.md#checkpoint-al-terminar-u5), pendiente de la prueba manual del autor. Las autorizaciones antiguas que figuran debajo son históricas.
+> Estado vigente en [ESTADO_ACTUAL](ESTADO_ACTUAL.md): U1–U4 aprobados; [U4 aprobada manualmente el 04/10/2026](PROGRESO_U4.md#checkpoint-al-terminar-u4). [U5 aprobado manualmente el 04/10/2026](PROGRESO_U5.md#checkpoint-al-terminar-u5). U6 solo autorizado para planificación. Las autorizaciones antiguas que figuran debajo son históricas.
 
 ## Historial de preparación (sustituido por el checkpoint U2)
 
@@ -165,7 +165,7 @@ extra; todas las pantallas y opciones se usan en una build Windows real.
 
 ### U5. Audio, pulido y validación de equivalencia
 
-**04/10/2026:** implementado y verificado (pasos 1–9), pendiente de la prueba manual del autor; cierre en [PROGRESO_U5](PROGRESO_U5.md) y lista de equivalencia en [EQUIVALENCIA_U5](EQUIVALENCIA_U5.md). No incluye las mejoras de balance pedidas tras U4 (menos enemigos iniciales más resistentes, más oro de partida), que van después de U6.
+**04/10/2026:** implementado, verificado (pasos 1–9) y aprobado manualmente por el autor; cierre en [PROGRESO_U5](PROGRESO_U5.md) y lista de equivalencia en [EQUIVALENCIA_U5](EQUIVALENCIA_U5.md). No incluye las mejoras de balance pedidas tras U4 (menos enemigos iniciales más resistentes, más oro de partida), que van después de U6.
 
 - Portar síntesis y reproducción, presupuestos de voces/partículas, cámara y
   opciones de reducción de efectos; conservar avisos de combate legibles.

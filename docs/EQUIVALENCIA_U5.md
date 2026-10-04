@@ -1,6 +1,6 @@
 # Equivalencia Unity ↔ web aprobada — validación final de U5
 
-Estado: U5 implementado y verificado el 04/10/2026, pendiente de la prueba manual del autor.
+Estado: U5 implementado, verificado y aprobado manualmente por el autor el 04/10/2026. Se conservan las diferencias intencionadas y limitaciones documentadas; no son funcionalidades aún sin portar.
 
 Referencia: web aprobada `0505b1690656d15188860157612455639820fe1f` (hito 6) y referencias congeladas en `unity/Docs/Reference/` (`baseline.json`, `u2-combat.json`, `u3-world.json`, corpus U4). Base Unity: U1–U4 aprobadas; U5 implementado en `docs/PROGRESO_U5.md`. Este documento clasifica, por sistemas, qué es **equivalente**, qué es una **diferencia intencionada**, qué **limitación** se acepta y qué se **aplaza** al rediseño posterior a U6. No exige identidad píxel a píxel: lo importante son reglas, feedback, legibilidad, funcionalidad, opciones, audio, progresión, guardado, controles y experiencia.
 
