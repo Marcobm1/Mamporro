@@ -29,6 +29,7 @@ namespace Mamporro.Tests
         static Reference cached;
         static Reference Ref=>cached??=JsonUtility.FromJson<Reference>(File.ReadAllText(Path.Combine(Application.dataPath,"../Docs/Reference/u3-world.json")));
         static IEnumerable<string> Names(){foreach(var r in Ref.runs)yield return r.name;}
+        public static RunRef[] References=>Ref.runs;
 
         // Resultado de reproducir una partida con el guion de la referencia.
         public sealed class Played
@@ -54,10 +55,11 @@ namespace Mamporro.Tests
             return order;
         }
 
-        public static Played Play(RunRef input)
+        // feedback (U5): observador opcional de sucesos; no debe cambiar nada de la partida.
+        public static Played Play(RunRef input,ICombatFeedback feedback=null)
         {
             var data=WorldData.Generate(input.seed);var character=Array.Find(Catalog.Characters,c=>c.id==input.character);
-            var s=new WorldRun(data,input.seed,character,null,input.minutes);var r=s.Combat;var p=new Played{Run=s};
+            var s=new WorldRun(data,input.seed,character,null,input.minutes);var r=s.Combat;var p=new Played{Run=s};r.Feedback=feedback;
             // Guion web: Run.update sigue aunque quede una carta abierta (ver HoldWhileChoosing).
             r.HoldWhileChoosing=false;r.Invincible=input.invincible;if(input.revealPortal)s.Interactables.Reveal("portal");
             p.Route.AddRange(Tour(data.Interactables,input.portalFirst,input.skipTotems));

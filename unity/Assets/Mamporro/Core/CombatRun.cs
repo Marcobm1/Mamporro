@@ -73,6 +73,10 @@ namespace Mamporro.Core
         }
         public void Emit(string kind,double x,double y,double z,double radius=0,double angle=0,double x2=0,double y2=0,double z2=0,double life=.25)
         {fx?.Emit(new CombatEffect{Kind=kind,X=x,Y=y,Z=z,Radius=radius,Angle=angle,X2=x2,Y2=y2,Z2=z2,Life=life});}
+        // U5: observador de sucesos (sonido, partículas, números, cámara). Nunca participa en la simulación.
+        public ICombatFeedback Feedback;
+        public void Notify(FeedbackKind kind,double x=0,double y=0,double z=0,double value=0,int code=0,double radius=0,double x2=0,double y2=0,double z2=0)
+        {var f=Feedback;if(f==null)return;var e=new CombatFeedback{Kind=kind,Code=code,X=x,Y=y,Z=z,Value=value,Radius=radius,X2=x2,Y2=y2,Z2=z2};f.Feedback(in e);}
         public void Step(double dt)
         {
             if(Paused||(Choosing&&HoldWhileChoosing)||Dead||Victory)return;
@@ -85,12 +89,12 @@ namespace Mamporro.Core
             Player.X+=Enemies.PushX;Player.Z+=Enemies.PushZ;
             if(contact>0)Hurt(contact);
             double slow=Math.Min(.4,Math.Max(0,Enemies.Pressure)*.2);CrowdSlow+=(slow-CrowdSlow)*Math.Min(1,dt*15);
-            if(!WeaponsOff)for(int i=0;i<Weapons.Count;i++)StepWeapon(Weapons[i],states[i],dt);
+            if(!WeaponsOff)for(int i=0;i<Weapons.Count;i++){StepWeapon(Weapons[i],states[i],dt);if(Weapons[i].SincePulse==0)Notify(FeedbackKind.WeaponFired,code:i);}
             Projectiles.Step(dt,Enemies,World,this);
             double shot=EnemyShots.StepHostile(dt,World,Player);if(shot>0)Hurt(shot);
             FlushDead();
-            double xp=Gems.Step(dt,Player,Stats[Stat.pickupRadius]);if(xp>0)GainXp(xp);
-            double gold=Coins.Step(dt,Player,Stats[Stat.pickupRadius]);if(gold>0)GainGold(gold*Stats[Stat.goldGain]);
+            double xp=Gems.Step(dt,Player,Stats[Stat.pickupRadius]);if(xp>0){Notify(FeedbackKind.PickupXp);GainXp(xp);}
+            double gold=Coins.Step(dt,Player,Stats[Stat.pickupRadius]);if(gold>0){Notify(FeedbackKind.PickupGold);GainGold(gold*Stats[Stat.goldGain]);}
             Schedule?.Late(this,dt);
             Invulnerable=Math.Max(0,Invulnerable-dt);
             if(Stats[Stat.regen]>0&&Hp>0)Hp=Math.Min(Stats[Stat.maxHp],Hp+Stats[Stat.regen]*dt);
@@ -114,30 +118,33 @@ namespace Mamporro.Core
             RefreshSpawnParams();double m=Minutes,hp=1+Tuning.BossHpGrowth*m+Tuning.BossHpCurve*m*m;World.Clamp(ref x,ref z);
             int i=Enemies.Spawn(5,x,World.Height(x,z),z,hp,SpawnXp,SpawnGold);if(i<0)return false;Spawned++;Enemies.Xp[i]=0;Enemies.Rebuild();
             Boss=new Boss(Enemies.Id[i],combatRng.Derive("boss-"+Time.ToString("F2",System.Globalization.CultureInfo.InvariantCulture)));
-            Event("bossSpawned");Event("boss",Catalog.Enemies[5].id);return true;
+            Event("bossSpawned");Event("boss",Catalog.Enemies[5].id);Notify(FeedbackKind.BossSpawned,Enemies.X[i],Enemies.Y[i],Enemies.Z[i]);return true;
         }
         public void Shoot(int i,double dx,double dz)
         {
             var d=Enemies.Def(i);var r=d.ranged;double x=Enemies.X[i]+dx*d.radius,z=Enemies.Z[i]+dz*d.radius;
             EnemyShots.Spawn(x,World.Height(x,z)+1,z,dx,dz,r.projectileSpeed,r.range/r.projectileSpeed+.6,r.projectileRadius,damage:r.projectileDamage);
+            Notify(FeedbackKind.EnemyShot,x,Enemies.Y[i]+d.height*.6,z);
         }
         public void Hit(int weapon,int enemy,double dx,double dz)
         {if(weapon<Weapons.Count)DamageEnemy(enemy,Weapons[weapon],dx,dz);}
         public void DamageEnemy(int i,Weapon w,double dx,double dz)
         {
             double amount=Rules.Damage(w[WStat.damage],w[WStat.critChance],w[WStat.critMultiplier],combatRng.Next(),out int crit),before=Enemies.Hp[i];
-            w.TotalDamage+=HitEnemy(i,amount,w.Def.hitFlash,dx*w[WStat.knockback],dz*w[WStat.knockback]);
+            w.TotalDamage+=HitEnemy(i,amount,w.Def.hitFlash,dx*w[WStat.knockback],dz*w[WStat.knockback],crit);
             if(before>0&&Enemies.Hp[i]<=0)w.Kills++;
             if(crit>0&&pearls>0&&combatRng.Next()<Rules.PearlChance(pearls)) {
                 excludedId=Enemies.Id[i];int target=Enemies.Grid.Nearest(Enemies.X[i],Enemies.Z[i],7,this);
-                if(target>=0){Emit("pearl",Enemies.X[i],Enemies.Y[i]+.8,Enemies.Z[i],x2:Enemies.X[target],y2:Enemies.Y[target]+.8,z2:Enemies.Z[target]);w.TotalDamage+=HitEnemy(target,amount*.5,.5,0,0);}
+                if(target>=0){Emit("pearl",Enemies.X[i],Enemies.Y[i]+.8,Enemies.Z[i],x2:Enemies.X[target],y2:Enemies.Y[target]+.8,z2:Enemies.Z[target]);
+                    Notify(FeedbackKind.Pearl,Enemies.X[i],Enemies.Y[i]+.8,Enemies.Z[i],x2:Enemies.X[target],y2:Enemies.Y[target]+.8,z2:Enemies.Z[target]);w.TotalDamage+=HitEnemy(target,amount*.5,.5,0,0);}
             }
         }
         public bool Accept(int i)=>Enemies.Accept(i)&&Enemies.Id[i]!=excludedId;
-        double HitEnemy(int i,double amount,double flash,double px,double pz)
+        double HitEnemy(int i,double amount,double flash,double px,double pz,int crit=0)
         {
             double before=Enemies.Hp[i];Enemies.Hp[i]=(float)(before-amount);Enemies.Flash[i]=(float)Math.Max(Enemies.Flash[i],flash);
-            double mass=Enemies.Def(i).mass;Enemies.Kx[i]=(float)(Enemies.Kx[i]+px/mass);Enemies.Kz[i]=(float)(Enemies.Kz[i]+pz/mass);
+            var def=Enemies.Def(i);double mass=def.mass;Enemies.Kx[i]=(float)(Enemies.Kx[i]+px/mass);Enemies.Kz[i]=(float)(Enemies.Kz[i]+pz/mass);
+            Notify(FeedbackKind.Hit,Enemies.X[i],Enemies.Y[i]+def.height+.35,Enemies.Z[i],amount,crit);
             return before>0?Math.Min(before,amount):0;
         }
         void RemoveDead()
@@ -149,6 +156,7 @@ namespace Mamporro.Core
                 if(ollas>0&&combatRng.Next()<Rules.OllaChance(ollas))blasts.Add(new CombatEffect{X=x,Y=y,Z=z,Radius=3.2*Stats[Stat.area],X2=16*Stats[Stat.damage]+.5*Enemies.MaxHp[i]});
                 // La victoria pertenece a U3. En U2 el jefe solo termina el escenario de combate.
                 if(d.behavior=="boss"){Boss=null;if(BossEndsRun)Victory=true;}
+                Notify(FeedbackKind.EnemyKilled,x,y,z,code:Enemies.Type[i]);
                 foreach(var s in states){s.NextBite[i]=s.NextBite[Enemies.Count-1];s.NextBite[Enemies.Count-1]=0;}
                 Enemies.Remove(i);
             }
@@ -159,7 +167,7 @@ namespace Mamporro.Core
             RemoveDead();
             for(int round=0;round<6&&blasts.Count>0;round++) {
                 batch.Clear();batch.AddRange(blasts);blasts.Clear();
-                foreach(var b in batch){Emit("blast",b.X,b.Y,b.Z,b.Radius);int n=Enemies.Query(b.X,b.Z,b.Radius,nearby);
+                foreach(var b in batch){Emit("blast",b.X,b.Y,b.Z,b.Radius);Notify(FeedbackKind.Explosion,b.X,b.Y,b.Z,radius:b.Radius);int n=Enemies.Query(b.X,b.Z,b.Radius,nearby);
                     for(int k=0;k<n;k++){int e=nearby[k];if(!Enemies.Accept(e))continue;double dx=Enemies.X[e]-b.X,dz=Enemies.Z[e]-b.Z,d=Rules.Hypot(dx,dz);if(d>b.Radius+Enemies.Radius(e))continue;HitEnemy(e,b.X2,.6,d>1e-4?dx/d*6:0,d>1e-4?dz/d*6:0);}}
                 RemoveDead();
             }
@@ -168,20 +176,21 @@ namespace Mamporro.Core
         public void Hurt(double amount)
         {
             if(Invincible||Invulnerable>0||Hp<=0||amount<=0)return;
-            if(Character.passive=="shield"&&ShieldCharge>=Character.recharge){ShieldCharge=0;Invulnerable=.7;Emit("shield",Player.X,Player.Y,Player.Z,1);Event("shield");return;}
-            ShieldCharge=0;Hp=Math.Max(0,Hp-Rules.Mitigate(amount,Stats[Stat.armor]));Invulnerable=.7;
+            if(Character.passive=="shield"&&ShieldCharge>=Character.recharge){ShieldCharge=0;Invulnerable=.7;Emit("shield",Player.X,Player.Y,Player.Z,1);Event("shield");Notify(FeedbackKind.Shield,Player.X,Player.Y,Player.Z);return;}
+            ShieldCharge=0;double damage=Rules.Mitigate(amount,Stats[Stat.armor]);Hp=Math.Max(0,Hp-damage);Invulnerable=.7;
+            Notify(FeedbackKind.PlayerHit,Player.X,Player.Y,Player.Z,damage);
             if(Hp<=0) {
                 var stack=Items.Find(s=>s.Def.id=="bata");if(stack==null)return;
                 if(--stack.Count<=0)Items.Remove(stack);RefreshStats();Hp=Stats[Stat.maxHp]*.5;Invulnerable=2.5;
                 int n=Enemies.Query(Player.X,Player.Z,8,nearby);
                 for(int k=0;k<n;k++){int i=nearby[k];if(i>=Enemies.Count)continue;double dx=Enemies.X[i]-Player.X,dz=Enemies.Z[i]-Player.Z,d=Rules.Nonzero(Rules.Hypot(dx,dz)),mass=Enemies.Def(i).mass;Enemies.Kx[i]=(float)(Enemies.Kx[i]+dx/d*14/mass);Enemies.Kz[i]=(float)(Enemies.Kz[i]+dz/d*14/mass);}
-                EnemyShots.Count=0;Emit("revive",Player.X,Player.Y,Player.Z,8);Event("revive");
+                EnemyShots.Count=0;Emit("revive",Player.X,Player.Y,Player.Z,8);Event("revive");Notify(FeedbackKind.Revive,Player.X,Player.Y,Player.Z,radius:8);
             }
         }
         public void GainXp(double amount)
         {
             int before=Level,gained=Rules.AddExperience(ref Level,ref Xp,amount*Stats[Stat.xpGain]);PendingLevels+=gained;
-            for(int k=1;k<=gained;k++)Event("levelUp",(before+k).ToString(System.Globalization.CultureInfo.InvariantCulture));
+            for(int k=1;k<=gained;k++){Event("levelUp",(before+k).ToString(System.Globalization.CultureInfo.InvariantCulture));Notify(FeedbackKind.LevelUp,code:before+k);}
         }
         // debugKillAll de la web: todos a 0 y recuento inmediato (bajas, gemas, victoria).
         public void KillAll(){for(int i=0;i<Enemies.Count;i++)Enemies.Hp[i]=0;FlushDead();}
@@ -206,7 +215,7 @@ namespace Mamporro.Core
         public void AddItem(string id)
         {
             var d=Array.Find(Catalog.Items,v=>v.id==id);if(d==null)return;
-            var s=Items.Find(v=>v.Def.id==id);if(s==null)Items.Add(new ItemStack{Def=d,Count=1});else s.Count++;RefreshStats();Event("item",id);
+            var s=Items.Find(v=>v.Def.id==id);if(s==null)Items.Add(new ItemStack{Def=d,Count=1});else s.Count++;RefreshStats();Event("item",id);Notify(FeedbackKind.ItemGained);
         }
         // U3: objeto de un baúl o del tótem, con el RNG propio de objetos (seed/run/items).
         public ItemDef RollItem(double luck)=>Offers.RollItem(luck,itemRng,Items,Stats,AllowedItems);

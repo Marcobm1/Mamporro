@@ -36,6 +36,8 @@ namespace Mamporro.Core
             World=world;Director=new Director(minutes);
             Combat=new CombatRun(world.Collision,seed,character,EnemyCapacity,effects,world.Heightfield.Size){BossEndsRun=true,Pace=Director.Pace,Schedule=this};
             Spawns=new WorldSpawns(seed);Interactables=new Interactables(world.Interactables);
+            // Aparición del director (fx.enemySpawned del SpawnSystem web): solo observador.
+            Spawns.OnSpawn=(x,y,z)=>Combat.Notify(FeedbackKind.EnemySpawned,x,y,z);
             Body.PlaceAt(0,world.Heightfield.HeightAt(0,0),0);SyncPlayer();
         }
         public double TimeLeft=>Director.TimeLeft(Combat.Time);
@@ -83,7 +85,7 @@ namespace Mamporro.Core
             var r=Combat;
             if(r.Gold<cost){r.Event("noGold",Math.Ceiling(cost-r.Gold).ToString(System.Globalization.CultureInfo.InvariantCulture));return false;}
             r.Gold-=cost;r.ChestsOpened=++Interactables.ChestsOpened;item.Used=true;
-            r.Emit("chest",item.Spot.X,item.Spot.Y+.9,item.Spot.Z,1.2,life:.6);r.Event("chestOpened");
+            r.Emit("chest",item.Spot.X,item.Spot.Y+.9,item.Spot.Z,1.2,life:.6);r.Event("chestOpened");r.Notify(FeedbackKind.ChestOpened,item.Spot.X,item.Spot.Y+.9,item.Spot.Z);
             var def=r.RollItem(r.Stats[Stat.luck]);
             if(def!=null)r.AddItem(def.id);else r.GainGold(cost);
             r.CheckPurse();return true;

@@ -4,12 +4,12 @@ Estado: **IMPLEMENTACIÓN AUTORIZADA Y EN CURSO desde el 04/10/2026.** Plan apro
 
 ## Cómo retomar
 
-- **Punto de partida:** `3754e31` (U4 aprobada). Plan en `31711bf` («Registra la aprobación de U4 y planifica U5»). Paso 1 `e7c9933` («Porta la síntesis de audio y el presupuesto de voces de U5»). Paso 2 en «Añade el motor de audio de U5» (hash: `git log -1 --format="%H %s" -- unity/Assets/Mamporro/U3/AudioDirector.cs`).
-- **Paso actual:** 3, sucesos del núcleo y sonidos de partida (sin empezar).
-- **Terminado:** pasos 1–2. Último Edit Mode 379/379, Play Mode 32/32, build y visual con medida de audio (04/10/2026).
+- **Punto de partida:** `3754e31` (U4 aprobada). Plan en `31711bf` («Registra la aprobación de U4 y planifica U5»). Paso 1 `e7c9933` («Porta la síntesis de audio y el presupuesto de voces de U5»). Paso 2 `6e154ec` («Añade el motor de audio de U5»). Paso 3 en «Conecta los sucesos de la partida al sonido de U5» (hash: `git log -1 --format="%H %s" -- unity/Assets/Mamporro/Core/CombatFeedback.cs`).
+- **Paso actual:** 4, partículas (sin empezar).
+- **Terminado:** pasos 1–3. Último Edit Mode 383/383, Play Mode 33/33, build y visual con medida de audio (04/10/2026).
 - **A medias:** nada.
 - **Sin commit a propósito:** siete ajustes Unity de «Cambios locales excluidos».
-- **Siguiente paso exacto:** paso 3: canal tipado `CombatFeedback` en el núcleo (disparo de arma, recogida xp/oro una vez por tick, golpe con nivel de crítico y posición, muerte con tipo, aparición, golpe al jugador con daño, pipa de paloma, explosión, más los ya existentes: nivel, escudo, objeto/baúl, jefe, culetazo, bata), emitido donde lo hace `Run.ts` sin tocar la RNG ni el orden de la simulación; prueba de que las partidas de referencia dan el mismo estado con y sin receptor; despachador `RunFeedback` en U3 con los sonidos de `RunView` (`weaponFired`→arma, `pickup`, `hit`/`critical`, `death`/`blast` jefe, `hurt`, `level`, `shield`, `reward`, `boss`, `blast`).
+- **Siguiente paso exacto:** paso 4: `Core` `ParticleBudget` (256/1500; reducido 64/400 y ⌈25 %⌉) con las pruebas de `ParticleBudget.test.ts`; `U3/Particles` (arrays por campo para 1500, `Rng("efectos").Derive("particulas")` visual, ráfagas de `Particles.burst`: ángulo, velocidad 0,3–1, vy 0,2–1·0,8 + lift, vida ×0,7–1,2, tamaño ×0,6–1,3, gravedad 18 por defecto, giro, color de la lista; llenas → se reutiliza una al azar; actualización: vida, gravedad, giro 6/s, escala que se apaga en el último tercio), dibujo `RenderMeshInstanced` con color por instancia (`_InstanceColor` de `RetroWorld`); todas las ráfagas de `RunView` en `RunFeedback` (crítico 3, muerte 12/24/80, aparición 5, nivel 24, escudo 18, baúl 26 en lugar del anillo, pipa 3, jefe 60, culetazo 20×2, olla 14+6, perla 5, bata 28×2, barrazo 4, rayo 3/enemigo, naftalina 3/pulso, fregona ≤3) con los colores de la paleta web; opción reducida al momento; limpieza en cada partida.
 - **Autorización:** pasos 1–9 seguidos, con checkpoint, pruebas, commit y push tras cada pieza. Detenerse solo ante una decisión nueva importante de diseño/arquitectura (o si el compresor propio resulta inestable, con latencia o coste inesperado) y al terminar U5.
 
 Comprobación desde CMD:
@@ -209,6 +209,17 @@ Conservar sin publicar ni restaurar:
 - **Commit/push:** «Añade el motor de audio de U5»; fetch previo y push normal si el remoto sigue en `e7c9933`.
 - **Árbol al terminar:** solo los siete ajustes Unity excluidos.
 - **Siguiente paso exacto:** paso 3 (ver «Cómo retomar»).
+
+### 04/10/2026 — paso 3: sucesos de la partida y sonidos — Claude Code
+
+- **Punto de partida:** `6e154ec` (paso 2 publicado); solo los siete ajustes Unity excluidos.
+- **Trabajo:** `Core/CombatFeedback.cs`: `FeedbackKind` (disparo de arma, recogida de XP/oro, golpe con nivel de crítico, baja con tipo, aparición, golpe al jugador con daño, pipa, nivel, escudo, objeto, baúl, jefe, culetazo, olla, perla, bata), `CombatFeedback` (struct) e `ICombatFeedback` (`in`, sin asignaciones). `CombatRun.Feedback`/`Notify` emiten en los mismos puntos que `fx.*` de `Run.ts`, siempre después del hecho y sin consumir RNG: arma tras `StepWeapon` si `SincePulse==0`; recogidas antes de ganar XP/oro; golpe dentro de `HitEnemy` (con crítico; perla y olla con 0); baja en `RemoveDead`; golpe al jugador tras la mitigación y antes de la bata; pipa en `Shoot`; nivel por cada nivel ganado; escudo, bata, objeto, jefe, culetazo (`Boss.cs`), olla (`FlushDead`), baúl (`WorldRun.OpenChest`) y aparición del director (`WorldSpawns.OnSpawn`). `U3/RunFeedback.cs`: receptor único con los sonidos de `RunView` (arma → su timbre, `xp`, `gold`, `hit`/`critical`, `death` o `blast` si es el jefe, `hurt`, `level`, `shield` con escudo y bata, `reward` con objeto y baúl, `boss`, `blast` con culetazo y olla) y recuento por tipo. `U3Game` lo conecta a cada partida.
+- **Pruebas nuevas:** Edit (4, `CombatFeedbackTests`): las cuatro partidas de `u3-world.json` jugadas con y sin observador dan **exactamente** la misma cronología, detalle por tick (posiciones de enemigos incluidas), totales, armas y resultado; recuentos coherentes (una baja por muerte, un nivel por subida, baúles, apariciones del director, objetos, jefe), sin valores no finitos. Ejemplo: `remedios-5min-invencible` → 5444 golpes, 1412 bajas, 2162 apariciones, 2429 pipas, 31 niveles; `armario-jefe-victoria` → 1 jefe, 23 culetazos. Play (1): partida real con horda: armas y golpes suenan, una baja por muerte, descartes por enfriamiento y nunca más de 16 voces. `IntegratedRunTests.Play` acepta un observador opcional; sus expectativas no cambian.
+- **Pruebas ejecutadas (04/10/2026):** `scripts\u3.cmd edit` **383/383**; `scripts\u3.cmd play` **33/33**; `scripts\u3.cmd build` correcta; `scripts\u3.cmd visual` 19 capturas + audio correcto (menú 0,0125; silencio 0; efecto 0,052).
+- **Limitaciones:** la prueba Play de horda es corta (pocas bajas en 3 s); la carga alta de voces se medirá en el ensayo del paso 7. Partículas, números y cámara llegan en los pasos 4–6 por el mismo receptor.
+- **Commit/push:** «Conecta los sucesos de la partida al sonido de U5»; fetch previo y push normal si el remoto sigue en `6e154ec`.
+- **Árbol al terminar:** solo los siete ajustes Unity excluidos.
+- **Siguiente paso exacto:** paso 4 (ver «Cómo retomar»).
 
 ## Checkpoint al terminar U5
 

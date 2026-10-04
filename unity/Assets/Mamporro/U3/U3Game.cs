@@ -41,6 +41,8 @@ namespace Mamporro.U3
         public RunScreens Screens {get;private set;}
         // U5: audio de la aplicación (música, efectos, foco y opciones de volumen).
         public AudioDirector Audio {get;private set;}
+        // U5: receptor único de los sucesos de la partida (sonido, partículas, números, cámara).
+        public RunFeedback Feedback {get;private set;}
         public Material CombatMaterial {get;private set;}
         public Mesh CombatMesh {get;private set;}
         public int InternalHeight {get;private set;}=360;
@@ -165,6 +167,7 @@ namespace Mamporro.U3
             Screens=gameObject.AddComponent<RunScreens>();Screens.Build(this);
             // Audio desde el arranque (en Windows no hace falta esperar a un gesto, a diferencia de la web).
             Audio=gameObject.AddComponent<AudioDirector>();Audio.Initialize(worldCamera.gameObject,()=>Progress.Progress.settings);
+            Feedback=new RunFeedback(this);
             ApplySettings();
             var args=Environment.GetCommandLineArgs();int seedArg=Array.IndexOf(args,"-u3-seed");
             LoadWorld(seedArg>=0&&seedArg+1<args.Length?NormalizeSeed(args[seedArg+1])??defaultSeed:defaultSeed);
@@ -204,7 +207,7 @@ namespace Mamporro.U3
             // armas/objetos y usos iniciales (2 + extras). Gastarlos no toca el progreso.
             runSetup=Progress.Begin();LastSettlement=null;Progress.ForgetSettlement();
             Session=new WorldRun(World,Seed,Array.Find(Catalog.Characters,c=>c.id==runSetup.Character),this,Minutes);
-            ProgressSession.Apply(runSetup,Session);
+            ProgressSession.Apply(runSetup,Session);Session.Combat.Feedback=Feedback;
             FreeCamera=false;DebugVisible=false;
             ResetPlayer();CombatView.Clear();Cards.Hide();Hud.Reset(World);eventCursor=0;lastHp=Run.Hp;
             Screens.ShowResults(false);SetPaused(true);UpdateHelp();

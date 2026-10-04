@@ -79,6 +79,22 @@ namespace Mamporro.Tests
             LogAssert.NoUnexpectedReceived();
         }
 
+        // Paso 3: la partida real suena por sus sucesos; con horda, el presupuesto contiene las voces.
+        [UnityTest]public IEnumerator CombatEventsPlayTheirSoundsWithinTheVoiceBudget()
+        {
+            qa=QaSave.UseAllUnlocked();yield return Load();var g=Game;var a=g.Audio;a.SetFocused(true);
+            g.StartRun("");g.QaAction(1);g.QaAction(4);g.QaAction(4);int played=a.Played;
+            int peak=0;float until=Time.realtimeSinceStartup+3;
+            while(Time.realtimeSinceStartup<until){yield return null;peak=Mathf.Max(peak,a.ActiveVoices);Assert.That(a.BudgetCount,Is.LessThanOrEqualTo(16));if(g.Run.Choosing)while(g.Run.Choosing)g.Choose(0);g.SetPaused(false);}
+            var counts=g.Feedback.Counts;
+            Assert.That(counts[(int)Mamporro.Core.FeedbackKind.WeaponFired],Is.GreaterThan(0));Assert.That(counts[(int)Mamporro.Core.FeedbackKind.Hit],Is.GreaterThan(0));
+            Assert.That(counts[(int)Mamporro.Core.FeedbackKind.EnemyKilled],Is.EqualTo(g.Run.Kills));
+            Assert.That(a.Played,Is.GreaterThan(played));Assert.That(a.Dropped,Is.GreaterThan(0),"golpes repetidos agrupados");Assert.That(peak,Is.LessThanOrEqualTo(16));
+            TestContext.WriteLine($"Horda: {g.Run.Kills} bajas, {a.Played} sonidos, {a.Dropped} descartados, pico {peak} voces");
+            g.SetPaused(true);g.BackToTitle();
+            LogAssert.NoUnexpectedReceived();
+        }
+
         [UnityTest]public IEnumerator FocusLossSilencesDropsEffectsAndReturnsPausedAtQuarterMusic()
         {
             qa=QaSave.UseAllUnlocked();yield return Load();var g=Game;var a=g.Audio;a.SetFocused(true);

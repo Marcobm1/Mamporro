@@ -35,7 +35,7 @@ namespace Mamporro.Core
         {
             var e=r.Enemies;double x=e.X[i],y=e.Y[i],z=e.Z[i];
             if(Attack=="roll"){double time=22.0/18;Set("attack",time);e.SetState(i,2,time);e.DashSpeed[i]=18;e.HitDamage[i]=28;return;}
-            if(Attack=="slam"){r.Emit("slam",x,y,z,5.5,life:.5);if(Rules.Hypot(r.Player.X-x,r.Player.Z-z)<=5.5+CombatPlayer.Radius&&Math.Abs(r.Player.Y-y)<3)r.Hurt(32);}
+            if(Attack=="slam"){r.Emit("slam",x,y,z,5.5,life:.5);r.Notify(FeedbackKind.BossSlam,x,y,z,radius:5.5);if(Rules.Hypot(r.Player.X-x,r.Player.Z-z)<=5.5+CombatPlayer.Radius&&Math.Abs(r.Player.Y-y)<3)r.Hurt(32);}
             else if(Attack=="sneeze"){
                 int n=Enraged?24:16;double a0=rng.Next()*Math.PI*2,radius=e.Radius(i);
                 for(int k=0;k<n;k++){double a=a0+k/(double)n*Math.PI*2,dx=Math.Cos(a),dz=Math.Sin(a),sx=x+dx*radius,sz=z+dz*radius;r.EnemyShots.Spawn(sx,r.World.Height(sx,sz)+1,sz,dx,dz,8,4,.45,damage:10,kind:1);}
