@@ -85,18 +85,39 @@ namespace Mamporro.U3
         // Pruebas: idioma por defecto cuando no hay guardado, independiente del sistema.
         public static string DefaultLanguageOverride;
         static string SystemLanguage=>DefaultLanguageOverride??(Application.systemLanguage==UnityEngine.SystemLanguage.Spanish?"es":"en");
-        // Cambio de idioma desde el menú: se guarda en las opciones y se reconstruyen las pantallas.
-        public void SetLanguage(string language)
+        // U4 paso 8: opciones vigentes (las 14 de SettingsDto, del progreso permanente). Las que
+        // se leen al usarse (sensibilidad, Ctrl, destellos, FPS, partículas, sacudida y audio)
+        // salen siempre de aquí; idioma, resolución, dithering, vértices y duración se aplican
+        // en ApplySettings. Volúmenes y silencio solo se guardan: el sonido llega en U5.
+        public SettingsDto Settings=>Progress.Progress.settings;
+        // Cambio de una opción (Game.changeSettings): ProgressSession la valida y la guarda
+        // (o la deja solo para esta sesión si no puede) y aquí se aplica al momento.
+        public SettingsChange ChangeSettings(Action<SettingsDto> change)
         {
-            if(State!=Screen.Title||(language!="es"&&language!="en"))return;
-            Progress.SetLanguage(language);CombatText.English=Progress.Progress.settings.language=="en";Screens.Rebuild();
+            var result=Progress.ChangeSettings(change);if(result.Applied)ApplySettings();return result;
         }
+        // Idioma desde el menú o la pausa: se guarda y se reconstruyen las pantallas abiertas.
+        public void SetLanguage(string language)=>ChangeSettings(s=>s.language=language);
         // Duración elegida en la preparación; se guarda como la opción runMinutes de la web.
-        public void SetMinutes(int minutes){if(Array.IndexOf(Catalog.RunDurations,minutes)<0)return;Minutes=minutes;Progress.SetRunMinutes(minutes);}
+        // La partida en curso no cambia: la duración solo se lee al empezar otra.
+        public void SetMinutes(int minutes)=>ChangeSettings(s=>s.runMinutes=minutes);
+        // Aplica las opciones vigentes (Game.applySettings). Se llama al arrancar, tras cada
+        // cambio y al adoptar un progreso importado o recuperado.
+        public void ApplySettings()
+        {
+            var s=Settings;bool english=s.language=="en",relabel=english!=CombatText.English;
+            CombatText.English=english;Minutes=s.runMinutes;
+            if(target==null||InternalHeight!=s.renderHeight||Dither!=s.dithering||Snap!=s.vertexSnap)ConfigurePresentation(s.renderHeight,s.dithering,s.vertexSnap);
+            // Sin textos del idioma anterior: avisos efímeros fuera y pantallas abiertas reconstruidas.
+            if(relabel&&Screens!=null){Hud.ClearNotices();Screens.Rebuild();}
+        }
         // La importación usa el mismo almacén que la partida: al confirmarla, la sesión adopta
-        // el progreso importado y la siguiente partida ya lo usa, sin reiniciar la aplicación.
+        // el progreso importado (también sus opciones) y la siguiente partida ya lo usa, sin
+        // reiniciar la aplicación.
         public ProgressImporter CreateImporter()=>new ProgressImporter(Progress.Store,Progress.Language);
-        public void AdoptImported(StoreResult result){if(State==Screen.Title)Progress.Adopt(result);}
+        public void AdoptImported(StoreResult result){if(State==Screen.Title){Progress.Adopt(result);ApplySettings();}}
+        // Recuperación confirmada desde el menú; el progreso recuperado trae sus opciones.
+        public StoreResult RecoverProgress(){var result=Progress.Recover(true);ApplySettings();return result;}
         public int AutoChosen {get;private set;}
         U3Benchmark benchmark;
         public bool DebugVisible {get;private set;}
@@ -129,8 +150,7 @@ namespace Mamporro.U3
             // memoria, que se escribe en la primera liquidación o elección. Con problemas: se
             // conserva el archivo y se informa en el menú; nunca se resetea en silencio.
             Progress=new ProgressSession(new ProgressFiles(SaveDirectory),SystemLanguage);
-            CombatText.English=Progress.Progress.settings.language=="en";
-            Minutes=Array.IndexOf(Catalog.RunDurations,Progress.Progress.settings.runMinutes)>=0?Progress.Progress.settings.runMinutes:10;
+            CombatText.English=Settings.language=="en";Minutes=Settings.runMinutes;
             if(!combatTemplate||!combatTemplate.enableInstancing)throw new InvalidOperationException("Falta el material instanciado de combate U3.");
             CombatMaterial=new Material(combatTemplate){name="Combate U3",enableInstancing=true};
             var primitive=GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -140,6 +160,7 @@ namespace Mamporro.U3
             Cards=gameObject.AddComponent<RunCards>();Cards.Session=this;Cards.Build();
             Hud=gameObject.AddComponent<RunHud>();Hud.Build(this);
             Screens=gameObject.AddComponent<RunScreens>();Screens.Build(this);
+            ApplySettings();
             var args=Environment.GetCommandLineArgs();int seedArg=Array.IndexOf(args,"-u3-seed");
             LoadWorld(seedArg>=0&&seedArg+1<args.Length?NormalizeSeed(args[seedArg+1])??defaultSeed:defaultSeed);
         }
@@ -268,7 +289,8 @@ namespace Mamporro.U3
                     case "item":var def=Array.Find(Catalog.Items,i=>i.id==e.Detail);if(def!=null)Hud.ShowItem(def);break;
                 }
             }
-            if(Run.Hp<lastHp-1e-9)Hud.FlashHurt();
+            // Destello rojo al recibir daño solo con «Destellos de daño» (como la web).
+            if(Run.Hp<lastHp-1e-9&&Settings.flashes)Hud.FlashHurt();
             lastHp=Run.Hp;
         }
         // Cada pantalla en su estado; HUD durante la partida (también en pausa y con cartas).
@@ -338,10 +360,7 @@ namespace Mamporro.U3
                 if(DebugVisible&&State==Screen.Playing&&!Paused&&!Cards.Visible){
                     for(int n=1;n<=8;n++)if(k[(Key)((int)Key.Digit1+n-1)].wasPressedThisFrame){QaAction(n);break;}
                 }
-                if(k.f1Key.wasPressedThisFrame)ConfigurePresentation(InternalHeight==240?360:InternalHeight==360?480:240,Dither,Snap);
-                if(k.f2Key.wasPressedThisFrame)Dither=!Dither;
-                if(k.f9Key.wasPressedThisFrame)Snap=!Snap;
-                if(k.f6Key.wasPressedThisFrame)UnityEngine.Screen.SetResolution(UnityEngine.Screen.width<2200?2560:1920,UnityEngine.Screen.width<2200?1440:1080,FullScreenMode.Windowed);
+                PresentationShortcuts(k);
             }
             if(!Paused&&k!=null){
                 var axis=new Vector2((k.dKey.isPressed?1:0)-(k.aKey.isPressed?1:0),(k.wKey.isPressed?1:0)-(k.sKey.isPressed?1:0));
@@ -350,14 +369,42 @@ namespace Mamporro.U3
                 // De Unity a web: se invierte Z.
                 intent.MoveX=dir.x;intent.MoveZ=-dir.y;
                 intent.JumpPressed|=k.spaceKey.wasPressedThisFrame;intent.JumpHeld=k.spaceKey.isPressed;
-                intent.SlidePressed|=k.leftShiftKey.wasPressedThisFrame||k.cKey.wasPressedThisFrame;intent.SlideHeld=k.leftShiftKey.isPressed||k.cKey.isPressed;
+                intent.SlidePressed|=SlidePressed(k,Settings.slideWithCtrl);intent.SlideHeld=SlideHeld(k,Settings.slideWithCtrl);
                 interactPressed|=k.eKey.wasPressedThisFrame;
-                if(mouse!=null&&Cursor.lockState==CursorLockMode.Locked){var d=mouse.delta.ReadValue();yaw+=d.x*.126f;pitch=Mathf.Clamp(pitch-d.y*.126f,-25,70);}
+                if(mouse!=null&&Cursor.lockState==CursorLockMode.Locked)Look(mouse.delta.ReadValue());
             }
             Shader.SetGlobalFloat(SnapId,Snap?1:0);Shader.SetGlobalFloat(DitherId,Dither?1:0);
             ReadEvents();RefreshPanels();
             textTimer-=Time.unscaledDeltaTime;
             if(textTimer<=0){textTimer=.1f;RefreshStatus();}
+        }
+
+        // Atajos de QA de U1–U3 (F1 resolución interna, F2 dithering, F9 vértices): cambian las
+        // mismas opciones guardadas, nunca un valor activo distinto del guardado. F6 (ventana)
+        // no es una opción. ConfigurePresentation queda para las herramientas (sin guardar).
+        void PresentationShortcuts(Keyboard k)
+        {
+            foreach(var key in new[]{Key.F1,Key.F2,Key.F9,Key.F6})if(k[key].wasPressedThisFrame)PresentationShortcut(key);
+        }
+        public void PresentationShortcut(Key key)
+        {
+            switch(key){
+                case Key.F1:ChangeSettings(s=>s.renderHeight=s.renderHeight==240?360:s.renderHeight==360?480:240);break;
+                case Key.F2:ChangeSettings(s=>s.dithering=!s.dithering);break;
+                case Key.F9:ChangeSettings(s=>s.vertexSnap=!s.vertexSnap);break;
+                case Key.F6:UnityEngine.Screen.SetResolution(UnityEngine.Screen.width<2200?2560:1920,UnityEngine.Screen.width<2200?1440:1080,FullScreenMode.Windowed);break;
+            }
+        }
+        // Deslizarse: Shift/C siempre; Ctrl solo con la opción activada (Input.setSlideWithCtrl).
+        public static bool SlideHeld(Keyboard k,bool withCtrl)=>k.leftShiftKey.isPressed||k.cKey.isPressed||withCtrl&&(k.leftCtrlKey.isPressed||k.rightCtrlKey.isPressed);
+        public static bool SlidePressed(Keyboard k,bool withCtrl)=>k.leftShiftKey.wasPressedThisFrame||k.cKey.wasPressedThisFrame||withCtrl&&(k.leftCtrlKey.wasPressedThisFrame||k.rightCtrlKey.wasPressedThisFrame);
+        // CameraRig.look de la web: baseSensitivity (0,0022 rad = 0,126° por píxel) × sensibilidad.
+        public const float LookDegreesPerPixel=.126f;
+        public float Pitch=>pitch;
+        public void Look(Vector2 delta)
+        {
+            float k=LookDegreesPerPixel*(float)Settings.mouseSensitivity;
+            yaw+=delta.x*k;pitch=Mathf.Clamp(pitch-delta.y*k,-25,70);
         }
 
         // Panel F3 (Game.updateStats): rendimiento, jugador, semilla, entidades, partida y director.

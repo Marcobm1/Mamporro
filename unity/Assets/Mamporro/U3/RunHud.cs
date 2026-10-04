@@ -32,6 +32,8 @@ namespace Mamporro.U3
         public string BannerText=>bannerText.text;
         // Avisos visibles, del más antiguo al más reciente.
         public string NoticeText(int i)=>noticeLeft[i]>0?notices[i].text:"";
+        // Todo el texto activo del HUD (pruebas de idioma).
+        public string AllText{get{var sb=new StringBuilder();foreach(var t in root.GetComponentsInChildren<Text>())sb.Append(t.text).Append('\n');return sb.ToString();}}
 
         static Color Hex(string hex){ColorUtility.TryParseHtmlString(hex,out var c);return c;}
 
@@ -110,6 +112,9 @@ namespace Mamporro.U3
             bannerText.text=sb.ToString();banner.SetActive(true);bannerLeft=ItemSeconds;
         }
         public void FlashHurt(){hurtLeft=.45f;}
+        public bool HurtFlashing=>hurtLeft>0;
+        // Cambio de idioma: fuera los avisos y el objeto conseguido (textos ya escritos).
+        public void ClearNotices()=>ClearTransient();
         static Color Rarity(string r)=>r=="uncommon"?Hex("#8cc84b"):r=="rare"?Hex("#4aa8ff"):r=="epic"?Hex("#c070ff"):r=="legendary"?Hex("#ffb020"):Hex("#c8c0dc");
         // itemDescriptionParams de la web (porcentajes de los objetos con efecto especial).
         public static string ItemDescription(ItemDef def)

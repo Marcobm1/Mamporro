@@ -30,7 +30,7 @@ namespace Mamporro.U3
             balance=Label(c,"",30,TextAnchor.MiddleLeft,new Vector2(.16f,.9f),new Vector2(.6f,.97f));balance.color=Hex("#f6c63a");
             for(int i=0;i<2;i++){string lang=i==0?"es":"en";languages[i]=Button(c,CombatText.Get("lang."+lang),new Vector2(.7f+.14f*i,.9f),new Vector2(.83f+.14f*i,.97f),()=>game.SetLanguage(lang));}
             saveState=Label(c,"",22,TextAnchor.UpperLeft,new Vector2(.02f,.82f),new Vector2(.72f,.89f));saveState.color=Hex("#ffd84a");
-            recover=Button(c,CombatText.Get("progress.recover"),new Vector2(.74f,.83f),new Vector2(.97f,.89f),()=>{var r=game.Progress.Recover(true);OpenPage(current);if(r.Success)saveState.text=CombatText.Get("progress.recovered");});
+            recover=Button(c,CombatText.Get("progress.recover"),new Vector2(.74f,.83f),new Vector2(.97f,.89f),()=>{var r=game.RecoverProgress();OpenPage(current);if(r.Success)saveState.text=CombatText.Get("progress.recovered");});
             var area=new GameObject("Página",typeof(RectTransform));area.transform.SetParent(c,false);page=(RectTransform)area.transform;
             page.anchorMin=new Vector2(.02f,.03f);page.anchorMax=new Vector2(.98f,.81f);page.offsetMin=page.offsetMax=Vector2.zero;
             menu.SetActive(false);
@@ -86,7 +86,7 @@ namespace Mamporro.U3
                 b.targetGraphic.color=game.Minutes==minutes?Hex("#8a6cd8"):Hex("#463874");}
             Label(page,CombatText.Get("title.clickHint"),22,TextAnchor.MiddleLeft,new Vector2(0,.04f),new Vector2(.6f,.14f)).color=Hex("#a49cc0");
             Label(page,CombatText.Get("controls.title"),26,TextAnchor.UpperLeft,new Vector2(.66f,.9f),new Vector2(1,.97f)).color=Hex("#a49cc0");
-            var controls=Label(page,Controls(),22,TextAnchor.UpperLeft,new Vector2(.66f,.1f),new Vector2(1,.9f));controls.verticalOverflow=VerticalWrapMode.Overflow;
+            var controls=Label(page,Controls(),20,TextAnchor.UpperLeft,new Vector2(.66f,.1f),new Vector2(1,.9f));controls.verticalOverflow=VerticalWrapMode.Overflow;
         }
         void PageCharacters(MetaDto meta)
         {
@@ -149,15 +149,13 @@ namespace Mamporro.U3
                 if(m.UnlockId!=null)Label(card,CombatText.Format("meta.unlock","name",UnlockName(m.UnlockKind,m.UnlockId)),20,TextAnchor.UpperLeft,new Vector2(.05f,.02f),new Vector2(.95f,.2f));
             }
         }
+        // Las 14 opciones guardadas e importación del progreso web (RunScreens.Options).
         void PageOptions()
         {
-            Label(page,CombatText.Get("options.title"),48,TextAnchor.MiddleLeft,new Vector2(0,.88f),new Vector2(1,1));
-            Label(page,CombatText.Get("options.language"),30,TextAnchor.MiddleLeft,new Vector2(0,.72f),new Vector2(.25f,.82f));
-            for(int i=0;i<2;i++){string lang=i==0?"es":"en";var b=Button(page,CombatText.Get("lang."+lang),new Vector2(.26f+.17f*i,.72f),new Vector2(.42f+.17f*i,.82f),()=>game.SetLanguage(lang));
-                b.targetGraphic.color=(lang=="en")==CombatText.English?Hex("#8a6cd8"):Hex("#463874");}
-            // Contrapartida Unity de «Exportar progreso para Unity» de la web.
-            Label(page,CombatText.Get("import.help"),22,TextAnchor.UpperLeft,new Vector2(0,.48f),new Vector2(.7f,.64f)).color=Hex("#a49cc0");
-            Button(page,CombatText.Get("import.open"),new Vector2(0,.34f),new Vector2(.42f,.46f),()=>ShowImport(true));
+            Label(page,CombatText.Get("options.title"),48,TextAnchor.MiddleLeft,new Vector2(0,.9f),new Vector2(1,1));
+            var grid=new GameObject("Opciones",typeof(RectTransform));grid.transform.SetParent(page,false);var r=(RectTransform)grid.transform;
+            r.anchorMin=Vector2.zero;r.anchorMax=new Vector2(1,.89f);r.offsetMin=r.offsetMax=Vector2.zero;
+            PaintOptions(r,false);
         }
 
         // ------------------------------------------------------------ piezas

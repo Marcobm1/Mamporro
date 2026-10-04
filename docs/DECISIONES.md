@@ -611,3 +611,13 @@ Decisión del autor: plan U4 aprobado, pasos 1–9 autorizados sin confirmación
 Validar → vista previa → confirmar → backup del guardado actual → escritura segura → relectura y validación. Sustitución completa, nunca fusión; original exportado intacto; importación repetida sin recompensas. Probar temporal, backup y recuperación; no afirmar atomicidad sin garantía real. Separar tests puros de IO. Las seis propuestas U3 mantienen su clasificación, sin exigir confirmación individual.
 
 Concreción técnica del paso 1 (Codex, dentro del plan autorizado): tres formatos separados; transferencia `mamporro.progress` v1 y persistencia `mamporro.unity-save` v1, DTO explícito y adaptadores web v1/v2/v3. Límites defensivos y reglas reales diferenciados. Detalle y corpus en [CONTRATO_GUARDADO_U4](CONTRATO_GUARDADO_U4.md). No modifica reglas web ni referencias previas.
+
+## U4: decisiones técnicas de implementación de los pasos 7–8 (04/10/2026)
+
+Aceptadas por el autor las del paso 7; las del paso 8 las toma Claude Code dentro de lo que el autor dejó a su criterio. No cambian reglas ni balance.
+
+- **Duración 5/10/15** (paso 7, aceptada): se guarda en `settings.runMinutes` en cuanto se elige, como la web; la partida en curso no cambia.
+- **Idioma del primer arranque sin guardado** (paso 7, aceptada): español si Windows está en español; inglés en otro caso (equivalente a `detectLanguage` web).
+- **Atajos QA F1/F2/F9** (paso 8): cambian las mismas opciones guardadas (resolución interna, dithering, vértices), sin valores activos distintos de los guardados. F3, F6 y F8 no son opciones y siguen igual. Las pruebas usan carpetas temporales.
+- **Fallo al guardar una opción** (paso 8): el cambio se aplica solo en la sesión, se avisa y el último guardado válido no se toca, como la web sin almacenamiento. Las compras siguen sin aplicarse si no se guardan.
+- **Efectos pendientes de U5** (paso 8): volúmenes y silencio, «Reducir partículas» y «Sacudidas de cámara» se guardan y se muestran, pero Unity aún no tiene audio, partículas decorativas ni sacudidas que gobernar. Los destellos sí gobiernan los efectos existentes: el rojo del HUD y el blanco de enemigos golpeados.

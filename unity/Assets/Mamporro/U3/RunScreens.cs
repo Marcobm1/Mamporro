@@ -7,9 +7,9 @@ using UnityEngine.UI;
 
 namespace Mamporro.U3
 {
-    // Pantallas técnicas de U3 en uGUI: inicio (personaje, duración y semilla), pausa
-    // (semilla, estadísticas y objetos, como UI.buildPause de la web, sin las opciones
-    // guardadas) y resultados (UI.buildResults sin la Calderilla ni las misiones, que son U4).
+    // Pantallas técnicas en uGUI: menú (RunScreens.Menu), pausa (semilla, estadísticas, objetos,
+    // controles y opciones guardadas, como UI.buildPause de la web), resultados con la
+    // liquidación U4, importación (RunScreens.Import) y opciones (RunScreens.Options).
     public sealed partial class RunScreens : MonoBehaviour
     {
         U3Game game;Font font;
@@ -34,24 +34,26 @@ namespace Mamporro.U3
             var scaler=canvasObject.GetComponent<CanvasScaler>();scaler.uiScaleMode=CanvasScaler.ScaleMode.ScaleWithScreenSize;scaler.referenceResolution=new Vector2(1920,1080);scaler.matchWidthOrHeight=.5f;
             pause=Panel(canvasObject.transform,"Pausa");
             Label(Content(pause),CombatText.Get("pause.title"),60,TextAnchor.MiddleCenter,new Vector2(.05f,.86f),new Vector2(.95f,.96f));
-            Button(Content(pause),CombatText.Get("pause.resume"),new Vector2(.05f,.76f),new Vector2(.3f,.84f),()=>game.SetPaused(false));
-            pauseSeed=Label(Content(pause),"",28,TextAnchor.MiddleLeft,new Vector2(.33f,.76f),new Vector2(.66f,.84f));
+            Button(Content(pause),CombatText.Get("pause.resume"),new Vector2(.05f,.76f),new Vector2(.27f,.84f),()=>game.SetPaused(false));
+            Button(Content(pause),CombatText.Get("options.title"),new Vector2(.29f,.76f),new Vector2(.49f,.84f),()=>ShowPauseOptions(true));
+            pauseSeed=Label(Content(pause),"",26,TextAnchor.MiddleLeft,new Vector2(.51f,.76f),new Vector2(.7f,.84f));
             Label(Content(pause),CombatText.Get("pause.stats"),26,TextAnchor.UpperLeft,new Vector2(.05f,.68f),new Vector2(.36f,.73f)).color=Hex("#a49cc0");
             pauseStats=Label(Content(pause),"",26,TextAnchor.UpperLeft,new Vector2(.05f,.06f),new Vector2(.36f,.68f));
             Label(Content(pause),CombatText.Get("pause.items"),26,TextAnchor.UpperLeft,new Vector2(.38f,.68f),new Vector2(.66f,.73f)).color=Hex("#a49cc0");
             pauseItems=Label(Content(pause),"",24,TextAnchor.UpperLeft,new Vector2(.38f,.06f),new Vector2(.66f,.68f));
             Label(Content(pause),CombatText.Get("controls.title"),26,TextAnchor.UpperLeft,new Vector2(.68f,.68f),new Vector2(.95f,.73f)).color=Hex("#a49cc0");
-            pauseControls=Label(Content(pause),Controls(),24,TextAnchor.UpperLeft,new Vector2(.68f,.06f),new Vector2(.95f,.68f));
+            pauseControls=Label(Content(pause),Controls(),22,TextAnchor.UpperLeft,new Vector2(.68f,.06f),new Vector2(.95f,.68f));
             // Volver al inicio pide confirmación: abandonar no da Calderilla ni misiones (web).
-            Button(Content(pause),CombatText.Get("pause.backToTitle"),new Vector2(.68f,.76f),new Vector2(.95f,.84f),()=>ShowAbandon(true));
+            Button(Content(pause),CombatText.Get("pause.backToTitle"),new Vector2(.72f,.76f),new Vector2(.95f,.84f),()=>ShowAbandon(true));
             abandon=new GameObject("Abandonar",typeof(RectTransform),typeof(Image));abandon.transform.SetParent(Content(pause),false);
             var ar=(RectTransform)abandon.transform;ar.anchorMin=new Vector2(.2f,.3f);ar.anchorMax=new Vector2(.8f,.7f);ar.offsetMin=ar.offsetMax=Vector2.zero;abandon.GetComponent<Image>().color=Hex("#2a2048");
             Label(abandon.transform,CombatText.Get("meta.abandon"),30,TextAnchor.MiddleCenter,new Vector2(.05f,.45f),new Vector2(.95f,.95f));
             Button(abandon.transform,CombatText.Get("meta.cancel"),new Vector2(.05f,.08f),new Vector2(.47f,.35f),()=>ShowAbandon(false));
             Button(abandon.transform,CombatText.Get("meta.confirm"),new Vector2(.53f,.08f),new Vector2(.95f,.35f),()=>{ShowAbandon(false);game.BackToTitle();});
             abandon.SetActive(false);
+            BuildPauseOptions();
             pause.SetActive(false);
-            BuildMenu(canvasObject.transform);BuildResults(canvasObject.transform);BuildImport(canvasObject.transform);
+            BuildMenu(canvasObject.transform);BuildResults(canvasObject.transform);BuildImport(canvasObject.transform);BuildFps(canvasObject.transform);
         }
 
         // ------------------------------------------------------------ resultados
@@ -91,13 +93,15 @@ namespace Mamporro.U3
             if(results.activeSelf!=visible)results.SetActive(visible);
         }
 
-        // Leyenda de controles (controlsLegend de la web) más las teclas técnicas de U3.
-        static string Controls()
+        // Leyenda de controles (controlsLegend de la web, con Ctrl si la opción está activada)
+        // más los atajos técnicos de QA de U1–U3.
+        string Controls()
         {
             string Row(string action,string keys)=>$"<b>{CombatText.Get(keys)}</b>  {CombatText.Get(action)}";
             return string.Join("\n",Row("controls.move","controls.keys.move"),Row("controls.look","controls.keys.look"),Row("controls.jump","controls.keys.jump"),
-                Row("controls.slide","controls.keys.slide"),Row("controls.interact","controls.keys.interact"),Row("controls.pause","controls.keys.pause"),Row("controls.debug","controls.keys.debug"),
-                "\n<b>F1</b>  resolución interna\n<b>F2</b>  dither\n<b>F9</b>  ajuste de vértices\n<b>F6</b>  ventana 1080p/1440p");
+                Row("controls.slide",game.Settings.slideWithCtrl?"controls.keys.slideCtrl":"controls.keys.slide"),Row("controls.interact","controls.keys.interact"),Row("controls.pause","controls.keys.pause"),Row("controls.debug","controls.keys.debug"),
+                "\n"+CombatText.Get("controls.qa"),$"<b>F1</b>  {CombatText.Get("options.resolution")}",$"<b>F2</b>  {CombatText.Get("options.dithering")}",
+                $"<b>F9</b>  {CombatText.Get("options.vertexSnap")}",$"<b>F6</b>  {CombatText.Get("controls.window")}");
         }
 
         public void ShowPause(bool visible)
@@ -107,19 +111,24 @@ namespace Mamporro.U3
                 var sb=new StringBuilder();foreach(var line in StatLines(r))sb.Append(line.Label).Append(": <b>").Append(line.Value).Append("</b>\n");pauseStats.text=sb.ToString();
                 sb.Clear();foreach(var s in r.Items)sb.Append(s.Count>1?CombatText.Format("hud.itemCount","name",CombatText.Get("item."+s.Def.id),"n",s.Count):CombatText.Get("item."+s.Def.id)).Append('\n');
                 pauseItems.text=r.Items.Count>0?sb.ToString():CombatText.Get("pause.noItems");
+                pauseControls.text=Controls();
             }
-            if(!visible)ShowAbandon(false);
+            if(!visible){ShowAbandon(false);ShowPauseOptions(false);}
             pause.SetActive(visible);
         }
         GameObject abandon;
         public bool AbandonVisible=>abandon&&abandon.activeSelf;
         public void ShowAbandon(bool visible){if(abandon)abandon.SetActive(visible);}
-        // Cambio de idioma: las pantallas se reconstruyen con los textos nuevos (como UI.refresh web).
+        // Cambio de idioma: las pantallas se reconstruyen con los textos nuevos (como UI.refresh web)
+        // y se quedan como estaban: página del menú, pausa con sus opciones, resultados o importación.
         public void Rebuild()
         {
-            bool resultsShown=ResultsVisible,menuShown=TitleVisible;string page=Page;
+            bool resultsShown=ResultsVisible,menuShown=TitleVisible,pauseShown=PauseVisible,optionsShown=PauseOptionsVisible,importShown=ImportVisible;
+            string page=Page,path=importPath?importPath.text:"";
             if(canvasObject)Destroy(canvasObject);
             Build(game);if(menuShown){menu.SetActive(true);OpenPage(page);}if(resultsShown)ShowResults(true);
+            if(pauseShown){ShowPause(true);if(optionsShown)ShowPauseOptions(true);}
+            if(importShown){importPath.text=path;ShowImport(true);}
         }
 
         public struct StatLine { public string Label,Value; }

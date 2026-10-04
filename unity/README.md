@@ -106,7 +106,13 @@ finales de U4.
   de seguridad y sustituye (nunca suma). Guardado en `Application.persistentDataPath/Progress`
   (`-u4-save-dir` lo cambia).
 - **Menú (U4):** Inicio, Jugar (semilla, duración), Personajes, Tienda (compras y
-  mejoras), Misiones y Opciones (idioma e importación), en español o inglés.
+  mejoras), Misiones y Opciones, en español o inglés.
+- **Opciones (U4):** las 14 de la web, en el menú y en la pausa («Opciones»): idioma,
+  sensibilidad, resolución interna 240/360/480, temblor de vértices, dithering,
+  FPS, reducir partículas, sacudidas, destellos, Ctrl para deslizarse, duración
+  (solo en el menú), volúmenes y silencio. Se aplican al momento y se guardan con el
+  progreso. Volúmenes, partículas y sacudidas solo se guardan: el audio, las
+  partículas decorativas y las sacudidas llegan en U5.
 - **Progreso permanente (U4):** se carga al arrancar; la partida usa el personaje
   desbloqueado seleccionado, los desbloqueos de armas y objetos y los usos 2 + extras.
   Al ganar o perder se liquida una sola vez (Calderilla del Caos y misiones, como la
@@ -120,12 +126,13 @@ finales de U4.
   bajas, armas, tomos, objetos, minimapa con descubrimiento, barra del jefe,
   avisos y telegrafiado de sus ataques.
 - **Controles:** WASD, ratón, Espacio (salto), Mayús/C (deslizarse), E (usar
-  baúl, tótem o armario), Esc (pausa: semilla, estadísticas, objetos y volver al
-  inicio). Cartas: 1–4/clic, R volver a tirar, X saltar, B descartar.
+  baúl, tótem o armario), Ctrl con su opción, Esc (pausa: semilla, estadísticas,
+  objetos, opciones y volver al inicio con confirmación). Cartas: 1–4/clic, R volver a tirar, X saltar, B descartar.
 - **Resultados:** victoria o derrota, tiempo, bajas, nivel, oro, baúles, daño por
   arma y objetos; sin Calderilla (U4). Reintentar, nuevo mapa o volver al inicio.
 - **Técnico:** F1 resolución interna 240/360/480, F2 dithering, F9 ajuste de
-  vértices, F6 ventana 1080p/1440p, F8 vuelve al inicio con el mismo mapa.
+  vértices (cambian y guardan esas mismas opciones), F6 ventana 1080p/1440p, F8
+  vuelve al inicio con el mismo mapa.
 - **F3:** panel de depuración (FPS, tiempos, draw calls, posición, director…).
   Con el panel abierto y jugando: 1 invencible, 2 +nivel, 3 +1 minuto, 4 +100
   enemigos, 5 matar todo, 6 invocar jefe, 7 +100 de oro, 8 revelar el mapa. Abrir
@@ -141,10 +148,11 @@ scripts\u3.cmd visual
 scripts\u3.cmd benchmark
 ```
 
-`visual` ejecuta la build con `-u3-visual-check -u3-output` y genera catorce capturas
-en `unity/TestResults/U3/Visual/`: inicio, importación revisada (con un guardado
+`visual` ejecuta la build con `-u3-visual-check -u3-output` y genera diecinueve capturas
+en `unity/TestResults/U3/Visual/`: inicio, tienda, misiones, opciones en español e
+inglés, importación revisada (con un guardado
 propio dentro de la carpeta de salida), vista alta, casa, templo, granja, pozo,
-combate con HUD, interactuables, telegrafiado, pausa, cartas, resultados y
+combate con HUD, interactuables, telegrafiado, pausa, opciones en pausa, cartas, resultados y
 reinicio. Comprueba que sean nuevas y contengan imagen; abre una ventana visible
 durante unos segundos. También exige diferencias de píxeles al activar/desactivar
 el render de combate con cámara/simulación/viento inmóviles: detecta instancing

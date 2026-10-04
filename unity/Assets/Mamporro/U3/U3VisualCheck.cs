@@ -10,7 +10,7 @@ namespace Mamporro.U3
     public sealed class U3VisualCheck : MonoBehaviour
     {
         public U3Game Game;
-        public static readonly string[] Names={"inicio","tienda","misiones","importar","vista-alta","sitio-house","sitio-temple","sitio-farm","sitio-well","combate","interactuables","telegrafiado","pausa","cartas","resultados","reinicio"};
+        public static readonly string[] Names={"inicio","tienda","misiones","opciones","opciones-en","importar","vista-alta","sitio-house","sitio-temple","sitio-farm","sitio-well","combate","interactuables","telegrafiado","pausa","pausa-opciones","cartas","resultados","reinicio"};
         IEnumerator Start()
         {
             string output=Path.Combine(Application.persistentDataPath,"U3Visual");
@@ -21,6 +21,9 @@ namespace Mamporro.U3
             yield return Capture(output,"inicio");
             Game.Screens.OpenPage(RunScreens.Shop);yield return Capture(output,"tienda");
             Game.Screens.OpenPage(RunScreens.Missions);yield return Capture(output,"misiones");
+            // Opciones en español y en inglés (el idioma se guarda en el guardado de la comprobación).
+            Game.Screens.OpenPage(RunScreens.Options);yield return Capture(output,"opciones");
+            Game.SetLanguage("en");yield return Capture(output,"opciones-en");Game.SetLanguage("es");
             Game.Screens.OpenPage(RunScreens.Home);
             // Importación U4 revisada (sin confirmar) sobre el guardado de la sesión; el lanzador
             // pasa -u4-save-dir para que la comprobación nunca use el guardado del autor.
@@ -81,6 +84,7 @@ namespace Mamporro.U3
             var bossPos=WebSpace.ToUnity(r.Enemies.X[b],r.Enemies.Y[b],r.Enemies.Z[b]);
             yield return Look(output,"telegrafiado",bossPos+new Vector3(10,11,-10),bossPos);
             Game.FreeCamera=false;Game.HideInterface=false;yield return Capture(output,"pausa");
+            Game.Screens.ShowPauseOptions(true);yield return Capture(output,"pausa-opciones");Game.Screens.ShowPauseOptions(false);
             Game.QaAction(2);yield return Capture(output,"cartas");
             Game.Choose(0);while(Game.Run.Choosing)Game.Choose(0);
             Game.QaAction(5);Game.SetPaused(false);yield return new WaitForSecondsRealtime(2.2f);

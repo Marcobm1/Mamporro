@@ -24,6 +24,13 @@ namespace Mamporro.Persistence
         public bool NothingToSave;
         internal ProgressDto Pending;
     }
+    // Resultado de un cambio de opciones: aplicado (en memoria) y, si se pudo, guardado.
+    public sealed class SettingsChange
+    {
+        public bool Applied,Saved;
+        // value.invalid (rechazado, nada cambia) o el fallo de guardado (storage.*).
+        public string Error;
+    }
 
     // Progreso permanente de la aplicación sobre un único ProgressStore: carga al arrancar,
     // selección, configuración de partida y liquidación única (MetaRules.Settle + lastRun),
@@ -52,7 +59,7 @@ namespace Mamporro.Persistence
 
         public void Reload()
         {
-            Baseline=Store.Load();Status=Baseline.Status;LastError=Baseline.Error;
+            Baseline=Store.Load();Status=Baseline.Status;LastError=Baseline.Error;SettingsSessionOnly=false;
             Progress=Baseline.Candidate!=null?Copy(Baseline.Candidate):ProgressDto.New(Language);
         }
         ProgressDto Copy(ProgressDto source)=>ProgressValidator.Stored(ProgressTree.Stored(source),Language).Candidate;
@@ -69,7 +76,7 @@ namespace Mamporro.Persistence
         public void Adopt(StoreResult result)
         {
             if(result==null||!result.Success)return;
-            Baseline=result.Snapshot;Status=Baseline.Status;LastError=null;Progress=Copy(Baseline.Candidate);
+            Baseline=result.Snapshot;Status=Baseline.Status;LastError=null;SettingsSessionOnly=false;Progress=Copy(Baseline.Candidate);
         }
 
         // Recuperación confirmada por el usuario del candidato revisado (review/backup).
@@ -92,15 +99,33 @@ namespace Mamporro.Persistence
         // Sin guardado disponible se aplican solo en memoria, como la web sin almacenamiento.
         public bool Purchase(string id)=>Change(next=>MetaRules.Purchase(next.meta,id));
         public bool PurchaseExtra(string action)=>Change(next=>MetaRules.PurchaseExtra(next.meta,action));
-        public bool SetLanguage(string language)
+        public bool SetLanguage(string language)=>ChangeSettings(s=>s.language=language).Applied;
+        public bool SetRunMinutes(int minutes)=>ChangeSettings(s=>s.runMinutes=minutes).Applied;
+
+        // Cambio de opciones (las 14 de SettingsDto). Se valida con las mismas reglas que el
+        // guardado (ProgressValidator): un valor fuera del contrato no se aplica. Si el guardado
+        // falla o no está disponible, el cambio se queda en memoria solo para esta sesión (como
+        // la web sin almacenamiento) y se conserva el último guardado válido.
+        public SettingsChange ChangeSettings(Action<SettingsDto> apply)
         {
-            if(language!="es"&&language!="en")return false;
-            return Progress.settings.language==language||Change(next=>{next.settings.language=language;return true;});
+            var next=Copy(Progress);apply(next.settings);
+            if(!ValidSettings(next))return new SettingsChange {Error="value.invalid"};
+            if(ProgressTree.Stored(next)==ProgressTree.Stored(Progress))return new SettingsChange {Applied=true,Saved=CanSave&&!SettingsSessionOnly};
+            if(!CanSave){Progress=next;return new SettingsChange {Applied=true,Error=NeedsRecovery?"storage.recovery-pending":"storage.unavailable"};}
+            var result=Save(next);
+            if(result.Success)return new SettingsChange {Applied=true,Saved=true};
+            Progress=next;SettingsSessionOnly=true;
+            return new SettingsChange {Applied=true,Error=result.Error};
         }
-        public bool SetRunMinutes(int minutes)
+        // Hay opciones aplicadas que no se pudieron guardar (se escribirán con el próximo guardado correcto).
+        public bool SettingsSessionOnly {get;private set;}
+        bool ValidSettings(ProgressDto progress)
         {
-            if(minutes!=5&&minutes!=10&&minutes!=15)return false;
-            return Progress.settings.runMinutes==minutes||Change(next=>{next.settings.runMinutes=minutes;return true;});
+            string json;try{json=ProgressTree.Stored(progress);}catch(ArgumentException){return false;}
+            var validation=ProgressValidator.Stored(json,Language);
+            if(validation.Candidate==null)return false;
+            foreach(var issue in validation.Issues)if(issue.Code=="option.default")return false;
+            return true;
         }
         bool Change(Func<ProgressDto,bool> apply)
         {

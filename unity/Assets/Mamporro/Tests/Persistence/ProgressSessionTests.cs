@@ -237,6 +237,76 @@ namespace Mamporro.Tests
             Assert.That(File.ReadAllText(Primary),Is.EqualTo("{roto"));
         }
 
+        // ------------------------------------------------------------ opciones (paso 8)
+        static void ChangeAll(SettingsDto s)
+        {
+            s.musicVolume=.25;s.effectsVolume=1;s.muted=true;s.reducedParticles=true;s.cameraShake=false;s.flashes=false;s.language="en";
+            s.mouseSensitivity=2.4;s.renderHeight=480;s.vertexSnap=false;s.dithering=false;s.slideWithCtrl=true;s.showFps=true;s.runMinutes=15;
+        }
+        [Test]public void TheFourteenOptionsChangeSaveAndSurviveAReload()
+        {
+            Save(ProgressDto.New("es"));var session=Open();
+            var change=session.ChangeSettings(ChangeAll);Assert.That(change.Applied,Is.True);Assert.That(change.Saved,Is.True);Assert.That(change.Error,Is.Null);
+            var expected=ProgressDto.New("es");ChangeAll(expected.settings);
+            Assert.That(Json(session.Progress),Is.EqualTo(Json(expected)));
+            var reloaded=Open();Assert.That(reloaded.Status,Is.EqualTo("loaded"));Assert.That(Json(reloaded.Progress),Is.EqualTo(Json(expected)),"las 14 opciones tras recargar");
+            Assert.That(reloaded.Progress.meta.coins,Is.Zero,"las opciones no tocan la meta");
+        }
+        [Test]public void OptionLimitsComeFromTheContractAndInvalidValuesChangeNothing()
+        {
+            Save(ProgressDto.New("es"));var session=Open();
+            // Extremos permitidos.
+            foreach(Action<SettingsDto> ok in new Action<SettingsDto>[]{s=>s.mouseSensitivity=.2,s=>s.mouseSensitivity=3,s=>s.musicVolume=0,s=>s.musicVolume=1,s=>s.effectsVolume=0,
+                s=>s.effectsVolume=1,s=>s.renderHeight=240,s=>s.renderHeight=360,s=>s.renderHeight=480,s=>s.runMinutes=5,s=>s.runMinutes=10,s=>s.runMinutes=15,s=>s.language="en",s=>s.language="es"})
+                Assert.That(session.ChangeSettings(ok).Saved,Is.True);
+            var before=File.ReadAllBytes(Primary);string current=Json(session.Progress);
+            // Fuera del contrato, NaN o infinito: se rechaza sin tocar la sesión ni el archivo.
+            foreach(Action<SettingsDto> bad in new Action<SettingsDto>[]{s=>s.mouseSensitivity=.19,s=>s.mouseSensitivity=3.01,s=>s.mouseSensitivity=double.NaN,
+                s=>s.musicVolume=-.01,s=>s.musicVolume=1.01,s=>s.effectsVolume=double.PositiveInfinity,s=>s.renderHeight=300,s=>s.renderHeight=0,
+                s=>s.runMinutes=7,s=>s.runMinutes=0,s=>s.language="fr",s=>s.language=null}){
+                var result=session.ChangeSettings(bad);
+                Assert.That(result.Applied,Is.False);Assert.That(result.Error,Is.EqualTo("value.invalid"));
+            }
+            Assert.That(Json(session.Progress),Is.EqualTo(current));CollectionAssert.AreEqual(before,File.ReadAllBytes(Primary));
+        }
+        [Test]public void InvalidStoredOptionsLoadAsDefaultsWithoutSilentReset()
+        {
+            var p=ProgressDto.New("es");p.meta.coins=77;p.settings.showFps=true;var tree=ProgressTree.From(p);var settings=(Dictionary<string,object>)tree["settings"];
+            settings["mouseSensitivity"]=9.0;settings["renderHeight"]=300;settings["runMinutes"]=7;
+            Directory.CreateDirectory(dir);string json=ProgressJson.Stringify(ProgressTree.Object("format","mamporro.unity-save","version",1,"progress",tree));
+            File.WriteAllText(Primary,json,new UTF8Encoding(false));
+            var session=Open();Assert.That(session.Status,Is.EqualTo("review"));
+            var s=session.Progress.settings;Assert.That(s.mouseSensitivity,Is.EqualTo(1));Assert.That(s.renderHeight,Is.EqualTo(360));Assert.That(s.runMinutes,Is.EqualTo(10));
+            Assert.That(s.showFps,Is.True,"las opciones válidas se conservan");Assert.That(session.Progress.meta.coins,Is.EqualTo(77));
+            Assert.That(File.ReadAllText(Primary),Is.EqualTo(json),"sin recuperación confirmada no se reescribe");
+            Assert.That(session.Recover(true).Success,Is.True);Assert.That(Open().Progress.settings.renderHeight,Is.EqualTo(360));
+        }
+        [TestCase("write")][TestCase("publish")]
+        public void OptionSaveFailureKeepsTheChangeOnlyForThisSession(string failOn)
+        {
+            Save(ProgressDto.New("es"));var before=File.ReadAllBytes(Primary);
+            var failing=new FailingFiles(files);var session=Open(failing);failing.FailOn=failOn;
+            var change=session.ChangeSettings(s=>{s.showFps=true;s.renderHeight=240;});
+            Assert.That(change.Applied,Is.True);Assert.That(change.Saved,Is.False,"no finge el guardado");Assert.That(change.Error,Does.StartWith("storage.write-failed"));
+            Assert.That(session.SettingsSessionOnly,Is.True);Assert.That(session.Progress.settings.showFps,Is.True);Assert.That(session.Progress.settings.renderHeight,Is.EqualTo(240));
+            CollectionAssert.AreEqual(before,File.ReadAllBytes(Primary),"el último guardado válido sigue intacto");
+            Assert.That(Open().Progress.settings.showFps,Is.False);
+            // El siguiente guardado correcto escribe también lo pendiente.
+            failing.FailOn=null;Assert.That(session.ChangeSettings(s=>s.flashes=false).Saved,Is.True);Assert.That(session.SettingsSessionOnly,Is.False);
+            var stored=Open().Progress.settings;Assert.That(stored.showFps,Is.True);Assert.That(stored.renderHeight,Is.EqualTo(240));Assert.That(stored.flashes,Is.False);
+        }
+        [Test]public void ImportedOptionsReplaceTheSessionOptions()
+        {
+            Save(ProgressDto.New("es"));var session=Open();
+            var web=ProgressDto.New("es");ChangeAll(web.settings);web.meta.coins=55;
+            var bytes=Encoding.UTF8.GetBytes(ProgressJson.Stringify(ProgressTree.Object("format","mamporro.progress","version",1,
+                "source",ProgressTree.Object("platform","web","saveVersion",3),"progress",ProgressTree.From(web))));
+            var importer=new ProgressImporter(session.Store,"es");var review=importer.Review(bytes);Assert.That(review.CanConfirm,Is.True);
+            var result=importer.Confirm(review,true);Assert.That(result.Success,Is.True);session.Adopt(result);
+            Assert.That(Json(session.Progress),Is.EqualTo(Json(web)));Assert.That(session.Progress.settings.language,Is.EqualTo("en"));
+            Assert.That(Json(Open().Progress),Is.EqualTo(Json(web)),"y siguen tras recargar");
+        }
+
         // ------------------------------------------------------------ partida real → recibo → guardado → recarga
         [Test]public void RealRunCountersFlowThroughMetaRulesIntoStorage()
         {

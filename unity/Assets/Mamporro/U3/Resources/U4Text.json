@@ -62,5 +62,12 @@
 {"key":"import.code.value.invalid","es":"Valor no válido o fuera de rango","en":"Invalid or out-of-range value"},
 {"key":"import.code.version.conflict","es":"Versión incompatible o contradictoria","en":"Incompatible or contradictory version"},
 {"key":"import.code.web.initial-meta","es":"Guardado web antiguo sin progreso: se crea progreso inicial","en":"Old web save without progress: initial progress is created"},
-{"key":"import.code.web.migrate","es":"Guardado web de una versión anterior","en":"Web save from an earlier version"}
+{"key":"import.code.web.migrate","es":"Guardado web de una versión anterior","en":"Web save from an earlier version"},
+{"key":"options.on","es":"Sí","en":"On"},
+{"key":"options.off","es":"No","en":"Off"},
+{"key":"options.audioPending","es":"El sonido aún no está en esta versión: volúmenes y silencio se guardan y se aplicarán cuando llegue.","en":"Sound is not in this version yet: volumes and mute are saved and will apply when it arrives."},
+{"key":"options.sessionOnly","es":"No se pudo guardar: los cambios de opciones solo durarán esta sesión.","en":"Could not save: option changes only last for this session."},
+{"key":"options.close","es":"Cerrar opciones","en":"Close options"},
+{"key":"controls.qa","es":"Atajos de QA (cambian las mismas opciones guardadas)","en":"QA shortcuts (change the same saved options)"},
+{"key":"controls.window","es":"Ventana 1080p / 1440p","en":"Window 1080p / 1440p"}
 ]}
