@@ -1,6 +1,6 @@
 # Migración propuesta a Unity
 
-> Estado vigente en [ESTADO_ACTUAL](ESTADO_ACTUAL.md): U1–U4 aprobados; [U4 aprobada manualmente el 04/10/2026](PROGRESO_U4.md#checkpoint-al-terminar-u4). [U5 en planificación](PROGRESO_U5.md), no autorizado. Las autorizaciones antiguas que figuran debajo son históricas.
+> Estado vigente en [ESTADO_ACTUAL](ESTADO_ACTUAL.md): U1–U4 aprobados; [U4 aprobada manualmente el 04/10/2026](PROGRESO_U4.md#checkpoint-al-terminar-u4). [U5 autorizado el 04/10/2026](PROGRESO_U5.md), en implementación. Las autorizaciones antiguas que figuran debajo son históricas.
 
 ## Historial de preparación (sustituido por el checkpoint U2)
 
@@ -165,7 +165,7 @@ extra; todas las pantallas y opciones se usan en una build Windows real.
 
 ### U5. Audio, pulido y validación de equivalencia
 
-**04/10/2026:** siguiente bloque propuesto, en planificación; auditoría, plan por pasos y dudas en [PROGRESO_U5](PROGRESO_U5.md). No autorizado. No incluye las mejoras de balance pedidas tras U4 (menos enemigos iniciales más resistentes, más oro de partida), que van después de U6.
+**04/10/2026:** plan aprobado e implementación autorizada; auditoría, plan, resoluciones y avance en [PROGRESO_U5](PROGRESO_U5.md). No incluye las mejoras de balance pedidas tras U4 (menos enemigos iniciales más resistentes, más oro de partida), que van después de U6.
 
 - Portar síntesis y reproducción, presupuestos de voces/partículas, cámara y
   opciones de reducción de efectos; conservar avisos de combate legibles.

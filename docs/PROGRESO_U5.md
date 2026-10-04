@@ -1,16 +1,16 @@
 # Checkpoint U5 — audio, pulido y validación de equivalencia
 
-Estado: **PLANIFICACIÓN. U5 no está autorizado para implementación** (04/10/2026). U4 aprobada manualmente por el autor el 04/10/2026; último cierre técnico `3754e31be16904207fd2ee25340bfa1ca095f181`. Este documento recoge la auditoría, el plan propuesto y las dudas para el autor. No programar U5 hasta su respuesta.
+Estado: **IMPLEMENTACIÓN AUTORIZADA Y EN CURSO desde el 04/10/2026.** Plan aprobado por el autor con las 11 dudas resueltas («Resolución del autor»). U4 aprobada manualmente el 04/10/2026; último cierre técnico `3754e31be16904207fd2ee25340bfa1ca095f181`. No iniciar U6 sin la aprobación manual de U5.
 
 ## Cómo retomar
 
-- **Punto de partida:** `3754e31` («Cierra U4 y prepara la prueba manual»), U4 aprobada. Cierre documental de U4 y este plan en «Registra la aprobación de U4 y planifica U5» (hash: `git log -1 --format="%H %s" -- docs/PROGRESO_U5.md`).
-- **Paso actual:** ninguno. Plan propuesto; esperando respuesta del autor a «Dudas para el autor».
-- **Terminado:** auditoría de audio, efectos y rendimiento (web y Unity); plan por pasos.
-- **A medias:** nada. Sin cambios de runtime.
+- **Punto de partida:** `3754e31` (U4 aprobada). Plan en `31711bf` («Registra la aprobación de U4 y planifica U5»). Paso 1 en «Porta la síntesis de audio y el presupuesto de voces de U5» (hash: `git log -1 --format="%H %s" -- unity/Assets/Mamporro/Core/Audio/AudioSynth.cs`).
+- **Paso actual:** 2, motor de audio (sin empezar).
+- **Terminado:** paso 1 (síntesis y voces). Último Edit Mode 373/373 (04/10/2026).
+- **A medias:** nada.
 - **Sin commit a propósito:** siete ajustes Unity de «Cambios locales excluidos».
-- **Siguiente paso exacto:** esperar la respuesta del autor. Con la autorización, empezar por el paso 1 (síntesis y presupuesto de voces en C# puro contra `baseline.json`).
-- **Autorización:** ninguna todavía para U5.
+- **Siguiente paso exacto:** paso 2: `U5/AudioDirector` (escucha añadida en código a la cámara del mundo; clips `AudioClip.Create` desde `AudioSynth`; 16 fuentes de efectos con `VoiceBudget` y reloj `AudioSettings.dspTime`; 2 fuentes de música con cambio a intensa conservando `timeSamples`; modos menú ×0,65 / partida ×1 / intensa / pausa y cartas ×0,25 / resultados ×1; maestro 0,8; rampas 15/40 ms; opciones de volumen y silencio; compresor propio en `OnAudioFilterRead`; foco según la resolución 1; sonidos de botones, compras y resultados; `OnAudioConfigurationChanged`). Pruebas Play y medidor de señal.
+- **Autorización:** pasos 1–9 seguidos, con checkpoint, pruebas, commit y push tras cada pieza. Detenerse solo ante una decisión nueva importante de diseño/arquitectura (o si el compresor propio resulta inestable, con latencia o coste inesperado) y al terminar U5.
 
 Comprobación desde CMD:
 
@@ -132,7 +132,23 @@ Propuesta sin redundancia:
 - Las vistas del mundo sin interfaz (vista alta, cuatro sitios) solo una vez, a 1920×1080: no dependen del idioma.
 - 2560×1440 queda cubierta por las capturas del ensayo de rendimiento.
 
-## Dudas para el autor
+## Resolución del autor (04/10/2026)
+
+Plan aprobado e implementación autorizada (pasos 1–9 seguidos). Respuestas:
+
+1. **Foco:** al perderlo, pausar, descartar efectos pendientes y silenciar todo. Al volver, sigue en pausa, sin cola de efectos, música al 25 % hasta pulsar Continuar. Diferencia intencionada con la web.
+2. **Inicio del audio:** música del menú desde el arranque, sin esperar a un clic.
+3. **Compresor:** propio, pequeño, aislado y sin asignaciones en el hilo de audio; umbral −12 dB, relación 8, rodilla 30 dB, ataque 3 ms, liberación 250 ms. Aproximación documentada, sin NaN/Infinity, con pruebas deterministas. Si resulta inestable o caro, detenerse antes de cambiar de arquitectura.
+4. **Cámara:** equivalencia web (brazo contra el terreno, recuperación suave, pivote suavizado al deslizarse, FOV extra a gran velocidad y sacudida). No autoriza cámara nueva contra estructuras.
+5. **Números de daño:** portarlos equivalentes (fuente pixelada, crítico, daño recibido, 140, limpieza entre partidas).
+6. **Parpadeo del jugador:** sí, sujeto a «Destellos de daño»; los telegrafiados siempre visibles. Sacudida con valores web (0,45 / 0,8 / 1 / 0,4 / 0,7), trauma 0–1 al cuadrado, la opción la desactiva y pone el trauma a 0.
+7. **GPU:** no publicar cambios de `ProjectSettings.asset`. Ensayo principal en build normal con GPU «n/d» si no hay medida válida; intento aparte en **diagnóstico Development**, nunca presentado como rendimiento final.
+8. **Asignaciones:** pasada separada «diagnóstico Development» (GC, memoria, GPU si es válida), sin mezclar sus FPS.
+9. **Capturas:** 11 pantallas × 1280×720 y 1920×1080 × ES/EN (44), mundo sin interfaz una vez a 1920×1080, 2560×1440 solo en el ensayo. Revisarlas de verdad.
+10. **Nombre:** no cambiar `Mamporro-U3.exe` ni el producto «Mamporro U1» en U5; se decide en U6 con migración segura.
+11. **Ejecución:** pasos 1–9 seguidos dentro del alcance; sin balance nuevo ni contenido.
+
+## Dudas planteadas al autor (resueltas arriba)
 
 1. **Audio al perder el foco (Alt+Tab):** la web pausa al perder el foco (la música sigue al 25 %) y solo suspende el audio si la pestaña se oculta. En escritorio, una ventana sin foco suele estar tapada. **Recomendado:** al perder el foco, pausar, vaciar efectos y silenciar todo; al volver, seguir en pausa con la música al 25 %. Alternativa: igual que la web (música al 25 % en segundo plano).
 2. **Inicio del audio:** la web espera un primer clic/tecla por imposición del navegador. **Recomendado:** en Windows, música del menú desde el arranque (diferencia intencionada documentada).
@@ -171,6 +187,17 @@ Conservar sin publicar ni restaurar:
 - **Árbol al terminar:** solo los siete ajustes Unity excluidos.
 - **Siguiente paso exacto:** esperar respuesta del autor a las dudas; no programar U5 antes.
 
+### 04/10/2026 — paso 1: síntesis y presupuesto de voces — Claude Code
+
+- **Punto de partida:** `31711bfc0240dca833803cbcae7e6aad47365e64` (plan publicado); solo los siete ajustes Unity excluidos.
+- **Trabajo:** `Core/Audio/AudioCatalog.cs` (20 timbres de `data/audio.ts` en el mismo orden, 22 050 Hz, 16/4 voces, 132 BPM, melodía y bajo), `Core/Audio/AudioSynth.cs` (`Sound` y `Music` portados de `synth.ts`: cálculo en double, muestras en float, `Rng("sonido")`/`Rng("musica")`, `Math.round` de JS para la longitud) y `Core/Audio/VoiceBudget.cs` (16 voces, 4 reservadas para prioridad ≥ 1, enfriamiento por timbre, lo rechazado se descarta; arrays fijos, sin asignaciones, reloj inyectado). C# puro en `Mamporro.Core`, sin UnityEngine.
+- **Pruebas nuevas (Edit, 6, `Tests/Core/AudioReferenceTests.cs`):** catálogo igual a la referencia (IDs, orden y 22 050 Hz); los 20 efectos contra `baseline.json` → `audio` (muestras exactas, pico ±1e-6, energía ±1e-6 relativa, 32 primeras muestras ±1e-7) más las propiedades de `audio.test.ts` (finitos, ≤ 0,25, bordes a cero, audibles, repetibles); las dos músicas contra la referencia (320 727 muestras, igual duración, distintas, pico 0,1–0,5, bordes a cero); las cuatro comprobaciones de `VoiceBudget` web (agrupar golpes y liberar; 4 reservadas y nunca más de 16, sin aplazar) y expiración/enfriamiento por timbre. La sección `audio` se extrae del JSON congelado y se lee con `ProgressJson`; no se regenera nada.
+- **Pruebas ejecutadas (04/10/2026, Europe/Madrid):** `scripts\u3.cmd edit` **373/373** (367 + 6), a la primera.
+- **No ejecutado:** Play/build (sin cambios de escena ni runtime).
+- **Commit/push:** «Porta la síntesis de audio y el presupuesto de voces de U5»; fetch previo y push normal si el remoto sigue en `31711bf`.
+- **Árbol al terminar:** solo los siete ajustes Unity excluidos.
+- **Siguiente paso exacto:** paso 2 (ver «Cómo retomar»).
+
 ## Checkpoint al terminar U5
 
-Pendiente: U5 no está autorizado ni implementado.
+Pendiente: U5 en implementación.

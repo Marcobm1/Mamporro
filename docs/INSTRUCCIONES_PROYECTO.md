@@ -30,7 +30,7 @@ Al iniciar una sesión, leer en este orden:
 
 1. `docs/ESTADO_ACTUAL.md`.
 2. `docs/CONTINUIDAD_AGENTES.md`.
-3. El checkpoint del bloque vigente (`docs/PROGRESO_U5.md`: planificación, sin autorización de implementación).
+3. El checkpoint del bloque vigente (`docs/PROGRESO_U5.md`: implementación autorizada el 04/10/2026).
 4. `docs/DECISIONES.md` y cualquier continuación posterior indicada por el estado actual.
 5. `docs/ESPECIFICACION.md` como especificación histórica de partida.
 6. `docs/MIGRACION_UNITY.md`.
@@ -110,7 +110,7 @@ Mantener la web recuperable y no alterarla para ocultar diferencias de Unity. Ve
 
 ## Unity y migración
 
-U0 conserva referencia reproducible. U1 creó y validó el proyecto técnico y fue aprobado manualmente por el autor el 29/09/2026. U2 fue aprobado por el autor el 29/09/2026. **U3 y U4 aprobadas manualmente el 04/10/2026.** U5 está en planificación en `docs/PROGRESO_U5.md`; no implementar hasta la autorización del autor.
+U0 conserva referencia reproducible. U1 creó y validó el proyecto técnico y fue aprobado manualmente por el autor el 29/09/2026. U2 fue aprobado por el autor el 29/09/2026. **U3 y U4 aprobadas manualmente el 04/10/2026.** U5 está autorizado (04/10/2026); avanzar por piezas verificables según `docs/PROGRESO_U5.md`.
 
 Durante el port, conservar IDs, reglas, datos, traducciones y progresión compatible. No rebalancear ni añadir contenido nuevo para «mejorar» mientras se valida equivalencia, salvo autorización expresa.
 

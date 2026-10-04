@@ -1,6 +1,6 @@
 # MAMPORRO en Unity
 
-> Estado vigente en [ESTADO_ACTUAL](../docs/ESTADO_ACTUAL.md): U1–U3 aprobados; aprobación manual U3 el 04/10/2026 ([cierre](../docs/PROGRESO_U3.md#checkpoint-al-terminar-u3)). [U4 aprobada manualmente el 04/10/2026](../docs/PROGRESO_U4.md#checkpoint-al-terminar-u4). [U5 en planificación](../docs/PROGRESO_U5.md), sin audio todavía.
+> Estado vigente en [ESTADO_ACTUAL](../docs/ESTADO_ACTUAL.md): U1–U3 aprobados; aprobación manual U3 el 04/10/2026 ([cierre](../docs/PROGRESO_U3.md#checkpoint-al-terminar-u3)). [U4 aprobada manualmente el 04/10/2026](../docs/PROGRESO_U4.md#checkpoint-al-terminar-u4). [U5 autorizado y en implementación](../docs/PROGRESO_U5.md).
 
 ## Referencia U1 (aceptada por el autor)
 
@@ -248,4 +248,4 @@ la horda provisional no garantiza el coste del futuro combate completo.
 - `Generated/`: escena, malla, datos y materiales originales con sus `.meta`.
 
 La web y `Docs/Reference/` permanecen intactos. U1 ya ha recibido revisión favorable del
-autor; U2 y U3 están aprobados. U4 está aprobada por el autor (04/10/2026). U5 está en planificación.
+autor; U2 y U3 están aprobados. U4 está aprobada por el autor (04/10/2026). U5 está autorizado y en implementación.

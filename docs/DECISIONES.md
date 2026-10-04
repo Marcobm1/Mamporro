@@ -1,6 +1,6 @@
 # Decisiones acordadas
 
-**Estado actual:** U1–U4 aprobados; U4 aprobada manualmente el 04/10/2026. U5 en planificación, no autorizado; véase la última entrada y [PROGRESO_U5](PROGRESO_U5.md). Las autorizaciones anteriores son históricas.
+**Estado actual:** U1–U4 aprobados; U4 aprobada manualmente el 04/10/2026. U5 autorizado e implementándose desde el 04/10/2026; véase la última entrada y [PROGRESO_U5](PROGRESO_U5.md). Las autorizaciones anteriores son históricas.
 
 Registro de lo que se ha decidido durante el desarrollo, además de la
 [especificación original](ESPECIFICACION.md). Cuando esto la concreta o la
@@ -632,3 +632,17 @@ Dos mejoras de balance pedidas por el autor durante la prueba. **No son fallos d
 - **Oro de partida:** los enemigos sueltan demasiado poco oro. Más adelante deben soltar bastante más, con cantidad/frecuencia que pueda crecer con el tiempo y la dificultad, y más oportunidades reales de abrir baúles. Es **oro de la partida, no Calderilla del Caos**. No cambiar todavía probabilidades, cantidades, precios ni curvas.
 
 Dirección futura completa confirmada para después de terminar la migración (U6): mundo y estructuras notablemente mayores; terreno más rectangular/geométrico con grandes mesetas, rampas y más verticalidad; escalada libre; menos enemigos al inicio y más resistentes, con aumento progresivo; más oro de partida; acabado retro bastante más profesional; animaciones; arte e iconos originales; más enemigos, armas, tomos y personajes. Megabonk es referencia de escala, verticalidad, lectura espacial/geometría y agilidad; no copiar arte, mapas, modelos, assets, contenido ni diseño exacto. MAMPORRO mantiene identidad propia.
+
+## U5 autorizado: resolución de las dudas del plan (04/10/2026)
+
+Decisión del autor: plan de U5 aprobado e implementación autorizada (pasos 1–9 seguidos, con checkpoint, pruebas, commit y push por pieza; detenerse solo ante una decisión nueva importante y al terminar U5; no iniciar U6 sin aprobación).
+
+- **Foco (diferencia intencionada con la web):** al perder el foco se pausa, se descartan efectos y se silencia todo; al volver, sigue en pausa sin cola de efectos y con la música al 25 % hasta Continuar.
+- **Inicio del audio:** música del menú desde el arranque en Windows.
+- **Compresor propio** (aproximación del `DynamicsCompressor` del navegador): umbral −12 dB, relación 8, rodilla 30 dB, ataque 3 ms, liberación 250 ms; sin asignaciones en el hilo de audio ni NaN/Infinity. Si es inestable o caro, detenerse antes de cambiar de arquitectura.
+- **Cámara:** equivalencia con la web (brazo, recuperación, pivote, FOV y sacudida); no autoriza cámara nueva contra estructuras.
+- **Números de daño y parpadeo del jugador** equivalentes a la web; el parpadeo y los destellos dependen de «Destellos de daño»; los telegrafiados nunca se ocultan. Sacudida con valores web (0,45/0,8/1/0,4/0,7), sin rebalancear.
+- **Medidas:** no publicar `ProjectSettings.asset`. GPU «n/d» en el ensayo principal si no hay medida válida; GC, memoria y GPU (si es válida) en una pasada «diagnóstico Development» separada, nunca presentada como rendimiento final.
+- **Capturas:** 1280×720 y 1920×1080 en ES/EN (44), mundo sin interfaz una vez, 2560×1440 solo en el ensayo.
+- **Nombre:** `Mamporro-U3.exe` y «Mamporro U1» se conservan en U5; nombre definitivo y migración de la carpeta de guardado en U6.
+- U5 sigue sin incluir las mejoras de balance pedidas tras U4 ni contenido, mundo, escalada, animaciones finales, overhaul, Steam ni telemetría.

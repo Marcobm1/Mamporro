@@ -1,6 +1,6 @@
 # MAMPORRO — estado actual y punto de continuación
 
-Corte vigente: **04/10/2026**, U3 **aprobada manualmente por el autor como base funcional**. Último cierre técnico previo: `83246ebfd873b0c5d23611a1d557f83096180217`. U4 **aprobada manualmente por el autor el 04/10/2026** (último cierre técnico `3754e31`); [cierre](PROGRESO_U4.md#checkpoint-al-terminar-u4). **U5 es el siguiente bloque propuesto: en planificación, no autorizado ni implementado**; plan y dudas en [PROGRESO_U5](PROGRESO_U5.md).
+Corte vigente: **04/10/2026**, U3 **aprobada manualmente por el autor como base funcional**. Último cierre técnico previo: `83246ebfd873b0c5d23611a1d557f83096180217`. U4 **aprobada manualmente por el autor el 04/10/2026** (último cierre técnico `3754e31`); [cierre](PROGRESO_U4.md#checkpoint-al-terminar-u4). **U5 autorizado e implementándose desde el 04/10/2026**; plan, resoluciones y avance en [PROGRESO_U5](PROGRESO_U5.md).
 
 Las limitaciones visuales son mejoras futuras; los picos aislados sin causa aislada siguen documentados y no bloquean el avance. Las seis propuestas técnicas de U3 no han recibido confirmación individual. Las actualizaciones siguientes son históricas.
 
@@ -17,7 +17,7 @@ Las limitaciones visuales son mejoras futuras; los picos aislados sin causa aisl
 - U2: **implementado, probado y aprobado por el autor el 29/09/2026**; cierre en `docs/PROGRESO_U2.md`.
 - U3: **implementado y verificado; aprobado manualmente por el autor el 04/10/2026**; cierre e instrucciones en `docs/PROGRESO_U3.md`.
 - U4: implementada, verificada y **aprobada manualmente el 04/10/2026** (pasos 1–9; último cierre técnico `3754e31`).
-- U5: siguiente bloque propuesto, **en planificación** ([PROGRESO_U5](PROGRESO_U5.md)); no autorizado ni implementado. U5–U6 siguen en el plan, sin implementar.
+- U5: **autorizado el 04/10/2026, en implementación** por pasos ([PROGRESO_U5](PROGRESO_U5.md)). U5–U6 siguen en el plan, sin implementar.
 - Rama de trabajo y por defecto: `claude/zen-pasteur-674ik0`.
 - Implementación U1: `abe0a9b7f0b8c53f478b91c870341999df2ea073`.
 - Checkpoint U1: `eb691b595eb247118075368430d34ed0a95735d1`.
@@ -42,7 +42,7 @@ Los Markdown del traspaso del 28/29 de septiembre decían que Codex CLI estaba p
 
 El entorno local se comprobó, Codex CLI se instaló/verificó y U1 se implementó realmente en Unity. Unity importó el proyecto, compiló C#, ejecutó Edit/Play Mode, generó una build Windows x64 Mono y la build se ejecutó con D3D11. Tras esa entrega, el autor probó U1 y confirmó que estaba bien; a continuación autorizó U2.
 
-Por tanto, cualquier frase histórica como «no iniciar U2» dentro de un checkpoint anterior debe interpretarse en su fecha, no como restricción vigente. El bloque vigente es `docs/PROGRESO_U5.md`, en planificación (sin autorización de implementación).
+Por tanto, cualquier frase histórica como «no iniciar U2» dentro de un checkpoint anterior debe interpretarse en su fecha, no como restricción vigente. El bloque vigente es `docs/PROGRESO_U5.md`, implementación autorizada.
 
 ## Repositorio y protección del trabajo local
 
@@ -132,6 +132,6 @@ Codex CLI: iniciar `codex` en la raíz y pedir que lea `AGENTS.md`.
 
 Claude Code: iniciarlo en la raíz; `CLAUDE.md` contiene la entrada equivalente.
 
-Ambos deben leer `docs/CONTINUIDAD_AGENTES.md`, este documento y `docs/PROGRESO_U5.md`, además de los cierres de U3 y U4. U3 y U4 están aprobadas; las seis propuestas técnicas de U3 no se consideran confirmadas individualmente. U5 está en planificación y no se programa sin autorización.
+Ambos deben leer `docs/CONTINUIDAD_AGENTES.md`, este documento y `docs/PROGRESO_U5.md`, además de los cierres de U3 y U4. U3 y U4 están aprobadas; las seis propuestas técnicas de U3 no se consideran confirmadas individualmente. U5 está autorizado: avanzar por pasos verificables.
 
 Al terminar una sesión con cambios relevantes, el agente saliente debe actualizar `docs/PROGRESO_U5.md` antes de entregar el turno.
