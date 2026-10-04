@@ -1,0 +1,6 @@
+{
+  "name": "Mamporro.Persistence",
+  "rootNamespace": "Mamporro.Persistence",
+  "references": ["Mamporro.Core"],
+  "noEngineReferences": true
+}

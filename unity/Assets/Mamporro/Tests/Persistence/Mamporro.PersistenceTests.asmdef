@@ -1,0 +1,6 @@
+{
+  "name": "Mamporro.PersistenceTests",
+  "references": ["Mamporro.Core", "Mamporro.Persistence"],
+  "includePlatforms": ["Editor"],
+  "optionalUnityReferences": ["TestAssemblies"]
+}

@@ -122,4 +122,6 @@ Estrategia a implementar/probar en paso 3: temporal en el mismo directorio, cerr
 
 `Core/ProgressJson.cs` y `ProgressValidation.cs` implementan el parser acotado, tokens numéricos exactos, migraciones/normalización e informe. `ProgressValidator.Import` admite transferencia/web heredada; `Stored` exige formato Unity. Ambas devuelven un candidato completo o ninguno, sin IO. `ProgressTree.Stored` ofrece serialización canónica; no escribe archivos. Los 94 casos contractuales ya se ejecutan contra C# mediante `ProgressValidationTests`; no se han cambiado sus esperados para hacer pasar el validador.
 
-Pendientes: confirmar en UI, snapshot inmutable para sustitución y servicio físico de almacenamiento/recuperación. La prueba de doble importación actual verifica identidad del candidato serializado, no dos escrituras físicas.
+El paso 3 incorpora también `Persistence/ProgressStore.cs` y `ProgressFiles.cs`: candidato preparado inmutable, comparación con la instantánea anterior, confirmación, temporal/backup/sustitución/relectura y recuperación. Hay pruebas deterministas de fallos separadas de cinco pruebas sobre archivos reales, incluida importación repetida conservando el archivo externo. Estrategia y garantías efectivas en [PERSISTENCIA_U4](PERSISTENCIA_U4.md).
+
+Pendientes: interfaz de informe/confirmación e integración del servicio con la aplicación. El almacenamiento no está conectado todavía a la escena U3 ni escribe progreso del autor.

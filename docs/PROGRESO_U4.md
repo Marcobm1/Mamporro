@@ -5,11 +5,11 @@ Estado: **IMPLEMENTACIÓN AUTORIZADA Y EN CURSO desde el 04/10/2026.** Política
 ## Cómo retomar
 
 - **Paso 1 publicado:** `fabaf2a64f5ff6c34d3592a25a6594f066130208`. Paso 2 en «Porta las reglas meta y la liquidación de U4»; localizar hash con `git log -1 --format="%H %s" -- unity/Assets/Mamporro/Core/MetaRules.cs`.
-- **Paso actual:** 3 en curso: parser/validación/migraciones puras terminados; falta almacenamiento físico, backup y recuperación.
-- **Terminado:** pasos 1–2 (`fabaf2a`, `dd994b8`) y primera pieza del 3 (parser/validación). Último Edit Mode 287/287; Play Mode 17/17 y build Mono corresponden al cierre del paso 2. Ver registro para comandos, fecha y rutas.
-- **A medias:** ninguna pieza rota. Paso 3 incompleto: validación pura ya funciona, todavía no existe persistencia ni UI de importación/exportación U4.
+- **Paso actual:** 4, exportación web explícita; todavía sin implementar.
+- **Terminado:** pasos 1–3. Contrato `fabaf2a`, meta `dd994b8`, validador `d3927ff`; almacenamiento en «Guarda el progreso de U4 con copia y recuperación» (hash: `git log -1 --format="%H %s" -- unity/Assets/Mamporro/Persistence/ProgressStore.cs`). Último Edit Mode 309/309 y Play Mode 17/17; ver entrada del cierre del paso 3 para build y evidencias.
+- **A medias:** ninguna pieza rota. Persistencia probada como servicio, aún no conectada a aplicación/menús. No existe UI de importación/exportación U4.
 - **Sin commit a propósito:** siete ajustes Unity de «Cambios locales excluidos».
-- **Siguiente paso exacto:** completar paso 3 con servicio de archivos usando `ProgressValidator.Stored` y `ProgressTree.Stored`: temporal validado, confirmación sobre snapshot, backup verificado, sustitución, relectura y recuperación; tests IO/fallos separados. `ProgressValidator.Import` ya procesa transferencia y web heredada sin escribir. No reimplementar el parser ni cambiar esperados.
+- **Siguiente paso exacto:** paso 4, exportador web explícito. Revisar `SaveManager.ts`/`schema.ts`: no construir un gestor al exportar, pues persiste migraciones/reset. Validar estrictamente una instantánea antes de llamar a las reglas puras web; informe y confirmación de recuperaciones, transferencia versionada, descarga sin modificar almacenamiento/partida/recompensas. Probar contra el corpus existente y añadir fallos de lectura/no mutación. Mantener intactas las guardas de referencias: ejecutarlas sobre una instantánea aislada de la base aprobada al introducir la excepción de exportación en `src/`. Reutilizar en Unity `ProgressValidator.Import`, `ProgressStore` y su preparación inmutable; no reimplementar ni cambiar esperados.
 - **Autorización:** continuar los pasos 2–9 sin nuevas confirmaciones generales. Detenerse solo ante decisión nueva importante y, al terminar U4, para prueba manual del autor.
 
 Comprobación desde CMD:
@@ -76,7 +76,7 @@ Sustitución completa, nunca fusión: validar → informe → confirmar → back
 
 ## Plan propuesto por pasos/commits verificables
 
-Plan aprobado. Cada fila es una unidad coherente; dividir si tamaño o pruebas lo exigen. Pasos 1–2 terminados; pasos 3–9 pendientes.
+Plan aprobado. Cada fila es una unidad coherente; dividir si tamaño o pruebas lo exigen. Pasos 1–3 terminados; pasos 4–9 pendientes.
 
 | Paso | Resultado y límites | Verificación principal |
 |---|---|---|
@@ -174,6 +174,21 @@ Conservar sin publicar ni restaurar:
 - **Estado/exclusiones:** pieza compilada y probada, solo siete ajustes Unity excluidos tras publicar. No se ha escrito ningún guardado de usuario.
 - **Siguiente paso exacto:** almacenamiento con temporal/backup/sustitución/relectura y recuperación, reutilizando este validador; no marcar paso 3 terminado todavía.
 
+### 04/10/2026 — paso 3, cierre: almacenamiento y recuperación — Codex
+
+- **Punto de partida:** `d3927ff5cdd8d25d7c57075a7b3e3ae7e3fb982b`, parser/validador puro publicado y verificado en remoto. Se conservan los siete ajustes Unity locales.
+- **Trabajo:** ensamblado `Mamporro.Persistence` sin UnityEngine; almacenamiento acotado, bloqueo entre instancias, preparación inmutable, comprobación de instantánea, confirmación, backup verificado, temporal, sustitución y relectura. Rollback al principal anterior y recuperación revisable desde backup. Repetir el mismo candidato es una operación sin nueva escritura; nunca fusiona ni liquida recompensas.
+- **Archivos:** `Persistence/ProgressFiles.cs`, `ProgressStore.cs`, ensamblado/metas; `Tests/Persistence/ProgressStoreTests.cs`, `ProgressFileTests.cs`, ensamblado/metas. Garantías y límites detallados en `docs/PERSISTENCIA_U4.md`; contrato y estado actualizados.
+- **Pruebas específicas:** 22 nuevas: 17 deterministas en memoria con fallos inyectados y 5 sobre archivos temporales reales de Windows. Preparación/cancelación, vista previa aislada, doble importación, cambio del principal, plan consumido, fallo de lectura/bloqueo/escritura/publicación/verificación/rollback, corrupción, backup, límites y rutas. Archivo externo intacto tras importar dos veces; principal bloqueado conserva progreso y copia. No se usó el directorio de guardado del autor.
+- **Edit Mode:** `scripts\u3.cmd edit`, **309/309**, 04/10/2026 11:01:13–11:01:25 Europe/Madrid. Una pasada intermedia fue 307/307; después se añadieron dos casos de archivos reales. Evidencias `unity/TestResults/U4/step3-edit.xml` y `step3-edit.log`.
+- **Play Mode:** `scripts\u3.cmd play`, **17/17**, 04/10/2026 11:05:29–11:06:34 Europe/Madrid. Evidencias `unity/TestResults/U4/step3-play.xml` y `step3-play.log`.
+- **Build:** `scripts\u3.cmd build`, **Windows x64 Mono correcta**, log terminado el 04/10/2026 11:07:27 Europe/Madrid. `unity/Builds/U3/Mamporro-U3.exe`, evidencia `unity/TestResults/U4/step3-build.log`. Sin visual nuevo: no se modifica escena/render ni se conecta todavía esta capa a U3.
+- **Referencias/web:** ejecutados `git diff --exit-code 0505b1690656d15188860157612455639820fe1f -- src` y `git diff --exit-code -- unity/Docs/Reference`, sin diferencias. Verificadores U0/U2/U3/U4 ya pasaron en el paso 1 de esta sesión; no se repiten aquí ni se regeneran referencias. Índice revisado con `git diff --cached --check`; el whitespace global procede de los ajustes Unity excluidos.
+- **Decisiones/limitaciones:** no hay nueva decisión de diseño. Se usa `File.Replace` para sustitución y `Flush(true)` con relectura; no se promete atomicidad universal ni resistencia a corte eléctrico. Archivo inaccesible/sobredimensionado produce `unavailable`, sin reset ni sustitución. Principal recuperable/corrupto se conserva literalmente al reemplazarlo; no pisa backup válido. Los temporales huérfanos nunca se promueven. UI de recuperación y conexión a `Application.persistentDataPath` pendientes de aplicación.
+- **Commit/push:** «Guarda el progreso de U4 con copia y recuperación». Fetch previo; publicar solo si el remoto sigue en `d3927ff`, push normal y comprobación del HEAD remoto. Hash consultable por la ruta de `ProgressStore.cs` en «Cómo retomar».
+- **Árbol/exclusiones:** tras publicar, solo los siete ajustes Unity deliberadamente excluidos. Sin WIP de runtime pendiente. Logs/builds son evidencia local ignorada por Git.
+- **Siguiente paso exacto:** paso 4, exportación web explícita validada, pruebas web y equivalencia sin mutar el progreso. Pasos 1–3 cerrados; U4 aún no completo. No iniciar U5 ni mejoras posteriores.
+
 ## Checkpoint al terminar U4
 
-Pendiente: U4 no se ha implementado. Completar al cerrar con commits, pruebas exactas/fecha/ruta, build, instrucciones manuales, límites y aprobación del autor. No marcarlo como verificado por haber aprobado U3.
+Pendiente: U4 todavía no está completo. Completar al cerrar con commits, pruebas exactas/fecha/ruta, build, instrucciones manuales, límites y aprobación del autor. No marcarlo como verificado por haber aprobado U3.
