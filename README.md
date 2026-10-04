@@ -79,6 +79,14 @@ npm test           # tests unitarios (Vitest)
 npm run typecheck  # solo la comprobación de tipos de TypeScript
 ```
 
+## Exportar progreso para Unity
+
+En el menú principal web, abre **Opciones**, baja hasta **Exportar progreso para Unity**, revisa la vista previa y pulsa **Descargar progreso**. En inglés: **Options → Export progress for Unity → Download progress**. El navegador descarga `mamporro-progreso.json` (`mamporro.progress`, versión 1).
+
+Incluye Calderilla, desbloqueos/compras, misiones, extras, selección, idioma y opciones compatibles. No guarda una partida activa ni modifica el progreso web. Si el almacenamiento está bloqueado, avisa y permite exportar el progreso cargado en memoria. Las recuperaciones secundarias se muestran antes de descargar; los errores críticos bloquean la exportación sin resetear datos.
+
+La interfaz de importación Unity llegará en el paso 5 de U4; el archivo ya es compatible con su validador. Guía técnica y comprobaciones reproducibles: [EXPORTACION_U4](docs/EXPORTACION_U4.md).
+
 ## Controles
 
 | Acción       | Tecla                                   |

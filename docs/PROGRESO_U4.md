@@ -5,11 +5,11 @@ Estado: **IMPLEMENTACIÓN AUTORIZADA Y EN CURSO desde el 04/10/2026.** Política
 ## Cómo retomar
 
 - **Paso 1 publicado:** `fabaf2a64f5ff6c34d3592a25a6594f066130208`. Paso 2 en «Porta las reglas meta y la liquidación de U4»; localizar hash con `git log -1 --format="%H %s" -- unity/Assets/Mamporro/Core/MetaRules.cs`.
-- **Paso actual:** 4, exportación web explícita; todavía sin implementar.
-- **Terminado:** pasos 1–3. Contrato `fabaf2a`, meta `dd994b8`, validador `d3927ff`; almacenamiento en «Guarda el progreso de U4 con copia y recuperación» (hash: `git log -1 --format="%H %s" -- unity/Assets/Mamporro/Persistence/ProgressStore.cs`). Último Edit Mode 309/309 y Play Mode 17/17; ver entrada del cierre del paso 3 para build y evidencias.
-- **A medias:** ninguna pieza rota. Persistencia probada como servicio, aún no conectada a aplicación/menús. No existe UI de importación/exportación U4.
+- **Paso actual:** 5, importación Unity del archivo exportado (sin empezar).
+- **Terminado:** pasos 1–4. Paso 4 en «Exporta el progreso web para Unity» (hash: `git log -1 --format="%H %s" -- src/save/exportProgress.ts`); guía en [EXPORTACION_U4](EXPORTACION_U4.md). Contrato `fabaf2a`, meta `dd994b8`, validador `d3927ff`; almacenamiento en «Guarda el progreso de U4 con copia y recuperación» (hash: `git log -1 --format="%H %s" -- unity/Assets/Mamporro/Persistence/ProgressStore.cs`). Último Edit Mode 317/317 y Play Mode 17/17 (paso 4, 04/10/2026 11:53–11:54); web 232/232, typecheck y build web correctos; descarga real ES/EN en Edge.
+- **A medias:** ninguna pieza rota. Persistencia probada como servicio, aún no conectada a aplicación/menús. Existe la exportación web; no existe todavía la UI de importación Unity.
 - **Sin commit a propósito:** siete ajustes Unity de «Cambios locales excluidos».
-- **Siguiente paso exacto:** paso 4, exportador web explícito. Revisar `SaveManager.ts`/`schema.ts`: no construir un gestor al exportar, pues persiste migraciones/reset. Validar estrictamente una instantánea antes de llamar a las reglas puras web; informe y confirmación de recuperaciones, transferencia versionada, descarga sin modificar almacenamiento/partida/recompensas. Probar contra el corpus existente y añadir fallos de lectura/no mutación. Mantener intactas las guardas de referencias: ejecutarlas sobre una instantánea aislada de la base aprobada al introducir la excepción de exportación en `src/`. Reutilizar en Unity `ProgressValidator.Import`, `ProgressStore` y su preparación inmutable; no reimplementar ni cambiar esperados.
+- **Siguiente paso exacto:** paso 5, importación Unity: servicio de aplicación sin UnityEngine que lea el archivo elegido con el límite de 256 KiB, llame a `ProgressValidator.Import`, prepare con `ProgressStore.Prepare` sobre la instantánea cargada, muestre informe/vista previa y solo tras confirmar ejecute `Confirm` (backup, sustitución, relectura); cancelación sin escritura, importación repetida sin cambios, sin fusionar ni liquidar. UI técnica uGUI mínima en la escena U3 para elegir archivo, revisar y confirmar; los menús completos son el paso 7.
 - **Autorización:** continuar los pasos 2–9 sin nuevas confirmaciones generales. Detenerse solo ante decisión nueva importante y, al terminar U4, para prueba manual del autor.
 
 Comprobación desde CMD:
@@ -76,7 +76,7 @@ Sustitución completa, nunca fusión: validar → informe → confirmar → back
 
 ## Plan propuesto por pasos/commits verificables
 
-Plan aprobado. Cada fila es una unidad coherente; dividir si tamaño o pruebas lo exigen. Pasos 1–3 terminados; pasos 4–9 pendientes.
+Plan aprobado. Cada fila es una unidad coherente; dividir si tamaño o pruebas lo exigen. Pasos 1–4 terminados; pasos 5–9 pendientes.
 
 | Paso | Resultado y límites | Verificación principal |
 |---|---|---|
@@ -188,6 +188,20 @@ Conservar sin publicar ni restaurar:
 - **Commit/push:** «Guarda el progreso de U4 con copia y recuperación». Fetch previo; publicar solo si el remoto sigue en `d3927ff`, push normal y comprobación del HEAD remoto. Hash consultable por la ruta de `ProgressStore.cs` en «Cómo retomar».
 - **Árbol/exclusiones:** tras publicar, solo los siete ajustes Unity deliberadamente excluidos. Sin WIP de runtime pendiente. Logs/builds son evidencia local ignorada por Git.
 - **Siguiente paso exacto:** paso 4, exportación web explícita validada, pruebas web y equivalencia sin mutar el progreso. Pasos 1–3 cerrados; U4 aún no completo. No iniciar U5 ni mejoras posteriores.
+
+### 04/10/2026 — paso 4: exportación web — Codex (implementación) y Claude Code (verificación y publicación)
+
+- **Punto de partida:** `777bba85e648d2d803f64d0a86fad3ae512abe15`, local y remoto iguales (ahead 0 / behind 0). Codex implementó el paso 4 y agotó su sesión sin commit, push ni entrada en este checkpoint. Claude Code lo encontró como WIP local el 04/10/2026, lo auditó sin pull/stash/reset/clean y lo conservó íntegro, junto con los siete ajustes Unity excluidos.
+- **Trabajo de Codex (WIP recuperado):** `src/save/exportProgress.ts` (instantánea acotada sin getters, validación estricta según el contrato, opciones con default e informe sin clamp, exclusión de IDs desconocidos/duplicados, críticos fatales, migración v1/v2 explícita, `parseSave` solo como comprobación, serialización canónica y relectura), `src/ui/ProgressExport.ts` (panel en Opciones del menú principal, vista previa con informe, descarga Blob `mamporro-progreso.json`, aviso de copia en memoria si no hay almacenamiento), lector en `Game.ts`, colocación en `UI.ts`, 17 textos ES/EN, `exportProgress.test.ts` (30 pruebas), `scripts/u4-export-fixtures.mjs` (entradas reales, nunca esperados), `WebExportTests.cs` (8 casos contra `ProgressValidator.Import` y `u4-progress.json`), preparación automática en `scripts/u3.ps1 edit`, `scripts/verify-historical-reference.ps1`, `scripts/verify-u4-export-browser.cjs`, `docs/EXPORTACION_U4.md` y secciones de README raíz y de Unity.
+- **Revisión de Claude Code:** código contrastado con el contrato y con la política del autor; sin cambios necesarios. Diff web frente a `0505b16` limitado a `Game.ts` (1 línea), `UI.ts` (3), `es.ts`/`en.ts` (17 textos cada uno) y los tres archivos nuevos; sin cambios en combate, RNG, balance, meta, precios, misiones, mundo, armas, enemigos ni economía. Referencias congeladas y corpus U4 intactos.
+- **Pruebas ejecutadas por Claude Code (04/10/2026, Europe/Madrid):** `npm.cmd run typecheck` correcto; `npm.cmd test` **232/232** (11:51); `npm.cmd run build` correcto; `node --test scripts\u4-contract.test.mjs` **5/5**; `powershell -File scripts\verify-historical-reference.ps1` correcto en la instantánea `qa-results/reference-35e9ea57b12f4333a727a0d38bee9145` (U0, U2, U3 y U4: 8 guardados y 6 secuencias coinciden, 11:52); `scripts\u3.cmd edit` **317/317** (309 + 8 `WebExportTests`, 11:53, incluye `u4-export-fixtures.mjs`: 8 transferencias verificadas); `scripts\u3.cmd play` **17/17** (11:54). Evidencias `unity/TestResults/U4/step4-claude-edit.xml/.log` y `step4-claude-play.xml/.log`.
+- **Navegador real (Claude Code, 11:55):** Vite en `127.0.0.1:5173` y `node scripts\verify-u4-export-browser.cjs` con Edge 154 instalado y Playwright externo en `%LOCALAPPDATA%\MamporroQA`: ES y EN, pulsar exportar, evento de descarga real, `mamporro-progreso.json` guardado y releído, `mamporro.progress` v1, contenido exacto, dos descargas con bytes idénticos, estado y `localStorage` sin cambios, exportación desde memoria con almacenamiento bloqueado, fallo de Blob avisado y progreso crítico inválido sin botón de descarga. Los archivos descargados (`es-0.json`, `en-0.json`) son **idénticos byte a byte** a `Exports/v3-partial.json` y `Exports/v3-all.json`, que `WebExportTests` acepta con `ProgressValidator.Import`. Evidencias `unity/TestResults/U4/BrowserExport/` (JSON, capturas ES/EN y `report.json`).
+- **No ejecutado:** build Unity y visual (sin cambios de escena ni runtime Unity; solo una prueba Edit Mode nueva).
+- **Decisiones nuevas:** ninguna.
+- **Observaciones:** cada ejecución del verificador histórico crea un worktree desacoplado nuevo en `qa-results/` (ignorado por Git); quedan dos (`reference-850a…` de Codex y `reference-35e9…`). No se eliminan automáticamente; pueden retirarse con `git worktree remove` cuando ya no hagan falta. Los mensajes de descarga dicen «solicitada»: el navegador no permite confirmar que el usuario guardó el archivo.
+- **Commit/push:** «Exporta el progreso web para Unity»; fetch previo y push normal si el remoto sigue en `777bba8`.
+- **Árbol al terminar:** solo los siete ajustes Unity excluidos.
+- **Siguiente paso exacto:** paso 5 (ver «Cómo retomar»).
 
 ## Checkpoint al terminar U4
 

@@ -2,6 +2,23 @@
 // `TranslationKey`, y el inglés debe tener exactamente las mismas.
 
 export const es = {
+  "export.title": "Exportar progreso para Unity",
+  "export.help": "Exporta solo progreso permanente. No guarda una partida activa ni cambia tu progreso web.",
+  "export.memory": "El guardado local no está disponible. Se exportará la copia cargada en memoria, que puede no estar guardada en este navegador.",
+  "export.invalid": "No se puede exportar este progreso. Revisa los problemas indicados; no se ha cambiado ningún dato.",
+  "export.preview": "Revisa la copia que se descargará. Los cambios indicados solo afectan al archivo exportado.",
+  "export.preserved": "Datos conservados",
+  "export.download": "Descargar progreso",
+  "export.started": "Descarga solicitada al navegador: mamporro-progreso.json.",
+  "export.failed": "No se pudo preparar la descarga. Tu progreso no ha cambiado.",
+  "export.reason.preserve": "Conservado",
+  "export.reason.default": "Opción ausente o inválida: se usará su valor por defecto",
+  "export.reason.exclude": "Dato adicional, ID desconocido o repetido: se excluirá",
+  "export.reason.migrate": "Migración explícita de una versión admitida",
+  "export.reason.invalid": "Dato inválido o incoherente; no se puede interpretar con seguridad",
+  "export.reason.limit": "Se excede un límite de seguridad",
+  "export.reason.read": "No se pudo obtener la instantánea del progreso",
+  "export.reason.unsupported": "Versión no admitida",
   "mission.first": "Termina una partida",
   "mission.kills": "Acumula 1000 bajas",
   "mission.chests": "Abre 10 baúles en total",

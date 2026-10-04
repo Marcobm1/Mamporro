@@ -5,6 +5,7 @@ import { CHARACTERS, type CharacterId } from '../data/characters';
 import { MISSIONS, type ExtraAction } from '../data/meta';
 import type { MetaProgress, MetaReceipt } from '../systems/meta';
 import { charactersPanel, missionsPanel, shopPanel } from './MetaScreens';
+import { progressExportPanel } from './ProgressExport';
 import { RUN_DURATIONS } from '../data/waves';
 import { formatNumber, onLanguageChange, t, type TranslationKey } from '../i18n';
 import type { Settings } from '../save/schema';
@@ -77,6 +78,7 @@ export interface PauseRunInfo {
 }
 
 export interface UIContext {
+  progress(): unknown;
   meta(): MetaProgress;
   canSave(): boolean;
   settings(): Settings;
@@ -266,6 +268,7 @@ export class UI {
         : page === 'missions' ? missionsPanel(meta)
         : optionsPanel(this.ctx.settings(), patch => this.callbacks.onSettingsChange(patch), false);
       content = h('div', { className: 'stack' }, h('h2', { className: 'panel-title', text: t(heading) }), panel);
+      if (page === 'options') content.append(progressExportPanel(() => this.ctx.progress(), () => this.ctx.canSave()));
     }
     return h('div', { className: 'screen screen--menu' }, h('div', { className: 'panel menu-panel stack' }, header,
       !this.ctx.canSave() && h('p', { className: 'warning', text: t('meta.saveWarning') }), content));

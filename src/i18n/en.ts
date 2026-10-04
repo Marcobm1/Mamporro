@@ -3,6 +3,23 @@
 import type { TranslationKey } from './es';
 
 export const en: Record<TranslationKey, string> = {
+  "export.title": "Export progress for Unity",
+  "export.help": "Exports permanent progress only. It does not save an active run or change your web progress.",
+  "export.memory": "Local saving is unavailable. The loaded copy in memory will be exported; it may not be saved in this browser.",
+  "export.invalid": "This progress cannot be exported. Review the issues below; no data has been changed.",
+  "export.preview": "Review the copy to download. The listed changes affect the exported file only.",
+  "export.preserved": "Preserved data",
+  "export.download": "Download progress",
+  "export.started": "Download requested from your browser: mamporro-progreso.json.",
+  "export.failed": "The download could not be prepared. Your progress has not changed.",
+  "export.reason.preserve": "Preserved",
+  "export.reason.default": "Missing or invalid option: its default will be used",
+  "export.reason.exclude": "Additional data, unknown or repeated ID: it will be excluded",
+  "export.reason.migrate": "Explicit migration from a supported version",
+  "export.reason.invalid": "Invalid or inconsistent data; its meaning cannot be determined safely",
+  "export.reason.limit": "A safety limit was exceeded",
+  "export.reason.read": "The progress snapshot could not be read",
+  "export.reason.unsupported": "Unsupported version",
   "mission.first": "Finish a run",
   "mission.kills": "Defeat 1000 enemies in total",
   "mission.chests": "Open 10 chests in total",

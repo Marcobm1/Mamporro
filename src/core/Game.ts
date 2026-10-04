@@ -198,7 +198,7 @@ export class Game {
 
     this.ui = new UI(
       uiRoot,
-      { meta: () => this.save.data.meta, canSave: () => this.save.canSave, settings: () => this.save.settings, seed: () => this.seed, runInfo: () => this.pauseRunInfo() },
+      { progress: () => this.save.data, meta: () => this.save.data.meta, canSave: () => this.save.canSave, settings: () => this.save.settings, seed: () => this.seed, runInfo: () => this.pauseRunInfo() },
       {
         onSelectCharacter: (id) => {
           if (this.state !== 'title' || !this.save.data.meta.characters.includes(id)) return;

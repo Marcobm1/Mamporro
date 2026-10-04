@@ -4,6 +4,13 @@ $repo=Split-Path $PSScriptRoot -Parent
 $project=Join-Path $repo 'unity'
 $results=Join-Path $project 'TestResults\U3'
 New-Item -ItemType Directory -Force -Path $results | Out-Null
+if($Action -eq 'edit') {
+    # Entradas reales web para la prueba de compatibilidad U4; nunca genera esperados.
+    $exportLog=Join-Path $project 'TestResults\U4\step4-export-fixtures.log'
+    New-Item -ItemType Directory -Force -Path (Split-Path $exportLog -Parent) | Out-Null
+    node (Join-Path $repo 'scripts\u4-export-fixtures.mjs') | Tee-Object -FilePath $exportLog
+    if($LASTEXITCODE -ne 0){throw 'Falló la preparación de transferencias web U4.'}
+}
 if($Action -eq 'benchmark') {
     $player=Join-Path $project 'Builds\U3\Mamporro-U3.exe'
     if(!(Test-Path -LiteralPath $player)){throw 'Primero genera la build U3.'}

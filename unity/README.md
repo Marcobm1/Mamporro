@@ -30,13 +30,12 @@ Desde la raíz del repositorio, en CMD:
 
 ```cmd
 npm ci
-node scripts\unity-reference.mjs
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts\verify-historical-reference.ps1
 ```
 
-El comando compara los datos actuales con la referencia aprobada. Ejecutarlo con
-Unity cerrado evita el bloqueo del fichero temporal UnityLockfile por el watcher
-de Vite. No regenerar referencias. Estado real de pruebas y Git en
-[PROGRESO_U2](../docs/PROGRESO_U2.md).
+Desde U4, la web incorpora la excepción autorizada del exportador. El comando crea una instantánea aislada de la base aprobada y ejecuta las guardas originales U0/U2/U3/U4 sin relajarlas ni regenerar referencias; conserva esa instantánea en `qa-results/` para revisión. Procedimiento en [EXPORTACION_U4](../docs/EXPORTACION_U4.md), estado vigente en [PROGRESO_U4](../docs/PROGRESO_U4.md).
+
+`scripts\u3.cmd edit` prepara además ocho transferencias usando el exportador web real y las valida en C# contra el corpus congelado. Requiere las dependencias Node instaladas. No genera ni modifica esperados.
 
 ## Abrir y jugar
 
