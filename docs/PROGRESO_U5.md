@@ -4,12 +4,12 @@ Estado: **IMPLEMENTACIÓN AUTORIZADA Y EN CURSO desde el 04/10/2026.** Plan apro
 
 ## Cómo retomar
 
-- **Punto de partida:** `3754e31` (U4 aprobada). Plan en `31711bf` («Registra la aprobación de U4 y planifica U5»). Paso 1 `e7c9933` («Porta la síntesis de audio y el presupuesto de voces de U5»). Paso 2 `6e154ec` («Añade el motor de audio de U5»). Paso 3 `85f7a1b` («Conecta los sucesos de la partida al sonido de U5»). Paso 4 en «Añade las partículas decorativas de U5» (hash: `git log -1 --format="%H %s" -- unity/Assets/Mamporro/Core/Effects/Particles.cs`).
-- **Paso actual:** 5, números de daño (sin empezar).
-- **Terminado:** pasos 1–4. Último Edit Mode 388/388, Play Mode 34/34, build y visual con medida de audio (04/10/2026).
+- **Punto de partida:** `3754e31` (U4 aprobada). Plan en `31711bf` («Registra la aprobación de U4 y planifica U5»). Paso 1 `e7c9933` («Porta la síntesis de audio y el presupuesto de voces de U5»). Paso 2 `6e154ec` («Añade el motor de audio de U5»). Paso 3 `85f7a1b` («Conecta los sucesos de la partida al sonido de U5»). Paso 4 `22821d0` («Añade las partículas decorativas de U5»). Paso 5 en «Añade los números de daño de U5» (hash: `git log -1 --format="%H %s" -- unity/Assets/Mamporro/Core/Effects/DamageNumbers.cs`).
+- **Paso actual:** 6, cámara, sacudida y destellos (sin empezar).
+- **Terminado:** pasos 1–5. Último Edit Mode 392/392, Play Mode 35/35, build y visual con medida de audio (04/10/2026).
 - **A medias:** nada.
 - **Sin commit a propósito:** siete ajustes Unity de «Cambios locales excluidos».
-- **Siguiente paso exacto:** paso 5: números de daño (`DamageNumbers.ts`): atlas con los glifos `0123456789!` de la fuente pixelada web (`src/ui/font/glyphs`, celdas 7×9, contorno negro de 1 píxel), hasta 140 números de 6 caracteres, vida 0,75 s, quads orientados a la cámara e instanciados, dibujados en la textura interna; daño normal, crítico (color/tamaño por nivel) y daño recibido por el jugador (`PlayerHit`, nivel −1); emitidos desde `RunFeedback` (`Hit`, `PlayerHit`); limpieza por partida, quietos en pausa; RNG visual `Rng("efectos").Derive("numeros")`.
+- **Siguiente paso exacto:** paso 6: `CameraRig` de la web en `U3Game.LateUpdate` (brazo de 6,2 m recorrido en pasos contra el terreno con margen 0,35 y mínimo 1,1, acercamiento inmediato y recuperación suave `damp(4)`; pivote 1,9/1,2 con `damp(8)` al deslizarse; FOV 70 + 12 × exceso de velocidad con `damp(4)`; sacudida: trauma 0–1, desplazamiento ±trauma²·0,3 m, decae 2,5/s, desactivada y a 0 sin la opción; golpe recibido 0,45, aparición del jefe 0,8, culetazo 1 cerca (< 2,5 radios) o 0,4, bata 0,7); escala de destello de enemigos élite 0,6 y jefe 0,3; parpadeo del jugador a 16 Hz mientras es invulnerable, sujeto a «Destellos de daño»; leer `src/render/CameraRig.ts` y `src/data/config.ts` (`CAMERA_CONFIG`).
 - **Autorización:** pasos 1–9 seguidos, con checkpoint, pruebas, commit y push tras cada pieza. Detenerse solo ante una decisión nueva importante de diseño/arquitectura (o si el compresor propio resulta inestable, con latencia o coste inesperado) y al terminar U5.
 
 Comprobación desde CMD:
@@ -230,6 +230,16 @@ Conservar sin publicar ni restaurar:
 - **Commit/push:** «Añade las partículas decorativas de U5»; fetch previo y push normal si el remoto sigue en `85f7a1b`.
 - **Árbol al terminar:** solo los siete ajustes Unity excluidos.
 - **Siguiente paso exacto:** paso 5 (ver «Cómo retomar»).
+
+### 04/10/2026 — paso 5: números de daño — Claude Code
+
+- **Punto de partida:** `22821d0` (paso 4 publicado); solo los siete ajustes Unity excluidos.
+- **Trabajo:** `Core/Effects/DamageNumbers.cs` (puro): hasta 140 números de 6 caracteres (el más viejo se va primero), `Math.round` con mínimo 1, «!» crítico y «!!» supercrítico, vida 0,75 s, subida 1,5t − 0,6t², desvanecido en el último 35 %, «pop» de 0,08 s, deriva y dispersión de ±0,25 con RNG visual «efectos/numeros», escala 1,45 crítico y 1,3 daño recibido; dígitos en buffer fijo, sin cadenas. `U3/DamageNumberRenderer.cs`: atlas generado con los glifos de `src/ui/font/glyphs.ts` (celdas 7×9, contorno negro de 1 píxel), malla dinámica de quads orientados a la cámara (altura 0,42 m, avance 6/9), colores de `palette.ts` (blanco, amarillo, naranja, rojo para el jugador), sin prueba de profundidad y dibujada en la textura interna. Sombreador propio `U3/Resources/DamageNumbers.shader` (en `Resources` para entrar en la build sin regenerar la escena). `RunFeedback`: número en cada golpe (con su nivel de crítico) y en cada daño recibido (2 m sobre el jugador). Quietos en pausa, limpios en cada partida. Partículas y números se dibujan ahora tras colocar la cámara.
+- **Pruebas nuevas:** Edit (4, `DamageNumberTests`): texto (redondeo JS, mínimo 1, «!»/«!!», recorte a 6), tope de 140 retirando el más viejo, subida/desvanecido/«pop»/vida/escalas con los valores web, sin asignaciones. Play (1): horda real con números visibles y dibujados, número rojo al recibir daño, quietos en pausa y ninguno en la partida siguiente.
+- **Pruebas ejecutadas (04/10/2026):** `scripts\u3.cmd edit` **392/392**; `scripts\u3.cmd play` **35/35** (una pasada 28/35: la malla validaba los vértices nuevos contra los índices del fotograma anterior; corregido vaciando antes los índices); `scripts\u3.cmd build` correcta; `scripts\u3.cmd visual` 19 capturas + audio correcto; números visibles en «combate» (pequeños en esa vista lejana: a 360 de altura interna un glifo ocupa unos 5 píxeles, como en la web).
+- **Commit/push:** «Añade los números de daño de U5»; fetch previo y push normal si el remoto sigue en `22821d0`.
+- **Árbol al terminar:** solo los siete ajustes Unity excluidos.
+- **Siguiente paso exacto:** paso 6 (ver «Cómo retomar»).
 
 ## Checkpoint al terminar U5
 

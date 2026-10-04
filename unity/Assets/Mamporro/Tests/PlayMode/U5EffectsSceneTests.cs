@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using Mamporro.Core;
 using Mamporro.U2;
 using Mamporro.U3;
@@ -44,6 +44,22 @@ namespace Mamporro.Tests
             // Nueva partida: nada de la anterior.
             g.SetPaused(true);g.BackToTitle();Assert.That(p.Active,Is.Zero);
             g.ChangeSettings(o=>o.reducedParticles=false);Assert.That(p.Budget.Reduced,Is.False);
+            LogAssert.NoUnexpectedReceived();
+        }
+
+        [UnityTest]public IEnumerator DamageNumbersShowHitsAndDamageTakenAndClearPerRun()
+        {
+            qa=QaSave.UseAllUnlocked();yield return Load();var g=Game;g.Audio.SetFocused(true);
+            g.StartRun("");g.QaAction(4);g.QaAction(4);g.Run.Invincible=true;
+            yield return Play(g,2.5f);
+            var n=g.Numbers;Assert.That(g.Feedback.Counts[(int)FeedbackKind.Hit],Is.GreaterThan(0));
+            Assert.That(n.Active,Is.GreaterThan(0).And.LessThanOrEqualTo(140));yield return null;Assert.That(g.NumberView.DrawnGlyphs,Is.GreaterThan(0),"se dibujan");
+            // Daño recibido: número rojo del jugador.
+            g.Run.Invincible=false;g.Run.Invulnerable=0;g.Run.Hurt(10);
+            bool player=false;for(int i=0;i<n.Active;i++)if(n.KindOf(i)<0)player=true;Assert.That(player,Is.True);
+            // Pausa: quietos; nueva partida: ninguno.
+            g.SetPaused(true);yield return Frames(2);int paused=n.Active;yield return new WaitForSecondsRealtime(1);Assert.That(n.Active,Is.EqualTo(paused),"no caducan en pausa");
+            g.BackToTitle();Assert.That(n.Active,Is.Zero);
             LogAssert.NoUnexpectedReceived();
         }
     }

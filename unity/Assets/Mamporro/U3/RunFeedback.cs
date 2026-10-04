@@ -16,6 +16,7 @@ namespace Mamporro.U3
         readonly Dictionary<string,SoundDef> weaponSounds=new Dictionary<string,SoundDef>();
         readonly Rng rng=new Rng("efectos").Derive("armas");
         public readonly ParticleField Particles=new ParticleField(new Rng("efectos").Derive("particulas"));
+        public readonly DamageNumbers Numbers=new DamageNumbers(new Rng("efectos").Derive("numeros"));
         // Recuento por tipo (pruebas y ensayo).
         public readonly int[] Counts=new int[Enum.GetValues(typeof(FeedbackKind)).Length];
 
@@ -37,7 +38,7 @@ namespace Mamporro.U3
             level=AudioCatalog.Get("level");shield=AudioCatalog.Get("shield");boss=AudioCatalog.Get("boss");
         }
         // Nueva partida (RunView.attach): sin partículas de la anterior.
-        public void Clear(){Particles.Clear();}
+        public void Clear(){Particles.Clear();Numbers.Clear();}
 
         public void Feedback(in CombatFeedback f)
         {
@@ -50,13 +51,13 @@ namespace Mamporro.U3
                 case FeedbackKind.PickupXp:audio.Play(xp);break;
                 case FeedbackKind.PickupGold:audio.Play(gold);break;
                 case FeedbackKind.Hit:
-                    audio.Play(f.Code>0?critical:hit);
+                    audio.Play(f.Code>0?critical:hit);Numbers.Spawn(f.X,f.Y,f.Z,f.Value,f.Code);
                     if(f.Code>0)Particles.Burst(f.X,f.Y,f.Z,3,CritColors,2.5,.08,.25);break;
                 case FeedbackKind.EnemyKilled:{
                     int special=Special(f.Code);audio.Play(special==2?blast:death);
                     Particles.Burst(f.X,f.Y+Catalog.Enemies[f.Code].height*.5,f.Z,special==2?80:special==1?24:12,Debris[f.Code],5,.14,.7,2);break;}
                 case FeedbackKind.EnemySpawned:Particles.Burst(f.X,f.Y+.2,f.Z,5,Dust,1.8,.28,.5,0,-1);break;
-                case FeedbackKind.PlayerHit:audio.Play(hurt);break;
+                case FeedbackKind.PlayerHit:audio.Play(hurt);Numbers.Spawn(p.X,p.Y+2,p.Z,f.Value,-1);break;
                 case FeedbackKind.EnemyShot:Particles.Burst(f.X,f.Y,f.Z,3,PipaColors,1.5,.08,.35);break;
                 case FeedbackKind.LevelUp:audio.Play(level);Particles.Burst(p.X,p.Y+1,p.Z,24,LevelColors,4,.12,.9,3,6);break;
                 case FeedbackKind.Shield:audio.Play(shield);Particles.Burst(p.X,p.Y+1,p.Z,18,ShieldColors,3,.14,.45);break;

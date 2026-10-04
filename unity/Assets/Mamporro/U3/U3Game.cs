@@ -45,6 +45,8 @@ namespace Mamporro.U3
         public RunFeedback Feedback {get;private set;}
         public Mamporro.Core.Effects.ParticleField Particles=>Feedback.Particles;
         public ParticleRenderer ParticleView {get;private set;}
+        public Mamporro.Core.Effects.DamageNumbers Numbers=>Feedback.Numbers;
+        public DamageNumberRenderer NumberView {get;private set;}
         public Material CombatMaterial {get;private set;}
         public Mesh CombatMesh {get;private set;}
         public int InternalHeight {get;private set;}=360;
@@ -170,7 +172,7 @@ namespace Mamporro.U3
             Screens=gameObject.AddComponent<RunScreens>();Screens.Build(this);
             // Audio desde el arranque (en Windows no hace falta esperar a un gesto, a diferencia de la web).
             Audio=gameObject.AddComponent<AudioDirector>();Audio.Initialize(worldCamera.gameObject,()=>Progress.Progress.settings);
-            Feedback=new RunFeedback(this);ParticleView=new ParticleRenderer(CombatMaterial,CombatMesh);
+            Feedback=new RunFeedback(this);ParticleView=new ParticleRenderer(CombatMaterial,CombatMesh);NumberView=new DamageNumberRenderer();
             ApplySettings();
             var args=Environment.GetCommandLineArgs();int seedArg=Array.IndexOf(args,"-u3-seed");
             LoadWorld(seedArg>=0&&seedArg+1<args.Length?NormalizeSeed(args[seedArg+1])??defaultSeed:defaultSeed);
@@ -474,16 +476,22 @@ namespace Mamporro.U3
             avatar.rotation=Quaternion.Euler(0,-(float)Body.Facing*Mathf.Rad2Deg,0);
             avatar.localScale=Body.Sliding?new Vector3(1,.6f,1.35f):Vector3.one;
             CombatView.Draw();
-            // Partículas decorativas: se mueven solo jugando (en pausa, cartas o resultados quedan quietas, como la web).
-            Particles.Update(State==Screen.Playing&&!Paused?Time.deltaTime:0);ParticleView.Draw(Particles,worldCamera);
-            if(FreeCamera){Renderer.FollowCamera(worldCamera);return;}
+            if(FreeCamera){Renderer.FollowCamera(worldCamera);DrawEffects();return;}
             var pivot=p+Vector3.up*(Body.Sliding?1.2f:1.9f);
             var rotation=Quaternion.Euler(pitch,yaw,0);
             var cameraPos=pivot-rotation*Vector3.forward*6.2f;
             // Como la web: la cámara solo choca con el terreno.
             if(World!=null)cameraPos.y=Mathf.Max(cameraPos.y,(float)World.Heightfield.HeightAt(cameraPos.x,-cameraPos.z)+.35f);
             worldCamera.transform.SetPositionAndRotation(cameraPos,Quaternion.LookRotation(pivot-cameraPos));
-            Renderer.FollowCamera(worldCamera);
+            Renderer.FollowCamera(worldCamera);DrawEffects();
+        }
+        // Partículas y números de daño (tras colocar la cámara: los números miran a ella). Solo se
+        // mueven jugando; en pausa, cartas o resultados quedan quietos, como la web.
+        void DrawEffects()
+        {
+            float effectsDt=State==Screen.Playing&&!Paused?Time.deltaTime:0;
+            Particles.Update(effectsDt);ParticleView.Draw(Particles,worldCamera);
+            Numbers.Update(effectsDt);NumberView.Draw(Numbers,worldCamera);
         }
 
         void Resize()
@@ -503,6 +511,6 @@ namespace Mamporro.U3
             InternalHeight=height;Dither=dither;Snap=snap;Resize();
         }
 
-        void OnDestroy(){if(target!=null){target.Release();Destroy(target);}if(avatarMaterial)Destroy(avatarMaterial);if(CombatMaterial)Destroy(CombatMaterial);if(CombatMesh)Destroy(CombatMesh);ParticleView?.Destroy();}
+        void OnDestroy(){if(target!=null){target.Release();Destroy(target);}if(avatarMaterial)Destroy(avatarMaterial);if(CombatMaterial)Destroy(CombatMaterial);if(CombatMesh)Destroy(CombatMesh);ParticleView?.Destroy();NumberView?.Destroy();}
     }
 }
