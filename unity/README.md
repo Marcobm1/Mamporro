@@ -113,6 +113,9 @@ pantallas uGUI técnicas (el arte final es U5).
   (solo en el menú), volúmenes y silencio. Se aplican al momento y se guardan con el
   progreso. Volúmenes, partículas y sacudidas solo se guardan: el audio, las
   partículas decorativas y las sacudidas llegan en U5.
+- **Audio (U5):** música chiptune original (normal e intensa con jefe o enjambre) y
+  efectos sintetizados como en la web; volúmenes y silencio de Opciones; sin foco se
+  silencia y se pausa. `visual` mide además la señal real de salida (`audio-report.json`).
 - **Progreso permanente (U4):** se carga al arrancar; la partida usa el personaje
   desbloqueado seleccionado, los desbloqueos de armas y objetos y los usos 2 + extras.
   Al ganar o perder se liquida una sola vez (Calderilla del Caos y misiones, como la

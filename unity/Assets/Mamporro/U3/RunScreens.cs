@@ -196,7 +196,8 @@ namespace Mamporro.U3
         {
             var o=new GameObject(text,typeof(RectTransform),typeof(Image),typeof(Button));o.transform.SetParent(parent,false);var r=(RectTransform)o.transform;
             r.anchorMin=min;r.anchorMax=max;r.offsetMin=r.offsetMax=Vector2.zero;o.GetComponent<Image>().color=Hex("#463874");
-            var b=o.GetComponent<Button>();b.onClick.AddListener(()=>click());Label(o.transform,text,32,TextAnchor.MiddleCenter,Vector2.zero,Vector2.one);return b;
+            // Clic en cualquier botón → «ui» (como el clic en <button> de la web).
+            var b=o.GetComponent<Button>();b.onClick.AddListener(()=>{game.Audio?.Play("ui");click();});Label(o.transform,text,32,TextAnchor.MiddleCenter,Vector2.zero,Vector2.one);return b;
         }
     }
 }

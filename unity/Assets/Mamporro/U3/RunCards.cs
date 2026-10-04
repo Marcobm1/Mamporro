@@ -57,12 +57,12 @@ namespace Mamporro.U3
             pending=Label(root.transform,"Pendientes",26,TextAnchor.MiddleCenter,new Vector2(0,.74f),new Vector2(1,.78f));
             for(int i=0;i<4;i++){
                 int slot=i;var card=Panel(root.transform,"Carta "+(i+1),Color.white,new Vector2(.05f+.225f*i,.22f),new Vector2(.05f+.225f*i+.205f,.72f),Vector2.zero,Vector2.zero);
-                cards[i]=card.GetComponent<Image>();var button=card.AddComponent<Button>();button.targetGraphic=cards[i];button.onClick.AddListener(()=>Press(slot));
+                cards[i]=card.GetComponent<Image>();var button=card.AddComponent<Button>();button.targetGraphic=cards[i];button.onClick.AddListener(()=>{Session.Audio?.Play("ui");Press(slot);});
                 cardTexts[i]=Label(card.transform,"Texto",26,TextAnchor.UpperLeft,new Vector2(.06f,.04f),new Vector2(.94f,.96f));
             }
             for(int i=0;i<3;i++){
                 int action=i;var panel=Panel(root.transform,"Acción "+i,Hex("#463874"),new Vector2(.2f+.21f*i,.08f),new Vector2(.2f+.21f*i+.18f,.16f),Vector2.zero,Vector2.zero);
-                actions[i]=panel.AddComponent<Button>();actions[i].targetGraphic=panel.GetComponent<Image>();actions[i].onClick.AddListener(()=>Action(action));
+                actions[i]=panel.AddComponent<Button>();actions[i].targetGraphic=panel.GetComponent<Image>();actions[i].onClick.AddListener(()=>{Session.Audio?.Play("ui");Action(action);});
                 actionTexts[i]=Label(panel.transform,"Texto",28,TextAnchor.MiddleCenter,Vector2.zero,Vector2.one);
             }
             root.SetActive(false);

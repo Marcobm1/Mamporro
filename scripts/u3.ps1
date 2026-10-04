@@ -54,6 +54,9 @@ if($Action -eq 'benchmark') {
             if($colors.Count -lt 16){throw "Captura sin imagen útil: $name"}
         } finally {$bitmap.Dispose()}
     }
+    $audio=Get-Item -LiteralPath (Join-Path $visual 'audio-report.json')
+    if($audio.LastWriteTime -lt $started){throw 'Falta la medida de audio nueva (audio-report.json).'}
+    Write-Output ('audio  : '+((Get-Content -Raw $audio.FullName | ConvertFrom-Json) | ConvertTo-Json -Compress))
     Write-Output 'visual : 19 capturas nuevas (no es un ensayo de rendimiento)'
 } else {
     if(Get-Process Unity -ErrorAction SilentlyContinue){throw 'Hay un Editor abierto. Guarda y cierra la instancia antes de ejecutar batch.'}

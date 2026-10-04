@@ -39,6 +39,8 @@ namespace Mamporro.U3
         public RunCards Cards {get;private set;}
         public RunHud Hud {get;private set;}
         public RunScreens Screens {get;private set;}
+        // U5: audio de la aplicación (música, efectos, foco y opciones de volumen).
+        public AudioDirector Audio {get;private set;}
         public Material CombatMaterial {get;private set;}
         public Mesh CombatMesh {get;private set;}
         public int InternalHeight {get;private set;}=360;
@@ -110,6 +112,7 @@ namespace Mamporro.U3
             if(target==null||InternalHeight!=s.renderHeight||Dither!=s.dithering||Snap!=s.vertexSnap)ConfigurePresentation(s.renderHeight,s.dithering,s.vertexSnap);
             // Sin textos del idioma anterior: avisos efímeros fuera y pantallas abiertas reconstruidas.
             if(relabel&&Screens!=null){Hud.ClearNotices();Screens.Rebuild();}
+            Audio?.Configure();
         }
         // La importación usa el mismo almacén que la partida: al confirmarla, la sesión adopta
         // el progreso importado (también sus opciones) y la siguiente partida ya lo usa, sin
@@ -160,6 +163,8 @@ namespace Mamporro.U3
             Cards=gameObject.AddComponent<RunCards>();Cards.Session=this;Cards.Build();
             Hud=gameObject.AddComponent<RunHud>();Hud.Build(this);
             Screens=gameObject.AddComponent<RunScreens>();Screens.Build(this);
+            // Audio desde el arranque (en Windows no hace falta esperar a un gesto, a diferencia de la web).
+            Audio=gameObject.AddComponent<AudioDirector>();Audio.Initialize(worldCamera.gameObject,()=>Progress.Progress.settings);
             ApplySettings();
             var args=Environment.GetCommandLineArgs();int seedArg=Array.IndexOf(args,"-u3-seed");
             LoadWorld(seedArg>=0&&seedArg+1<args.Length?NormalizeSeed(args[seedArg+1])??defaultSeed:defaultSeed);
@@ -221,6 +226,8 @@ namespace Mamporro.U3
             // aunque se vuelva a llamar; abandonar (inicio, F8) nunca pasa por aquí.
             if(State==Screen.Results)return;
             LastSettlement=Progress.Settle(ProgressSession.Summary(Session,runSetup.RunId));
+            // Como finishRun web: fuera los efectos pendientes y suena el desenlace.
+            Audio.ClearEffects();Audio.Play(Run.Victory?"victory":"defeat");
             State=Screen.Results;SetPaused(true);Screens.ShowResults(true);
         }
         // Reintento manual del guardado si falló: guarda el mismo progreso liquidado, sin repetir premios.
@@ -262,7 +269,12 @@ namespace Mamporro.U3
             Cursor.lockState=paused?CursorLockMode.None:CursorLockMode.Locked;Cursor.visible=paused;
             RefreshStatus();
         }
-        void OnApplicationFocus(bool focus){if(!focus&&State==Screen.Playing)SetPaused(true);}
+        // Sin foco: la partida se pausa y el audio se silencia sin cola de efectos (decisión U5);
+        // al volver sigue en pausa, con la música atenuada hasta Continuar.
+        void OnApplicationFocus(bool focus){if(!focus&&State==Screen.Playing)SetPaused(true);Audio?.SetFocused(focus);}
+        // Modo de música según el estado (Game.draw web): pausa y cartas atenúan; jefe o enjambre, intensa.
+        public MusicMode CurrentMusicMode=>State==Screen.Title?MusicMode.Menu:State==Screen.Results?MusicMode.Results:
+            Paused?MusicMode.Paused:Run.Boss!=null||Session.Swarm?MusicMode.Intense:MusicMode.Playing;
 
         public void Emit(CombatEffect effect)=>CombatView.Emit(effect);
         public void Choose(int index){if(Run.Choose(index))AfterChoice(true);}
@@ -375,6 +387,7 @@ namespace Mamporro.U3
             }
             Shader.SetGlobalFloat(SnapId,Snap?1:0);Shader.SetGlobalFloat(DitherId,Dither?1:0);
             ReadEvents();RefreshPanels();
+            if(Session!=null)Audio.SetMode(CurrentMusicMode);
             textTimer-=Time.unscaledDeltaTime;
             if(textTimer<=0){textTimer=.1f;RefreshStatus();}
         }

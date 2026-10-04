@@ -112,7 +112,7 @@ namespace Mamporro.U3
                 Label(card,UnlockName(s.UnlockKind,s.UnlockId),22,TextAnchor.UpperLeft,new Vector2(.05f,.76f),new Vector2(.95f,.97f));
                 Label(card,UnlockDescription(s.UnlockKind,s.UnlockId),18,TextAnchor.UpperLeft,new Vector2(.05f,.36f),new Vector2(.95f,.75f)).color=Hex("#a49cc0");
                 Label(card,CombatText.Format("meta.balance","n",s.Price),20,TextAnchor.MiddleLeft,new Vector2(.05f,.25f),new Vector2(.95f,.35f)).color=Hex("#f6c63a");
-                string id=s.Id;PurchaseButton(card,meta.coins,s.Price,owned,()=>{game.Progress.Purchase(id);OpenPage(Shop);});
+                string id=s.Id;PurchaseButton(card,meta.coins,s.Price,owned,()=>{if(game.Progress.Purchase(id))game.Audio?.Play("reward");OpenPage(Shop);});
             }
             Label(page,CombatText.Get("meta.extras"),30,TextAnchor.MiddleLeft,new Vector2(0,.42f),new Vector2(.4f,.49f));
             Label(page,CombatText.Get("meta.extrasHint"),20,TextAnchor.MiddleLeft,new Vector2(.4f,.42f),new Vector2(1,.49f)).color=Hex("#a49cc0");
@@ -123,7 +123,7 @@ namespace Mamporro.U3
                 Label(card,CombatText.Get("meta."+action),26,TextAnchor.UpperLeft,new Vector2(.05f,.7f),new Vector2(.95f,.96f));
                 Label(card,CombatText.Format("meta.uses","n",MetaRules.InitialUses(meta,action)),22,TextAnchor.UpperLeft,new Vector2(.05f,.45f),new Vector2(.95f,.7f));
                 if(level>=MetaRules.ExtraPrices.Count){var max=Button(card,CombatText.Get("meta.max"),new Vector2(.05f,.06f),new Vector2(.95f,.36f),()=>{});max.interactable=false;}
-                else PurchaseButton(card,meta.coins,MetaRules.ExtraPrices[level],false,()=>{game.Progress.PurchaseExtra(action);OpenPage(Shop);},new Vector2(.05f,.06f),new Vector2(.95f,.36f));
+                else PurchaseButton(card,meta.coins,MetaRules.ExtraPrices[level],false,()=>{if(game.Progress.PurchaseExtra(action))game.Audio?.Play("reward");OpenPage(Shop);},new Vector2(.05f,.06f),new Vector2(.95f,.36f));
             }
             // Desbloqueos que llegan por misión (no se compran).
             var sb=new StringBuilder();

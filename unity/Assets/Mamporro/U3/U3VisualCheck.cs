@@ -18,6 +18,7 @@ namespace Mamporro.U3
             if(index>=0&&index+1<args.Length)output=args[index+1];
             Directory.CreateDirectory(output);
             yield return new WaitForSecondsRealtime(1);
+            yield return AudioProbe(output);if(probeFailed)yield break;
             yield return Capture(output,"inicio");
             Game.Screens.OpenPage(RunScreens.Shop);yield return Capture(output,"tienda");
             Game.Screens.OpenPage(RunScreens.Missions);yield return Capture(output,"misiones");
@@ -92,6 +93,26 @@ namespace Mamporro.U3
             yield return Capture(output,"resultados");
             Game.Retry(false);yield return Capture(output,"reinicio");Game.SetPaused(true);
             Debug.Log("U3 visual check: pantallas, mundo, combate, interactuables, telegrafiado, cartas, resultados y reinicio guardados.");Application.Quit(0);
+        }
+        // U5: señal real a la salida de la mezcla de Unity (medidor tras el compresor). Demuestra
+        // que la música y los efectos llegan al dispositivo y que el silencio/volumen 0 los quitan;
+        // no sustituye a escuchar la build.
+        [System.Serializable] class AudioReport { public int sampleRate,blocks,played,dropped;public bool focused;public float menuRms,mutedRms,silenceRms,effectsRms,restoredRms,peak; }
+        bool probeFailed;
+        IEnumerator AudioProbe(string output)
+        {
+            var a=Game.Audio;var s=Game.Settings;double music=s.musicVolume;bool muted=s.muted;var report=new AudioReport{sampleRate=AudioSettings.outputSampleRate,focused=!a.Silenced};
+            float level=0;
+            IEnumerator Measure(float seconds){float sum=0;int n=0;float end=Time.realtimeSinceStartup+seconds;while(Time.realtimeSinceStartup<end){yield return null;sum+=a.Mix.Rms;n++;}level=n>0?sum/n:0;}
+            a.Mix.ResetPeak();yield return Measure(.6f);report.menuRms=level;
+            Game.ChangeSettings(o=>o.muted=true);yield return new WaitForSecondsRealtime(.3f);yield return Measure(.4f);report.mutedRms=level;
+            Game.ChangeSettings(o=>{o.muted=false;o.musicVolume=0;});yield return new WaitForSecondsRealtime(.3f);yield return Measure(.3f);report.silenceRms=level;
+            a.Play("level");yield return Measure(.4f);report.effectsRms=level;
+            Game.ChangeSettings(o=>{o.musicVolume=music;o.muted=muted;});yield return new WaitForSecondsRealtime(.3f);yield return Measure(.4f);report.restoredRms=level;
+            report.peak=a.Mix.HeldPeak;report.blocks=a.Mix.Blocks;report.played=a.Played;report.dropped=a.Dropped;
+            File.WriteAllText(Path.Combine(output,"audio-report.json"),JsonUtility.ToJson(report,true));
+            Debug.Log($"U5 audio: menú {report.menuRms:F4}, silencio {report.mutedRms:F5}, sin música {report.silenceRms:F5}, efecto {report.effectsRms:F4}, restaurado {report.restoredRms:F4}, pico {report.peak:F3}, {report.sampleRate} Hz");
+            if(report.menuRms<1e-3f||report.mutedRms>1e-4f||report.silenceRms>1e-4f||report.effectsRms<1e-3f||report.restoredRms<1e-3f||report.peak>1){Debug.LogError("U5: la señal de audio medida no es la esperada.");probeFailed=true;Application.Quit(1);}
         }
         IEnumerator Look(string output,string name,Vector3 position,Vector3 target,bool capture=true)
         {

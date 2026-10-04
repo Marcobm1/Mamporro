@@ -4,12 +4,12 @@ Estado: **IMPLEMENTACIÓN AUTORIZADA Y EN CURSO desde el 04/10/2026.** Plan apro
 
 ## Cómo retomar
 
-- **Punto de partida:** `3754e31` (U4 aprobada). Plan en `31711bf` («Registra la aprobación de U4 y planifica U5»). Paso 1 en «Porta la síntesis de audio y el presupuesto de voces de U5» (hash: `git log -1 --format="%H %s" -- unity/Assets/Mamporro/Core/Audio/AudioSynth.cs`).
-- **Paso actual:** 2, motor de audio (sin empezar).
-- **Terminado:** paso 1 (síntesis y voces). Último Edit Mode 373/373 (04/10/2026).
+- **Punto de partida:** `3754e31` (U4 aprobada). Plan en `31711bf` («Registra la aprobación de U4 y planifica U5»). Paso 1 `e7c9933` («Porta la síntesis de audio y el presupuesto de voces de U5»). Paso 2 en «Añade el motor de audio de U5» (hash: `git log -1 --format="%H %s" -- unity/Assets/Mamporro/U3/AudioDirector.cs`).
+- **Paso actual:** 3, sucesos del núcleo y sonidos de partida (sin empezar).
+- **Terminado:** pasos 1–2. Último Edit Mode 379/379, Play Mode 32/32, build y visual con medida de audio (04/10/2026).
 - **A medias:** nada.
 - **Sin commit a propósito:** siete ajustes Unity de «Cambios locales excluidos».
-- **Siguiente paso exacto:** paso 2: `U5/AudioDirector` (escucha añadida en código a la cámara del mundo; clips `AudioClip.Create` desde `AudioSynth`; 16 fuentes de efectos con `VoiceBudget` y reloj `AudioSettings.dspTime`; 2 fuentes de música con cambio a intensa conservando `timeSamples`; modos menú ×0,65 / partida ×1 / intensa / pausa y cartas ×0,25 / resultados ×1; maestro 0,8; rampas 15/40 ms; opciones de volumen y silencio; compresor propio en `OnAudioFilterRead`; foco según la resolución 1; sonidos de botones, compras y resultados; `OnAudioConfigurationChanged`). Pruebas Play y medidor de señal.
+- **Siguiente paso exacto:** paso 3: canal tipado `CombatFeedback` en el núcleo (disparo de arma, recogida xp/oro una vez por tick, golpe con nivel de crítico y posición, muerte con tipo, aparición, golpe al jugador con daño, pipa de paloma, explosión, más los ya existentes: nivel, escudo, objeto/baúl, jefe, culetazo, bata), emitido donde lo hace `Run.ts` sin tocar la RNG ni el orden de la simulación; prueba de que las partidas de referencia dan el mismo estado con y sin receptor; despachador `RunFeedback` en U3 con los sonidos de `RunView` (`weaponFired`→arma, `pickup`, `hit`/`critical`, `death`/`blast` jefe, `hurt`, `level`, `shield`, `reward`, `boss`, `blast`).
 - **Autorización:** pasos 1–9 seguidos, con checkpoint, pruebas, commit y push tras cada pieza. Detenerse solo ante una decisión nueva importante de diseño/arquitectura (o si el compresor propio resulta inestable, con latencia o coste inesperado) y al terminar U5.
 
 Comprobación desde CMD:
@@ -197,6 +197,18 @@ Conservar sin publicar ni restaurar:
 - **Commit/push:** «Porta la síntesis de audio y el presupuesto de voces de U5»; fetch previo y push normal si el remoto sigue en `31711bf`.
 - **Árbol al terminar:** solo los siete ajustes Unity excluidos.
 - **Siguiente paso exacto:** paso 2 (ver «Cómo retomar»).
+
+### 04/10/2026 — paso 2: motor de audio — Claude Code
+
+- **Punto de partida:** `e7c9933` (paso 1 publicado); solo los siete ajustes Unity excluidos.
+- **Trabajo:** `U3/AudioDirector.cs`: escucha añadida en código a la cámara del mundo (sin regenerar la escena); 20 clips y 2 pistas `AudioClip.Create` desde `AudioSynth` (22 050 Hz, mono); 16 fuentes 2D de efectos con `VoiceBudget` (reloj `AudioSettings.dspTime`; sin fuente libre o sin presupuesto se descarta, nunca se aplaza) y 2 de música; modos menú ×0,65, partida ×1, intensa (jefe o enjambre: arreglo intenso a la misma posición del reloj de audio, como la web), pausa/cartas ×0,25 (con el arreglo normal, como la web) y resultados ×1; maestro 0,8 (0 en silencio) y rampas exponenciales de 15 ms (maestro/efectos) y 40 ms (música); volumen de música 0 o silencio paran la pista; volumen de efectos 0 o silencio vacían los efectos; foco (resolución 1): sin foco, `AudioListener.pause` y efectos descartados, al volver pausa con música al 25 % hasta Continuar; cambio de dispositivo (`OnAudioConfigurationChanged`) rehace efectos y pista. `MixFilter` en la escucha: `Core/Audio/MixCompressor.cs` (puro, sin asignaciones, rodilla cuadrática, detector de pico enlazado, ataque/liberación de un polo en dB, compensación fija como el navegador ≈ +6,4 dB, tope ±1, NaN → silencio) y medidor RMS/pico. Sonidos de interfaz: «ui» en cualquier botón de pantallas y cartas, «reward» en compras correctas, «victory»/«defeat» en resultados tras vaciar efectos. Audio desde el arranque (resolución 2).
+- **Medida en build:** la comprobación visual mide la salida real tras el compresor y escribe `audio-report.json`; el lanzador lo exige. Resultado (48 kHz): menú RMS **0,0123**, silencio **0,0**, música 0 sin efectos **0,0**, un «level» **0,0518**, restaurado **0,0135**, pico **0,114**. Demuestra señal y silencio en el dispositivo, no la calidad: eso es la escucha del autor.
+- **Pruebas nuevas:** Edit (6, `MixCompressorTests`): curva estática, solo compensación con señal baja, compresión estable sin superar ±1, ataque rápido y liberación ≈ 250 ms (e⁻¹), muestras no finitas → silencio, determinismo y sin recolecciones en 5000 bloques. Play (3, `U5AudioSceneTests`): una escucha y 18 fuentes, clips con la longitud de la síntesis, niveles exactos por modo (menú, partida, pausa, jefe/intensa, cartas, resultados), arreglo normal en pausa; ráfagas con ≤ 16 voces y descartes; volumen de música/efectos 0 y silencio al momento, guardado y tras recargar; botón con «ui»; pérdida de foco (silencio, efectos descartados, nada admitido) y vuelta en pausa a 0,125 y 0,5 al continuar.
+- **Pruebas ejecutadas (04/10/2026):** `scripts\u3.cmd edit` **379/379**; `scripts\u3.cmd play` **32/32** (una pasada 31/32 por un `Debug.Log` de diagnóstico que `LogAssert` tomó como inesperado; el modo batch tiene salida real 48 kHz estéreo); `scripts\u3.cmd build` correcta; `scripts\u3.cmd visual` 19 capturas + medida de audio correcta.
+- **Limitaciones:** los efectos de combate llegan en el paso 3. El compresor es una aproximación del navegador; la compensación de ganancia fija lo hace sonar más fuerte que sin compresor, como en la web. Sin escucha humana todavía.
+- **Commit/push:** «Añade el motor de audio de U5»; fetch previo y push normal si el remoto sigue en `e7c9933`.
+- **Árbol al terminar:** solo los siete ajustes Unity excluidos.
+- **Siguiente paso exacto:** paso 3 (ver «Cómo retomar»).
 
 ## Checkpoint al terminar U5
 
