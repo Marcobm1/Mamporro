@@ -1,4 +1,4 @@
-﻿param([ValidateSet('create','build','devbuild','benchmark','devdiag','summary','edit','play','visual','jugar')][string]$Action='benchmark',[int]$Runs=3,[int]$First=1,[string]$Strategies='base',[string]$Source='',[ValidateSet('both','1080','1440')][string]$Sizes='both',[switch]$Avatar)
+﻿param([ValidateSet('create','build','devbuild','benchmark','devdiag','summary','edit','play','visual','jugar')][string]$Action='benchmark',[int]$Runs=3,[int]$First=1,[string]$Strategies='base',[string]$Source='',[ValidateSet('both','1080','1440')][string]$Resolution='both',[switch]$Avatar)
 # B0 (spike Blender): builds QA separadas y ensayo de presentación de la horda. No toca la
 # entrega aprobada (unity\Builds\Windows) ni el progreso personal (guardado propio del ensayo).
 $ErrorActionPreference='Stop'
@@ -71,7 +71,7 @@ if($Action -ne 'summary'){
 $player=Join-Path $project $(if($dev){'Builds\B0Dev\MAMPORRO-B0.exe'}else{'Builds\B0\MAMPORRO-B0.exe'})
 if(!(Test-Path -LiteralPath $player)){throw "Primero genera la build: scripts\b0.cmd $(if($dev){'devbuild'}else{'build'})"}
 $save=Join-Path $out 'BenchmarkSave'
-$sizes=@(@(1920,1080),@(2560,1440));if($Sizes -eq '1080'){$sizes=@(,$sizes[0])}elseif($Sizes -eq '1440'){$sizes=@(,$sizes[1])};if($dev){$sizes=@(,@(1920,1080));$Runs=1}
+$sizes=@(@(1920,1080),@(2560,1440));if($Resolution -eq '1080'){$sizes=@(,$sizes[0])}elseif($Resolution -eq '1440'){$sizes=@(,$sizes[1])};if($dev){$sizes=@(,@(1920,1080));$Runs=1}
 # Repeticiones alternadas: cada pasada recorre todas las condiciones antes de repetir ninguna.
 for($run=$First;$run -lt $First+$Runs;$run++){
 foreach($size in $sizes){
