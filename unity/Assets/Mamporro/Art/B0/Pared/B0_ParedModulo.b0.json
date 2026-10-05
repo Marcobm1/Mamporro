@@ -1,0 +1,57 @@
+{
+  "contract": 1,
+  "id": "B0_ParedModulo",
+  "kind": "modular",
+  "purpose": "spike",
+  "materials": [
+    "B0_Piedra"
+  ],
+  "objects": [
+    "B0_ParedModulo"
+  ],
+  "clips": [],
+  "fps": 30,
+  "boundsMin": [
+    0.0,
+    -0.31,
+    0.0
+  ],
+  "boundsMax": [
+    4.0,
+    0.31,
+    3.0
+  ],
+  "boundsTolerance": 0.011,
+  "probes": [
+    {
+      "name": "coping_front_right",
+      "position": [
+        4.0,
+        0.3,
+        3.0
+      ],
+      "srgb": [
+        0.8235294117647058,
+        0.792156862745098,
+        0.7215686274509804
+      ]
+    },
+    {
+      "name": "plinth_back_left",
+      "position": [
+        0.0,
+        -0.3,
+        0.0
+      ],
+      "srgb": [
+        0.5215686274509804,
+        0.49019607843137253,
+        0.4392156862745098
+      ]
+    }
+  ],
+  "triangles": 348,
+  "vertices": 232,
+  "digest": "60e0a1aedf1d8d06b6bb2f57b4afe17f4fe947dab86915f9dfbe06dad1e9bbf9",
+  "fbxSha256": "078d895c673de299a15a37f995879dacaf3c8a0c58a2f63ab881eeb29547aeed"
+}

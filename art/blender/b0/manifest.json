@@ -63,6 +63,202 @@
           0.5
         ]
       }
+    },
+    {
+      "id": "B0_Pelusa",
+      "purpose": "spike",
+      "kind": "rigged",
+      "source": "pelusa/b0_pelusa.blend",
+      "output": "Pelusa/B0_Pelusa.fbx",
+      "objects": [
+        "B0_Pelusa_Rig",
+        "B0_Pelusa"
+      ],
+      "materials": [
+        "B0_Pelusa"
+      ],
+      "maxBones": 4,
+      "fps": 30,
+      "clips": [
+        {
+          "name": "Pelusa_Walk",
+          "action": "Pelusa_Walk",
+          "start": 0,
+          "end": 20,
+          "loop": true
+        }
+      ],
+      "bounds": {
+        "min": [
+          -0.5602,
+          -0.4638,
+          0.0
+        ],
+        "max": [
+          0.583,
+          0.4794,
+          1.0279
+        ]
+      },
+      "boundsTolerance": 0.005,
+      "probes": {
+        "eye_left": [
+          -0.215,
+          0.445,
+          0.665
+        ],
+        "foot_right": [
+          0.215,
+          0.205,
+          0.0
+        ]
+      },
+      "colors": {
+        "eye_left": [
+          0.9725490196078431,
+          0.9725490196078431,
+          0.9411764705882353
+        ],
+        "foot_right": [
+          0.22745098039215686,
+          0.20784313725490197,
+          0.2823529411764706
+        ]
+      }
+    },
+    {
+      "id": "B0_Remedios",
+      "purpose": "spike",
+      "kind": "rigged",
+      "source": "remedios/b0_remedios.blend",
+      "output": "Remedios/B0_Remedios.fbx",
+      "objects": [
+        "B0_Remedios_Rig",
+        "B0_Remedios"
+      ],
+      "materials": [
+        "B0_Remedios"
+      ],
+      "maxBones": 16,
+      "fps": 30,
+      "clips": [
+        {
+          "name": "Remedios_Walk",
+          "action": "Remedios_Walk",
+          "start": 0,
+          "end": 24,
+          "loop": true
+        },
+        {
+          "name": "Remedios_Idle",
+          "action": "Remedios_Idle",
+          "start": 0,
+          "end": 60,
+          "loop": true
+        }
+      ],
+      "bounds": {
+        "min": [
+          -0.3607,
+          -0.3334,
+          0.0
+        ],
+        "max": [
+          0.3607,
+          0.3771,
+          1.62
+        ]
+      },
+      "boundsTolerance": 0.005,
+      "probes": {
+        "nose": [
+          0.025,
+          0.21,
+          1.375
+        ],
+        "chancla_right": [
+          0.305,
+          0.215,
+          0.725
+        ],
+        "bag_left": [
+          -0.335,
+          0.04,
+          0.705
+        ]
+      },
+      "colors": {
+        "nose": [
+          0.9490196078431372,
+          0.7764705882352941,
+          0.6274509803921569
+        ],
+        "chancla_right": [
+          0.9098039215686274,
+          0.6901960784313725,
+          0.12549019607843137
+        ],
+        "bag_left": [
+          0.5411764705882353,
+          0.1803921568627451,
+          0.23137254901960785
+        ]
+      }
+    },
+    {
+      "id": "B0_ParedModulo",
+      "purpose": "spike",
+      "kind": "modular",
+      "source": "pared/b0_pared_modulo.blend",
+      "output": "Pared/B0_ParedModulo.fbx",
+      "objects": [
+        "B0_ParedModulo"
+      ],
+      "materials": [
+        "B0_Piedra"
+      ],
+      "bounds": {
+        "min": [
+          0.0,
+          -0.31,
+          0.0
+        ],
+        "max": [
+          4.0,
+          0.31,
+          3.0
+        ]
+      },
+      "boundsTolerance": 0.011,
+      "moduleSize": [
+        4.0,
+        0.5,
+        3.0
+      ],
+      "probes": {
+        "plinth_back_left": [
+          0.0,
+          -0.3,
+          0.0
+        ],
+        "coping_front_right": [
+          4.0,
+          0.3,
+          3.0
+        ]
+      },
+      "colors": {
+        "plinth_back_left": [
+          0.5215686274509804,
+          0.49019607843137253,
+          0.4392156862745098
+        ],
+        "coping_front_right": [
+          0.8235294117647058,
+          0.792156862745098,
+          0.7215686274509804
+        ]
+      }
     }
   ]
 }

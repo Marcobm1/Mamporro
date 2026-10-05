@@ -1,0 +1,86 @@
+{
+  "contract": 1,
+  "id": "B0_Remedios",
+  "kind": "rigged",
+  "purpose": "spike",
+  "materials": [
+    "B0_Remedios"
+  ],
+  "objects": [
+    "B0_Remedios_Rig",
+    "B0_Remedios"
+  ],
+  "clips": [
+    {
+      "name": "Remedios_Walk",
+      "take": "Remedios_Walk",
+      "start": 0,
+      "end": 24,
+      "loop": true
+    },
+    {
+      "name": "Remedios_Idle",
+      "take": "Remedios_Idle",
+      "start": 0,
+      "end": 60,
+      "loop": true
+    }
+  ],
+  "fps": 30,
+  "boundsMin": [
+    -0.3607,
+    -0.3334,
+    0.0
+  ],
+  "boundsMax": [
+    0.3607,
+    0.3771,
+    1.62
+  ],
+  "boundsTolerance": 0.005,
+  "probes": [
+    {
+      "name": "bag_left",
+      "position": [
+        -0.335,
+        0.04,
+        0.705
+      ],
+      "srgb": [
+        0.5411764705882353,
+        0.1803921568627451,
+        0.23137254901960785
+      ]
+    },
+    {
+      "name": "chancla_right",
+      "position": [
+        0.305,
+        0.215,
+        0.725
+      ],
+      "srgb": [
+        0.9098039215686274,
+        0.6901960784313725,
+        0.12549019607843137
+      ]
+    },
+    {
+      "name": "nose",
+      "position": [
+        0.025,
+        0.21,
+        1.375
+      ],
+      "srgb": [
+        0.9490196078431372,
+        0.7764705882352941,
+        0.6274509803921569
+      ]
+    }
+  ],
+  "triangles": 784,
+  "vertices": 494,
+  "digest": "2f4772a8fbc815e99923c1b99bd8177e78562958b5f33a29f82bebcb9013b0bc",
+  "fbxSha256": "c4d8ad232e64265e50e4e59f0434c68be88cb94e96446300f513aa2923a2b13b"
+}

@@ -1,4 +1,4 @@
-﻿param([ValidateSet('verify','author','export','test')][string]$Action='verify',[string]$Asset='',[switch]$Force)
+﻿param([ValidateSet('verify','author','export','test','capture')][string]$Action='verify',[string]$Asset='',[switch]$Force)
 $ErrorActionPreference='Stop'
 $repo=Split-Path $PSScriptRoot -Parent
 $results=Join-Path $repo $(if($Action -eq 'verify'){'unity\TestResults\B0\Environment'}else{"unity\TestResults\B0\$((Get-Culture).TextInfo.ToTitleCase($Action))"})
@@ -27,8 +27,8 @@ if($Action -ne 'verify'){
         return
     }
     foreach($id in $ids){
-        $script=Join-Path $PSScriptRoot $(if($Action -eq 'author'){'blender\b0_author.py'}else{'blender\b0_export.py'})
-        $extra=@($id);if($Action -eq 'export'){$extra+=(Join-Path $results "$id.json")};if($Force){$extra+='--force'}
+        $script=Join-Path $PSScriptRoot ('blender\b0_'+$Action+'.py')
+        $extra=@($id);if($Action -eq 'export'){$extra+=(Join-Path $results "$id.json")};if($Action -eq 'capture'){$extra+=(Join-Path $results $id)};if($Force){$extra+='--force'}
         & $blender @common --python $script -- @extra | Tee-Object -FilePath (Join-Path $results "$id.log") | Where-Object {$_ -match '^(B0|\{)'}
         if($LASTEXITCODE -ne 0){throw "Falló $Action de ${id}: $(Join-Path $results "$id.log")"}
     }

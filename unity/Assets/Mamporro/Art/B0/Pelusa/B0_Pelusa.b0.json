@@ -1,0 +1,66 @@
+{
+  "contract": 1,
+  "id": "B0_Pelusa",
+  "kind": "rigged",
+  "purpose": "spike",
+  "materials": [
+    "B0_Pelusa"
+  ],
+  "objects": [
+    "B0_Pelusa_Rig",
+    "B0_Pelusa"
+  ],
+  "clips": [
+    {
+      "name": "Pelusa_Walk",
+      "take": "Pelusa_Walk",
+      "start": 0,
+      "end": 20,
+      "loop": true
+    }
+  ],
+  "fps": 30,
+  "boundsMin": [
+    -0.5602,
+    -0.4638,
+    0.0
+  ],
+  "boundsMax": [
+    0.583,
+    0.4794,
+    1.0279
+  ],
+  "boundsTolerance": 0.005,
+  "probes": [
+    {
+      "name": "eye_left",
+      "position": [
+        -0.215,
+        0.445,
+        0.665
+      ],
+      "srgb": [
+        0.9725490196078431,
+        0.9725490196078431,
+        0.9411764705882353
+      ]
+    },
+    {
+      "name": "foot_right",
+      "position": [
+        0.215,
+        0.205,
+        0.0
+      ],
+      "srgb": [
+        0.22745098039215686,
+        0.20784313725490197,
+        0.2823529411764706
+      ]
+    }
+  ],
+  "triangles": 268,
+  "vertices": 174,
+  "digest": "d04e144ada9197f36e84bbb7fdcda1e58cb2a7d85c401d346891a68be454538b",
+  "fbxSha256": "abb6ccc954930c1b5cc94d1dddb00c1c62561663b61ba2541c9517a1040502b2"
+}

@@ -47,6 +47,11 @@ def _reimport_check(fbx, entry, digest):
     if set(imported) != expected:
         raise ExportError(f"Reimportación: objetos {sorted(imported)} != {sorted(expected)}")
     meshes = [o for o in imported.values() if o.type == "MESH"]
+    # El importador deja aplicada la primera toma: medir en reposo (bind pose), como la fuente.
+    for o in imported.values():
+        if o.type == "ARMATURE":
+            o.data.pose_position = "REST"
+    bpy.context.view_layer.update()
     tris = 0
     for o in meshes:
         o.data.calc_loop_triangles()
