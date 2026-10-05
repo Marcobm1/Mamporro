@@ -8,7 +8,7 @@ Estado: **P0-A1–P0-A5 AUTORIZADOS Y EN CURSO**. Preparación del 05/10/2026 (C
 - U0–U6 cerrados y aprobados. Entrega `unity/Builds/Windows/MAMPORRO.exe` intacta; SHA-256 `96b492cb271111251fe42b8646e65370a1b7b566773a1e35b34c3f2d1ae70873`.
 - Trabajo realizado: auditoría de código/documentación y plan. Ningún código, asset, script, escena o build P0 creado. No hay WIP runtime.
 - Siete ajustes Unity protegidos intactos y excluidos, según BLENDER_B0/PROGRESO_U6. No reset/clean/stash ni publicación accidental.
-- **Siguiente paso exacto:** A2, estados y movimiento sobre PlayerBody; A1 lógico terminado (445/445). La escena visible sigue pendiente para A3. Las cuatro decisiones están aprobadas; no volver a preguntarlas. P0-B/C/D no autorizados.
+- **Siguiente paso exacto:** A3, integración runtime optativa y cámara QA. A1/A2 lógicos terminados (453/453); escena visible, Play/build/medidas pendientes. Las cuatro decisiones están aprobadas; no volver a preguntarlas. P0-B/C/D no autorizados.
 - Publicación de este plan: commit «Planifica el prototipo de movilidad y verticalidad», localizable con `git log --oneline -- docs/PROGRESO_P0.md`; fetch/push normal y comprobar remoto. Un paso verificable por commit durante implementación futura.
 
 Auditoría CMD antes de continuar:
@@ -111,3 +111,9 @@ Barrido continuo contra cajas (sin muestreo que atraviese sólidos finos); norma
 Pruebas nuevas realmente ejecutadas: `scripts\u3.cmd edit`, 05/10/2026, primera pasada 444/444 y segunda final **445/445**, `unity/TestResults/U3/edit.xml` y `edit.log`; incluye las 430 regresiones anteriores y las 15 nuevas. El primer intento restringido no llegó a ejecutar Unity por licencia/entorno; la ejecución fuera del entorno restringido terminó correctamente. No Play/build/visual todavía porque no hay integración runtime. Sin cambios en `src/` ni referencias. Entrega U6 no regenerada.
 
 Commit de esta pieza: «Añade las consultas y el circuito lógico de movilidad vertical». Fetch/push normal; siguiente pieza A2: estados y movimiento sobre PlayerBody, después integración visible A3. No iniciar P0-B. Los siete ajustes locales siguen excluidos; no hay otros cambios heredados.
+
+## Sesión 05/10/2026 — A2, estados de movimiento (Codex)
+
+A1 publicado en `508aa0f849eb536068359a90a6fc883a117d5937`. Añadido `VerticalMotion.cs`: extensión optativa sobre un único PlayerBody con estados suelo/aire/escalada/borde, controles e intención separados, velocidades parametrizadas, rearmado tras soltar, barridos, transición recorrida a velocidad finita, timeout y contadores. No cambia PlayerPhysics U3. Ocho pruebas nuevas cubren ausencia de agarre pasivo, velocidad/diagonal, espera de 120 s sin límite, salto/rearme, suspensión/reset, salida de borde en varios ticks, techo bloqueante y repetición determinista.
+
+`scripts\u3.cmd edit` ejecutado el 05/10/2026: **453/453**, `unity/TestResults/U3/edit.xml`/`edit.log`. Aún no hay entrada de ratón/cámara QA ni escena visible: corresponde a A3. Commit «Añade los estados de escalada y salida de borde». Siguiente: conectar optativamente circuito/movimiento al runtime existente, sin segunda simulación de combate, e integrar cámara QA. Play/build/medidas pendientes. Siete ajustes excluidos.
