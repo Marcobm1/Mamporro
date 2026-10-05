@@ -1,5 +1,9 @@
 # Decisiones acordadas
 
+## B0 cerrado técnicamente; propuestas pendientes del autor (05/10/2026)
+
+Claude Code cierra B0.1–B0.6 ([BLENDER_B0](BLENDER_B0.md)). **No son decisiones aprobadas**, sino propuestas que esperan al autor: (1) estrategia de animación de horda — D (VAT) como candidata por calidad y memoria, C como alternativa simple, o ninguna; (2) **Git normal** sin LFS para las fuentes `.blend` sin comprimir, con revisión si aparecen archivos > 10 MB; (3) aprobación artística de Pelusa, Doña Remedios y el módulo de pared. Nada se adopta en la partida normal ni en la entrega.
+
 ## B0.2: contrato de assets 3D, decisiones técnicas (05/10/2026)
 
 Tomadas por Claude Code dentro del plan B0 autorizado, con evidencia de la fixture asimétrica; no cambian reglas, colliders ni gameplay. Detalle y pruebas en [BLENDER_B0](BLENDER_B0.md#sesión-05102026--b02-contrato-de-assets-claude-code).

@@ -133,5 +133,5 @@ A fecha 05/10/2026:
 - U1 está cerrado y aprobado.
 - U2 está aprobado y cerrado.
 - U3 aprobada manualmente el 04/10/2026; último cierre técnico previo: `83246ebfd873b0c5d23611a1d557f83096180217`.
-- U4 aprobada manualmente el 04/10/2026 (último cierre técnico `3754e31`). U5 aprobado manualmente el 04/10/2026; U6 aprobado manualmente el 05/10/2026; migración cerrada y B0 autorizado y en curso.
+- U4 aprobada manualmente el 04/10/2026 (último cierre técnico `3754e31`). U5 aprobado manualmente el 04/10/2026; U6 aprobado manualmente el 05/10/2026; migración cerrada. B0 cerrado técnicamente por Claude Code el 05/10/2026 (B0.1–B0.6); detenido a la espera de la revisión del autor.
 - Codex CLI y Claude Code trabajan por turnos. Leer `docs/BLENDER_B0.md`, `docs/PROGRESO_U6.md` y los cierres de U3–U5, auditar el árbol y continuar desde el checkpoint; conservar los siete ajustes locales Unity excluidos.

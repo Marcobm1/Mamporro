@@ -1,14 +1,14 @@
 # B0 — Spike Blender / pipeline de assets 3D
 
-Objetivos confirmados por el autor el 04/10/2026; plan concretado el 05/10/2026, después de aprobar U6. **IMPLEMENTACIÓN AUTORIZADA Y EN CURSO (05/10/2026), pasos B0.1–B0.6.** Pelusa, Doña Remedios y módulo de pared aprobados. Suelo 300: p95 ≤ 16,67 ms; 500/750 obligatorios para comparar coste/calidad, sin umbral rígido de 60 FPS. No instalar plugins ni activar LFS por anticipación. El spike precede a cualquier adopción artística masiva.
+Objetivos confirmados por el autor el 04/10/2026; plan concretado el 05/10/2026, después de aprobar U6. **IMPLEMENTACIÓN AUTORIZADA (05/10/2026), pasos B0.1–B0.6; **CIERRE TÉCNICO TERMINADO — PENDIENTE DE REVISIÓN Y APROBACIÓN DEL AUTOR**.** Pelusa, Doña Remedios y módulo de pared aprobados. Suelo 300: p95 ≤ 16,67 ms; 500/750 obligatorios para comparar coste/calidad, sin umbral rígido de 60 FPS. No instalar plugins ni activar LFS por anticipación. El spike precede a cualquier adopción artística masiva.
 
 ## Cómo retomar
 
 - **Base:** migración U0–U6 cerrada; cierre formal publicado en `39602c8aaba3ca163cde39c654b005f23f9e5f2f`. Cierre técnico anterior `c84b62d`; código de entrega `daaa626` y paquete conservados en [PROGRESO_U6](PROGRESO_U6.md).
-- **Paso actual:** B0.1–B0.5 **terminados** (B0.5: A/B/C/D medidas, sin adopción). Siguiente: B0.6, cierre técnico.
+- **Paso actual:** B0.1–B0.6 **terminados**. B0 cerrado técnicamente; **detenido para la revisión visual/manual del autor**. No adoptar assets ni estrategia ni empezar otro bloque sin su aprobación.
 - **Terminado:** instalación real 5.2.2 LTS, background/Python/FBX, GUI capturada y cerrada sin guardar; `scripts\blender.cmd verify` implementado y ejecutado. Arnés QA `-b0-benchmark` (`unity/Assets/Mamporro/U3/B0Benchmark.cs`), builds QA separadas `U3Project.BuildB0`/`BuildB0Development` y lanzador `scripts\b0.cmd build|devbuild|benchmark|devdiag|summary`; base A medida (resultados abajo). Contrato B0.2: manifiesto `art/blender/b0/manifest.json`, scripts `scripts/blender/b0_*.py`, importador `Editor/B0AssetImport.cs`, fixture QA y pruebas Blender 22/22 + Unity 8/8. B0.3: fuentes `art/blender/b0/{pelusa,remedios,pared}`, FBX en `Art/B0/{Pelusa,Remedios,Pared}`, pruebas Blender 25/25 + Unity 22/22 y capturas locales (`scriptslender.cmd capture`). B0.4: escena aditiva `unity/Assets/Mamporro/QA/B0/B0_QA.unity` (solo builds B0), `U3/B0Visuals.cs` (biblioteca, horda instanciada, `VisualRoot`), `U3/B0VisualCheck.cs`, gancho `RunRenderer.EnemyVisual` y `U3Game.AvatarRoot`; `scripts0.cmd create|play|visual|jugar`.
 - **Sin commit deliberadamente:** los siete ajustes Unity protegidos enumerados en PROGRESO_U6; no publicar ni restaurar. Product Name ya es MAMPORRO y no se vuelve a cambiar.
-- **Siguiente acción exacta:** B0.6 — regresión completa (`scripts\u3.cmd edit|play|build`, B0 `edit|play|visual`), repetibilidad exportación/importación desde CMD, inventario de binarios y ruido de reexportación para la recomendación Git/LFS, guía de revisión manual y checkpoint final; después DETENERSE para la revisión del autor.
+- **Siguiente acción exacta:** esperar la revisión del autor (guía al final de este documento). Según su respuesta: ajustes artísticos, adopción parcial autorizada o cierre «sin adopción». Ningún agente debe avanzar sin esa respuesta.
 - **Continuidad:** una pieza verificable por commit español, pruebas reales, checkpoint aquí, fetch antes de push normal a `claude/zen-pasteur-674ik0`. Sin PR. Parar ante nueva decisión importante y al cierre para revisión artística/manual.
 
 Auditoría inicial futura, desde CMD en la raíz del repositorio:
@@ -353,3 +353,61 @@ Ningún fotograma por encima de 16,67 ms en ninguna condición. **Suelo de 300 (
 **Lectura de los datos.** En este equipo y a interna 360, la horda no es el cuello de botella: el fotograma completo cuesta ~0,4–0,6 ms y las tres estrategias nuevas son **ligeramente más baratas que la base A** (una malla por enemigo frente a dos cajas). Entre B, C y D las diferencias de p95 (≤ 0,02 ms) están dentro de la dispersión; el coste CPU propio de la horda crece lineal (~0,13–0,15 µs por Pelusa) y es casi igual en las tres. Por tanto la elección no la decide el coste medido sino la calidad y la memoria: **D (VAT)** da animación continua con la menor memoria extra de las animadas y sin coste CPU adicional; **C** es más simple (sin shader propio) pero con movimiento a saltos y el doble de memoria. **Ninguna se adopta**: es propuesta para la revisión del autor.
 
 **Limitaciones.** Tiempo GPU **N/D** (FrameTimingManager no fiable en este equipo), draw calls/batches **N/D** (contadores a 0 con `RenderMeshInstanced`); con una RTX 4070 Ti SUPER a 640×360 el coste GPU de los vértices extra de D no se puede distinguir aquí y podría importar en equipos modestos. Presentación aislada con la lógica en pausa: no son FPS de partida. Sin vídeo (no hay grabador instalado): secuencias de 6 PNG por estrategia/carga en su lugar. Equipo de gama alta, sin valor de requisito mínimo.
+
+## Sesión 05/10/2026 — B0.6, cierre técnico (Claude Code)
+
+**Regresión y repetibilidad (ejecutado el 05/10/2026 sobre `27ea0a7`).**
+
+- `scripts\u3.cmd edit` → **430/430** (405 U6 + 25 B0); `scripts\u3.cmd play` → **42/42** (39 U6 + 3 B0).
+- Desde CMD, cadena completa: `scripts\blender.cmd verify` (5.2.2 LTS, Python 3.13.13, FBX) → `test` **25/25** → `export` (los cuatro assets «sin cambios»: reexportar no reescribe nada) → `scripts\b0.cmd edit` **25/25** → `play` **3/3** → `build` → `visual` (capturas nuevas).
+- **No se ejecutó `scripts\u3.cmd build`**: borra y regenera `unity\Builds\Windows`, y la instrucción vigente es no sustituir la entrega aprobada. La escena U3 compila y se empaqueta en cada build B0 (que la incluye). Entrega intacta: `MAMPORRO.exe` SHA-256 `96b492cb…0873`, igual que U6.
+- Siete ajustes protegidos sin cambios: mismas huellas SHA-256 que al recibir el relevo (`f88523da`, `71b8ad93`, `35dd86b4`, `9e68444b`, `4505cd00`, `7698172a`, `68d75e5e`), fuera de todos los commits.
+- Builds QA locales (no versionadas): `unity\Builds\B0` 102 MB (normal) y `unity\Builds\B0Dev` 166 MB (Development).
+
+**Inventario de binarios versionados en B0 (tamaño / zlib-9 ≈ como los guarda Git).**
+
+| Archivo | Tipo | Bytes | Comprimido |
+| --- | --- | --- | --- |
+| `art/blender/b0/remedios/b0_remedios.blend` | binario | 755 935 | 116 669 |
+| `art/blender/b0/pelusa/b0_pelusa.blend` | binario | 573 614 | 99 268 |
+| `art/blender/b0/fixture/b0_fixture.blend` | binario | 541 631 | 90 580 |
+| `art/blender/b0/pared/b0_pared_modulo.blend` | binario | 535 611 | 93 759 |
+| `Art/B0/Remedios/B0_Remedios.fbx` | binario | 265 644 | 58 241 |
+| `QA/B0/Generated/B0_Pelusa_VAT.asset` | YAML | 194 952 | 37 828 |
+| `Art/B0/Pelusa/B0_Pelusa.fbx` | binario | 70 604 | 20 969 |
+| `QA/B0/Generated/B0_Pelusa_Pose_0…7.asset` | YAML | 8 × ~50 410 | 8 × ~11 300 |
+| `Art/B0/Pared/B0_ParedModulo.fbx` | binario | 21 900 | 10 645 |
+| `Art/B0/Fixture/B0_Fixture.fbx` | binario | 17 996 | 5 871 |
+| manifiesto, gemelos `.b0.json`, materiales, escena QA | texto | < 6,4 KB c/u | — |
+| **Total** | | **3 401 097** | **631 157** |
+
+Sin texturas de imagen (la paleta va en color de vértice). Pack completo del repositorio tras B0: ~5 MB.
+
+**Ruido de revisiones (medido en un repositorio Git temporal con `b0_remedios.blend`, `git gc --aggressive`).** Pack con la versión original 118 804 B; volver a guardar sin cambios altera 390 bytes y añade **1 778 B**; mover un vértice 1 cm altera 8 bytes y añade **273 B**. FBX: una reexportación forzada cambia ~51 bytes (fecha e IDs internos) y el exportador no reescribe la salida si el contenido semántico no cambia.
+
+**Recomendación Git/LFS (propuesta, no activada).** **Git normal** para este volumen: fuentes de 0,5–0,8 MB que comprimen al ~17 % y cuyos cambios se guardan como deltas de pocos KB; LFS añadiría dependencia de servidor y cuota sin ventaja medible. Condiciones para mantenerlo: guardar los `.blend` **sin compresión** (la compresión de Blender destruye los deltas), no reexportar FBX sin cambios (ya garantizado) y no versionar builds. Reconsiderar LFS si aparecen texturas/fuentes grandes (orientativo: archivos > 10 MB o crecimiento > 100 MB/año) o audio/vídeo fuente. Lo derivado (poses/VAT, 0,6 MB en YAML) podría dejar de versionarse y generarse con `scripts\b0.cmd create` si se adopta; hoy se versiona para que la build QA sea reproducible sin pasos extra. Decisión pendiente del autor.
+
+**Estructura final del pipeline.**
+
+```text
+art/blender/b0/manifest.json            catálogo y contrato por asset (objetos, slots, bounds, sondas, clips)
+art/blender/b0/<asset>/*.blend          fuentes editables (fuera de unity/Assets)
+scripts/blender.cmd verify|author|export|test|capture   (scripts/blender/b0_*.py, Blender 5.2.2 en background)
+unity/Assets/Mamporro/Art/B0/<Asset>/<Id>.fbx + <Id>.b0.json   salida para Unity (+ .meta estables)
+unity/Assets/Mamporro/Editor/B0AssetImport.cs                   importador del contrato
+unity/Assets/Mamporro/QA/B0/                                     escena aditiva QA, materiales, horneado C/D
+unity/Assets/Mamporro/U3/B0Visuals.cs, B0VisualCheck.cs, B0Benchmark.cs   VisualRoot, horda A/B/C/D, QA
+scripts/b0.cmd create|build|devbuild|edit|play|visual|jugar|benchmark|devdiag|summary
+```
+
+**Conclusión técnica.** Pipeline Blender → FBX → Unity reproducible y probado (contrato cerrado, exportación idempotente que protege la última salida válida, reimportación con GUID/fileID estables, tres casos representativos con rig/clips/módulo). Integración `VisualRoot` sin efecto en la lógica (verificado con huella completa de la partida). Rendimiento: con el contenido del spike, todas las estrategias cumplen el suelo de 300 con un margen enorme en este equipo; B/C/D cuestan algo menos que las cajas U6 y no asignan memoria. Estado: **«pipeline validado técnicamente, pendiente de la aprobación visual/manual del autor»**; ningún resultado se adopta en la partida normal.
+
+## Guía de revisión manual del autor
+
+Desde CMD en la raíz del repositorio, con el Editor de Unity cerrado. Nada de esto toca tu progreso personal ni la entrega `unity\Builds\Windows`.
+
+1. **Jugar con el visual B0:** `scripts\b0.cmd jugar` (si no existe la build: antes `scripts\b0.cmd build`). Abre la build QA en ventana 1920×1080 con Remedios rig, Pelusas instanciadas y dos módulos de muro 10 m delante del inicio; el progreso va a `unity\TestResults\B0\ManualSave`. Para ver las Pelusas animadas, ciérrala y lánzala a mano desde `unity` con la estrategia: `Builds\B0\MAMPORRO-B0.exe -b0-visual -b0-horde vat -u4-save-dir TestResults\B0\ManualSave` (o `poses`, o `static`). Comprueba: andar/inactiva y su ritmo, giro, deslizamiento, salto, pausa (Esc congela la animación), parpadeo al recibir daño, reinicio (F8), legibilidad de las Pelusas a 360 p, destello de golpe. El muro **no tiene collider** (se atraviesa a propósito).
+2. **Capturas ya generadas:** `unity\TestResults\B0\Visual\` (juego, colliders superpuestos, mismo instante con U6, 6 fotogramas de andar de frente, inactiva, reinicio) y `unity\TestResults\B0\Capture\<asset>\` (vistas frente/¾/derecha/espalda y fotogramas de cada clip renderizados en Blender).
+3. **Comparar estrategias:** `unity\TestResults\B0\Benchmark\Normal\{base,static,poses,vat}-{300,500,750}-1920x1080-r1-*-cerca-0…5.png` (seis fotogramas cercanos) y las vistas generales `*-r1-*.png`; datos en `agregado-20261005T145847.csv`.
+4. **Fuentes en Blender (opcional):** abre `art\blender\b0\remedios\b0_remedios.blend` (o Pelusa/pared) con Blender 5.2.2; el frente mira a +Y (vista trasera, Ctrl+Numpad1). Si editas una fuente: guárdala **sin compresión** y ejecuta `scripts\blender.cmd test` y `scripts\blender.cmd export`; luego `scripts\b0.cmd create`, `edit` y `build`.
+5. **Decide y dímelo:** originalidad, silueta, proporciones y legibilidad de Pelusa, Doña Remedios y el muro; si el flujo de edición/reexportación te sirve; estrategia de horda preferida (C, D o ninguna); Git normal o LFS; y si B0 se cierra como «validado para proponer adopción» o «sin adopción».
