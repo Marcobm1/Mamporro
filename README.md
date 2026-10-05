@@ -28,6 +28,8 @@ Para probar la build sin usar el guardado personal:
 start "" "unity\Builds\Windows\MAMPORRO.exe" -monitor 1 -screen-fullscreen 0 -screen-width 1920 -screen-height 1080 -u4-save-dir "%TEMP%\MamporroU6Prueba"
 ```
 
+Paquete local de entrega (sin publicar nada): `scripts\mamporro.cmd package` crea en `unity\Builds\Paquete\` la carpeta `MAMPORRO-Windows-x64-<commit>` (build sin la carpeta de copia de seguridad de Unity, `LEEME.txt` y `MANIFIESTO.json` con tamaño y SHA-256 de cada archivo), su ZIP determinista y el `.sha256`; `scripts\mamporro.cmd verify` lo extrae en una carpeta temporal con espacios, comprueba todas las huellas y arranca `MAMPORRO.exe -u6-smoke` con un guardado temporal.
+
 Conservar toda la carpeta de build, incluidos datos y DLL. Builds, resultados y capturas no se versionan. Development es diagnóstico separado, no entrega final.
 
 ## Progreso y opciones
