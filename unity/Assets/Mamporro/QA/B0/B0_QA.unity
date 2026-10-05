@@ -119,7 +119,7 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &2103937927
+--- !u!1 &603025149
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -127,8 +127,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 2103937929}
-  - component: {fileID: 2103937928}
+  - component: {fileID: 603025151}
+  - component: {fileID: 603025150}
   m_Layer: 0
   m_Name: B0 visuales
   m_TagString: Untagged
@@ -136,13 +136,13 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &2103937928
+--- !u!114 &603025150
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2103937927}
+  m_GameObject: {fileID: 603025149}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 483d2d9de59d5e440866dc8963270430, type: 3}
@@ -156,13 +156,26 @@ MonoBehaviour:
   pelusaWalk: {fileID: -205524413462689082, guid: c162c1b67e302a048b49e7c1c70c72e9, type: 3}
   retro: {fileID: 2100000, guid: 49111bbb128f61649a013d88a4b0512f, type: 2}
   retroFlash: {fileID: 2100000, guid: e3e596908f6c0f843a1cf96f61835052, type: 2}
---- !u!4 &2103937929
+  pelusaPoses:
+  - {fileID: 4300000, guid: 46a068bd9ff442748b3338c24998f0b2, type: 2}
+  - {fileID: 4300000, guid: 1f6173c00c7cec54ab8c6fa83c8e3dd3, type: 2}
+  - {fileID: 4300000, guid: b8eb972edd8ecb94e95382744f340e9a, type: 2}
+  - {fileID: 4300000, guid: e85fa5ea440b74d4eb652abfefbd6948, type: 2}
+  - {fileID: 4300000, guid: 19e2e76f3db3a1745ab21108ba0cf99a, type: 2}
+  - {fileID: 4300000, guid: 64a8ba5cade4bca4e9fff8f0ab50fdb5, type: 2}
+  - {fileID: 4300000, guid: 5c7929fa7dfe02441a2860109a0eda3e, type: 2}
+  - {fileID: 4300000, guid: a48d24a888acf9343b202e411f5b3caa, type: 2}
+  pelusaVat: {fileID: 2800000, guid: 73c27283b60ae7543a0adad3ab374304, type: 2}
+  vat: {fileID: 2100000, guid: 446e719906d7ca145bdd7cee8819deb9, type: 2}
+  vatFlash: {fileID: 2100000, guid: 0abbbe61ab7c28a4c859c94650e3b05c, type: 2}
+  clipSeconds: 0.6666667
+--- !u!4 &603025151
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2103937927}
+  m_GameObject: {fileID: 603025149}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -175,4 +188,4 @@ Transform:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 2103937929}
+  - {fileID: 603025151}
