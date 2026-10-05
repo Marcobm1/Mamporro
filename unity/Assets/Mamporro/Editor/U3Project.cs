@@ -95,7 +95,7 @@ namespace Mamporro.Editor
             if(PlayerSettings.GetScriptingBackend(NamedBuildTarget.Standalone)!=ScriptingImplementation.Mono2x)throw new BuildFailedException("B0 requiere Mono.");
             if(Directory.Exists(folder))Directory.Delete(folder,true);
             Directory.CreateDirectory(folder);
-            var report=BuildPipeline.BuildPlayer(new BuildPlayerOptions{scenes=new[]{ScenePath},locationPathName=folder+"/MAMPORRO-B0.exe",target=BuildTarget.StandaloneWindows64,options=options});
+            var report=BuildPipeline.BuildPlayer(new BuildPlayerOptions{scenes=File.Exists(B0Project.ScenePath)?B0Project.Scenes:new[]{ScenePath},locationPathName=folder+"/MAMPORRO-B0.exe",target=BuildTarget.StandaloneWindows64,options=options});
             if(report.summary.result!=BuildResult.Succeeded)throw new BuildFailedException(report.summary.result.ToString());
             Debug.Log($"B0 Windows x64 Mono ({options}): build QA correcta en {folder}.");
         }

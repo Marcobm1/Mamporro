@@ -4,6 +4,7 @@ using System.Linq;
 using Mamporro.Editor;
 using NUnit.Framework;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 
 namespace Mamporro.Tests.B0
@@ -114,6 +115,25 @@ namespace Mamporro.Tests.B0
             HashSet<Vector2Int> Profile(float x)=>new HashSet<Vector2Int>(v.Where(p=>Mathf.Abs(p.x-x)<1e-4f).Select(p=>new Vector2Int(Mathf.RoundToInt(p.y*1000),Mathf.RoundToInt(p.z*1000))));
             var left=Profile(0);var right=Profile(4);
             Assert.That(left.Count,Is.GreaterThan(0));Assert.That(left.SetEquals(right),Is.True,"los bordes del módulo no coinciden");
+        }
+
+        // B0.4: la escena QA sigue resolviendo mallas, clips, prefabs y materiales tras reimportar.
+        [Test]
+        public void QaSceneReferencesSurviveReimport()
+        {
+            string[] Ids()
+            {
+                var scene=EditorSceneManager.OpenScene(B0Project.ScenePath,OpenSceneMode.Additive);
+                try{
+                    var lib=scene.GetRootGameObjects().Select(o=>o.GetComponent<Mamporro.U3.B0VisualLibrary>()).Single(l=>l!=null);
+                    Object[] refs={lib.pelusa,lib.remedios,lib.wall,lib.remediosWalk,lib.remediosIdle,lib.pelusaWalk,lib.retro,lib.retroFlash};
+                    Assert.That(refs.All(r=>r!=null),Is.True,"referencia rota en B0_QA");
+                    return refs.Select(r=>{AssetDatabase.TryGetGUIDAndLocalFileIdentifier(r,out string g,out long id);return g+":"+id;}).ToArray();
+                }finally{EditorSceneManager.CloseScene(scene,true);}
+            }
+            var before=Ids();
+            foreach(var a in Assets)AssetDatabase.ImportAsset(Path(a),ImportAssetOptions.ForceUpdate);
+            Assert.That(Ids(),Is.EqualTo(before));
         }
 
         [TestCaseSource(nameof(Assets))]

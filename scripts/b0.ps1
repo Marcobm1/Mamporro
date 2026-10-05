@@ -1,4 +1,4 @@
-﻿param([ValidateSet('build','devbuild','benchmark','devdiag','summary','edit')][string]$Action='benchmark',[int]$Runs=3,[int]$First=1,[string]$Strategies='base',[string]$Source='')
+﻿param([ValidateSet('create','build','devbuild','benchmark','devdiag','summary','edit','play','visual','jugar')][string]$Action='benchmark',[int]$Runs=3,[int]$First=1,[string]$Strategies='base',[string]$Source='')
 # B0 (spike Blender): builds QA separadas y ensayo de presentación de la horda. No toca la
 # entrega aprobada (unity\Builds\Windows) ni el progreso personal (guardado propio del ensayo).
 $ErrorActionPreference='Stop'
@@ -9,8 +9,38 @@ $results=Join-Path $project 'TestResults\B0\Benchmark'
 New-Item -ItemType Directory -Force -Path $results | Out-Null
 function Invoke-Build([string]$method,[string]$log){
     if(Get-Process Unity -ErrorAction SilentlyContinue){throw 'Hay un Editor abierto. Guarda y cierra la instancia antes de ejecutar batch.'}
-    $process=Start-Process -FilePath $unity -ArgumentList "-batchmode -projectPath `"$project`" -logFile `"$log`" -quit -executeMethod Mamporro.Editor.U3Project.$method" -WorkingDirectory $project -WindowStyle Hidden -PassThru
+    $process=Start-Process -FilePath $unity -ArgumentList "-batchmode -projectPath `"$project`" -logFile `"$log`" -quit -executeMethod Mamporro.Editor.$method" -WorkingDirectory $project -WindowStyle Hidden -PassThru
     $process.WaitForExit();if($process.ExitCode -ne 0){throw "Falló la build ($method): $log"}
+}
+if($Action -in @('visual','jugar')){
+    $player=Join-Path $project 'Builds\B0\MAMPORRO-B0.exe'
+    if(!(Test-Path -LiteralPath $player)){throw 'Primero genera la build: scripts\b0.cmd build'}
+    if($Action -eq 'jugar'){
+        # Revisión manual del autor: build QA con el visual B0 y guardado QA propio (nunca el personal).
+        $save=Join-Path $project 'TestResults\B0\ManualSave'
+        Start-Process -FilePath $player -WorkingDirectory $project -ArgumentList "-screen-fullscreen 0 -screen-width 1920 -screen-height 1080 -b0-visual -u4-save-dir `"$save`" -logFile `"$(Join-Path $project 'TestResults\B0\manual.log')`""
+        Write-Output "B0 jugar: build QA con visual B0; progreso QA en $save";return
+    }
+    $out=Join-Path $project 'TestResults\B0\Visual';New-Item -ItemType Directory -Force -Path $out | Out-Null;$started=Get-Date
+    $process=Start-Process -FilePath $player -WorkingDirectory $project -ArgumentList "-monitor 1 -screen-fullscreen 0 -screen-width 1920 -screen-height 1080 -b0-visual -b0-visual-check -b0-output `"$out`" -u4-save-dir `"$(Join-Path $out VisualSave)`" -logFile `"$(Join-Path $out 'visual.log')`"" -WindowStyle Normal -PassThru
+    if(!$process.WaitForExit(180000)){Stop-Process -Id $process.Id -Force;throw 'La comprobación visual B0 no terminó en 180 s'}
+    if($process.ExitCode -ne 0){throw "La build terminó con error $($process.ExitCode): $(Join-Path $out 'visual.log')"}
+    foreach($name in @('b0-juego','b0-colliders','b0-u6-mismo-instante','b0-andar-0','b0-andar-5','b0-inactiva','b0-reinicio')){
+        $f=Get-Item -LiteralPath (Join-Path $out "$name.png");if($f.LastWriteTime -lt $started -or $f.Length -eq 0){throw "Captura ausente o antigua: $name"}
+    }
+    Write-Output ('B0 visual: '+((Get-Content -Raw (Join-Path $out 'b0-visual.json') | ConvertFrom-Json) | ConvertTo-Json -Compress));Write-Output "Capturas: $out";return
+}
+if($Action -eq 'play'){
+    # Solo las pruebas Play B0 (integración visual); la batería completa sigue en scripts\u3.cmd play.
+    if(Get-Process Unity -ErrorAction SilentlyContinue){throw 'Hay un Editor abierto. Guarda y cierra la instancia antes de ejecutar batch.'}
+    $xml=Join-Path $results 'play-b0.xml';$log=Join-Path $results 'play-b0.log';Remove-Item -LiteralPath $xml -ErrorAction SilentlyContinue
+    $process=Start-Process -FilePath $unity -ArgumentList "-batchmode -projectPath `"$project`" -logFile `"$log`" -runTests -testPlatform PlayMode -testFilter Mamporro.Tests.B0VisualSceneTests -testResults `"$xml`"" -WorkingDirectory $project -WindowStyle Hidden -PassThru
+    $process.WaitForExit()
+    if(!(Test-Path -LiteralPath $xml)){throw "Unity no generó resultados: $log"}
+    [xml]$report=Get-Content -Raw $xml
+    foreach($t in $report.SelectNodes('//test-case')){Write-Output "$($t.result.PadRight(7)) $($t.name)$(if($t.result -ne 'Passed'){' -> '+$t.failure.message.InnerText})"}
+    if($report.'test-run'.result -ne 'Passed'){throw "Pruebas Play B0 fallidas: $xml"}
+    Write-Output "play B0: $($report.'test-run'.passed)/$($report.'test-run'.total) correctas";return
 }
 if($Action -eq 'edit'){
     # Solo las pruebas B0 (contrato de importación); la batería completa sigue en scripts\u3.cmd edit.
@@ -24,8 +54,9 @@ if($Action -eq 'edit'){
     if($report.'test-run'.result -ne 'Passed'){throw "Pruebas B0 fallidas: $xml"}
     Write-Output "edit B0: $($report.'test-run'.passed)/$($report.'test-run'.total) correctas";return
 }
-if($Action -eq 'build'){Invoke-Build 'BuildB0' (Join-Path $results 'build.log');Write-Output 'B0 build QA normal: unity\Builds\B0\MAMPORRO-B0.exe';return}
-if($Action -eq 'devbuild'){Invoke-Build 'BuildB0Development' (Join-Path $results 'devbuild.log');Write-Output 'B0 build QA Development: unity\Builds\B0Dev\MAMPORRO-B0.exe';return}
+if($Action -eq 'create'){Invoke-Build 'B0Project.CreateQa' (Join-Path $results 'create.log');Write-Output 'B0 escena QA: unity\Assets\Mamporro\QA\B0\B0_QA.unity';return}
+if($Action -eq 'build'){Invoke-Build 'U3Project.BuildB0' (Join-Path $results 'build.log');Write-Output 'B0 build QA normal: unity\Builds\B0\MAMPORRO-B0.exe';return}
+if($Action -eq 'devbuild'){Invoke-Build 'U3Project.BuildB0Development' (Join-Path $results 'devbuild.log');Write-Output 'B0 build QA Development: unity\Builds\B0Dev\MAMPORRO-B0.exe';return}
 $dev=$Action -eq 'devdiag'
 $out=Join-Path $results $(if($dev){'DevDiag'}else{'Normal'})
 New-Item -ItemType Directory -Force -Path $out | Out-Null

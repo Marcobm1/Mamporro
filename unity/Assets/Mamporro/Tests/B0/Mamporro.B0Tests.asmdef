@@ -1,6 +1,13 @@
 {
   "name": "Mamporro.B0Tests",
-  "references": ["Mamporro.Editor"],
-  "includePlatforms": ["Editor"],
-  "optionalUnityReferences": ["TestAssemblies"]
+  "references": [
+    "Mamporro.Editor",
+    "Mamporro.U3"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "optionalUnityReferences": [
+    "TestAssemblies"
+  ]
 }

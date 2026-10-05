@@ -135,6 +135,8 @@ namespace Mamporro.U3
         public double RenderMs {get;private set;}
 
         Transform avatar;
+        // B0: lectura del avatar provisional ya colocado (VisualRoot de QA); no cambia la lógica.
+        public Transform AvatarRoot=>avatar;
         Material avatarMaterial;
         RenderTexture target;
         PlayerIntent intent;
