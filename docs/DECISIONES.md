@@ -1,5 +1,11 @@
 # Decisiones acordadas
 
+## B0 autorizado y casos/rendimiento aprobados (05/10/2026)
+
+El autor autoriza B0.1–B0.6 consecutivos conforme a BLENDER_B0: Pelusa, Doña Remedios con rig/locomoción y módulo de pared. Suelo de 300 entidades: p95 ≤ 16,67 ms; 500/750 obligatorios para comparar escalabilidad, coste y calidad, sin requisito rígido de 60 FPS. Ninguna estrategia se adopta automáticamente por cumplir el suelo. Preservar simulación/arrays/pools/grid/render central; VisualRoot solo presentación.
+
+Comprobada la instalación real: Blender 5.2.2 LTS, build d13f752e3b9c, Python 3.13.13; versión fijada para B0 sin reinstalar ni añadir plugins. Fuentes .blend fuera de Assets, FBX como intercambio. No LFS preventivo; tamaños y recomendación al cierre. No producción masiva ni otras mejoras; detenerse para revisión visual/manual del autor. Estado, pruebas reales y pendientes en [BLENDER_B0](BLENDER_B0.md).
+
 ## Preparación de B0 tras cerrar U6 (05/10/2026)
 
 Solo planificación autorizada: [BLENDER_B0](BLENDER_B0.md) concreta seis pasos con dependencias, aceptación, evidencias y pruebas. Fuentes .blend fuera de unity/Assets; FBX como intercambio a validar. Instalación real primero cuando se autorice; ninguna instalación, ejecución Blender, modelo o integración ahora. Dos propuestas para el autor: trío representativo Pelusa/Remedios/módulo de pared y criterio de comparación de rendimiento; no son decisiones aprobadas. No adoptar animación masiva, cambiar colliders ni activar LFS por anticipación.

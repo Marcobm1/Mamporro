@@ -11,7 +11,7 @@ Antes de modificar código o documentación, lee:
 1. [`docs/INSTRUCCIONES_PROYECTO.md`](docs/INSTRUCCIONES_PROYECTO.md).
 2. [`docs/ESTADO_ACTUAL.md`](docs/ESTADO_ACTUAL.md).
 3. [`docs/CONTINUIDAD_AGENTES.md`](docs/CONTINUIDAD_AGENTES.md).
-4. [`docs/BLENDER_B0.md`](docs/BLENDER_B0.md) (plan/checkpoint vigente; implementación no autorizada). [`docs/PROGRESO_U6.md`](docs/PROGRESO_U6.md) conserva la migración cerrada y U6 aprobado manualmente el 05/10/2026. Cierre aprobado de U5 en [`docs/PROGRESO_U5.md`](docs/PROGRESO_U5.md) y cierres aprobados en [`docs/PROGRESO_U4.md`](docs/PROGRESO_U4.md) y [`docs/PROGRESO_U3.md`](docs/PROGRESO_U3.md).
+4. [`docs/BLENDER_B0.md`](docs/BLENDER_B0.md) (checkpoint vigente; implementación autorizada y en curso). [`docs/PROGRESO_U6.md`](docs/PROGRESO_U6.md) conserva la migración cerrada y U6 aprobado manualmente el 05/10/2026. Cierre aprobado de U5 en [`docs/PROGRESO_U5.md`](docs/PROGRESO_U5.md) y cierres aprobados en [`docs/PROGRESO_U4.md`](docs/PROGRESO_U4.md) y [`docs/PROGRESO_U3.md`](docs/PROGRESO_U3.md).
 5. [`docs/DECISIONES.md`](docs/DECISIONES.md) y [`docs/ESPECIFICACION.md`](docs/ESPECIFICACION.md).
 6. [`docs/MIGRACION_UNITY.md`](docs/MIGRACION_UNITY.md).
 7. [`README.md`](README.md) y [`unity/README.md`](unity/README.md).
@@ -28,7 +28,7 @@ Las decisiones posteriores concretan o sustituyen la especificación original. L
 - Unity: proyecto real en `unity/`, Unity 6.6 `6000.6.3f1`, Windows x64 Mono, URP 17.6.0, Input System 1.20.0, uGUI 2.6.0, Test Framework 1.8.0.
 - U1: implementado en `abe0a9b7f0b8c53f478b91c870341999df2ea073`, checkpoint `eb691b595eb247118075368430d34ed0a95735d1`; build y pruebas automáticas correctas y **aprobación manual del autor posterior al checkpoint**.
 - U2: aprobado por el autor el 29/09/2026 (`docs/PROGRESO_U2.md`).
-- **U3 y U4 aprobadas manualmente el 04/10/2026** (último cierre técnico U4: `3754e31`). **U5 aprobado manualmente por el autor el 04/10/2026** (`docs/PROGRESO_U5.md`); U6 aprobado manualmente el 05/10/2026; migración cerrada, B0 solo planificación.
+- **U3 y U4 aprobadas manualmente el 04/10/2026** (último cierre técnico U4: `3754e31`). **U5 aprobado manualmente por el autor el 04/10/2026** (`docs/PROGRESO_U5.md`); U6 aprobado manualmente el 05/10/2026; migración cerrada, B0 autorizado y en curso.
 - Codex CLI ya está instalado/verificado; no repetir la instalación.
 - Codex y Claude Code trabajan por turnos. El último checkpoint publicado manda sobre recuerdos de sesiones anteriores.
 
@@ -46,14 +46,14 @@ Decisiones, plan y criterios: `docs/PROGRESO_U3.md`.
 
 1. Antes de editar, comprueba rama, `git status --short --branch`, últimos commits, remoto y cambios locales. Haz `git fetch origin`; si el árbol está limpio y solo falta avanzar, usa `git pull --ff-only`. Conserva cambios del autor, de Unity y del agente anterior; no uses `reset --hard`, `git clean`, checkout destructivo ni reclonado para «arreglar» un árbol sucio.
 2. Lee «Cómo retomar» de `docs/BLENDER_B0.md` y el cierre aprobado de `docs/PROGRESO_U6.md`. No asumas que Codex terminó todo lo planeado ni repitas trabajo sin comprobar commits y estado.
-3. U5 está aprobado manualmente (`docs/PROGRESO_U5.md`). U6 aprobado y migración cerrada. B0 solo en planificación: leer docs/BLENDER_B0.md y esperar autorización expresa antes de implementar.
+3. U5 está aprobado manualmente (`docs/PROGRESO_U5.md`). U6 aprobado y migración cerrada. B0 autorizado y en curso: seguir docs/BLENDER_B0.md por piezas verificables.
 4. Mantén la base web y `unity/Docs/Reference/` como referencia. Nunca uses `--write` o cambies valores esperados para hacer pasar un port incorrecto.
 5. Implementa por piezas verificables. Código en inglés; comentarios, documentación y commits en español. No nombres modelos de IA en código ni commits.
 6. Verifica lo que realmente ejecutes. Distingue pruebas unitarias, Edit Mode, Play Mode, build y benchmark; un benchmark de lógica no equivale a FPS reales.
 7. Actualiza `docs/BLENDER_B0.md` cuando cambie el punto de continuación y siempre antes de ceder el turno a Codex. Actualiza `README.md`, `docs/DECISIONES.md`, `docs/ESTADO_ACTUAL.md` y demás documentación cuando cambie el estado global o haya decisiones permanentes.
 8. Commits pequeños que compilen y pasen sus pruebas por separado; push directo a la rama. Sin PR.
 9. Si la sesión/tokens se acercan al límite, no empieces una pieza nueva: deja lo terminado verificado, commit/push cuando sea seguro, documenta cualquier cambio local no publicado y escribe un `Siguiente paso exacto` para Codex o para la siguiente sesión.
-10. U1–U5 ya están aprobados. U6 aprobado manualmente el 05/10/2026. No implementar B0 antes de la autorización expresa del autor.
+10. U1–U5 ya están aprobados. U6 aprobado manualmente el 05/10/2026. B0 autorizado por pasos; no adoptar masivamente el resultado ni iniciar otro bloque antes de aprobación manual.
 
 ## Relevo a Codex
 

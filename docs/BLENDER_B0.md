@@ -1,14 +1,14 @@
 # B0 — Spike Blender / pipeline de assets 3D
 
-Objetivos confirmados por el autor el 04/10/2026; plan concretado el 05/10/2026, después de aprobar U6. **SOLO PLANIFICACIÓN AUTORIZADA. IMPLEMENTACIÓN NO AUTORIZADA.** No abrir Blender, crear modelos/FBX/scripts, modificar assets Unity, instalar plugins ni activar LFS todavía. El spike precede a cualquier adopción artística masiva.
+Objetivos confirmados por el autor el 04/10/2026; plan concretado el 05/10/2026, después de aprobar U6. **IMPLEMENTACIÓN AUTORIZADA Y EN CURSO (05/10/2026), pasos B0.1–B0.6.** Pelusa, Doña Remedios y módulo de pared aprobados. Suelo 300: p95 ≤ 16,67 ms; 500/750 obligatorios para comparar coste/calidad, sin umbral rígido de 60 FPS. No instalar plugins ni activar LFS por anticipación. El spike precede a cualquier adopción artística masiva.
 
 ## Cómo retomar
 
 - **Base:** migración U0–U6 cerrada; cierre formal publicado en `39602c8aaba3ca163cde39c654b005f23f9e5f2f`. Cierre técnico anterior `c84b62d`; código de entrega `daaa626` y paquete conservados en [PROGRESO_U6](PROGRESO_U6.md).
-- **Paso actual:** plan preparado; esperar autorización expresa del autor y resolver las dos propuestas de la última sección. Ningún paso B0 implementado.
-- **Terminado:** alcance, dependencias, pasos, criterios y protocolo de evidencia propuestos. No hay modelos ni automatización nuevos, instalación Blender no comprobada.
+- **Paso actual:** B0.1 en curso. Instalación Blender y verificador terminados; falta medir la base 300/500/750 antes de crear los modelos del spike.
+- **Terminado:** instalación real 5.2.2 LTS, background/Python/FBX, GUI capturada y cerrada sin guardar; `scripts\blender.cmd verify` implementado y ejecutado. No hay modelos ni FBX del spike todavía.
 - **Sin commit deliberadamente:** los siete ajustes Unity protegidos enumerados en PROGRESO_U6; no publicar ni restaurar. Product Name ya es MAMPORRO y no se vuelve a cambiar.
-- **Siguiente acción tras autorización:** B0.1, detectar instalación real desde CMD y registrar versión/ruta, sin instalar por inferencia. Si no existe o hay incompatibilidad, informar antes de elegir otra versión o instalar.
+- **Siguiente acción exacta:** completar B0.1 con arnés QA aislado de comparación visual sobre la base aprobada, sin tocar reglas ni settings protegidos; medir base 300/500/750 con CSV y condiciones del plan. Después B0.2 contrato y fixture.
 - **Continuidad:** una pieza verificable por commit español, pruebas reales, checkpoint aquí, fetch antes de push normal a `claude/zen-pasteur-674ik0`. Sin PR. Parar ante nueva decisión importante y al cierre para revisión artística/manual.
 
 Auditoría inicial futura, desde CMD en la raíz del repositorio:
@@ -23,7 +23,7 @@ git rev-parse HEAD origin/claude/zen-pasteur-674ik0
 
 Blender: producción de personajes, enemigos, armas, props y piezas modulares de estructuras; UV, vertex colors, rigging, skinning y animaciones. Unity: gameplay, combate, colliders/física, mundo y generación procedural, pools/rejilla/hordas, ensamblaje de escenarios, shaders/materiales e iluminación/render final, integración y optimización runtime. No reconstruir en Blender lo que convenga mantener procedural en Unity.
 
-Referencia prevista: **Blender 5.2.2 LTS**, designación facilitada por el autor, no instalación comprobada. Al empezar B0 verificar desde CMD la versión y ruta reales de Windows antes de crear scripts; fijar entonces una versión exacta soportada para exportaciones reproducibles. No presuponer rutas ni instalar plugins de terceros por defecto.
+Versión comprobada y soportada para B0: **Blender 5.2.2 LTS**, build `d13f752e3b9c`, Python integrado `3.13.13`. Ejecutable encontrado bajo `%ProgramFiles%\Blender Foundation\Blender 5.2\blender.exe`; ruta absoluta real solo en informes locales. `scripts\blender.cmd verify` detecta instalación única o respeta `MAMPORRO_BLENDER`, sin cambiar PATH ni instalar. No actualizar versión ni añadir plugins por defecto.
 
 ## Pipeline a validar
 
@@ -31,7 +31,7 @@ Referencia prevista: **Blender 5.2.2 LTS**, designación facilitada por el autor
 
 B0 definirá convenciones para escala/unidades, ejes, transforms, pivotes/orígenes, triangulación, normales, UV, vertex colors, rigs, nombres, materiales, clips de animación, rutas de exportación y reimportación estable. Automatización con Blender en background y Python, compatible con CMD; detectar/configurar instalación sin rutas absolutas locales versionadas.
 
-Nombres orientativos **no existentes ni funcionales todavía**: `scripts\blender.cmd verify`, `scripts\blender.cmd export`, `scripts\blender.cmd test`. Solo podrán documentarse como comandos utilizables tras implementarlos y probarlos en B0. Los agentes podrán ayudar mediante scripts a generar, modificar, validar y exportar assets; la revisión visual/artística humana seguirá siendo obligatoria.
+**Implementado y probado:** `scripts\blender.cmd verify`. **Todavía no implementados:** `scripts\blender.cmd export` y `scripts\blender.cmd test`; se añadirán y probarán en sus pasos, no usarlos aún. Los agentes podrán ayudar mediante scripts a generar, modificar, validar y exportar assets; la revisión visual/artística humana seguirá siendo obligatoria.
 
 ## Separación visual y rendimiento
 
@@ -62,9 +62,9 @@ B0 prepara acabado retro profesional, mejores modelos, animaciones de jugador/en
 
 Balance separado: menos enemigos iniciales, individualmente más resistentes, crecimiento progresivo y bastante más oro **de partida**, no Calderilla del Caos. Sin cifras nuevas. La hoja de ruta canónica sigue en [HOJA_DE_RUTA](../unity/Docs/HOJA_DE_RUTA.md).
 
-## Plan ejecutable propuesto y dependencias
+## Plan autorizado y dependencias
 
-Todo lo siguiente es futuro, no una lista de tareas ejecutadas. Cada fila termina con pruebas, evidencia y checkpoint antes del commit/push. Dependencia secuencial salvo el diseño de convenciones, que puede prepararse con la base ya medida; no producir el catálogo completo.
+El plan está autorizado; el registro de sesión distingue lo ejecutado de lo pendiente. Cada fila termina con pruebas, evidencia y checkpoint antes del commit/push. Dependencia secuencial salvo el diseño de convenciones, que puede prepararse con la base ya medida; no producir el catálogo completo.
 
 | Paso | Trabajo y dependencia | Aceptación de la pieza | Evidencia / commit propuesto |
 | --- | --- | --- | --- |
@@ -79,7 +79,7 @@ Dependencias externas: Blender instalado y funcional (por comprobar), exportador
 
 ## Comprobación futura del entorno desde CMD
 
-**No ejecutada en esta planificación.** Primero buscar instalaciones; la ausencia en PATH no demuestra que no esté instalado. Búsquedas acotadas, sin recorrer ni modificar todo el disco:
+Secuencia del plan, ejecutada en B0.1 según registro inferior. Primero buscar instalaciones; la ausencia en PATH no demuestra que no esté instalado. Búsquedas acotadas, sin recorrer ni modificar todo el disco:
 
 ```cmd
 where blender.exe
@@ -110,7 +110,7 @@ Las opciones CLI están descritas en el [manual oficial de Blender](https://docs
 
 ## Convenciones propuestas para validar, no decisiones ya implementadas
 
-Carpetas propuestas: `art/blender/b0/` para .blend y fuentes de texturas; `art/blender/b0/manifest.json` para catálogo y parámetros; `scripts/blender/` para Python y configuración versionada sin rutas locales; `unity/Assets/Mamporro/Art/B0/` para FBX, materiales/texturas runtime y sus .meta; `unity/Assets/Mamporro/QA/B0/` para prefabs/escena de comparación. Informes voluminosos en `unity/TestResults/B0/` (ignorado), resumen técnico y huellas en documentación versionada. No crear carpetas ni archivos de implementación ahora.
+Carpetas propuestas: `art/blender/b0/` para .blend y fuentes de texturas; `art/blender/b0/manifest.json` para catálogo y parámetros; `scripts/blender/` para Python y configuración versionada sin rutas locales; `unity/Assets/Mamporro/Art/B0/` para FBX, materiales/texturas runtime y sus .meta; `unity/Assets/Mamporro/QA/B0/` para prefabs/escena de comparación. Informes voluminosos en `unity/TestResults/B0/` (ignorado), resumen técnico y huellas en documentación versionada. Aplicar por pasos, sin crear todo el catálogo.
 
 | Convención | Propuesta / prueba que debe resolverla |
 | --- | --- |
@@ -137,7 +137,7 @@ Cuatro condiciones mínimas: **A** representación U6 original; **B** nueva mall
 - CSV por fotograma: tiempo de frame, p50/p95/p99/máximo del resumen, conteo de entidades/instancias realmente dibujadas, eventos de GC y picos. Registrar CPU de lógica y envío/render/animación mediante marcadores válidos; no llamar tiempo GPU al tiempo de envío CPU. Draw calls, batches, vértices/triángulos y materiales; memoria total y buffers/poses/texturas añadidos, incluidos costes de carga y tamaño en disco.
 - Allocations/GC y atribución mediante diagnóstico Development separado cuando las APIs sean válidas. El HUD ya asigna memoria en U5: comparar con la misma base y distinguir el incremento visual, sin atribuirle toda la asignación previa. GPU o contador no fiable = **N/D**, conservando el dato bruto y la razón. No transformar FPS de lógica ni medidas Development en FPS de entrega.
 - Comparar deltas absolutos y relativos y dispersión por carga/resolución; coste animación C/D frente a B y coste total frente a A. Capturas idénticas más vídeo corto de movimiento, pausas y reinicio para juzgar calidad, popping, deformaciones y legibilidad.
-- Propuesta de suelo conocido: conservar 60 FPS con 300 entidades en el equipo de referencia (p95 ≤ 16,67 ms como criterio operativo propuesto), y usar 500/750 para comparar margen, no como cifras de balance ni requisitos comerciales. No basta con estar por debajo de ese suelo: si se pierde mucho margen, se presentan el coste y la ganancia visual, sin adopción masiva automática. Ningún presupuesto extra en ms/% está aprobado todavía; la elección final requiere revisión del informe.
+- Suelo aprobado: con 300 entidades p95 ≤ 16,67 ms en las condiciones del benchmark. Medir obligatoriamente 500/750 para comparar margen, no como cifras de balance ni requisitos comerciales. No basta con estar por debajo de ese suelo: si se pierde mucho margen, se presentan el coste y la ganancia visual, sin adopción masiva automática. Ningún presupuesto extra en ms/% está aprobado todavía; la elección final requiere revisión del informe.
 
 ## Pruebas y aceptación final de B0
 
@@ -152,15 +152,28 @@ B0 puede cerrar como **spike concluido sin adopción** si descubre límites impo
 
 Medir tamaños de fuentes y exportados, crecimiento tras varias revisiones y ruido de reexportación antes de proponer Git normal/LFS. No activar LFS en este bloque sin decisión posterior informada. Resumen y tablas versionados; logs/CSV/capturas voluminosos locales con ubicación y huellas, sin datos personales ni telemetría externa.
 
-## Decisiones propuestas al autor — una sola tanda
+## Decisiones del autor resueltas — 05/10/2026
 
-1. **Contenido del spike:** ¿Pelusa común + Doña Remedios con rig/locomoción + módulo de pared son los tres casos iniciales adecuados? Recomendados por cubrir horda, avatar y estructura sin introducir contenido nuevo. Son pruebas originales representativas, no diseños finales del catálogo.
-2. **Criterio de rendimiento:** ¿mantener el objetivo conocido de 60 FPS/300 como suelo (operativamente p95 ≤ 16,67 ms), usar 500/750 para comparar margen y decidir la adopción con el informe de coste/calidad, sin fijar ahora un presupuesto extra arbitrario? Ninguna estrategia se da por elegida antes de medir.
+1. Pelusa común, Doña Remedios con rig/locomoción y módulo de pared aprobados como casos representativos, no arte final completo.
+2. 300 entidades: p95 ≤ 16,67 ms. Mediciones obligatorias 500/750 para coste, escalabilidad, CPU, memoria, animación, render, GC fiable y legibilidad. Sin 60 FPS rígidos para 500/750; ni adopción automática por superar el suelo de 300.
 
-No se vuelven a preguntar pipeline FBX, fuentes fuera de Assets, separación lógica/visual, arte original, ausencia de plugins, preservación de hordas ni Git LFS preventivo: ya están resueltos. Versión exacta/instalación solo se concretará al inspeccionar lo que hay tras autorización. Si aparecen incompatibilidades, cambio de formato/paquetes o necesidad de tocar reglas/colliders, son decisiones nuevas y requieren consulta.
+B0.1–B0.6 autorizados consecutivamente, checkpoint/commit/push por pieza. No hay decisiones bloqueantes. No repetir consultas resueltas; detenerse solo ante cambio importante no cubierto y al cierre técnico para aprobación visual/manual. LFS, formato distinto, plugins, cambios de reglas/colliders o adopción de producción requieren decisión expresa.
 
 ## Registro de planificación — 05/10/2026, Codex
 
 Cierre formal U6 `39602c8aaba3ca163cde39c654b005f23f9e5f2f` publicado y remoto verificado antes de este plan. Lectura de BLENDER_B0, hoja de ruta, decisiones, arquitectura de render y automatización existentes. Esta sesión solo modifica documentación: pasos/dependencias/criterios, comandos futuros CMD, contrato propuesto, comparación y decisiones; revisión de enlaces y diff, siete excluidos con huellas conservadas. No se abrió Blender/Unity ni se ejecutaron pruebas de assets, suites, build o benchmark. No se crearon scripts, modelos, FBX ni carpetas de implementación.
 
 Commit del plan: «Planifica el spike Blender tras cerrar la migración»; localizarlo con `git log --all --grep="Planifica el spike Blender tras cerrar la migración"`. Publicar con fetch/push normal y verificar remoto. Siguiente paso: esperar respuesta del autor; implementación B0 no autorizada.
+
+
+## Sesión 05/10/2026 — B0.1a, entorno real (Codex)
+
+- Partida: `24df07733bb264e6c88323a7302ae8fe6d444785`, rama correcta, local/remoto 0/0 tras fetch; solo siete ajustes Unity protegidos.
+- Autor autoriza B0 completo y resuelve las dos propuestas anteriores. Se actualizan entradas de continuidad; migración U0–U6 permanece cerrada.
+- Instalación encontrada por registro Windows y búsqueda acotada desde CMD; `where blender.exe` no la encontró en PATH, lo que no impedía usarla. Consulta CMD `call "%MAMPORRO_BLENDER%" --version`: 5.2.2 LTS, build d13f752e3b9c, Windows Release. Background + `--python-expr` confirmó Python 3.13.13 y exportador FBX. No instalar ni cambiar versión.
+- GUI: arranque normal con factory-startup/disable-autoexec; título Blender 5.2.2 LTS, respondió. Primera captura de escritorio minimizada descartada; repetida desde `bpy.ops.screen.screenshot` en una ventana 1280×800, revisada visualmente, cierre automático con salida 0. Solo escena inicial en memoria, sin guardar .blend ni preferencias.
+- Automatización: `scripts/blender.cmd`, `scripts/blender.ps1`, `scripts/blender/verify.py`. Detección única por variable/PATH/registro/carpeta estándar, versión exacta y registro del operador FBX mediante RNA; ningún path personal versionado.
+- Comando ejecutado: `scripts\blender.cmd verify` → salida 0, Blender/Python/FBX válidos. Evidencias locales en `unity/TestResults/B0/Environment/`: version.log, background.log, verify.log, verified.json, gui.json y blender-gui.png. GUI y background comprobados; no es una prueba de exportación de assets.
+- Pendiente dentro de B0.1: base de rendimiento nueva 300/500/750, aún no ejecutada. No se han creado assets, probado exportación/importación Unity ni ejecutado suites/build/benchmarks en esta pieza.
+- Commit: «Verifica Blender y registra la autorización de B0»; fetch y push normal tras comprobar remoto, verificar SHA antes de continuar. Árbol fuera del commit: mismos siete ajustes protegidos.
+- Siguiente paso exacto: arnés QA de comparación, base U6 y medidas de B0.1; después contrato B0.2. No dar B0.1 completo hasta tener la base medida.

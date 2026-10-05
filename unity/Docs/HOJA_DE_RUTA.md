@@ -1,6 +1,6 @@
 # Mejoras de MAMPORRO en Unity
 
-> Estado vigente en [ESTADO_ACTUAL](../../docs/ESTADO_ACTUAL.md): U1–U4 aprobados; U4 aprobada manualmente el 04/10/2026. [U5 aprobado manualmente el 04/10/2026](../../docs/PROGRESO_U5.md). U6 aprobado manualmente el 05/10/2026: migración U0–U6 cerrada. B0 solo autorizado para planificación; las mejoras siguientes necesitan su propio bloque autorizado.
+> Estado vigente en [ESTADO_ACTUAL](../../docs/ESTADO_ACTUAL.md): U1–U4 aprobados; U4 aprobada manualmente el 04/10/2026. [U5 aprobado manualmente el 04/10/2026](../../docs/PROGRESO_U5.md). U6 aprobado manualmente el 05/10/2026: migración U0–U6 cerrada. B0 autorizado para implementación por pasos; las mejoras siguientes necesitan su propio bloque autorizado.
 
 **Historial — U1 autorizado el 29/09/2026 y posteriormente aceptado:** prototipo técnico de movimiento, imagen y horda;
 seguimiento en [PROGRESO_U1](../../docs/PROGRESO_U1.md). La escalada libre, mundo
@@ -16,9 +16,9 @@ de las peticiones del autor.
 
 ### B0 posterior a U6 — pipeline 3D Blender
 
-Objetivos confirmados el 04/10/2026; U6 aprobado el 05/10/2026. **B0 solo en planificación, implementación no autorizada.** Plan en [BLENDER_B0](../../docs/BLENDER_B0.md): entorno y base, contrato, tres assets/exportador, integración aislada, comparación de animación masiva y cierre para revisión del autor. Blender para producción 3D; Unity conserva simulación, colliders, procedural y arquitectura de hordas. Dirección a validar: `.blend → exportación automatizada → FBX → Unity`, sin importar `.blend` directamente en producción.
+Objetivos confirmados el 04/10/2026; U6 aprobado el 05/10/2026. **B0 autorizado y en curso.** Plan en [BLENDER_B0](../../docs/BLENDER_B0.md): entorno y base, contrato, tres assets/exportador, integración aislada, comparación de animación masiva y cierre para revisión del autor. Blender para producción 3D; Unity conserva simulación, colliders, procedural y arquitectura de hordas. Dirección a validar: `.blend → exportación automatizada → FBX → Unity`, sin importar `.blend` directamente en producción.
 
-Referencia prevista por el autor: Blender 5.2.2 LTS; versión/ruta reales se comprobarán en Windows al comenzar B0, no ahora. Spike mínimo con enemigo común, avatar con rig/animación, pieza modular, exportación/reimportación y horda 300/500/750 cuando proceda. Comparar estrategias de animación masiva sin dar por elegido un Animator/SkinnedMeshRenderer individual por enemigo. Medir binarios antes de proponer LFS. Convenciones, automatización prevista, VisualRoot, límites y autoría en [BLENDER_B0](../../docs/BLENDER_B0.md). No hay scripts Blender funcionales ni autorización de implementación B0. Fuentes .blend fuera de unity/Assets; exportados FBX separados. Dependencias, aceptación por paso, pruebas y dos propuestas pendientes del autor se mantienen en BLENDER_B0.
+Instalación real comprobada en B0.1: Blender 5.2.2 LTS, build d13f752e3b9c; versión fijada para el spike sin reinstalar. Spike mínimo con enemigo común, avatar con rig/animación, pieza modular, exportación/reimportación y horda 300/500/750 cuando proceda. Comparar estrategias de animación masiva sin dar por elegido un Animator/SkinnedMeshRenderer individual por enemigo. Medir binarios antes de proponer LFS. Convenciones, automatización prevista, VisualRoot, límites y autoría en [BLENDER_B0](../../docs/BLENDER_B0.md). Verificador Blender ya implementado; exportación e integración siguen sus pasos del checkpoint. Fuentes .blend fuera de unity/Assets; exportados FBX separados. Dependencias, aceptación por paso, pruebas y decisiones resueltas del autor se mantienen en BLENDER_B0.
 
 Juego de escritorio para una futura publicación en Steam/plataformas similares.
 Conservar humor e identidad propios, supervivencia contra hordas, progresión y
