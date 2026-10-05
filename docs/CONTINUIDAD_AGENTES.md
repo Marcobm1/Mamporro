@@ -20,7 +20,7 @@ El repositorio es la memoria compartida. Una decisión, prueba, limitación o si
 2. `docs/INSTRUCCIONES_PROYECTO.md`.
 3. `docs/ESTADO_ACTUAL.md`.
 4. Este archivo, `docs/CONTINUIDAD_AGENTES.md`.
-5. `docs/BLENDER_B0.md`, plan/checkpoint vigente (implementación autorizada y en curso); `docs/PROGRESO_U6.md` conserva el cierre aprobado de la migración (05/10/2026).
+5. `docs/BLENDER_B0.md`, plan/checkpoint vigente (B0 cerrado y aceptado técnicamente; siguiente bloque solo en planificación); `docs/PROGRESO_U6.md` conserva el cierre aprobado de la migración (05/10/2026).
 6. `docs/DECISIONES.md` y el resto de documentación indicada por el checkpoint.
 
 Después comprobar desde CMD:
@@ -133,5 +133,5 @@ A fecha 05/10/2026:
 - U1 está cerrado y aprobado.
 - U2 está aprobado y cerrado.
 - U3 aprobada manualmente el 04/10/2026; último cierre técnico previo: `83246ebfd873b0c5d23611a1d557f83096180217`.
-- U4 aprobada manualmente el 04/10/2026 (último cierre técnico `3754e31`). U5 aprobado manualmente el 04/10/2026; U6 aprobado manualmente el 05/10/2026; migración cerrada. B0 cerrado técnicamente por Claude Code el 05/10/2026 (B0.1–B0.6); detenido a la espera de la revisión del autor.
+- U4 aprobada manualmente el 04/10/2026 (último cierre técnico `3754e31`). U5 aprobado manualmente el 04/10/2026; U6 aprobado manualmente el 05/10/2026; migración cerrada. B0.1–B0.6 cerrados y aceptados por el autor como pipeline validado técnicamente y validado para proponer adopción. No hubo revisión manual de la build ni aprobación de arte final. P0 solo en planificación.
 - Codex CLI y Claude Code trabajan por turnos. Leer `docs/BLENDER_B0.md`, `docs/PROGRESO_U6.md` y los cierres de U3–U5, auditar el árbol y continuar desde el checkpoint; conservar los siete ajustes locales Unity excluidos.

@@ -1,8 +1,14 @@
 # Decisiones acordadas
 
-## B0 cerrado técnicamente; propuestas pendientes del autor (05/10/2026)
+## Aceptación técnica de B0 y selección de candidatas (05/10/2026)
 
-Claude Code cierra B0.1–B0.6 ([BLENDER_B0](BLENDER_B0.md)). **No son decisiones aprobadas**, sino propuestas que esperan al autor: (1) estrategia de animación de horda — D (VAT) como candidata por calidad y memoria, C como alternativa simple, o ninguna; (2) **Git normal** sin LFS para las fuentes `.blend` sin comprimir, con revisión si aparecen archivos > 10 MB; (3) aprobación artística de Pelusa, Doña Remedios y el módulo de pared. Nada se adopta en la partida normal ni en la entrega.
+Decisión expresa del autor: **pipeline validado técnicamente y validado para proponer adopción**. B0.1–B0.6 cerrados en `ab9e619`; no hubo revisión visual/manual de la build por el autor. Pelusa, Doña Remedios y pared aceptados como prototipos suficientes, no arte final ni dirección artística definitiva. P1 podrá rediseñarlos; no sustituyen automáticamente producción.
+
+D/VAT es candidata preferida por continuidad visual, render centralizado/instanciado, menor memoria extra que C y coste CPU comparable en el ensayo. C/poses queda como fallback. No autoriza convertir la horda normal: adopción gradual futura con regresión y gameplay medido. Arrays/pools/grid, simulación central y render instanciado se conservan; sin RNG de gameplay para fases visuales ni Animator/Rigidbody/Update individual por enemigo común.
+
+**Git normal aprobado, LFS no activado**, .blend sin comprimir fuera de Assets, FBX idempotente sin reexportación semánticamente innecesaria; builds fuera de Git. Umbrales de tamaño orientativos, reevaluar con datos reales. **Blender 5.2.2 LTS fijado** para `.blend → background/Python → FBX → importador Unity → prefab/VisualRoot/render`.
+
+Entrega U6 intacta y siete ajustes protegidos excluidos. Pruebas y límites del ensayo conservados en [BLENDER_B0](BLENDER_B0.md). Siguiente bloque: planificación P0 de movilidad/verticalidad aislada, no implementación, arte P1 ni contenido P2.
 
 ## B0.2: contrato de assets 3D, decisiones técnicas (05/10/2026)
 
