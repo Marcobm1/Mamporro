@@ -20,7 +20,7 @@ El repositorio es la memoria compartida. Una decisión, prueba, limitación o si
 2. `docs/INSTRUCCIONES_PROYECTO.md`.
 3. `docs/ESTADO_ACTUAL.md`.
 4. Este archivo, `docs/CONTINUIDAD_AGENTES.md`.
-5. El checkpoint del bloque vigente, actualmente `docs/PROGRESO_U6.md` (U6 aprobado manualmente el 05/10/2026; B0 solo planificación; U5 aprobado manualmente el 04/10/2026).
+5. `docs/BLENDER_B0.md`, plan/checkpoint vigente (solo planificación, sin autorización de implementación); `docs/PROGRESO_U6.md` conserva el cierre aprobado de la migración (05/10/2026).
 6. `docs/DECISIONES.md` y el resto de documentación indicada por el checkpoint.
 
 Después comprobar desde CMD:
@@ -134,4 +134,4 @@ A fecha 05/10/2026:
 - U2 está aprobado y cerrado.
 - U3 aprobada manualmente el 04/10/2026; último cierre técnico previo: `83246ebfd873b0c5d23611a1d557f83096180217`.
 - U4 aprobada manualmente el 04/10/2026 (último cierre técnico `3754e31`). U5 aprobado manualmente el 04/10/2026; U6 aprobado manualmente el 05/10/2026; migración cerrada y B0 solo planificación.
-- Codex CLI y Claude Code trabajan por turnos. Leer `docs/PROGRESO_U6.md` y los cierres de U3–U5, auditar el árbol y continuar desde el checkpoint; conservar los siete ajustes locales Unity excluidos.
+- Codex CLI y Claude Code trabajan por turnos. Leer `docs/BLENDER_B0.md`, `docs/PROGRESO_U6.md` y los cierres de U3–U5, auditar el árbol y continuar desde el checkpoint; conservar los siete ajustes locales Unity excluidos.

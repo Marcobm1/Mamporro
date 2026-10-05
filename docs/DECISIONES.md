@@ -1,5 +1,9 @@
 # Decisiones acordadas
 
+## Preparación de B0 tras cerrar U6 (05/10/2026)
+
+Solo planificación autorizada: [BLENDER_B0](BLENDER_B0.md) concreta seis pasos con dependencias, aceptación, evidencias y pruebas. Fuentes .blend fuera de unity/Assets; FBX como intercambio a validar. Instalación real primero cuando se autorice; ninguna instalación, ejecución Blender, modelo o integración ahora. Dos propuestas para el autor: trío representativo Pelusa/Remedios/módulo de pared y criterio de comparación de rendimiento; no son decisiones aprobadas. No adoptar animación masiva, cambiar colliders ni activar LFS por anticipación.
+
 ## Aprobación manual de U6 y cierre de la migración (05/10/2026)
 
 El autor confirma expresamente que U6 está probado y aprobado manualmente. Último cierre técnico previo: `c84b62dfedabdcbc5ce7c1da09916282fe1c67e0`. **U0–U6 terminados; migración web → Unity formalmente cerrada.** Unity es la versión principal; entrega Windows `MAMPORRO.exe` y transición segura del progreso histórico ya implementadas. Web ejecutable congelada, recuperable y con exportador; historial y corpus intactos. Se conservan limitaciones y diferencias aceptadas, sin inventar pruebas nuevas ni certificaciones individuales.

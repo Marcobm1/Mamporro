@@ -30,7 +30,7 @@ Al iniciar una sesión, leer en este orden:
 
 1. `docs/ESTADO_ACTUAL.md`.
 2. `docs/CONTINUIDAD_AGENTES.md`.
-3. El checkpoint del bloque vigente (`docs/PROGRESO_U6.md`: U6 aprobado y migración cerrada; B0 solo planificación; U5 aprobado manualmente).
+3. El checkpoint vigente `docs/BLENDER_B0.md` (solo planificación; implementación no autorizada) y el cierre aprobado de la migración en `docs/PROGRESO_U6.md`.
 4. `docs/DECISIONES.md` y cualquier continuación posterior indicada por el estado actual.
 5. `docs/ESPECIFICACION.md` como especificación histórica de partida.
 6. `docs/MIGRACION_UNITY.md`.

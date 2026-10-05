@@ -236,3 +236,8 @@ Guía conservada para repetir la comprobación si hace falta. El autor confirma 
 - Commit de cierre: «Aprueba U6 y cierra la migración a Unity»; localizar SHA con `git log --all --grep="Aprueba U6 y cierra la migración a Unity"`. Push normal tras fetch y comprobación del remoto; verificar el HEAD publicado antes de preparar B0.
 - Árbol fuera del commit: los mismos siete ajustes locales; productName ya publicado en U6, resto protegido byte a byte.
 - Siguiente paso: solo planificación B0 en BLENDER_B0; no abrir Blender, instalar, exportar, tocar assets ni iniciar mejoras antes de autorización expresa.
+
+
+### Continuación documental — 05/10/2026
+
+Cierre formal publicado y remoto verificado en `39602c8aaba3ca163cde39c654b005f23f9e5f2f`. El plan/checkpoint siguiente vive en [BLENDER_B0](BLENDER_B0.md): seis pasos, dependencias, aceptación y pruebas propuestas; **solo planificación, implementación no autorizada**. Las entradas de agentes apuntan allí. Ninguna prueba de U6 se ha repetido para este cambio documental; no cambia el paquete aprobado ni su manifiesto.
