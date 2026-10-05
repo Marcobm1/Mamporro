@@ -1,16 +1,16 @@
 # Checkpoint U6 — adoptar Unity como versión principal
 
-Estado: **IMPLEMENTADO Y VERIFICADO el 05/10/2026; pendiente de la prueba manual y la aprobación final del autor** (autorizado el 04/10/2026). U1–U5 aprobados; aprobación manual U5 registrada en `4fcbcdf7707f4b22594164ae27552e62629228ac` y publicada. Último cierre técnico U5: `5ef42b6083ea15251308dcebac60cb851ca766ea`. Plan y decisiones aprobados. Solo se autoriza publicar productName, preservando las demás diferencias locales de configuración.
+Estado: **IMPLEMENTADO, VERIFICADO Y APROBADO MANUALMENTE por el autor el 05/10/2026. Migración U0–U6 formalmente cerrada** (autorizado el 04/10/2026). U1–U5 aprobados; aprobación manual U5 registrada en `4fcbcdf7707f4b22594164ae27552e62629228ac` y publicada. Último cierre técnico U5: `5ef42b6083ea15251308dcebac60cb851ca766ea`. Plan y decisiones aprobados. Solo se autoriza publicar productName, preservando las demás diferencias locales de configuración.
 
 ## Cómo retomar
 
-- **Punto de partida:** cierre/aprobación U5 publicado en `4fcbcdf`; plan U6 en «Prepara el plan de adopción de Unity para U6» (hash: `git log -1 --format="%H %s" -- docs/PROGRESO_U6.md`).
-- **Paso actual:** ninguno. U6 cerrado técnicamente (pasos 1–6); esperando la prueba manual del autor («Checkpoint al terminar U6»).
-- **Terminado:** migración funcional U1–U5 aprobada; contrato/transferencia/meta, partida completa, audio y feedback. Falta la adopción y entrega de U6, no reimplementar esos sistemas.
-- **A medias:** nada. Paso 1 `7f3760c` (Codex); paso 2 en «Revisa y copia el progreso Unity anterior antes del cambio de identidad» (hash: `git log -1 --format="%H %s" -- unity/Assets/Mamporro/Persistence/ProgressLocations.cs`). Paso 2 `5719db4`; paso 3 en «Fija la identidad MAMPORRO y la build de entrega» (hash: `git log -1 --format="%H %s" -- unity/Assets/Mamporro/U3/DeliverySmoke.cs`). Paso 3 `25b14b1`; paso 4 en «Empaqueta y verifica la entrega Windows de MAMPORRO» (hash: `git log -1 --format="%H %s" -- scripts/mamporro.ps1`). Paso 4 `dd45b45`; ajuste de la medida de audio `daaa626`; paso 5 `49b6fe4`; paso 6 en «Cierra U6 y prepara la prueba manual» (hash: `git log -1 --format="%H %s" -- docs/PROGRESO_U6.md`). Regresión final del paso 5 (05/10/2026): web 232/232, contrato 5/5, verificador histórico, Edit 405/405, Play 39/39, build, visual (audio, 5 partidas seguidas, 19 + 44 capturas), paquete y verificación correctos.
+- **Punto de partida del cierre formal:** `c84b62dfedabdcbc5ce7c1da09916282fe1c67e0`, último cierre técnico publicado. Aprobación manual del autor recibida el 05/10/2026. U0–U6 terminados; Unity es la versión principal.
+- **Paso actual:** ninguno de migración. U6 aprobado; B0 autorizado únicamente para planificación en [BLENDER_B0](BLENDER_B0.md). Esperar autorización expresa antes de implementar B0.
+- **Terminado:** migración funcional U1–U5 aprobada; contrato/transferencia/meta, partida completa, audio y feedback. U6 completa la adopción, entrega Windows y transición segura del progreso histórico. No reimplementar esos sistemas.
+- **A medias:** nada. Paso 1 `7f3760c` (Codex); paso 2 en «Revisa y copia el progreso Unity anterior antes del cambio de identidad» (hash: `git log -1 --format="%H %s" -- unity/Assets/Mamporro/Persistence/ProgressLocations.cs`). Paso 2 `5719db4`; paso 3 en «Fija la identidad MAMPORRO y la build de entrega» (hash: `git log -1 --format="%H %s" -- unity/Assets/Mamporro/U3/DeliverySmoke.cs`). Paso 3 `25b14b1`; paso 4 en «Empaqueta y verifica la entrega Windows de MAMPORRO» (hash: `git log -1 --format="%H %s" -- scripts/mamporro.ps1`). Paso 4 `dd45b45`; ajuste de la medida de audio `daaa626`; paso 5 `49b6fe4`; paso 6 `c84b62d` («Cierra U6 y prepara la prueba manual»). Regresión final del paso 5 (05/10/2026): web 232/232, contrato 5/5, verificador histórico, Edit 405/405, Play 39/39, build, visual (audio, 5 partidas seguidas, 19 + 44 capturas), paquete y verificación correctos.
 - **Sin publicar deliberadamente:** los siete ajustes Unity enumerados debajo; no restaurarlos ni incluirlos para limpiar Git.
 - **Pruebas de esta preparación:** únicamente auditoría Git, lectura de documentación/código, revisión de Markdown y comparación SHA-256 de los excluidos. No se han repetido suites, build, visual ni benchmark.
-- **Siguiente paso exacto:** prueba manual del autor según «Instrucciones de prueba manual (autor)»; corregir solo lo que encuentre. **No iniciar B0** ni mejoras posteriores hasta su aprobación.
+- **Siguiente paso exacto:** presentar el plan B0 y esperar autorización expresa de implementación. La aprobación de U6 no autoriza B0, balance ni otras mejoras.
 
 Comprobación CMD:
 
@@ -39,7 +39,7 @@ U6 no es un nuevo port de combate/audio/UI, un rediseño artístico ni una publi
 
 Conservar las pruebas existentes como regresión. La aceptación de U6 será de entrega/adopción y continuidad del progreso; no invalida aprobaciones anteriores.
 
-## Revisión del repositorio y elementos provisionales
+## Revisión histórica previa a U6 y elementos entonces provisionales
 
 | Elemento real | Propuesta para U6 | Riesgo/tratamiento |
 | --- | --- | --- |
@@ -54,14 +54,14 @@ Conservar las pruebas existentes como regresión. La aceptación de U6 será de 
 | F3 y acciones de debug | Mantener decisiones existentes: no recompensas con trucos | U6 no elimina debug ya aprobado; atajos históricos QA documentados |
 | Siete ajustes locales excluidos | Intactos en esta preparación | No publicar nube/organización ni whitespace. Excepción expresa: únicamente productName |
 
-Revisión basada en `U3Project.cs`, `U3Game.SaveDirectory`, `ProjectSettings.asset`, scripts actuales y checkpoints. No se ha probado todavía un mecanismo nuevo de identidad/build.
+Tabla conservada como diagnóstico previo a U6. Su implementación y pruebas finales están en las sesiones de pasos 2–5 y el checkpoint de cierre; identidad y transición ya están verificadas y aprobadas.
 
 ## Web histórica y estructura
 
-Decisi?n aprobada: conservar web y exportador como referencia ejecutable en el mismo repositorio, sin evolución del gameplay ni nuevas publicaciones automáticas. Mantener `src/`, paquete/lockfile, scripts y documentos históricos; crear una guía web específica al reorganizar README. No hay workflow `.github` versionado que demuestre una publicación web actual: no se desplegará ni retirará hosting ni se preparará una nueva publicación.
+Decisión aprobada: conservar web y exportador como referencia ejecutable en el mismo repositorio, sin evolución del gameplay ni nuevas publicaciones automáticas. Mantener `src/`, paquete/lockfile, scripts y documentos históricos; crear una guía web específica al reorganizar README. No hay workflow `.github` versionado que demuestre una publicación web actual: no se desplegará ni retirará hosting ni se preparará una nueva publicación.
 
 - Referencia funcional inmutable: `0505b1690656d15188860157612455639820fe1f`.
-- Web con exportador: `b734b49` como base de comparación de `src/` documentada en U5; registrar el hash completo en la guía antes de cerrar U6.
+- Web con exportador: `b734b49500644fd2296e5213909bb1ff872e694d`, base de comparación de `src/` documentada en U5.
 - `baseline.json`, `u2-combat.json`, `u3-world.json` y corpus U4 permanecen intactos. Nunca regenerar esperados para resolver fallos.
 - Usar `scripts\verify-historical-reference.ps1`, que ejecuta guardas originales sobre una instantánea aislada. La referencia histórica y el exportador se verifican por vías distintas.
 - No mover ahora `src/` a otro árbol ni duplicar el juego: evitar romper hashes/rutas/herramientas por una reorganización innecesaria.
@@ -109,7 +109,7 @@ scripts\u3.cmd build
 scripts\u3.cmd visual
 ```
 
-Los comandos definitivos de entrega se documentarán cuando existan; hoy la build sigue siendo `unity\Builds\U3\Mamporro-U3.exe`.
+Entrega actual: `unity\Builds\Windows\MAMPORRO.exe`; `scripts\u3.cmd build` genera esa build. `scripts\mamporro.cmd package` y `scripts\mamporro.cmd verify` empaquetan y verifican la entrega (detalles y resultados abajo).
 
 ## Prueba manual final y criterios de cierre
 
@@ -200,9 +200,9 @@ Conservar sin publicar/restaurar: `unity/Assets/Mamporro/Generated/RetroPipeline
 
 ## Checkpoint al terminar U6
 
-**Implementado y verificado el 05/10/2026; pendiente de la prueba manual y la aprobación final del autor.** No iniciar B0, balance, mundo, escalada, overhaul, contenido ni Steam antes.
+**Implementado, verificado y aprobado manualmente por el autor el 05/10/2026. U0–U6 formalmente cerrados.** B0 solo en planificación; balance, mundo, escalada, overhaul, contenido y Steam requieren sus propios bloques autorizados.
 
-- **Commits de U6:** `09d5d80` (plan, Codex), `7f3760c` (paso 1: Unity como entrada principal, guía web histórica y B0 documentado; Codex), `5719db4` (paso 2: transición del guardado; trabajo de Codex revisado, probado y publicado por Claude Code), `25b14b1` (paso 3: identidad y build de entrega), `dd45b45` (paso 4: paquete y verificación), `daaa626` (medida de audio independiente del foco), `49b6fe4` (paso 5: regresión) y el de este cierre, «Cierra U6 y prepara la prueba manual».
+- **Commits de U6:** `09d5d80` (plan, Codex), `7f3760c` (paso 1: Unity como entrada principal, guía web histórica y B0 documentado; Codex), `5719db4` (paso 2: transición del guardado; trabajo de Codex revisado, probado y publicado por Claude Code), `25b14b1` (paso 3: identidad y build de entrega), `dd45b45` (paso 4: paquete y verificación), `daaa626` (medida de audio independiente del foco), `49b6fe4` (paso 5: regresión) y `c84b62d` (cierre técnico, «Cierra U6 y prepara la prueba manual»).
 - **Entrega:** `unity\Builds\Windows\MAMPORRO.exe` (producto `MAMPORRO`, empresa `Mamporro`, versión 1.0, Windows x64 Mono normal). Paquete `unity\Builds\Paquete\MAMPORRO-Windows-x64-daaa626\` y `MAMPORRO-Windows-x64-daaa626.zip` (37,7 MB), **SHA-256 `58030a6ba69913886661c1cb14396c3a1337c5036b5362f6aa17e3f994bacd53`** (también en `…zip.sha256`); 188 archivos, 104 822 484 bytes; `MANIFIESTO.json` con commit `daaa626c4fe9cead609a522cacb8dd63bc2c0dd7` (último con código; los commits posteriores solo cambian documentación) y SHA-256 de cada archivo; `MAMPORRO.exe` `96b492cb271111251fe42b8646e65370a1b7b566773a1e35b34c3f2d1ae70873`. Sin guardados, registros, cachés, carpeta de copia de seguridad de Unity ni build Development. Builds y paquetes no se versionan ni se publican.
 - **Transición del guardado:** el progreso pasa a `%USERPROFILE%\AppData\LocalLow\Mamporro\MAMPORRO\Progress`. El de la versión anterior (`…\Mamporro\Mamporro U1\Progress`) **no se mueve, no se modifica, no se borra y no se fusiona**: si el destino nuevo no tiene progreso, el juego abre al arrancar la revisión del progreso anterior (origen, destino, resumen e informe); si ya lo tiene, se puede revisar desde Opciones → «Revisar progreso anterior». Copiar exige confirmación; cancelar no escribe nada; repetir es idempotente; un destino existente se sustituye solo tras confirmarlo y con copia de seguridad; un principal anterior roto o incompatible se rechaza y su copia `progress.backup.json` se ofrece marcada como tal. Se valida con `ProgressValidator.Stored` (mismo formato `mamporro.unity-save` v1) y se escribe con `ProgressStore` (U4). Con `-u4-save-dir` no se busca ni se ofrece nada del progreso personal.
 - **Web e historia:** `src/` sin cambios desde `b734b49`; `unity/Docs/Reference/` sin cambios desde `3754e31`; verificador histórico correcto. La web sigue ejecutable y congelada ([WEB_REFERENCIA](WEB_REFERENCIA.md)).
@@ -223,6 +223,16 @@ Usa primero carpetas de prueba; tu progreso real solo al final y a propósito.
 6. **Web → Unity:** exportación web e importación desde Opciones siguen como en U4.
 7. **Audio, foco y opciones:** Alt+Tab pausa y silencia; al volver, pausa con música baja; opciones y volúmenes se conservan.
 
-La aprobación de esta prueba cierra U6 y la migración. B0 no empieza antes.
+Guía conservada para repetir la comprobación si hace falta. El autor confirma que probó y aprobó U6 el 05/10/2026; esta aprobación cierra la migración. No se atribuyen resultados individuales adicionales que no haya comunicado.
 
-- **Aprobación del autor:** pendiente.
+- **Aprobación del autor:** recibida expresamente el 05/10/2026. Unity es la versión principal; migración web → Unity cerrada.
+
+## Sesión 05/10/2026 — aprobación manual y cierre formal (Codex)
+
+- Punto de partida comprobado: `c84b62dfedabdcbc5ce7c1da09916282fe1c67e0`, rama `claude/zen-pasteur-674ik0`, local/remoto 0/0 tras fetch; únicamente siete ajustes Unity protegidos.
+- Decisión del autor: U6 probado y aprobado manualmente. U0–U6 terminados; migración formalmente cerrada. La aprobación es global, no una nueva medición automática ni una afirmación de cada subcaso manual.
+- Trabajo exclusivamente documental: estados, continuidad, README, decisiones, plan histórico y hoja de ruta. Corregidas frases obsoletas sobre entrega/guardado pendientes; conservadas evidencias, paquete y limitaciones. Web ejecutable congelada y recuperable con exportador; MAMPORRO.exe y transición segura ya implementados.
+- Comprobaciones de esta sesión: fetch, rama/HEAD/ahead-behind/status, revisión del diff documental e índice, enlaces locales y SHA-256 de los siete excluidos antes/después. Sin suites nuevas, build, benchmark ni prueba de juego: se conservan los resultados fechados de los pasos 2–5. Sin cambios en código, src, assets ni referencias.
+- Commit de cierre: «Aprueba U6 y cierra la migración a Unity»; localizar SHA con `git log --all --grep="Aprueba U6 y cierra la migración a Unity"`. Push normal tras fetch y comprobación del remoto; verificar el HEAD publicado antes de preparar B0.
+- Árbol fuera del commit: los mismos siete ajustes locales; productName ya publicado en U6, resto protegido byte a byte.
+- Siguiente paso: solo planificación B0 en BLENDER_B0; no abrir Blender, instalar, exportar, tocar assets ni iniciar mejoras antes de autorización expresa.

@@ -4,7 +4,7 @@ Este documento contiene las reglas estables que deben seguir ChatGPT, Codex CLI 
 
 ## Proyecto
 
-MAMPORRO es un roguelike 3D de supervivencia contra hordas con humor propio y estética PS1. La versión web aprobada usa Three.js + TypeScript estricto + Vite. Se está migrando a Unity para Windows de escritorio con intención de publicación futura en Steam/plataformas similares.
+MAMPORRO es un roguelike 3D de supervivencia contra hordas con humor propio y estética PS1. La versión web aprobada usa Three.js + TypeScript estricto + Vite. La migración U0–U6 a Unity para Windows de escritorio está cerrada; Unity es la versión principal con intención de publicación futura en Steam/plataformas similares.
 
 Repositorio: `https://github.com/Marcobm1/Mamporro`
 
@@ -30,7 +30,7 @@ Al iniciar una sesión, leer en este orden:
 
 1. `docs/ESTADO_ACTUAL.md`.
 2. `docs/CONTINUIDAD_AGENTES.md`.
-3. El checkpoint del bloque vigente (`docs/PROGRESO_U6.md`: U6 cerrado técnicamente, pendiente de prueba manual; U5 aprobado manualmente).
+3. El checkpoint del bloque vigente (`docs/PROGRESO_U6.md`: U6 aprobado y migración cerrada; B0 solo planificación; U5 aprobado manualmente).
 4. `docs/DECISIONES.md` y cualquier continuación posterior indicada por el estado actual.
 5. `docs/ESPECIFICACION.md` como especificación histórica de partida.
 6. `docs/MIGRACION_UNITY.md`.

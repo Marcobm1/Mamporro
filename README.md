@@ -1,8 +1,8 @@
 # MAMPORRO
 
-**Unity es la versión principal.** U1–U5 aprobados; U6 implementado y verificado (05/10/2026), pendiente de la prueba manual del autor; entrega `unity\Builds\Windows\MAMPORRO.exe`. [Checkpoint U6](docs/PROGRESO_U6.md). La migración no se declara terminada hasta la prueba y aprobación final del autor.
+**Unity es la versión principal. La migración U0–U6 está terminada y formalmente cerrada.** U6 probado y aprobado manualmente por el autor el 05/10/2026; entrega `unity\Builds\Windows\MAMPORRO.exe`. [Cierre U6](docs/PROGRESO_U6.md).
 
-Roguelike 3D de supervivencia contra hordas, tercera persona, humor propio y estética retro. Dos personajes, seis armas, ocho tomos, doce objetos, mundo procedural, jefe, progresión permanente, español e inglés. El catálogo y balance se conservan durante la migración.
+Roguelike 3D de supervivencia contra hordas, tercera persona, humor propio y estética retro. Dos personajes, seis armas, ocho tomos, doce objetos, mundo procedural, jefe, progresión permanente, español e inglés. La base migrada conserva el catálogo y balance aprobados; las mejoras se abordarán en bloques posteriores.
 
 ## Abrir y jugar en Unity
 
@@ -36,7 +36,7 @@ Conservar toda la carpeta de build, incluidos datos y DLL. Builds, resultados y 
 
 U4 ya implementa persistencia versionada, backup/recuperación, compras, ocho misiones, selección y 14 opciones. No guarda partidas activas. Oro de partida y Calderilla del Caos son monedas distintas. Partidas con trucos y abandonos no dan meta; no se duplican liquidaciones.
 
-Web → Unity: exportar desde Opciones de la web y abrir el JSON desde Opciones → Importar progreso web en Unity; revisar y confirmar sustitución, nunca fusión. [Exportación](docs/EXPORTACION_U4.md), [contrato](docs/CONTRATO_GUARDADO_U4.md), [persistencia](docs/PERSISTENCIA_U4.md). La transición de la carpeta histórica al nuevo producto forma parte de U6 y se probará antes de cambiar identidad.
+Web → Unity: exportar desde Opciones de la web y abrir el JSON desde Opciones → Importar progreso web en Unity; revisar y confirmar sustitución, nunca fusión. [Exportación](docs/EXPORTACION_U4.md), [contrato](docs/CONTRATO_GUARDADO_U4.md), [persistencia](docs/PERSISTENCIA_U4.md). La transición segura del progreso histórico ya forma parte de Unity: revisión y confirmación antes de copiar, original intacto, backup del destino y sin fusión ni duplicados.
 
 ## Referencia web conservada
 
@@ -54,6 +54,6 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts\verify-historical-re
 
 [Equivalencia U5](docs/EQUIVALENCIA_U5.md) y [cierre aprobado U5](docs/PROGRESO_U5.md). Compresor aproximado, partículas iluminadas, jefe sin destello blanco y presentación provisional son limitaciones aceptadas. Los benchmarks solo describen el hardware y condiciones documentados.
 
-U6 no añade balance, mundo ampliado, escalada, arte/animación final, contenido, mando ni Steam. [Hoja de ruta](unity/Docs/HOJA_DE_RUTA.md). [B0 Blender](docs/BLENDER_B0.md) queda **solo documentado para después de aprobar U6**: no hay instalación, pipeline ni comandos Blender implementados.
+U6 no añade balance, mundo ampliado, escalada, arte/animación final, contenido, mando ni Steam. [Hoja de ruta](unity/Docs/HOJA_DE_RUTA.md). [B0 Blender](docs/BLENDER_B0.md) está **solo en planificación, sin autorización para implementar**: no hay pipeline ni comandos Blender implementados y la instalación real no se ha comprobado.
 
-[Instrucciones del proyecto](docs/INSTRUCCIONES_PROYECTO.md), [continuidad](docs/CONTINUIDAD_AGENTES.md), [decisiones](docs/DECISIONES.md) y [estado actual](docs/ESTADO_ACTUAL.md). Rama única `claude/zen-pasteur-674ik0`; preservar cambios locales y referencias. Tras cada bloque verificable, checkpoint y commit; al cierre U6, detenerse para la prueba manual del autor.
+[Instrucciones del proyecto](docs/INSTRUCCIONES_PROYECTO.md), [continuidad](docs/CONTINUIDAD_AGENTES.md), [decisiones](docs/DECISIONES.md) y [estado actual](docs/ESTADO_ACTUAL.md). Rama única `claude/zen-pasteur-674ik0`; preservar cambios locales y referencias. Tras cada bloque verificable, checkpoint y commit; U6 ya aprobado; esperar autorización expresa antes de implementar B0 o cualquier mejora posterior.

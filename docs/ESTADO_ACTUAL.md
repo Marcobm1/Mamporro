@@ -1,6 +1,6 @@
 # MAMPORRO — estado actual y punto de continuación
 
-Corte vigente: **04/10/2026**, U3 **aprobada manualmente por el autor como base funcional**. Último cierre técnico previo: `83246ebfd873b0c5d23611a1d557f83096180217`. U4 **aprobada manualmente por el autor el 04/10/2026** (último cierre técnico `3754e31`); [cierre](PROGRESO_U4.md#checkpoint-al-terminar-u4). U5 **aprobado manualmente por el autor el 04/10/2026**, tras el cierre técnico `5ef42b6`; cierre, guía de escucha y prueba manual en [PROGRESO_U5](PROGRESO_U5.md#checkpoint-al-terminar-u5); equivalencia en [EQUIVALENCIA_U5](EQUIVALENCIA_U5.md). U6 **implementado y verificado el 05/10/2026, pendiente de la prueba manual y la aprobación final del autor**; entrega `unity\Builds\Windows\MAMPORRO.exe`, paquete y guía en [PROGRESO_U6](PROGRESO_U6.md#checkpoint-al-terminar-u6). Después: B0 Blender solo documentado ([BLENDER_B0](BLENDER_B0.md)), no iniciado.
+Corte vigente: **05/10/2026**, U3 **aprobada manualmente por el autor como base funcional**. Último cierre técnico previo: `83246ebfd873b0c5d23611a1d557f83096180217`. U4 **aprobada manualmente por el autor el 04/10/2026** (último cierre técnico `3754e31`); [cierre](PROGRESO_U4.md#checkpoint-al-terminar-u4). U5 **aprobado manualmente por el autor el 04/10/2026**, tras el cierre técnico `5ef42b6`; cierre, guía de escucha y prueba manual en [PROGRESO_U5](PROGRESO_U5.md#checkpoint-al-terminar-u5); equivalencia en [EQUIVALENCIA_U5](EQUIVALENCIA_U5.md). U6 **implementado, verificado y aprobado manualmente por el autor el 05/10/2026; migración U0–U6 formalmente cerrada**; entrega `unity\Builds\Windows\MAMPORRO.exe`, paquete y guía en [PROGRESO_U6](PROGRESO_U6.md#checkpoint-al-terminar-u6). Después: B0 Blender solo en planificación, implementación no autorizada ([BLENDER_B0](BLENDER_B0.md)), no iniciado.
 
 Las limitaciones visuales son mejoras futuras; los picos aislados sin causa aislada siguen documentados y no bloquean el avance. Las seis propuestas técnicas de U3 no han recibido confirmación individual. Las actualizaciones siguientes son históricas.
 
@@ -18,7 +18,7 @@ Las limitaciones visuales son mejoras futuras; los picos aislados sin causa aisl
 - U3: **implementado y verificado; aprobado manualmente por el autor el 04/10/2026**; cierre e instrucciones en `docs/PROGRESO_U3.md`.
 - U4: implementada, verificada y **aprobada manualmente el 04/10/2026** (pasos 1–9; último cierre técnico `3754e31`).
 - U5: **implementado y verificado el 04/10/2026** (pasos 1–9: audio, sucesos, partículas, números, cámara/sacudida/destellos, rendimiento, sesiones/capturas/equivalencia, cierre); aprobado manualmente por el autor.
-- U6: implementado y verificado el 05/10/2026 (Unity principal, transición del guardado, identidad `MAMPORRO`, build `unity\Builds\Windows\MAMPORRO.exe`, paquete con manifiesto); pendiente de la prueba manual y la aprobación final. B0 Blender y las mejoras posteriores: solo documentados.
+- U6: implementado y verificado el 05/10/2026 (Unity principal, transición del guardado, identidad `MAMPORRO`, build `unity\Builds\Windows\MAMPORRO.exe`, paquete con manifiesto); aprobado manualmente por el autor. Unity es la versión principal; web histórica ejecutable, congelada y recuperable con exportador. B0 solo en planificación; mejoras posteriores fuera de la migración cerrada.
 - Rama de trabajo y por defecto: `claude/zen-pasteur-674ik0`.
 - Implementación U1: `abe0a9b7f0b8c53f478b91c870341999df2ea073`.
 - Checkpoint U1: `eb691b595eb247118075368430d34ed0a95735d1`.
@@ -33,7 +33,7 @@ Codex CLI y Claude Code se alternarán cuando termine la sesión/tokens de uno. 
 
 Norma canónica: [`CONTINUIDAD_AGENTES.md`](CONTINUIDAD_AGENTES.md).
 
-El checkpoint vivo es [`PROGRESO_U6.md`](PROGRESO_U6.md), cerrado técnicamente y pendiente de la prueba manual del autor. U5 aprobado y publicado en `4fcbcdf7707f4b22594164ae27552e62629228ac`; cierre en [`PROGRESO_U5.md`](PROGRESO_U5.md). [`PROGRESO_U4.md`](PROGRESO_U4.md) y [`PROGRESO_U3.md`](PROGRESO_U3.md) conservan los cierres aprobados, pruebas e instrucciones manuales. Actualizar el checkpoint vigente antes de cada relevo.
+El checkpoint vivo es [`PROGRESO_U6.md`](PROGRESO_U6.md), aprobado manualmente; el siguiente bloque es [B0](BLENDER_B0.md), solo planificación. U5 aprobado y publicado en `4fcbcdf7707f4b22594164ae27552e62629228ac`; cierre en [`PROGRESO_U5.md`](PROGRESO_U5.md). [`PROGRESO_U4.md`](PROGRESO_U4.md) y [`PROGRESO_U3.md`](PROGRESO_U3.md) conservan los cierres aprobados, pruebas e instrucciones manuales. Actualizar el checkpoint vigente antes de cada relevo.
 
 Cada relevo debe registrar trabajo realmente realizado, pruebas ejecutadas, commits/push, limitaciones, cambios locales sin publicar y siguiente paso exacto. No registrar planes como si fueran resultados.
 
@@ -43,7 +43,7 @@ Los Markdown del traspaso del 28/29 de septiembre decían que Codex CLI estaba p
 
 El entorno local se comprobó, Codex CLI se instaló/verificó y U1 se implementó realmente en Unity. Unity importó el proyecto, compiló C#, ejecutó Edit/Play Mode, generó una build Windows x64 Mono y la build se ejecutó con D3D11. Tras esa entrega, el autor probó U1 y confirmó que estaba bien; a continuación autorizó U2.
 
-Por tanto, cualquier frase histórica como «no iniciar U2» dentro de un checkpoint anterior debe interpretarse en su fecha, no como restricción vigente. El bloque vigente es `docs/PROGRESO_U6.md`, pendiente de la prueba manual del autor; U5 aprobado manualmente.
+Por tanto, cualquier frase histórica como «no iniciar U2» dentro de un checkpoint anterior debe interpretarse en su fecha, no como restricción vigente. El bloque vigente es `docs/PROGRESO_U6.md`, aprobado y cerrado; B0 solo en planificación.
 
 ## Repositorio y protección del trabajo local
 
@@ -133,6 +133,6 @@ Codex CLI: iniciar `codex` en la raíz y pedir que lea `AGENTS.md`.
 
 Claude Code: iniciarlo en la raíz; `CLAUDE.md` contiene la entrada equivalente.
 
-Ambos deben leer `docs/CONTINUIDAD_AGENTES.md`, este documento y `docs/PROGRESO_U6.md`, además de los cierres de U3–U5. U3 y U4 están aprobadas; las seis propuestas técnicas de U3 no se consideran confirmadas individualmente. U5 está aprobado manualmente. U6 está cerrado técnicamente: esperar la prueba y aprobación manual final; no iniciar B0 antes.
+Ambos deben leer `docs/CONTINUIDAD_AGENTES.md`, este documento y `docs/PROGRESO_U6.md`, además de los cierres de U3–U5. U3 y U4 están aprobadas; las seis propuestas técnicas de U3 no se consideran confirmadas individualmente. U5 está aprobado manualmente. U6 aprobado manualmente el 05/10/2026: migración cerrada. Leer el plan B0 y esperar autorización expresa antes de implementarlo.
 
 Al terminar una sesión con cambios relevantes, el agente saliente debe actualizar `docs/PROGRESO_U6.md` antes de entregar el turno.

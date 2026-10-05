@@ -1,5 +1,11 @@
 # Decisiones acordadas
 
+## Aprobación manual de U6 y cierre de la migración (05/10/2026)
+
+El autor confirma expresamente que U6 está probado y aprobado manualmente. Último cierre técnico previo: `c84b62dfedabdcbc5ce7c1da09916282fe1c67e0`. **U0–U6 terminados; migración web → Unity formalmente cerrada.** Unity es la versión principal; entrega Windows `MAMPORRO.exe` y transición segura del progreso histórico ya implementadas. Web ejecutable congelada, recuperable y con exportador; historial y corpus intactos. Se conservan limitaciones y diferencias aceptadas, sin inventar pruebas nuevas ni certificaciones individuales.
+
+B0 queda autorizado **solo para planificación**, no para implementación. Revisar [BLENDER_B0](BLENDER_B0.md), presentar pasos, aceptación y dudas reales, y esperar autorización expresa. Las mejoras posteriores no pertenecen a la migración cerrada. Los siete ajustes locales Unity siguen protegidos; productName ya publicado, ninguna otra excepción.
+
 ## Cierre técnico de U6 (05/10/2026)
 
 U6 implementado y verificado; **pendiente de la prueba manual y la aprobación final del autor** ([PROGRESO_U6](PROGRESO_U6.md#checkpoint-al-terminar-u6)). Decisiones técnicas de implementación dentro de lo autorizado: la única build normal es la de entrega (`scripts\u3.cmd build` → `unity\Builds\Windows\MAMPORRO.exe`; `Builds\U3` deja de generarse y la de diagnóstico Development sigue en `Builds\U3Dev`); `scripts\mamporro.cmd package|verify` crea y comprueba el paquete local (carpeta, `LEEME.txt`, `MANIFIESTO.json` con SHA-256 por archivo y ZIP determinista) sin publicar nada; el progreso anterior (`Mamporro U1`) se ofrece para revisar y copiar con la pantalla de importación de U4 (al arrancar solo si el destino nuevo está vacío; si no, desde Opciones), sin moverlo, modificarlo ni fusionarlo; `-u6-smoke` es una comprobación rápida de la build con guardado temporal; la comprobación visual activa el foco del audio solo durante su medida cuando Windows no da el primer plano. Sin cambios de reglas, balance, contenido ni referencias. B0 sigue solo documentado.
