@@ -262,4 +262,4 @@ la horda provisional no garantiza el coste del futuro combate completo.
 - `Generated/`: escena, malla, datos y materiales originales con sus `.meta`.
 
 La web y `Docs/Reference/` permanecen intactos. U1 ya ha recibido revisión favorable del
-autor; U2 y U3 están aprobados. U4 está aprobada por el autor (04/10/2026). U5 está aprobado manualmente por el autor (04/10/2026); U6 autorizado y en curso.
+autor; U2 y U3 están aprobados. U4 está aprobada por el autor (04/10/2026). U5 está aprobado manualmente por el autor (04/10/2026); U6 implementado y verificado (05/10/2026), pendiente de la prueba manual del autor.

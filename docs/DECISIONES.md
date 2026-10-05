@@ -1,5 +1,9 @@
 # Decisiones acordadas
 
+## Cierre técnico de U6 (05/10/2026)
+
+U6 implementado y verificado; **pendiente de la prueba manual y la aprobación final del autor** ([PROGRESO_U6](PROGRESO_U6.md#checkpoint-al-terminar-u6)). Decisiones técnicas de implementación dentro de lo autorizado: la única build normal es la de entrega (`scripts\u3.cmd build` → `unity\Builds\Windows\MAMPORRO.exe`; `Builds\U3` deja de generarse y la de diagnóstico Development sigue en `Builds\U3Dev`); `scripts\mamporro.cmd package|verify` crea y comprueba el paquete local (carpeta, `LEEME.txt`, `MANIFIESTO.json` con SHA-256 por archivo y ZIP determinista) sin publicar nada; el progreso anterior (`Mamporro U1`) se ofrece para revisar y copiar con la pantalla de importación de U4 (al arrancar solo si el destino nuevo está vacío; si no, desde Opciones), sin moverlo, modificarlo ni fusionarlo; `-u6-smoke` es una comprobación rápida de la build con guardado temporal; la comprobación visual activa el foco del audio solo durante su medida cuando Windows no da el primer plano. Sin cambios de reglas, balance, contenido ni referencias. B0 sigue solo documentado.
+
 ## U6 autorizado y B0 Blender futuro (04/10/2026)
 
 El autor autoriza consecutivamente los pasos 1–6 de U6; no repetir permisos generales. Web ejecutable congelada con exportador en el repositorio, sin gameplay nuevo ni publicación/despliegue web. Unity pasa a principal. Identidad aprobada: `MAMPORRO.exe`, producto `MAMPORRO`, empresa `Mamporro` (ya existente), build normal en `unity/Builds/Windows`, Development separado.
@@ -18,7 +22,7 @@ U6 queda autorizado **solo para planificación**. Presentar alcance, pasos y dec
 
 Los picos finales conservados son 30,8 y 41,9 ms; 58 ms corresponde a una pasada anterior. Los benchmarks solo describen sus condiciones medidas, no rendimiento universal. En esta aprobación no se repiten suites ni se modifica runtime.
 
-**Estado actual:** U1–U4 aprobados; U4 aprobada manualmente el 04/10/2026. U5 aprobado manualmente por el autor el 04/10/2026; U6 solo en planificación; véase [PROGRESO_U5](PROGRESO_U5.md) y [EQUIVALENCIA_U5](EQUIVALENCIA_U5.md). Las autorizaciones anteriores son históricas.
+**Estado (histórico, 04/10/2026):** U1–U4 aprobados; U4 aprobada manualmente el 04/10/2026. U5 aprobado manualmente por el autor el 04/10/2026; U6 entonces solo en planificación (implementado el 05/10/2026, ver la entrada superior); véase [PROGRESO_U5](PROGRESO_U5.md) y [EQUIVALENCIA_U5](EQUIVALENCIA_U5.md). Las autorizaciones anteriores son históricas.
 
 Registro de lo que se ha decidido durante el desarrollo, además de la
 [especificación original](ESPECIFICACION.md). Cuando esto la concreta o la

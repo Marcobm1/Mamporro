@@ -1,6 +1,6 @@
 # MAMPORRO
 
-**Unity es la versión principal.** U1–U5 aprobados; U6 en implementación autorizada para cerrar la adopción y preparar la entrega Windows. [Checkpoint U6](docs/PROGRESO_U6.md). La migración no se declara terminada hasta la prueba y aprobación final del autor.
+**Unity es la versión principal.** U1–U5 aprobados; U6 implementado y verificado (05/10/2026), pendiente de la prueba manual del autor; entrega `unity\Builds\Windows\MAMPORRO.exe`. [Checkpoint U6](docs/PROGRESO_U6.md). La migración no se declara terminada hasta la prueba y aprobación final del autor.
 
 Roguelike 3D de supervivencia contra hordas, tercera persona, humor propio y estética retro. Dos personajes, seis armas, ocho tomos, doce objetos, mundo procedural, jefe, progresión permanente, español e inglés. El catálogo y balance se conservan durante la migración.
 

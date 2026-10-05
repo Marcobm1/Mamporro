@@ -1,6 +1,6 @@
 # Migración propuesta a Unity
 
-> Estado vigente en [ESTADO_ACTUAL](ESTADO_ACTUAL.md): U1–U4 aprobados; [U4 aprobada manualmente el 04/10/2026](PROGRESO_U4.md#checkpoint-al-terminar-u4). [U5 aprobado manualmente el 04/10/2026](PROGRESO_U5.md#checkpoint-al-terminar-u5). U6 autorizado para implementación por pasos. Las autorizaciones antiguas que figuran debajo son históricas.
+> Estado vigente en [ESTADO_ACTUAL](ESTADO_ACTUAL.md): U1–U4 aprobados; [U4 aprobada manualmente el 04/10/2026](PROGRESO_U4.md#checkpoint-al-terminar-u4). [U5 aprobado manualmente el 04/10/2026](PROGRESO_U5.md#checkpoint-al-terminar-u5). [U6](PROGRESO_U6.md#checkpoint-al-terminar-u6) **implementado y verificado el 05/10/2026, pendiente de la prueba manual y la aprobación final del autor**. Las autorizaciones antiguas que figuran debajo son históricas.
 
 ## Historial de preparación (sustituido por el checkpoint U2)
 
@@ -182,7 +182,7 @@ jugable del autor. Corregir regresiones antes de añadir contenido nuevo.
 
 ### U6. Adoptar Unity como versión principal
 
-Plan propuesto el 04/10/2026 en [PROGRESO_U6](PROGRESO_U6.md), después de la aprobación de U5. **Implementación autorizada**: decisiones resueltas, web histórica conservada y entrega MAMPORRO en Builds/Windows, con transición segura del progreso antes del cambio mínimo de productName.
+Plan propuesto el 04/10/2026 en [PROGRESO_U6](PROGRESO_U6.md), después de la aprobación de U5. **Implementación autorizada**: decisiones resueltas, web histórica conservada y entrega MAMPORRO en Builds/Windows, con transición segura del progreso antes del cambio mínimo de productName. **05/10/2026:** implementado y verificado (pasos 1–6): entrega `unity/Builds/Windows/MAMPORRO.exe`, paquete con manifiesto y transición revisable del progreso; pendiente de la prueba manual y la aprobación final.
 
 - Actualizar README y guía de trabajo con Editor exacto, apertura, pruebas y build.
 - Conservar una referencia recuperable a la última versión web aprobada y sus
