@@ -1,6 +1,6 @@
 # P0 — movilidad y verticalidad antes de ampliar el mundo
 
-Estado: **PLAN PROPUESTO, NO IMPLEMENTADO NI AUTORIZADO PARA PROGRAMAR**. Preparación del 05/10/2026 (Codex). No mezcla P1 artístico ni P2 contenido. La clasificación histórica de balance en P0 no lo incluye en este primer prototipo.
+Estado: **P0-A1–P0-A5 AUTORIZADOS Y EN CURSO**. Preparación del 05/10/2026 (Codex). No mezcla P1 artístico ni P2 contenido. La clasificación histórica de balance en P0 no lo incluye en este primer prototipo.
 
 ## Cómo retomar
 
@@ -8,7 +8,7 @@ Estado: **PLAN PROPUESTO, NO IMPLEMENTADO NI AUTORIZADO PARA PROGRAMAR**. Prepar
 - U0–U6 cerrados y aprobados. Entrega `unity/Builds/Windows/MAMPORRO.exe` intacta; SHA-256 `96b492cb271111251fe42b8646e65370a1b7b566773a1e35b34c3f2d1ae70873`.
 - Trabajo realizado: auditoría de código/documentación y plan. Ningún código, asset, script, escena o build P0 creado. No hay WIP runtime.
 - Siete ajustes Unity protegidos intactos y excluidos, según BLENDER_B0/PROGRESO_U6. No reset/clean/stash ni publicación accidental.
-- **Siguiente paso exacto:** recibir respuesta a las cuatro decisiones de abajo y autorización del primer bloque P0-A. Solo entonces crear el circuito QA y las pruebas del contrato de superficies. La aprobación de este plan no debe confundirse con resultados de pruebas.
+- **Siguiente paso exacto:** A2, estados y movimiento sobre PlayerBody; A1 lógico terminado (445/445). La escena visible sigue pendiente para A3. Las cuatro decisiones están aprobadas; no volver a preguntarlas. P0-B/C/D no autorizados.
 - Publicación de este plan: commit «Planifica el prototipo de movilidad y verticalidad», localizable con `git log --oneline -- docs/PROGRESO_P0.md`; fetch/push normal y comprobar remoto. Un paso verificable por commit durante implementación futura.
 
 Auditoría CMD antes de continuar:
@@ -81,7 +81,7 @@ Ampliar tamaño/densidad por medición de tiempos entre destinos y presupuesto d
 - Capturas: esquema del circuito, collider/volumen y VisualRoot superpuestos, antes/durante/después del borde, techo bloqueado, esquina, cámara en espacio estrecho y enemigos desde tejado. Clip corto de ruta completa y fallo recuperable; si no hay captura fiable de vídeo, secuencia de imágenes, sin fingir validación jugable.
 - Aceptación A: ninguna penetración/atasco irrecuperable ni agarre involuntario en casos fijados; transiciones completas, pausa/reset limpios, equivalencia U3 preservada y medidas registradas. Limitaciones de horda explícitas; aprobación manual del circuito antes de ampliar mundo. No se declara P0 completo por cerrar A.
 
-## Decisiones importantes del autor — una sola tanda
+## Propuestas del plan inicial (resueltas por la autorización inferior)
 
 1. **Control:** ¿mantener botón derecho para agarrarse, WASD sobre pared, Espacio para separarse saltando y soltar para caer? Recomendado por ser explícito y no interferir con E/salto/deslizamiento existentes. Alternativa: agarre automático al saltar hacia pared, con mayor riesgo de enganches involuntarios.
 2. **Superficies y transición:** ¿paredes sólidas de estructuras/acantilados, sin techos/follaje/interactuables, con salida automática al tejado al seguir ascendiendo si cabe el cuerpo? Incluir en el ensayo las velocidades iniciales propuestas (4,5 vertical / 3 lateral), ajustables por sensación; no son cifras de balance final.
@@ -93,3 +93,21 @@ No hay otras decisiones bloqueantes detectadas. Tras respuesta, registrar las re
 ## Registro de preparación — 05/10/2026
 
 Agente: Codex. Solo lectura de código y documentación; no se ejecutaron suites/build/benchmark nuevos. Revisadas evidencias históricas B0 y SHA de entrega/excluidos en el cierre formal. Este commit contiene exclusivamente planificación y enlaces de continuidad. Siguiente paso: esperar respuesta a las cuatro decisiones y autorización P0-A; no iniciar P1/P2, balance, mundo ampliado, Steam, mando ni telemetría.
+
+## Autorización P0-A — 05/10/2026
+
+El autor autoriza A1–A5 consecutivos y confirma las cuatro decisiones del plan: agarre mantenido con botón derecho, WASD independiente de cámara, Espacio separa, soltar/Shift/C suelta, rearmado tras soltar antes de reenganchar. Sin stamina ni duración máxima. E conserva su función.
+
+Estructuras y acantilados sólidos escalables; follaje, interactuables, enemigos, límites y caras inferiores de techos no. La superficie superior/tejado sí puede alcanzarse por borde con soporte, cuerpo y barrido completos libres, sin teleport ni adaptar colliders. Velocidades parametrizadas de ensayo 4,5 vertical / 3 lateral, diagonal normalizada; suelo 9,5 como control. Cámara QA contra sólidos autorizada, sin reemplazar la U3.
+
+Horda existente sin escalada, teleport, NavMeshAgent ni componentes individuales. Refugios inaccesibles visibles y medidos como limitación QA: se resolverán en P0-B, que NO entra aquí. Sin cambios de balance, director, spawns, oro o progreso. Build QA separada, entrega U6 y siete ajustes protegidos intactos. Detenerse al cerrar técnicamente A5 para prueba manual del autor; no iniciar B/C/D, P1/P2 ni adopción VAT.
+
+## Sesión 05/10/2026 — A1, consultas y datos del circuito (Codex)
+
+Base `e49fb9f`, local/remoto iguales y siete ajustes protegidos. Implementados `Core/World/VerticalQueries.cs`, `VerticalCircuit.cs` y 15 casos NUnit en `Tests/Core/VerticalQueriesTests.cs`. Datos QA fijos de rampa/meseta, tejado, techo bloqueante, esquinas, borde estrecho y tipos no escalables. No se modifica el generador, PlayerPhysics ni WorldCollision U3. La escena visible y su lanzador se conectarán con A2/A3; esta pieza valida el circuito lógico, no declara todavía una build jugable.
+
+Barrido continuo contra cajas (sin muestreo que atraviese sólidos finos); normal/ID/tipo, exclusiones, soporte de huella completa, validación de dos tramos de salida y espacio corporal. Envolvente de consulta conservadora cuadrada alrededor del cilindro: puede rechazar un hueco muy justo en diagonal; no cambia colliders ni agranda el cuerpo lógico. Debe mostrarse en QA y revisarse en la integración, sin ocultar rechazos.
+
+Pruebas nuevas realmente ejecutadas: `scripts\u3.cmd edit`, 05/10/2026, primera pasada 444/444 y segunda final **445/445**, `unity/TestResults/U3/edit.xml` y `edit.log`; incluye las 430 regresiones anteriores y las 15 nuevas. El primer intento restringido no llegó a ejecutar Unity por licencia/entorno; la ejecución fuera del entorno restringido terminó correctamente. No Play/build/visual todavía porque no hay integración runtime. Sin cambios en `src/` ni referencias. Entrega U6 no regenerada.
+
+Commit de esta pieza: «Añade las consultas y el circuito lógico de movilidad vertical». Fetch/push normal; siguiente pieza A2: estados y movimiento sobre PlayerBody, después integración visible A3. No iniciar P0-B. Los siete ajustes locales siguen excluidos; no hay otros cambios heredados.

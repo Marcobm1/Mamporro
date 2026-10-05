@@ -11,7 +11,7 @@ Antes de modificar código o documentación, lee:
 1. [`docs/INSTRUCCIONES_PROYECTO.md`](docs/INSTRUCCIONES_PROYECTO.md).
 2. [`docs/ESTADO_ACTUAL.md`](docs/ESTADO_ACTUAL.md).
 3. [`docs/CONTINUIDAD_AGENTES.md`](docs/CONTINUIDAD_AGENTES.md).
-4. [`docs/PROGRESO_P0.md`](docs/PROGRESO_P0.md) — plan vigente, esperar autorización; cierre B0 en [`docs/BLENDER_B0.md`](docs/BLENDER_B0.md) (cierre histórico; B0 cerrado y aceptado técnicamente; siguiente bloque solo en planificación). [`docs/PROGRESO_U6.md`](docs/PROGRESO_U6.md) conserva la migración cerrada y U6 aprobado manualmente el 05/10/2026. Cierre aprobado de U5 en [`docs/PROGRESO_U5.md`](docs/PROGRESO_U5.md) y cierres aprobados en [`docs/PROGRESO_U4.md`](docs/PROGRESO_U4.md) y [`docs/PROGRESO_U3.md`](docs/PROGRESO_U3.md).
+4. [`docs/PROGRESO_P0.md`](docs/PROGRESO_P0.md) — P0-A1–A5 autorizados; detenerse al cierre técnico; cierre B0 en [`docs/BLENDER_B0.md`](docs/BLENDER_B0.md) (cierre histórico; B0 cerrado y aceptado técnicamente; siguiente bloque solo en planificación). [`docs/PROGRESO_U6.md`](docs/PROGRESO_U6.md) conserva la migración cerrada y U6 aprobado manualmente el 05/10/2026. Cierre aprobado de U5 en [`docs/PROGRESO_U5.md`](docs/PROGRESO_U5.md) y cierres aprobados en [`docs/PROGRESO_U4.md`](docs/PROGRESO_U4.md) y [`docs/PROGRESO_U3.md`](docs/PROGRESO_U3.md).
 5. [`docs/DECISIONES.md`](docs/DECISIONES.md) y [`docs/ESPECIFICACION.md`](docs/ESPECIFICACION.md).
 6. [`docs/MIGRACION_UNITY.md`](docs/MIGRACION_UNITY.md).
 7. [`README.md`](README.md) y [`unity/README.md`](unity/README.md).
@@ -46,14 +46,14 @@ Decisiones, plan y criterios: `docs/PROGRESO_U3.md`.
 
 1. Antes de editar, comprueba rama, `git status --short --branch`, últimos commits, remoto y cambios locales. Haz `git fetch origin`; si el árbol está limpio y solo falta avanzar, usa `git pull --ff-only`. Conserva cambios del autor, de Unity y del agente anterior; no uses `reset --hard`, `git clean`, checkout destructivo ni reclonado para «arreglar» un árbol sucio.
 2. Lee «Cómo retomar» de `docs/BLENDER_B0.md` y el cierre aprobado de `docs/PROGRESO_U6.md`. No asumas que Codex terminó todo lo planeado ni repitas trabajo sin comprobar commits y estado.
-3. U5 está aprobado manualmente (`docs/PROGRESO_U5.md`). U6 aprobado y migración cerrada. B0 cerrado y aceptado técnicamente: consultar docs/BLENDER_B0.md; P0 solo en planificación.
+3. U5 está aprobado manualmente (`docs/PROGRESO_U5.md`). U6 aprobado y migración cerrada. B0 cerrado y aceptado técnicamente: consultar docs/BLENDER_B0.md; P0-A autorizado, B/C/D no autorizados.
 4. Mantén la base web y `unity/Docs/Reference/` como referencia. Nunca uses `--write` o cambies valores esperados para hacer pasar un port incorrecto.
 5. Implementa por piezas verificables. Código en inglés; comentarios, documentación y commits en español. No nombres modelos de IA en código ni commits.
 6. Verifica lo que realmente ejecutes. Distingue pruebas unitarias, Edit Mode, Play Mode, build y benchmark; un benchmark de lógica no equivale a FPS reales.
 7. Actualiza `docs/BLENDER_B0.md` cuando cambie el punto de continuación y siempre antes de ceder el turno a Codex. Actualiza `README.md`, `docs/DECISIONES.md`, `docs/ESTADO_ACTUAL.md` y demás documentación cuando cambie el estado global o haya decisiones permanentes.
 8. Commits pequeños que compilen y pasen sus pruebas por separado; push directo a la rama. Sin PR.
 9. Si la sesión/tokens se acercan al límite, no empieces una pieza nueva: deja lo terminado verificado, commit/push cuando sea seguro, documenta cualquier cambio local no publicado y escribe un `Siguiente paso exacto` para Codex o para la siguiente sesión.
-10. U1–U5 ya están aprobados. U6 aprobado manualmente el 05/10/2026. B0 aceptado técnicamente; no adoptar masivamente el resultado. P0 solo en planificación, pendiente de autorización.
+10. U1–U5 ya están aprobados. U6 aprobado manualmente el 05/10/2026. B0 aceptado técnicamente; no adoptar masivamente el resultado. P0-A autorizado, B/C/D no autorizados, pendiente de autorización.
 
 ## Relevo a Codex
 
@@ -128,4 +128,4 @@ Mundo/estructuras mayores; mesetas y rampas más marcadas; escalada libre por pa
 
 Cámara contra estructuras, mando/remapeo, métricas locales adicionales y servicios Steam siguen siendo propuestas/etapas futuras, no funciones ya terminadas.
 
-Punto de continuación vigente: [PROGRESO_P0](docs/PROGRESO_P0.md) — plan del circuito aislado de movilidad/verticalidad. Solo planificación; esperar respuesta del autor antes de programar P0-A. B0 cerrado y publicado en `0b0b68c31dda803cf9cf566b3c96f369ed893ce3`.
+Punto de continuación vigente: [PROGRESO_P0](docs/PROGRESO_P0.md) — plan del circuito aislado de movilidad/verticalidad. P0-A1–A5 autorizados y en curso; no iniciar P0-B/C/D al cerrar. B0 cerrado y publicado en `0b0b68c31dda803cf9cf566b3c96f369ed893ce3`.

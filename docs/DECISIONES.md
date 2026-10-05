@@ -1,5 +1,10 @@
 # Decisiones acordadas
 
+## P0-A autorizado (05/10/2026)
+
+El autor aprueba las cuatro propuestas del [plan P0](PROGRESO_P0.md) y autoriza exclusivamente A1–A5 consecutivos: agarre explícito con botón derecho; escalada libre sin stamina ni duración máxima; salida a tejado con volumen/soporte/barrido válidos; velocidades QA 4,5/3 m/s; cámara contra sólidos solo QA; horda existente y refugios inaccesibles documentados sin ocultarlos mediante balance. Conservar U3, entrega U6 y ajustes protegidos. No iniciar P0-B/C/D al cierre; esperar prueba manual.
+
+
 ## Aceptación técnica de B0 y selección de candidatas (05/10/2026)
 
 Decisión expresa del autor: **pipeline validado técnicamente y validado para proponer adopción**. B0.1–B0.6 cerrados en `ab9e619`; no hubo revisión visual/manual de la build por el autor. Pelusa, Doña Remedios y pared aceptados como prototipos suficientes, no arte final ni dirección artística definitiva. P1 podrá rediseñarlos; no sustituyen automáticamente producción.
