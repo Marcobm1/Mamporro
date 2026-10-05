@@ -181,7 +181,10 @@ namespace Mamporro.U3
         {
             var args=Environment.GetCommandLineArgs();
             if(Progress.Status=="new"&&LegacySaveAvailable)Screens.ShowLegacyImport(LegacySaveDirectory);
-            if(Array.IndexOf(args,"-u3-visual-check")>=0)gameObject.AddComponent<U3VisualCheck>().Game=this;
+            // U6: identidad y rutas en el registro del reproductor (sin leer el guardado).
+            if(!Application.isEditor)UnityEngine.Debug.Log($"{Application.productName} {Application.version} · progreso: {SaveDirectory}{(LegacySaveDirectory!=null?" · anterior: "+LegacySaveDirectory:"")}");
+            if(Array.IndexOf(args,"-u6-smoke")>=0)gameObject.AddComponent<DeliverySmoke>().Game=this;
+            else if(Array.IndexOf(args,"-u3-visual-check")>=0)gameObject.AddComponent<U3VisualCheck>().Game=this;
             else if(Array.IndexOf(args,"-u3-benchmark")>=0){benchmark=gameObject.AddComponent<U3Benchmark>();benchmark.Game=this;}
         }
 

@@ -5,12 +5,12 @@ Estado: **AUTORIZADO Y EN CURSO, 04/10/2026.** U1–U5 aprobados; aprobación ma
 ## Cómo retomar
 
 - **Punto de partida:** cierre/aprobación U5 publicado en `4fcbcdf`; plan U6 en «Prepara el plan de adopción de Unity para U6» (hash: `git log -1 --format="%H %s" -- docs/PROGRESO_U6.md`).
-- **Paso actual:** pasos 1–2 terminados; siguiente, paso 3 (identidad y build de entrega).
+- **Paso actual:** pasos 1–3 terminados; siguiente, paso 4 (paquete reproducible y manifiesto).
 - **Terminado:** migración funcional U1–U5 aprobada; contrato/transferencia/meta, partida completa, audio y feedback. Falta la adopción y entrega de U6, no reimplementar esos sistemas.
-- **A medias:** nada. Paso 1 `7f3760c` (Codex); paso 2 en «Revisa y copia el progreso Unity anterior antes del cambio de identidad» (hash: `git log -1 --format="%H %s" -- unity/Assets/Mamporro/Persistence/ProgressLocations.cs`). Último Edit Mode 405/405, Play Mode 39/39, build correcta (05/10/2026).
+- **A medias:** nada. Paso 1 `7f3760c` (Codex); paso 2 en «Revisa y copia el progreso Unity anterior antes del cambio de identidad» (hash: `git log -1 --format="%H %s" -- unity/Assets/Mamporro/Persistence/ProgressLocations.cs`). Paso 2 `5719db4`; paso 3 en «Fija la identidad MAMPORRO y la build de entrega» (hash: `git log -1 --format="%H %s" -- unity/Assets/Mamporro/U3/DeliverySmoke.cs`). Último Edit Mode 405/405, Play Mode 39/39, build de entrega y humo correctos (05/10/2026).
 - **Sin publicar deliberadamente:** los siete ajustes Unity enumerados debajo; no restaurarlos ni incluirlos para limpiar Git.
 - **Pruebas de esta preparación:** únicamente auditoría Git, lectura de documentación/código, revisión de Markdown y comparación SHA-256 de los excluidos. No se han repetido suites, build, visual ni benchmark.
-- **Siguiente paso exacto:** paso 3: cambiar solo `productName: Mamporro U1` → `MAMPORRO` en `ProjectSettings.asset` publicando únicamente esa línea (índice preparado a partir de la versión publicada, nunca `git add` del archivo entero; comprobar `git diff --cached` y que las demás diferencias locales siguen sin publicar); build normal en `unity/Builds/Windows/MAMPORRO.exe` (`U3Project.BuildRelease` o similar, sin Development), lanzador estable y compatibilidad de `scripts\u3.cmd`; comprobar en la build que `persistentDataPath` termina en `Mamporro\MAMPORRO` y que la ruta histórica se resuelve, siempre con carpetas temporales.
+- **Siguiente paso exacto:** paso 4: `scripts\mamporro.cmd package` (y `verify`): copiar `unity\Builds\Windows` excluyendo `*_BackUpThisFolder_ButDontShipItWithYourGame`, `*_BurstDebugInformation_DoNotShip`, logs, `.pdb` y cualquier carpeta ajena; añadir `LEEME.txt` (arranque, guardado, prueba aislada, limitaciones) y `MANIFIESTO.json` (commit, rama, Editor, backend, fecha, producto, archivos con tamaño y SHA-256); ZIP determinista (orden y fecha fijos) en `unity\Builds\Paquete\` con su SHA-256; `verify` extrae el ZIP en una carpeta temporal **con espacios**, comprueba las huellas del manifiesto y lanza `MAMPORRO.exe -u6-smoke` con `-u4-save-dir` temporal.
 
 Comprobación CMD:
 
@@ -164,3 +164,14 @@ Conservar sin publicar/restaurar: `unity/Assets/Mamporro/Generated/RetroPipeline
 - **Commit/push:** «Revisa y copia el progreso Unity anterior antes del cambio de identidad»; fetch previo y push normal si el remoto sigue en `7f3760c`.
 - **Árbol al terminar:** solo los siete ajustes Unity excluidos.
 - **Siguiente paso exacto:** paso 3 (ver «Cómo retomar»).
+
+## Sesión 05/10/2026 — paso 3, identidad y build de entrega (Claude Code)
+
+- **Punto de partida:** `5719db4` (paso 2 publicado); siete ajustes excluidos intactos.
+- **Identidad:** `productName: Mamporro U1` → `MAMPORRO` (empresa `Mamporro` y versión `1.0` sin cambios). El índice se preparó a partir del contenido **publicado** del archivo (`git show HEAD:…` → sustitución de esa única línea → `git hash-object -w` → `git update-index --cacheinfo`), y la misma línea se cambió en la copia local sin tocar nada más. Comprobado antes del commit: `git diff --cached` de `ProjectSettings.asset` = 1 línea (`productName`); la copia local conserva las mismas 124/124 diferencias del autor sin publicar y sin diferencia en `productName`; la build de Unity no reescribió el archivo.
+- **Build de entrega:** `U3Project.Build` (lo que ejecuta `scripts\u3.cmd build`) genera ahora la build normal Windows x64 Mono en una carpeta limpia `unity\Builds\Windows\MAMPORRO.exe` (`MAMPORRO_Data`, `MonoBleedingEdge`, `UnityPlayer.dll`, etc.). `Builds\U3` deja de generarse; la de diagnóstico Development sigue aparte en `Builds\U3Dev` (`scripts\u3.cmd devdiag`). `visual` y `benchmark` usan la build de entrega. Al arrancar, el reproductor (no el Editor) registra producto, versión y rutas de progreso. `U3/DeliverySmoke.cs` (`-u6-smoke`): identidad, rutas por defecto calculadas sin abrir nada, escena, audio y 2 s de partida; escribe `smoke-report.json` y sale.
+- **Humo en la build real (05/10/2026, con `-u4-save-dir` temporal en una ruta con espacios):** producto `MAMPORRO`, empresa `Mamporro`, versión 1.0, Unity 6000.6.3f1, `WindowsPlayer`, no Development; `persistentDataPath` = `%USERPROFILE%\AppData\LocalLow\Mamporro\MAMPORRO`; ruta por defecto `…\MAMPORRO\Progress` y anterior `…\Mamporro U1\Progress` (cálculo puro); con el override el progreso fue a la carpeta temporal y **no** se ofreció el anterior; escena `U3_Partida`, 48 kHz, 18 fuentes, partida de 2,0 s. Unity crea la carpeta vacía del producto en `LocalLow` al arrancar (comportamiento del motor); no se leyó ni se escribió ningún guardado personal.
+- **Pruebas ejecutadas:** `scripts\u3.cmd build` correcta (10:06; una pasada previa falló por una referencia ambigua a `Debug` en `U3Game`, corregida); humo correcto (exit 0). La regresión completa se hace en el paso 5.
+- **Commit/push:** «Fija la identidad MAMPORRO y la build de entrega»; fetch previo y push normal si el remoto sigue en `5719db4`.
+- **Árbol al terminar:** siete ajustes excluidos; `ProjectSettings.asset` sigue modificado en local solo por las diferencias del autor.
+- **Siguiente paso exacto:** paso 4 (ver «Cómo retomar»).

@@ -20,12 +20,12 @@ scripts\u3.cmd build
 
 Edit Mode prepara transferencias web de prueba: requiere Node 22.12 o superior y dependencias instaladas mediante `npm.cmd ci`. Unity puede jugarse sin Node desde una build autónoma.
 
-**Build vigente al empezar U6:** `unity\Builds\U3\Mamporro-U3.exe`. El nombre definitivo autorizado es `unity\Builds\Windows\MAMPORRO.exe`, todavía pendiente de implementación; no asumir que ya existe.
+**Build de entrega:** `scripts\u3.cmd build` genera `unity\Builds\Windows\MAMPORRO.exe` (producto `MAMPORRO`, empresa `Mamporro`, Windows x64 Mono normal). El progreso se guarda en `%USERPROFILE%\AppData\LocalLow\Mamporro\MAMPORRO\Progress`; el de versiones anteriores (`...\Mamporro\Mamporro U1\Progress`) se ofrece para revisar y copiar, nunca se mueve ni se fusiona.
 
-Para probar la build vigente sin usar el guardado personal:
+Para probar la build sin usar el guardado personal:
 
 ```cmd
-start "" "unity\Builds\U3\Mamporro-U3.exe" -monitor 1 -screen-fullscreen 0 -screen-width 1920 -screen-height 1080 -u4-save-dir "%TEMP%\MamporroU6Prueba"
+start "" "unity\Builds\Windows\MAMPORRO.exe" -monitor 1 -screen-fullscreen 0 -screen-width 1920 -screen-height 1080 -u4-save-dir "%TEMP%\MamporroU6Prueba"
 ```
 
 Conservar toda la carpeta de build, incluidos datos y DLL. Builds, resultados y capturas no se versionan. Development es diagnóstico separado, no entrega final.

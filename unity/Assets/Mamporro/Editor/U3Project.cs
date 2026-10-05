@@ -64,11 +64,15 @@ namespace Mamporro.Editor
         public static void Build()
         {
             if(PlayerSettings.GetScriptingBackend(NamedBuildTarget.Standalone)!=ScriptingImplementation.Mono2x)throw new BuildFailedException("U3 requiere Mono.");
-            Directory.CreateDirectory("Builds/U3");
-            var report=BuildPipeline.BuildPlayer(new BuildPlayerOptions{scenes=new[]{ScenePath},locationPathName="Builds/U3/Mamporro-U3.exe",target=BuildTarget.StandaloneWindows64,options=BuildOptions.None});
+            // U6: build normal de entrega, siempre en una carpeta limpia (solo contiene builds generadas).
+            if(Directory.Exists(ReleaseFolder))Directory.Delete(ReleaseFolder,true);
+            Directory.CreateDirectory(ReleaseFolder);
+            var report=BuildPipeline.BuildPlayer(new BuildPlayerOptions{scenes=new[]{ScenePath},locationPathName=ReleaseFolder+"/MAMPORRO.exe",target=BuildTarget.StandaloneWindows64,options=BuildOptions.None});
             if(report.summary.result!=BuildResult.Succeeded)throw new BuildFailedException(report.summary.result.ToString());
-            Debug.Log("U3 Windows x64 Mono: build correcta.");
+            Debug.Log("MAMPORRO Windows x64 Mono: build correcta en "+ReleaseFolder+"/MAMPORRO.exe ("+PlayerSettings.productName+").");
         }
+        // Entrega normal (U6). La build de diagnóstico Development sigue aparte en Builds/U3Dev.
+        public const string ReleaseFolder="Builds/Windows";
         // U5: build de desarrollo solo para el diagnóstico (asignaciones/GC, memoria y GPU si el
         // perfilador la da). En otra carpeta; nunca se usa para el rendimiento final. No cambia
         // ningún ajuste del proyecto.

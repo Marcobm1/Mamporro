@@ -92,7 +92,7 @@ Controles de U2 (sin conflictos con U1: en esta escena R, 1–4 y F5 de U1 no se
 ## Escena U3: mundo procedural y partida completa
 
 Abre `Assets/Mamporro/U3/U3_Partida.unity`, o ejecuta
-`unity\Builds\U3\Mamporro-U3.exe`. Es la partida completa de la web aprobada
+`unity\Builds\Windows\MAMPORRO.exe` (build de entrega desde U6; antes `Builds\U3\Mamporro-U3.exe`). Es la partida completa de la web aprobada
 sobre el mundo procedural, con el progreso permanente, menús y opciones de U4 en
 pantallas uGUI técnicas, y audio y efectos de U5 (el arte final llega después de U6).
 

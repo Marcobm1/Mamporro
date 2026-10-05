@@ -21,7 +21,7 @@ if($Action -eq 'devdiag') {
 }
 if($Action -in @('benchmark','devdiag')) {
     $dev=$Action -eq 'devdiag'
-    $player=Join-Path $project $(if($dev){'Builds\U3Dev\Mamporro-U3.exe'}else{'Builds\U3\Mamporro-U3.exe'})
+    $player=Join-Path $project $(if($dev){'Builds\U3Dev\Mamporro-U3.exe'}else{'Builds\Windows\MAMPORRO.exe'})
     if(!(Test-Path -LiteralPath $player)){throw 'Primero genera la build U3.'}
     if($dev){$results=Join-Path $results 'DevDiag';New-Item -ItemType Directory -Force -Path $results | Out-Null}
     $summary=@()
@@ -50,7 +50,7 @@ if($Action -in @('benchmark','devdiag')) {
     if($dev){Write-Output 'DIAGNÓSTICO DEVELOPMENT: no es el rendimiento de la build final.'}
     $summary | Format-Table -AutoSize | Out-String -Width 400 | Write-Output
 } elseif($Action -eq 'visual') {
-    $player=Join-Path $project 'Builds\U3\Mamporro-U3.exe'
+    $player=Join-Path $project 'Builds\Windows\MAMPORRO.exe'
     if(!(Test-Path -LiteralPath $player)){throw 'Primero genera la build U3.'}
     $visual=Join-Path $results 'Visual'
     $started=Get-Date
