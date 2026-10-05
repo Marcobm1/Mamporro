@@ -427,3 +427,5 @@ Git normal, .blend sin compresión fuera de Assets, FBX idempotente y sin reexpo
 Se conservan Blender 25/25 y las restantes pruebas históricas del cierre técnico. `scripts\u3.cmd build` no se ejecutó en B0.6 ni en este cierre documental; no se sustituyó la entrega. `scripts\b0.cmd jugar` no fue ejecutado por Claude Code y no se atribuye al autor. GPU y batches N/D; GC Development comparable entre A/B/C/D solo en el escenario medido. Los p95 son QA aislada en equipo de gama alta, nunca FPS generales ni requisitos mínimos.
 
 Commit documental: «Aprueba B0 y fija el pipeline 3D» (localizable con `git log --oneline -- docs/BLENDER_B0.md`). Publicación mediante fetch y push normal, con comprobación del remoto; el siguiente checkpoint registra su SHA publicado. Siguiente paso: plan P0, sin programación. Las entradas B0.1–B0.6 y su guía conservan el estado histórico anterior a esta aceptación; las solicitudes de decisión de aquellas entradas quedan resueltas por este cierre.
+
+Cierre formal publicado: `0b0b68c31dda803cf9cf566b3c96f369ed893ce3`, push normal confirmado. Continuación: [plan P0](PROGRESO_P0.md), sin implementación autorizada.

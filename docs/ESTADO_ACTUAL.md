@@ -33,7 +33,7 @@ Codex CLI y Claude Code se alternarán cuando termine la sesión/tokens de uno. 
 
 Norma canónica: [`CONTINUIDAD_AGENTES.md`](CONTINUIDAD_AGENTES.md).
 
-El checkpoint de continuación es [BLENDER_B0](BLENDER_B0.md), **B0 cerrado y aceptado técnicamente; siguiente bloque solo en planificación; seguir el checkpoint por pasos**. Cierre aprobado U6 en [`PROGRESO_U6.md`](PROGRESO_U6.md), publicado en `39602c8aaba3ca163cde39c654b005f23f9e5f2f`. U5 aprobado y publicado en `4fcbcdf7707f4b22594164ae27552e62629228ac`; cierre en [`PROGRESO_U5.md`](PROGRESO_U5.md). [`PROGRESO_U4.md`](PROGRESO_U4.md) y [`PROGRESO_U3.md`](PROGRESO_U3.md) conservan los cierres aprobados, pruebas e instrucciones manuales. Actualizar el checkpoint vigente antes de cada relevo.
+El checkpoint de continuación es [PROGRESO_P0](PROGRESO_P0.md), **solo planificación, pendiente de respuesta y autorización**. [BLENDER_B0](BLENDER_B0.md) conserva el cierre técnico aceptado, publicado en `0b0b68c`. Cierre aprobado U6 en [`PROGRESO_U6.md`](PROGRESO_U6.md), publicado en `39602c8aaba3ca163cde39c654b005f23f9e5f2f`. U5 aprobado y publicado en `4fcbcdf7707f4b22594164ae27552e62629228ac`; cierre en [`PROGRESO_U5.md`](PROGRESO_U5.md). [`PROGRESO_U4.md`](PROGRESO_U4.md) y [`PROGRESO_U3.md`](PROGRESO_U3.md) conservan los cierres aprobados, pruebas e instrucciones manuales. Actualizar el checkpoint vigente antes de cada relevo.
 
 Cada relevo debe registrar trabajo realmente realizado, pruebas ejecutadas, commits/push, limitaciones, cambios locales sin publicar y siguiente paso exacto. No registrar planes como si fueran resultados.
 
@@ -135,4 +135,6 @@ Claude Code: iniciarlo en la raíz; `CLAUDE.md` contiene la entrada equivalente.
 
 Ambos deben leer `docs/CONTINUIDAD_AGENTES.md`, este documento y `docs/PROGRESO_U6.md`, además de los cierres de U3–U5. U3 y U4 están aprobadas; las seis propuestas técnicas de U3 no se consideran confirmadas individualmente. U5 está aprobado manualmente. U6 aprobado manualmente el 05/10/2026: migración cerrada. B0 cerrado y aceptado técnicamente; preparar P0 y esperar autorización antes de implementarlo.
 
-Al terminar una sesión con cambios relevantes, actualizar el checkpoint de continuación `docs/BLENDER_B0.md` antes de entregar el turno; conservar U6 como cierre histórico aprobado.
+Al terminar una sesión con cambios relevantes, actualizar el checkpoint de continuación `docs/PROGRESO_P0.md` antes de entregar el turno; conservar U6 como cierre histórico aprobado.
+
+Punto de continuación vigente: [PROGRESO_P0](PROGRESO_P0.md) — plan del circuito aislado de movilidad/verticalidad. Solo planificación; esperar respuesta del autor antes de programar P0-A. B0 cerrado y publicado en `0b0b68c31dda803cf9cf566b3c96f369ed893ce3`.

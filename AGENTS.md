@@ -10,7 +10,7 @@ Codex y Claude Code trabajan por turnos sobre la misma rama. **No trabajan a la 
 1. [`docs/INSTRUCCIONES_PROYECTO.md`](docs/INSTRUCCIONES_PROYECTO.md) — reglas compartidas de trabajo.
 2. [`docs/ESTADO_ACTUAL.md`](docs/ESTADO_ACTUAL.md) — punto real de continuación.
 3. [`docs/CONTINUIDAD_AGENTES.md`](docs/CONTINUIDAD_AGENTES.md) — protocolo obligatorio de relevo Codex ↔ Claude Code.
-4. [`docs/BLENDER_B0.md`](docs/BLENDER_B0.md) — checkpoint vigente, B0 cerrado y aceptado técnicamente; siguiente bloque solo en planificación. [`docs/PROGRESO_U6.md`](docs/PROGRESO_U6.md) conserva el cierre aprobado U6 (05/10/2026), migración cerrada. Cierre aprobado de U5 en `docs/PROGRESO_U5.md`. Cierres aprobados de U3 y U4 en `docs/PROGRESO_U3.md` y `docs/PROGRESO_U4.md`.
+4. [`docs/PROGRESO_P0.md`](docs/PROGRESO_P0.md) — plan vigente, esperar autorización; cierre B0 en [`docs/BLENDER_B0.md`](docs/BLENDER_B0.md) — cierre histórico, B0 cerrado y aceptado técnicamente; siguiente bloque solo en planificación. [`docs/PROGRESO_U6.md`](docs/PROGRESO_U6.md) conserva el cierre aprobado U6 (05/10/2026), migración cerrada. Cierre aprobado de U5 en `docs/PROGRESO_U5.md`. Cierres aprobados de U3 y U4 en `docs/PROGRESO_U3.md` y `docs/PROGRESO_U4.md`.
 5. [`docs/DECISIONES.md`](docs/DECISIONES.md) — decisiones históricas; las posteriores prevalecen.
 6. [`docs/MIGRACION_UNITY.md`](docs/MIGRACION_UNITY.md) — plan U0–U6.
 7. [`README.md`](README.md) y [`unity/README.md`](unity/README.md) — uso de la web y del proyecto Unity.
@@ -46,8 +46,10 @@ Comprueba en `docs/BLENDER_B0.md` el último relevo y en `docs/PROGRESO_U6.md` e
 
 ## Al terminar o ceder el turno
 
-Antes de que termine la sesión de Codex, actualiza el checkpoint vigente `docs/BLENDER_B0.md` con lo realmente hecho, pruebas ejecutadas, commits/push, cambios locales pendientes, limitaciones y el **siguiente paso exacto** para Claude Code o para la siguiente sesión de Codex.
+Antes de que termine la sesión de Codex, actualiza el checkpoint vigente `docs/PROGRESO_P0.md` con lo realmente hecho, pruebas ejecutadas, commits/push, cambios locales pendientes, limitaciones y el **siguiente paso exacto** para Claude Code o para la siguiente sesión de Codex.
 
 Si una pieza está completa y verificable, haz commit pequeño y push antes del relevo. No crees un commit roto solo para transferir contexto. Si queda trabajo local no publicable, descríbelo con precisión y no lo borres.
 
 Trabaja un bloque cada vez. No abras Pull Request salvo petición expresa. Los commits van en español, pequeños y verificables. U5 está aprobado manualmente; U6 aprobado manualmente y migración cerrada; B0 aceptado técnicamente, sin revisión manual de la build ni aprobación artística final; P0 solo en planificación. No empezar mejoras posmigración ni servicios Steam.
+
+Punto de continuación vigente: [PROGRESO_P0](docs/PROGRESO_P0.md) — plan del circuito aislado de movilidad/verticalidad. Solo planificación; esperar respuesta del autor antes de programar P0-A. B0 cerrado y publicado en `0b0b68c31dda803cf9cf566b3c96f369ed893ce3`.

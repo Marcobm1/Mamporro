@@ -11,7 +11,7 @@ Antes de modificar código o documentación, lee:
 1. [`docs/INSTRUCCIONES_PROYECTO.md`](docs/INSTRUCCIONES_PROYECTO.md).
 2. [`docs/ESTADO_ACTUAL.md`](docs/ESTADO_ACTUAL.md).
 3. [`docs/CONTINUIDAD_AGENTES.md`](docs/CONTINUIDAD_AGENTES.md).
-4. [`docs/BLENDER_B0.md`](docs/BLENDER_B0.md) (checkpoint vigente; B0 cerrado y aceptado técnicamente; siguiente bloque solo en planificación). [`docs/PROGRESO_U6.md`](docs/PROGRESO_U6.md) conserva la migración cerrada y U6 aprobado manualmente el 05/10/2026. Cierre aprobado de U5 en [`docs/PROGRESO_U5.md`](docs/PROGRESO_U5.md) y cierres aprobados en [`docs/PROGRESO_U4.md`](docs/PROGRESO_U4.md) y [`docs/PROGRESO_U3.md`](docs/PROGRESO_U3.md).
+4. [`docs/PROGRESO_P0.md`](docs/PROGRESO_P0.md) — plan vigente, esperar autorización; cierre B0 en [`docs/BLENDER_B0.md`](docs/BLENDER_B0.md) (cierre histórico; B0 cerrado y aceptado técnicamente; siguiente bloque solo en planificación). [`docs/PROGRESO_U6.md`](docs/PROGRESO_U6.md) conserva la migración cerrada y U6 aprobado manualmente el 05/10/2026. Cierre aprobado de U5 en [`docs/PROGRESO_U5.md`](docs/PROGRESO_U5.md) y cierres aprobados en [`docs/PROGRESO_U4.md`](docs/PROGRESO_U4.md) y [`docs/PROGRESO_U3.md`](docs/PROGRESO_U3.md).
 5. [`docs/DECISIONES.md`](docs/DECISIONES.md) y [`docs/ESPECIFICACION.md`](docs/ESPECIFICACION.md).
 6. [`docs/MIGRACION_UNITY.md`](docs/MIGRACION_UNITY.md).
 7. [`README.md`](README.md) y [`unity/README.md`](unity/README.md).
@@ -57,7 +57,7 @@ Decisiones, plan y criterios: `docs/PROGRESO_U3.md`.
 
 ## Relevo a Codex
 
-Antes de terminar una sesión con trabajo relevante, el checkpoint vigente `docs/BLENDER_B0.md` debe indicar:
+Antes de terminar una sesión con trabajo relevante, el checkpoint vigente `docs/PROGRESO_P0.md` debe indicar:
 
 - que la sesión fue realizada con Claude Code;
 - objetivo concreto abordado;
@@ -127,3 +127,5 @@ U1 validó una escena técnica con 300/500/750/1000 entidades, salida 1920×1080
 Mundo/estructuras mayores; mesetas y rampas más marcadas; escalada libre por paredes sin imponer trepada breve ni resistencia sin consultarlo; inicio con menos enemigos pero más resistentes y crecimiento progresivo; más oro **de partida** de enemigos según tiempo/dificultad; acabado retro más profesional; iconos/ilustraciones originales; más enemigos, armas, tomos y personajes. No introducir estas mejoras dentro de U2 salvo un prototipo aislado aprobado expresamente.
 
 Cámara contra estructuras, mando/remapeo, métricas locales adicionales y servicios Steam siguen siendo propuestas/etapas futuras, no funciones ya terminadas.
+
+Punto de continuación vigente: [PROGRESO_P0](docs/PROGRESO_P0.md) — plan del circuito aislado de movilidad/verticalidad. Solo planificación; esperar respuesta del autor antes de programar P0-A. B0 cerrado y publicado en `0b0b68c31dda803cf9cf566b3c96f369ed893ce3`.

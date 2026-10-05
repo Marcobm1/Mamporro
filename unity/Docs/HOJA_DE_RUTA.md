@@ -26,6 +26,10 @@ estética retro. Megabonk sirve de referencia expresada por el autor para escala
 verticalidad y agilidad; no se han analizado sus sistemas en esta fase ni se
 presupone reproducirlos. MAMPORRO mantiene nombres, arte y diseño propios.
 
+## Primer bloque P0 propuesto, todavía sin implementar
+
+[Plan P0](../../docs/PROGRESO_P0.md): A circuito aislado de movilidad/escalada/cámara; B rutas y amenaza de enemigos en altura; C muestra procedural geométrica conectada; D ampliación por medidas. Solo A se presenta para la próxima autorización. Balance se mantiene separado, aunque figure como P0 histórico en la tabla. No mezclar P1/P2 ni adoptar VAT/modelos B0 por defecto.
+
 ## Peticiones del autor y orden propuesto
 
 | Prioridad | Petición | Trabajo propuesto | Criterio para darlo por bueno |

@@ -30,7 +30,7 @@ Al iniciar una sesión, leer en este orden:
 
 1. `docs/ESTADO_ACTUAL.md`.
 2. `docs/CONTINUIDAD_AGENTES.md`.
-3. El checkpoint vigente `docs/BLENDER_B0.md` (B0 cerrado y aceptado técnicamente; siguiente bloque solo en planificación) y el cierre aprobado de la migración en `docs/PROGRESO_U6.md`.
+3. El checkpoint vigente `docs/PROGRESO_P0.md` (solo planificación); cierre B0 en `docs/BLENDER_B0.md` y el cierre aprobado de la migración en `docs/PROGRESO_U6.md`.
 4. `docs/DECISIONES.md` y cualquier continuación posterior indicada por el estado actual.
 5. `docs/ESPECIFICACION.md` como especificación histórica de partida.
 6. `docs/MIGRACION_UNITY.md`.
@@ -130,3 +130,5 @@ La transferencia de guardado implementada en U4 debe conservar de forma compatib
 No hay cantidades finales cerradas. Primero validar la migración; después aplicar mejoras por bloques, salvo prototipo aislado aprobado.
 
 Cámara contra estructuras, mando/remapeo, métricas locales y servicios Steam son propuestas o fases posteriores. No añadir telemetría externa por defecto, no comprar/publicar nada y no copiar arte de otros juegos.
+
+Punto de continuación vigente: [PROGRESO_P0](PROGRESO_P0.md) — plan del circuito aislado de movilidad/verticalidad. Solo planificación; esperar respuesta del autor antes de programar P0-A. B0 cerrado y publicado en `0b0b68c31dda803cf9cf566b3c96f369ed893ce3`.
