@@ -17,3 +17,8 @@ unity/*.csproj
 unity/*.sln*
 unity/.vs/
 unity/.idea/
+
+# B0 (Blender): copias automáticas y caché de Python
+*.blend1
+*.blend2
+__pycache__/

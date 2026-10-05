@@ -1,0 +1,71 @@
+{
+  "contract": 1,
+  "id": "B0_Fixture",
+  "kind": "static",
+  "purpose": "qa",
+  "materials": [
+    "B0_Body",
+    "B0_Marker"
+  ],
+  "objects": [
+    "B0_Fixture"
+  ],
+  "clips": [],
+  "fps": 30,
+  "boundsMin": [
+    -0.5,
+    -0.25,
+    0.0
+  ],
+  "boundsMax": [
+    1.5,
+    1.25,
+    2.4
+  ],
+  "boundsTolerance": 0.001,
+  "probes": [
+    {
+      "name": "front",
+      "position": [
+        0.1,
+        1.25,
+        1.2
+      ],
+      "srgb": [
+        0.8,
+        0.2,
+        0.1
+      ]
+    },
+    {
+      "name": "right",
+      "position": [
+        1.5,
+        0.1,
+        1.7
+      ],
+      "srgb": [
+        0.2,
+        0.7,
+        0.3
+      ]
+    },
+    {
+      "name": "top",
+      "position": [
+        0.1,
+        0.0,
+        2.4
+      ],
+      "srgb": [
+        0.5,
+        0.5,
+        0.5
+      ]
+    }
+  ],
+  "triangles": 64,
+  "vertices": 40,
+  "digest": "5d9893730da941af40d6696040a51b2c3d77e3988ce60bf775e0b3f00f96c503",
+  "fbxSha256": "df84936e65f4f3995fc5ca98154234f34ad1392f7d6ca0395268fe5525d33f39"
+}

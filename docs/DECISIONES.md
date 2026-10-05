@@ -1,5 +1,14 @@
 # Decisiones acordadas
 
+## B0.2: contrato de assets 3D, decisiones técnicas (05/10/2026)
+
+Tomadas por Claude Code dentro del plan B0 autorizado, con evidencia de la fixture asimétrica; no cambian reglas, colliders ni gameplay. Detalle y pruebas en [BLENDER_B0](BLENDER_B0.md#sesión-05102026--b02-contrato-de-assets-claude-code).
+
+- **Orientación:** en Blender el frente de cada asset mira a **+Y** y su derecha a +X; exportación FBX con ejes nativos (Z arriba) y Unity `bakeAxisConversion`: llega con frente +Z, sin rotación ni espejo, también apto para rigs. Los ejes por defecto del exportador dejaban 90° en el nodo; «Apply Transform» se descarta por experimental con armaduras.
+- **Color de vértice** autorizado en sRGB y exportado en lineal (proyecto Unity lineal). **Materiales** propiedad de Unity: no se importan ni generan; se asignan por índice de slot del manifiesto.
+- **Reproducibilidad:** el FBX de Blender 5.2.2 no es binariamente reproducible (fecha e IDs internos); la igualdad se comprueba por resumen semántico y no se reescribe una salida sin cambios. GUID/fileID de Unity se conservan.
+- **Fuentes por código:** los agentes crean la fuente inicial con `scripts\blender.cmd author`; después el `.blend` es la fuente y manda sobre el script.
+
 ## B0 autorizado y casos/rendimiento aprobados (05/10/2026)
 
 El autor autoriza B0.1–B0.6 consecutivos conforme a BLENDER_B0: Pelusa, Doña Remedios con rig/locomoción y módulo de pared. Suelo de 300 entidades: p95 ≤ 16,67 ms; 500/750 obligatorios para comparar escalabilidad, coste y calidad, sin requisito rígido de 60 FPS. Ninguna estrategia se adopta automáticamente por cumplir el suelo. Preservar simulación/arrays/pools/grid/render central; VisualRoot solo presentación.

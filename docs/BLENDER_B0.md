@@ -5,10 +5,10 @@ Objetivos confirmados por el autor el 04/10/2026; plan concretado el 05/10/2026,
 ## Cómo retomar
 
 - **Base:** migración U0–U6 cerrada; cierre formal publicado en `39602c8aaba3ca163cde39c654b005f23f9e5f2f`. Cierre técnico anterior `c84b62d`; código de entrega `daaa626` y paquete conservados en [PROGRESO_U6](PROGRESO_U6.md).
-- **Paso actual:** B0.1 **terminado** (entorno + base 300/500/750 medida). Siguiente: B0.2.
-- **Terminado:** instalación real 5.2.2 LTS, background/Python/FBX, GUI capturada y cerrada sin guardar; `scripts\blender.cmd verify` implementado y ejecutado. Arnés QA `-b0-benchmark` (`unity/Assets/Mamporro/U3/B0Benchmark.cs`), builds QA separadas `U3Project.BuildB0`/`BuildB0Development` y lanzador `scripts\b0.cmd build|devbuild|benchmark|devdiag|summary`; base A medida (resultados abajo). No hay modelos ni FBX del spike todavía.
+- **Paso actual:** B0.1 y B0.2 **terminados** (base medida; contrato de assets cerrado y probado con fixture). Siguiente: B0.3.
+- **Terminado:** instalación real 5.2.2 LTS, background/Python/FBX, GUI capturada y cerrada sin guardar; `scripts\blender.cmd verify` implementado y ejecutado. Arnés QA `-b0-benchmark` (`unity/Assets/Mamporro/U3/B0Benchmark.cs`), builds QA separadas `U3Project.BuildB0`/`BuildB0Development` y lanzador `scripts\b0.cmd build|devbuild|benchmark|devdiag|summary`; base A medida (resultados abajo). Contrato B0.2: manifiesto `art/blender/b0/manifest.json`, scripts `scripts/blender/b0_*.py`, importador `Editor/B0AssetImport.cs`, fixture QA y pruebas Blender 22/22 + Unity 8/8. Todavía no hay assets de contenido (Pelusa, Remedios, pared).
 - **Sin commit deliberadamente:** los siete ajustes Unity protegidos enumerados en PROGRESO_U6; no publicar ni restaurar. Product Name ya es MAMPORRO y no se vuelve a cambiar.
-- **Siguiente acción exacta:** B0.2 — contrato de assets (carpetas, manifiesto, convenciones), fixture geométrica asimétrica Blender→FBX→Unity y pruebas de escala/ejes/handedness/pivote/normales/UV/colores; `scripts\blender.cmd export|test` solo cuando existan y pasen.
+- **Siguiente acción exacta:** B0.3 — fuentes originales Pelusa (con poses/deformación de prueba), Doña Remedios (rig + clip de locomoción in-place) y módulo de pared con `scripts\blender.cmd author|export|test` y el contrato de B0.2; inventario de polígonos/huesos/materiales/tamaños, capturas y clip.
 - **Continuidad:** una pieza verificable por commit español, pruebas reales, checkpoint aquí, fetch antes de push normal a `claude/zen-pasteur-674ik0`. Sin PR. Parar ante nueva decisión importante y al cierre para revisión artística/manual.
 
 Auditoría inicial futura, desde CMD en la raíz del repositorio:
@@ -31,7 +31,7 @@ Versión comprobada y soportada para B0: **Blender 5.2.2 LTS**, build `d13f752e3
 
 B0 definirá convenciones para escala/unidades, ejes, transforms, pivotes/orígenes, triangulación, normales, UV, vertex colors, rigs, nombres, materiales, clips de animación, rutas de exportación y reimportación estable. Automatización con Blender en background y Python, compatible con CMD; detectar/configurar instalación sin rutas absolutas locales versionadas.
 
-**Implementado y probado:** `scripts\blender.cmd verify`. **Todavía no implementados:** `scripts\blender.cmd export` y `scripts\blender.cmd test`; se añadirán y probarán en sus pasos, no usarlos aún. Los agentes podrán ayudar mediante scripts a generar, modificar, validar y exportar assets; la revisión visual/artística humana seguirá siendo obligatoria.
+**Implementado y probado:** `scripts\blender.cmd verify`, `author` (crea la fuente inicial de un asset solo si no existe; `-Force` la regenera), `export` (todos o `-Asset <id>`; `-Force` reescribe aunque el contenido no cambie) y `test` (contrato y exportador en Blender); `scripts\b0.cmd edit` ejecuta las pruebas Unity del contrato. Resultados en la sesión B0.2. Los agentes podrán ayudar mediante scripts a generar, modificar, validar y exportar assets; la revisión visual/artística humana seguirá siendo obligatoria.
 
 ## Separación visual y rendimiento
 
@@ -234,3 +234,34 @@ scripts\b0.cmd devdiag
 Cada `benchmark -Runs 1` abre la build B0 a pantalla completa 6 veces (~5 min); no usar el equipo durante la medida.
 
 **Commit B0.1:** «Documenta el entorno y la base del spike 3D» (arnés, builds QA, lanzador y este checkpoint). Fuera del commit: los siete protegidos (SHA-256 iniciales: RetroPipeline `f88523da…`, URP global `71b8ad93…`, GraphicsSettings `35dd86b4…`, ProjectAuditorSettings `9e68444b…`, ProjectSettings `4505cd00…`, PackageManagerSettings `7698172a…`, URPProjectSettings `68d75e5e…`) y el borrador B0.2 `scripts/blender/b0_contract.py`, todavía sin probar.
+
+## Sesión 05/10/2026 — B0.2, contrato de assets (Claude Code)
+
+**Estructura.** Fuentes editables en `art/blender/b0/<asset>/*.blend` (fuera de `unity/Assets`) y catálogo en `art/blender/b0/manifest.json` (id, tipo `static|modular|rigged`, fuente, salida, objetos exportados exactos, slots de material en orden, bounds esperados, sondas/colores de QA, clips). Scripts versionados sin rutas locales en `scripts/blender/`: `b0_contract.py` (contrato y ajustes FBX), `b0_author.py` (fuentes iniciales por código), `b0_export.py` (exportador), `b0_test.py` (pruebas). Salida Unity en `unity/Assets/Mamporro/Art/B0/<Carpeta>/<Id>.fbx` + `<Id>.b0.json` (gemelo derivado del manifiesto, sin fechas) y sus `.meta`. Importador `unity/Assets/Mamporro/Editor/B0AssetImport.cs`; pruebas `unity/Assets/Mamporro/Tests/B0/` (asamblea `Mamporro.B0Tests`, solo Editor). Informes locales ignorados en `unity/TestResults/B0/{Author,Export,Test}`.
+
+**Contrato cerrado (versión 1), comprobado con la fixture `B0_Fixture`.**
+
+| Convención | Regla | Cómo se comprueba |
+| --- | --- | --- |
+| Escala | Escena métrica, `scale_length` 1; 1 m Blender = 1 unidad Unity. FBX `FBX_SCALE_ALL`; Unity `globalScale` 1, `useFileScale`. | Bounds Blender y Unity con tolerancia 0,001 m; caso roto «factor 100» rechazado. |
+| Ejes y orientación | Blender Z arriba; **frente del asset hacia +Y y su derecha hacia +X**. Exportación con ejes nativos (`axis_forward=Y`, `axis_up=Z`); Unity `bakeAxisConversion` hornea Z→Y en mallas/animaciones: Blender (x,y,z) → Unity (x,z,y), frente +Z, sin espejo. | Sondas asimétricas (frente, derecha, arriba) en su vértice exacto; jerarquía sin rotación. |
+| Transforms y pivote | Objetos raíz en el origen, sin rotación y escala 1; pivote = origen de la fuente (personajes/enemigos a nivel de suelo y centrados; módulos en la esquina/base documentada por asset). | Contrato rechaza escala, rotación y pivote desplazados; Unity sin transform residual, `min.y` = 0. |
+| Triangulación | Fuente editable con quads/n-gons; triangulación en la salida (`use_triangles`). | Triángulos fuente = reimportación Blender = Unity (64). |
+| Normales | Aristas duras/suaves de la fuente (caras lisas/planas, sharp edges); se exportan las normales calculadas (`mesh_smooth_type=OFF`) y Unity las importa (`importNormals=Import`). El shader retro actual usa normales planas, pero se conservan. | Cajas con normales alineadas a ejes; solo la antena lisa tiene normales promediadas. |
+| UV | Exactamente una capa `UVMap`. | Contrato rechaza sin UV; Unity importa UV. |
+| Color de vértice | Exactamente un atributo `Col`, `BYTE_COLOR` en esquinas, autorizado en sRGB; exportado en **lineal** (`colors_type=LINEAR`) porque el proyecto Unity es lineal y el shader lo usa directamente. | Contrato rechaza capas extra; sondas: Unity recibe el lineal del sRGB fuente (±4/255). |
+| Materiales | Slots con nombres ASCII en el orden del manifiesto; Unity **no** importa ni genera materiales (`materialImportMode=None`): los asigna Unity por índice de submesh, con shaders propios. Sin texturas por defecto. | Submesh por slot y orden verificado; ningún `.mat`/textura bajo `Art/B0`. |
+| Nombres | IDs `B0_*` de asset distintos de IDs de gameplay; objetos, mallas (= nombre del objeto), materiales, huesos y clips `^[A-Za-z][A-Za-z0-9_]*$` (sin `.001`, sin no ASCII). Se exportan solo los objetos del manifiesto, sin depender de selección/visibilidad; nunca cámaras ni luces. | Casos rotos; prueba con cámara ajena seleccionada y fixture oculta. |
+| Rig/skinning | Una armadura por asset `rigged`; solo huesos deformantes, sin leaf bones; ≤ 4 influencias, pesos normalizados, ningún vértice sin peso; malla con un único Armature y transform local identidad. Unity: `Generic`, avatar propio, sin root motion. | Validador implementado; se prueba con Remedios en B0.3. |
+| Clips | Acciones con nombre/rango del manifiesto, escena a 30 fps, bucle explícito; acciones no declaradas = error; in-place (root bloqueado en Unity). | Caso roto «acción fuera del manifiesto»; clips reales en B0.3. |
+| Repetibilidad | Validar → exportar a temporal fuera de `Assets` → reimportar en Blender (objetos, materiales, UV, color, triángulos, bounds) → reemplazo atómico (`.tmp` que Unity ignora). Fuente nunca guardada (SHA-256 antes/después). Si el resumen semántico no cambia, no se reescribe nada. | El FBX **no es binariamente reproducible**: cambian la marca de tiempo y los IDs internos FBX (51 bytes); el resumen semántico sí es idéntico. |
+| Reimportación | GUID y fileID estables. | Dos reimportaciones forzadas y una reexportación forzada con bytes nuevos: GUID `d3bb2dec…`, fileID `576099132018298866` y `.meta` sin cambios. |
+
+**Orientación: hallazgo medido.** Las pruebas Unity fallaron primero con los ejes por defecto del exportador (−Z/Y): el nodo quedó girado 90° y la malla en Z arriba, porque el FBX ya se declara Y arriba y `bakeAxisConversion` no tiene nada que hornear. Con ejes nativos llegó sin giro pero mirando a −Z. Declarar −Y como frente sin «space transform» rompió la ida y vuelta: el exportador lo detectó en su reimportación y **conservó la salida válida anterior**. Se descartó «Apply Transform» (`bake_space_transform`), que Blender marca como experimental y roto con armaduras/animaciones. Resultado: ejes nativos + frente +Y en Blender, válido también para rigs.
+
+**Pruebas ejecutadas (05/10/2026).**
+
+- `scripts\blender.cmd author -Force` → fuente de la fixture regenerada y validada (`art/blender/b0/fixture/b0_fixture.blend`, 541 631 bytes sin comprimir).
+- `scripts\blender.cmd test` → **22/22** (`unity\TestResults\B0\Test\test-report.json`): fuente válida; 14 casos rotos rechazados con su explicación (escala, rotación, pivote, unidades cm, sufijo `.001`, no ASCII, sin UV, color extra, slot cambiado, malla con otro nombre, modificador sin aplicar, acción no declarada, cámara en el manifiesto, factor 100); exportación a ruta con espacios con reimportación; repetición «sin cambios»; reexportación forzada con el mismo resumen; fuente intacta; independencia de selección/visibilidad/objetos ajenos; fallo de contrato y fuente ausente sin tocar la última salida ni dejar temporales.
+- `scripts\blender.cmd export` → `B0_Fixture.fbx` (18 060 bytes, 64 triángulos, 40 vértices fuente) + gemelo.
+- `scripts\b0.cmd edit` → **8/8** (`unity\TestResults\B0\Benchmark\edit-b0.xml`): importador según contrato; jerarquía sin rotación/escala ni colliders/cámaras/luces/Animator; bounds en metros sin espejo; sondas con orientación y color lineal; aristas duras/suaves; triángulos/UV/slots; sin materiales/texturas generados; GUID/fileID/`.meta` estables. Ejecutado antes y después de `scripts\blender.cmd export -Force` (FBX con bytes distintos): mismos GUID/fileID.

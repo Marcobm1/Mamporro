@@ -1,4 +1,4 @@
-﻿param([ValidateSet('build','devbuild','benchmark','devdiag','summary')][string]$Action='benchmark',[int]$Runs=3,[int]$First=1,[string]$Strategies='base',[string]$Source='')
+﻿param([ValidateSet('build','devbuild','benchmark','devdiag','summary','edit')][string]$Action='benchmark',[int]$Runs=3,[int]$First=1,[string]$Strategies='base',[string]$Source='')
 # B0 (spike Blender): builds QA separadas y ensayo de presentación de la horda. No toca la
 # entrega aprobada (unity\Builds\Windows) ni el progreso personal (guardado propio del ensayo).
 $ErrorActionPreference='Stop'
@@ -11,6 +11,18 @@ function Invoke-Build([string]$method,[string]$log){
     if(Get-Process Unity -ErrorAction SilentlyContinue){throw 'Hay un Editor abierto. Guarda y cierra la instancia antes de ejecutar batch.'}
     $process=Start-Process -FilePath $unity -ArgumentList "-batchmode -projectPath `"$project`" -logFile `"$log`" -quit -executeMethod Mamporro.Editor.U3Project.$method" -WorkingDirectory $project -WindowStyle Hidden -PassThru
     $process.WaitForExit();if($process.ExitCode -ne 0){throw "Falló la build ($method): $log"}
+}
+if($Action -eq 'edit'){
+    # Solo las pruebas B0 (contrato de importación); la batería completa sigue en scripts\u3.cmd edit.
+    if(Get-Process Unity -ErrorAction SilentlyContinue){throw 'Hay un Editor abierto. Guarda y cierra la instancia antes de ejecutar batch.'}
+    $xml=Join-Path $results 'edit-b0.xml';$log=Join-Path $results 'edit-b0.log';Remove-Item -LiteralPath $xml -ErrorAction SilentlyContinue
+    $process=Start-Process -FilePath $unity -ArgumentList "-batchmode -nographics -projectPath `"$project`" -logFile `"$log`" -runTests -testPlatform EditMode -assemblyNames Mamporro.B0Tests -testResults `"$xml`"" -WorkingDirectory $project -WindowStyle Hidden -PassThru
+    $process.WaitForExit()
+    if(!(Test-Path -LiteralPath $xml)){throw "Unity no generó resultados: $log"}
+    [xml]$report=Get-Content -Raw $xml
+    foreach($t in $report.SelectNodes('//test-case')){Write-Output "$($t.result.PadRight(7)) $($t.name)$(if($t.result -ne 'Passed'){' -> '+$t.failure.message.InnerText})"}
+    if($report.'test-run'.result -ne 'Passed'){throw "Pruebas B0 fallidas: $xml"}
+    Write-Output "edit B0: $($report.'test-run'.passed)/$($report.'test-run'.total) correctas";return
 }
 if($Action -eq 'build'){Invoke-Build 'BuildB0' (Join-Path $results 'build.log');Write-Output 'B0 build QA normal: unity\Builds\B0\MAMPORRO-B0.exe';return}
 if($Action -eq 'devbuild'){Invoke-Build 'BuildB0Development' (Join-Path $results 'devbuild.log');Write-Output 'B0 build QA Development: unity\Builds\B0Dev\MAMPORRO-B0.exe';return}
