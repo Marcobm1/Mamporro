@@ -175,11 +175,15 @@ namespace Mamporro.U3
         // U5: señal real a la salida de la mezcla de Unity (medidor tras el compresor). Demuestra
         // que la música y los efectos llegan al dispositivo y que el silencio/volumen 0 los quitan;
         // no sustituye a escuchar la build.
-        [System.Serializable] class AudioReport { public int sampleRate,blocks,played,dropped;public bool focused;public float menuRms,mutedRms,silenceRms,effectsRms,restoredRms,peak; }
+        [System.Serializable] class AudioReport { public int sampleRate,blocks,played,dropped;public bool focused,focusForced;public float menuRms,mutedRms,silenceRms,effectsRms,restoredRms,peak; }
         bool probeFailed;
         IEnumerator AudioProbe(string output)
         {
             var a=Game.Audio;var s=Game.Settings;double music=s.musicVolume;bool muted=s.muted;var report=new AudioReport{sampleRate=AudioSettings.outputSampleRate,focused=!a.Silenced};
+            // Si Windows no dio el foco a la ventana (p. ej. se está usando otra), el juego se silencia por diseño;
+            // para medir la ruta de la señal se activa el foco del audio solo durante la medida y se anota.
+            // El silencio sin foco se prueba en Play Mode (U5AudioSceneTests) y con Alt+Tab real.
+            if(a.Silenced){report.focusForced=true;a.SetFocused(true);yield return new WaitForSecondsRealtime(.5f);}
             float level=0;
             IEnumerator Measure(float seconds){float sum=0;int n=0;float end=Time.realtimeSinceStartup+seconds;while(Time.realtimeSinceStartup<end){yield return null;sum+=a.Mix.Rms;n++;}level=n>0?sum/n:0;}
             a.Mix.ResetPeak();yield return Measure(.6f);report.menuRms=level;
@@ -187,6 +191,7 @@ namespace Mamporro.U3
             Game.ChangeSettings(o=>{o.muted=false;o.musicVolume=0;});yield return new WaitForSecondsRealtime(.3f);yield return Measure(.3f);report.silenceRms=level;
             a.Play("level");yield return Measure(.4f);report.effectsRms=level;
             Game.ChangeSettings(o=>{o.musicVolume=music;o.muted=muted;});yield return new WaitForSecondsRealtime(.3f);yield return Measure(.4f);report.restoredRms=level;
+            if(report.focusForced)a.SetFocused(Application.isFocused);
             report.peak=a.Mix.HeldPeak;report.blocks=a.Mix.Blocks;report.played=a.Played;report.dropped=a.Dropped;
             File.WriteAllText(Path.Combine(output,"audio-report.json"),JsonUtility.ToJson(report,true));
             Debug.Log($"U5 audio: menú {report.menuRms:F4}, silencio {report.mutedRms:F5}, sin música {report.silenceRms:F5}, efecto {report.effectsRms:F4}, restaurado {report.restoredRms:F4}, pico {report.peak:F3}, {report.sampleRate} Hz");
