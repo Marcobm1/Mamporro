@@ -5,10 +5,10 @@ Objetivos confirmados por el autor el 04/10/2026; plan concretado el 05/10/2026,
 ## Cómo retomar
 
 - **Base:** migración U0–U6 cerrada; cierre formal publicado en `39602c8aaba3ca163cde39c654b005f23f9e5f2f`. Cierre técnico anterior `c84b62d`; código de entrega `daaa626` y paquete conservados en [PROGRESO_U6](PROGRESO_U6.md).
-- **Paso actual:** B0.1 en curso. Instalación Blender y verificador terminados; falta medir la base 300/500/750 antes de crear los modelos del spike.
-- **Terminado:** instalación real 5.2.2 LTS, background/Python/FBX, GUI capturada y cerrada sin guardar; `scripts\blender.cmd verify` implementado y ejecutado. No hay modelos ni FBX del spike todavía.
+- **Paso actual:** B0.1 **terminado** (entorno + base 300/500/750 medida). Siguiente: B0.2.
+- **Terminado:** instalación real 5.2.2 LTS, background/Python/FBX, GUI capturada y cerrada sin guardar; `scripts\blender.cmd verify` implementado y ejecutado. Arnés QA `-b0-benchmark` (`unity/Assets/Mamporro/U3/B0Benchmark.cs`), builds QA separadas `U3Project.BuildB0`/`BuildB0Development` y lanzador `scripts\b0.cmd build|devbuild|benchmark|devdiag|summary`; base A medida (resultados abajo). No hay modelos ni FBX del spike todavía.
 - **Sin commit deliberadamente:** los siete ajustes Unity protegidos enumerados en PROGRESO_U6; no publicar ni restaurar. Product Name ya es MAMPORRO y no se vuelve a cambiar.
-- **Siguiente acción exacta:** completar B0.1 con arnés QA aislado de comparación visual sobre la base aprobada, sin tocar reglas ni settings protegidos; medir base 300/500/750 con CSV y condiciones del plan. Después B0.2 contrato y fixture.
+- **Siguiente acción exacta:** B0.2 — contrato de assets (carpetas, manifiesto, convenciones), fixture geométrica asimétrica Blender→FBX→Unity y pruebas de escala/ejes/handedness/pivote/normales/UV/colores; `scripts\blender.cmd export|test` solo cuando existan y pasen.
 - **Continuidad:** una pieza verificable por commit español, pruebas reales, checkpoint aquí, fetch antes de push normal a `claude/zen-pasteur-674ik0`. Sin PR. Parar ante nueva decisión importante y al cierre para revisión artística/manual.
 
 Auditoría inicial futura, desde CMD en la raíz del repositorio:
@@ -177,3 +177,60 @@ Commit del plan: «Planifica el spike Blender tras cerrar la migración»; local
 - Pendiente dentro de B0.1: base de rendimiento nueva 300/500/750, aún no ejecutada. No se han creado assets, probado exportación/importación Unity ni ejecutado suites/build/benchmarks en esta pieza.
 - Commit: «Verifica Blender y registra la autorización de B0»; fetch y push normal tras comprobar remoto, verificar SHA antes de continuar. Árbol fuera del commit: mismos siete ajustes protegidos.
 - Siguiente paso exacto: arnés QA de comparación, base U6 y medidas de B0.1; después contrato B0.2. No dar B0.1 completo hasta tener la base medida.
+
+## Sesión 05/10/2026 — B0.1b, base de rendimiento (Claude Code)
+
+**Relevo recibido.** HEAD = `origin/claude/zen-pasteur-674ik0` = `56bd557`, 0/0 tras fetch. Árbol: los siete ajustes protegidos (mismo número de líneas de diff que en U6) y trabajo **sin commit** de Codex: `U3Project.BuildB0()` (10 líneas, build normal en `Builds/B0`) y `unity/Assets/Mamporro/U3/B0Benchmark.cs` (130 líneas, sin `.meta`). Ningún otro archivo B0; `unity/TestResults/B0` solo tenía `Environment/`. No se descartó nada: se revisó y completó.
+
+**Revisión del arnés de Codex.** Válido y conservado: escena U6 real con `RunRenderer`, partida preparada y **en pausa** (sin ticks, director, RNG, drops ni guardado de partida; `Run.Time` debe seguir en 0), Pelusas (`Catalog.Enemies[0]`) inmóviles en rejilla fija a 60 m, cámara fija, salida retro 360 con dithering/snap, prueba real de píxeles con la horda dibujada y oculta antes de medir, 10 s + 30 s, CSV por fotograma, build QA en carpeta propia sin tocar `Builds/Windows`. Corregido/completado:
+
+- sin `-u4-save-dir` lanzaba una excepción pero la escena seguía cargando con el progreso personal; ahora fuerza una carpeta temporal antes de cargar la escena y sale con código 2;
+- errores de argumentos terminaban en excepción con el jugador abierto; ahora salen con código 1;
+- comprobación de **frustum** de cada entidad (debe ser N/N) además de los píxeles;
+- contadores añadidos: instancias de combate dibujadas, SetPass, triángulos, vértices, draw calls y batches (con validez), memoria del sistema, heap Mono, RAM, calidad, modo de pantalla; parámetros `-b0-strategy` (solo `base` por ahora; B/C/D en B0.5), `-b0-run` y `-b0-source`;
+- una reanudación externa (Esc/«Continuar» con la ventana en primer plano) abortó una pasada al despausar la partida; el arnés se ejecuta ahora después de `U3Game` (`DefaultExecutionOrder(1000)`), vuelve a pausar en el mismo fotograma, antes de cualquier tick, y cuenta `externalUnpauses` (0 en las 21 pasadas válidas). `Run.Time == 0` sigue siendo obligatoria;
+- `BuildB0()` limpia su carpeta; nueva `BuildB0Development()` en `Builds/B0Dev` solo para diagnóstico.
+
+No cambia reglas, gameplay, RNG, guardado, settings, `productName` ni la entrega. El ensayo solo existe con `-b0-benchmark`.
+
+**Pruebas ejecutadas (05/10/2026).**
+
+- `scripts\b0.cmd build` → correcta (`unity\Builds\B0\MAMPORRO-B0.exe`, log `unity\TestResults\B0\Benchmark\build.log`); compila todo el proyecto.
+- Humo manual 300/1080p (`TestResults\B0\Benchmark\Smoke`): correcto; captura revisada (horda visible sobre el mundo real), guardado aislado con solo `progress.lock`.
+- `scripts\b0.cmd benchmark -Runs 1 -First 1|2|3` (tres órdenes, cada pasada recorre las seis condiciones antes de repetir) → 18/18 informes válidos, fuente `56bd557+local` (arnés sin commit en el momento de medir; mismo código que este commit). Resumen `TestResults\B0\Benchmark\Normal\agregado-20261005T131448.csv`.
+- `scripts\b0.cmd devbuild` + `devdiag` → 3/3 válidos en `Builds\B0Dev` (Development), `TestResults\B0\Benchmark\DevDiag\agregado-20261005T131733.csv`.
+- `scripts\u3.cmd edit` → **405/405** (`unity\TestResults\U3\edit.xml`). `scripts\u3.cmd play` → **39/39** (`unity\TestResults\U3\play.xml`). Mismos totales que U6; B0.1 no añade pruebas.
+- `MAMPORRO.exe` de entrega intacto: SHA-256 `96b492cb…0873`, igual que en U6.
+
+**Condiciones.** Build Windows x64 Mono normal (`Builds\B0`), D3D11, Unity 6000.6.3f1, calidad «U1 Retro», VSync 0, sin límite de FPS; AMD Ryzen 7 7700X, NVIDIA RTX 4070 Ti SUPER, 32 GB; salida 1920×1080 y 2560×1440 pedida en exclusiva (Unity informa `FullScreenWindow`), interna 640×360 (1080p y 1440p), dithering y snap activos; mapa MAMPORRO, cámara (0,88,−32)→(0,60,0) FOV 58, rejilla de 30 columnas a 1,1 m (300 = 10 filas, 750 = 25); 10 s de calentamiento + 30 s; 3 pasadas alternadas.
+
+**Base A — representación U6 (build normal, mediana de 3 pasadas; ms por fotograma).**
+
+| Entidades | Salida | p50 | p95 (rango) | p99 | máx. (peor) | >16,67 ms | CPU fotograma | envío cámara mundo (CPU) | instancias | SetPass | triángulos |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 300 | 1920×1080 | 0,369 | 0,463 (0,458–0,466) | 0,549 | 1,641 | 0 | 0,384 | 0,113 | 764 | 15 | 227 337 |
+| 500 | 1920×1080 | 0,415 | 0,504 (0,502–0,506) | 0,582 | 1,008 | 0 | 0,430 | 0,116 | 1 164 | 15 | 232 137 |
+| 750 | 1920×1080 | 0,473 | 0,558 (0,547–0,561) | 0,629 | 1,224 | 0 | 0,485 | 0,114 | 1 664 | 15 | 238 137 |
+| 300 | 2560×1440 | 0,373 | 0,482 (0,480–0,487) | 0,561 | 1,110 | 0 | 0,389 | 0,114 | 764 | 15 | 227 337 |
+| 500 | 2560×1440 | 0,416 | 0,504 (0,503–0,504) | 0,579 | 1,039 | 0 | 0,430 | 0,116 | 1 164 | 15 | 232 137 |
+| 750 | 2560×1440 | 0,471 | 0,561 (0,557–0,561) | 0,635 | 1,095 | 0 | 0,485 | 0,114 | 1 664 | 15 | 238 137 |
+
+Suelo 300 (p95 ≤ 16,67 ms): **cumple** en las tres pasadas y ambas salidas. Coste marginal medido de 300→750 Pelusas: ≈ +0,1 ms de p95 (dos cajas instanciadas por Pelusa; las 164 instancias restantes son interactuables y efectos fijos del mapa). Memoria Unity asignada ≈ 226 MB, memoria del sistema usada ≈ 284 MB, reservada 538 MB; 12–15 recolecciones gen0 por condición en 90 s medidos. Diagnóstico Development (no es rendimiento de entrega): p95 0,545/0,583/0,601 ms y **≈ 97–100 B asignados por fotograma, constantes entre 300 y 750** (asignación de base de la escena/HUD, no por entidad).
+
+**Limitaciones.** Es **presentación aislada**: ni partida, ni simulación, ni FPS de juego. Frame time = intervalo real entre fotogramas; «envío cámara mundo» es CPU de la cámara del mundo, no GPU. **N/D:** tiempo GPU (FrameTimingManager devuelve valores absurdos, ~5·10⁹ ms, y no se valida), draw calls y batches (los contadores devuelven 0 también en Development con `RenderMeshInstanced` en Unity 6.6; se usa SetPass/triángulos/vértices), GC por fotograma en la build normal (solo Development). Los contadores de render son totales del fotograma (todas las cámaras). Equipo de gama alta, sin valor de requisito mínimo. Un pico aislado de 53,6 ms en el humo inicial tuvo CPU de fotograma normal (0,37 ms): pausa externa al trabajo del fotograma; no apareció en las 18 pasadas válidas (peor máximo 1,64 ms). Resultados voluminosos (CSV por fotograma, JSON, capturas, logs) locales e ignorados en `unity\TestResults\B0\Benchmark\`.
+
+**Comandos para repetirlo (CMD, raíz del repositorio, Editor cerrado):**
+
+```cmd
+scripts\b0.cmd build
+scripts\b0.cmd benchmark -Runs 1 -First 1
+scripts\b0.cmd benchmark -Runs 1 -First 2
+scripts\b0.cmd benchmark -Runs 1 -First 3
+scripts\b0.cmd summary
+scripts\b0.cmd devbuild
+scripts\b0.cmd devdiag
+```
+
+Cada `benchmark -Runs 1` abre la build B0 a pantalla completa 6 veces (~5 min); no usar el equipo durante la medida.
+
+**Commit B0.1:** «Documenta el entorno y la base del spike 3D» (arnés, builds QA, lanzador y este checkpoint). Fuera del commit: los siete protegidos (SHA-256 iniciales: RetroPipeline `f88523da…`, URP global `71b8ad93…`, GraphicsSettings `35dd86b4…`, ProjectAuditorSettings `9e68444b…`, ProjectSettings `4505cd00…`, PackageManagerSettings `7698172a…`, URPProjectSettings `68d75e5e…`) y el borrador B0.2 `scripts/blender/b0_contract.py`, todavía sin probar.

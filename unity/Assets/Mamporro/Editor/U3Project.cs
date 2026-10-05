@@ -84,5 +84,20 @@ namespace Mamporro.Editor
             if(report.summary.result!=BuildResult.Succeeded)throw new BuildFailedException(report.summary.result.ToString());
             Debug.Log("U3 Windows x64 Mono (Development, diagnóstico): build correcta.");
         }
+
+        // B0 (spike Blender): builds QA en carpetas propias. No sustituyen la entrega aprobada
+        // (Builds/Windows) ni modifican opciones del proyecto; el ensayo solo se activa con
+        // -b0-benchmark. La normal mide; la Development solo diagnostica asignaciones/GC.
+        public static void BuildB0()=>BuildQa("Builds/B0",BuildOptions.None);
+        public static void BuildB0Development()=>BuildQa("Builds/B0Dev",BuildOptions.Development);
+        static void BuildQa(string folder,BuildOptions options)
+        {
+            if(PlayerSettings.GetScriptingBackend(NamedBuildTarget.Standalone)!=ScriptingImplementation.Mono2x)throw new BuildFailedException("B0 requiere Mono.");
+            if(Directory.Exists(folder))Directory.Delete(folder,true);
+            Directory.CreateDirectory(folder);
+            var report=BuildPipeline.BuildPlayer(new BuildPlayerOptions{scenes=new[]{ScenePath},locationPathName=folder+"/MAMPORRO-B0.exe",target=BuildTarget.StandaloneWindows64,options=options});
+            if(report.summary.result!=BuildResult.Succeeded)throw new BuildFailedException(report.summary.result.ToString());
+            Debug.Log($"B0 Windows x64 Mono ({options}): build QA correcta en {folder}.");
+        }
     }
 }
