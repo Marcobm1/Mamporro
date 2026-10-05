@@ -153,6 +153,7 @@ namespace Mamporro.U3
         void PageOptions()
         {
             Label(page,CombatText.Get("options.title"),48,TextAnchor.MiddleLeft,new Vector2(0,.9f),new Vector2(1,1));
+            if(game.LegacySaveAvailable)Button(page,CombatText.Get("legacy.open"),new Vector2(.52f,.9f),new Vector2(1,1),()=>ShowLegacyImport(game.LegacySaveDirectory));
             var grid=new GameObject("Opciones",typeof(RectTransform));grid.transform.SetParent(page,false);var r=(RectTransform)grid.transform;
             r.anchorMin=Vector2.zero;r.anchorMax=new Vector2(1,.89f);r.offsetMin=r.offsetMax=Vector2.zero;
             PaintOptions(r,false);

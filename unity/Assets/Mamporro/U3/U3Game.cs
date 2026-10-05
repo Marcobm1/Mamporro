@@ -78,15 +78,14 @@ namespace Mamporro.U3
         // U4: carpeta del progreso persistente. Las pruebas la sustituyen por una temporal propia
         // (nunca el guardado del autor); -u4-save-dir permite lo mismo en la build.
         public static string SaveDirectoryOverride;
-        public string SaveDirectory
-        {
-            get
-            {
-                if(!string.IsNullOrEmpty(SaveDirectoryOverride))return SaveDirectoryOverride;
-                var args=Environment.GetCommandLineArgs();int i=Array.IndexOf(args,"-u4-save-dir");
-                return i>=0&&i+1<args.Length?args[i+1]:System.IO.Path.Combine(Application.persistentDataPath,"Progress");
-            }
-        }
+        ProgressLocations Locations=>ProgressLocations.Resolve(Application.persistentDataPath,
+            Application.platform==RuntimePlatform.WindowsPlayer||Application.platform==RuntimePlatform.WindowsEditor,
+            Environment.GetCommandLineArgs(),SaveDirectoryOverride);
+        public string SaveDirectory=>Locations.Current;
+        public string LegacySaveDirectory=>Locations.Legacy;
+        public bool LegacySaveAvailable=>LegacySaveDirectory!=null&&
+            (System.IO.File.Exists(System.IO.Path.Combine(LegacySaveDirectory,ProgressStore.PrimaryName))||
+             System.IO.File.Exists(System.IO.Path.Combine(LegacySaveDirectory,ProgressStore.BackupName)));
         // Idioma actual de la aplicación (el del progreso; sin guardado, el del sistema como
         // detectLanguage web: español si el sistema está en español, si no inglés).
         public string Language=>CombatText.English?"en":"es";
@@ -181,6 +180,7 @@ namespace Mamporro.U3
         void Start()
         {
             var args=Environment.GetCommandLineArgs();
+            if(Progress.Status=="new"&&LegacySaveAvailable)Screens.ShowLegacyImport(LegacySaveDirectory);
             if(Array.IndexOf(args,"-u3-visual-check")>=0)gameObject.AddComponent<U3VisualCheck>().Game=this;
             else if(Array.IndexOf(args,"-u3-benchmark")>=0){benchmark=gameObject.AddComponent<U3Benchmark>();benchmark.Game=this;}
         }

@@ -14,6 +14,7 @@ namespace Mamporro.U3
     {
         GameObject import;InputField importPath;Text importMessage,importCurrent,importIncoming,importIssues,importWarning;Button importConfirm,importCancel;
         ProgressImporter importer;ImportReview review;
+        Text importTitle,importHelp;Button importBrowse;string legacyDirectory;
         public bool ImportVisible=>import&&import.activeSelf;
         public bool ImportCanConfirm=>review!=null&&review.CanConfirm;
         public ImportReview ImportReview=>review;
@@ -24,11 +25,11 @@ namespace Mamporro.U3
         void BuildImport(Transform parent)
         {
             import=Panel(parent,"Importar");var c=Content(import);
-            Label(c,CombatText.Get("import.title"),52,TextAnchor.MiddleCenter,new Vector2(.05f,.88f),new Vector2(.95f,.97f));
-            Label(c,CombatText.Get("import.help"),24,TextAnchor.MiddleCenter,new Vector2(.05f,.81f),new Vector2(.95f,.88f)).color=Hex("#a49cc0");
+            importTitle=Label(c,CombatText.Get("import.title"),52,TextAnchor.MiddleCenter,new Vector2(.05f,.88f),new Vector2(.95f,.97f));
+            importHelp=Label(c,CombatText.Get("import.help"),24,TextAnchor.MiddleCenter,new Vector2(.05f,.80f),new Vector2(.95f,.88f));importHelp.color=Hex("#a49cc0");
             Label(c,CombatText.Get("import.path"),26,TextAnchor.MiddleLeft,new Vector2(.05f,.73f),new Vector2(.13f,.79f));
             importPath=Input(c,new Vector2(.14f,.73f),new Vector2(.62f,.79f));importPath.characterLimit=400;importPath.textComponent.fontSize=22;
-            Button(c,CombatText.Get("import.browse"),new Vector2(.63f,.73f),new Vector2(.77f,.79f),Browse);
+            importBrowse=Button(c,CombatText.Get("import.browse"),new Vector2(.63f,.73f),new Vector2(.77f,.79f),Browse);
             Button(c,CombatText.Get("import.review"),new Vector2(.78f,.73f),new Vector2(.95f,.79f),ReviewImport);
             importMessage=Label(c,"",26,TextAnchor.MiddleLeft,new Vector2(.05f,.66f),new Vector2(.95f,.72f));
             Label(c,CombatText.Get("import.current"),26,TextAnchor.UpperLeft,new Vector2(.05f,.6f),new Vector2(.32f,.65f)).color=Hex("#a49cc0");
@@ -46,6 +47,7 @@ namespace Mamporro.U3
 
         public void ShowImport(bool visible)
         {
+            ConfigureImport(null);
             if(visible){
                 importer=game.CreateImporter();review=null;
                 if(string.IsNullOrWhiteSpace(importPath.text))importPath.text=NativeFileDialog.SuggestedPath(ProgressImporter.DefaultFileName);
@@ -54,6 +56,21 @@ namespace Mamporro.U3
                 Message(CombatText.Get("import.notReviewed"),false);importIncoming.text=importIssues.text=importWarning.text="";Paint();
             } else {review=null;importer=null;}
             if(import.activeSelf!=visible)import.SetActive(visible);
+        }
+
+        // La misma pantalla U4 revisa el guardado Unity histórico; no se pasa por el parser web.
+        public void ShowLegacyImport(string directory)
+        {
+            if(game.State!=U3Game.Screen.Title||string.IsNullOrWhiteSpace(directory))return;
+            ShowImport(true);ConfigureImport(directory);importPath.text=directory;ReviewImport();
+        }
+        void ConfigureImport(string directory)
+        {
+            legacyDirectory=directory;bool legacy=directory!=null;
+            importTitle.text=CombatText.Get(legacy?"legacy.title":"import.title");
+            importHelp.fontSize=legacy?19:24;importHelp.resizeTextForBestFit=legacy;importHelp.resizeTextMinSize=12;importHelp.resizeTextMaxSize=19;
+            importHelp.text=legacy?CombatText.Format("legacy.paths","source",directory,"destination",game.SaveDirectory):CombatText.Get("import.help");
+            importPath.readOnly=legacy;importBrowse.interactable=!legacy;
         }
 
         void Browse()
@@ -65,7 +82,7 @@ namespace Mamporro.U3
         public void ReviewImport()
         {
             if(importer==null)return;
-            review=importer.Review(importPath.text);
+            review=legacyDirectory==null?importer.Review(importPath.text):importer.ReviewLegacy(legacyDirectory);
             var report=review.Report;var sb=new StringBuilder();int preserved=0;
             if(report!=null)foreach(var issue in report.Issues){
                 if(issue.Severity=="info"){preserved++;continue;}
@@ -74,6 +91,10 @@ namespace Mamporro.U3
                 sb.Append('\n');
             }
             importIssues.text=sb.Length>0?sb+CombatText.Format("import.preserved","n",preserved):report!=null&&report.CanConfirm?CombatText.Format("import.noIssues","n",preserved):"";
+            if(legacyDirectory!=null){
+                importHelp.text=CombatText.Format("legacy.paths","source",review.SourcePath??legacyDirectory,"destination",game.SaveDirectory);
+                if(review.UsedBackup)importIssues.text=CombatText.Get("legacy.backup")+"\n"+importIssues.text;
+            }
             importIncoming.text=review.Incoming!=null?Summary(review.Incoming):"";
             if(review.Baseline!=null)importCurrent.text=Summary(review.Current);
             if(review.Error!=null){Message(Error(review.Error),true);importWarning.text="";}
@@ -89,7 +110,7 @@ namespace Mamporro.U3
         {
             if(importer==null||review==null||!review.CanConfirm)return;
             if(game.State!=U3Game.Screen.Title)return;
-            bool same=review.Unchanged;var result=importer.Confirm(review,true);review=null;game.AdoptImported(result);OpenPage(current);
+            string legacy=legacyDirectory;bool same=review.Unchanged;var result=importer.Confirm(review,true);review=null;game.AdoptImported(result);OpenPage(current);ConfigureImport(legacy);
             if(result.Success){Message(CombatText.Get(same?"import.doneSame":"import.done"),false);importCurrent.text=Summary(result.Snapshot.Candidate);importWarning.text="";}
             else Message(Error(result.Error),true);
             Paint();

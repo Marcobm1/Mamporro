@@ -1,4 +1,8 @@
 {"entries":[
+{"key":"legacy.title","es":"Recuperar progreso de la versión anterior","en":"Recover progress from the previous version"},
+{"key":"legacy.open","es":"Revisar progreso anterior","en":"Review previous progress"},
+{"key":"legacy.paths","es":"Origen: {source}\nDestino: {destination}\nSe copia solo al confirmar. El original se conserva; nunca se fusiona progreso.","en":"Source: {source}\nDestination: {destination}\nCopied only after confirmation. The original is kept; progress is never merged."},
+{"key":"legacy.backup","es":"Se ofrece progress.backup.json: el principal anterior falta o no es utilizable. Revisa esta copia antes de confirmar.","en":"Offering progress.backup.json: the previous primary save is missing or unusable. Review this backup before confirming."},
 {"key":"progress.state.new","es":"Sin progreso guardado: empiezas con el progreso inicial; se guardará al terminar una partida.","en":"No saved progress: you start with the initial progress; it is saved when a run ends."},
 {"key":"progress.state.review","es":"El guardado necesita revisión: se recuperaron datos secundarios. Confirma la recuperación para seguir guardando.","en":"The save needs review: secondary data was recovered. Confirm the recovery to keep saving."},
 {"key":"progress.state.backup","es":"El guardado principal no es válido; hay una copia de seguridad válida. Confirma la recuperación para usarla y seguir guardando.","en":"The main save is not valid; a valid backup exists. Confirm the recovery to use it and keep saving."},

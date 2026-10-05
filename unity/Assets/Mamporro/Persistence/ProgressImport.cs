@@ -16,6 +16,8 @@ namespace Mamporro.Persistence
         public PendingProgress Pending {get;internal set;}
         // El archivo contiene exactamente el progreso ya guardado: confirmar no cambia nada.
         public bool Unchanged {get;internal set;}
+        public string SourcePath {get;internal set;}
+        public bool UsedBackup {get;internal set;}
         public ProgressDto Incoming=>Report?.Candidate;
         // Progreso guardado actual; null si no hay uno válido (nuevo, inválido o inaccesible).
         public ProgressDto Current=>Baseline!=null&&(Baseline.Status=="loaded"||Baseline.Status=="review"||Baseline.Status=="backup")?Baseline.Candidate:null;
@@ -63,6 +65,30 @@ namespace Mamporro.Persistence
         public ImportReview Review(byte[] data)
         {
             var review=new ImportReview {Report=ProgressValidator.Import(data??Array.Empty<byte>(),language)};
+            return Prepare(review);
+        }
+
+        // U6: el progreso Unity histórico tiene su propio sobre, no es una transferencia web.
+        // Lectura acotada sin Load/Lock en origen: no crea archivos ni cambia el original.
+        // Si el principal no es utilizable, una copia válida se ofrece explícitamente como tal.
+        public ImportReview ReviewLegacy(string directory)
+        {
+            if(string.IsNullOrWhiteSpace(directory))return new ImportReview {Error="import.missing"};
+            var primary=ReadStored(Path.Combine(directory,ProgressStore.PrimaryName));
+            if(primary.Report?.CanConfirm==true)return Prepare(primary);
+            var backup=ReadStored(Path.Combine(directory,ProgressStore.BackupName));
+            if(backup.Report?.CanConfirm==true){backup.UsedBackup=true;return Prepare(backup);}
+            return primary.Error=="import.missing"?backup:primary;
+        }
+        ImportReview ReadStored(string path)
+        {
+            var bytes=ReadExternal(path,out string error);
+            var review=new ImportReview {SourcePath=path,Error=error};
+            if(error==null){review.Report=ProgressValidator.Stored(bytes,language);if(!review.Report.CanConfirm)review.Error="import.invalid";}
+            return review;
+        }
+        ImportReview Prepare(ImportReview review)
+        {
             if(!review.Report.CanConfirm){review.Error="import.invalid";return review;}
             review.Baseline=store.Load();
             if(review.Baseline.Status=="unavailable"){review.Error="storage.unavailable";return review;}
