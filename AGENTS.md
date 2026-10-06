@@ -52,4 +52,4 @@ Si una pieza está completa y verificable, haz commit pequeño y push antes del 
 
 Trabaja un bloque cada vez. No abras Pull Request salvo petición expresa. Los commits van en español, pequeños y verificables. U5 está aprobado manualmente; U6 aprobado manualmente y migración cerrada; B0 aceptado técnicamente, sin revisión manual de la build ni aprobación artística final; P0-A autorizado, B/C/D no autorizados. No empezar mejoras posmigración ni servicios Steam.
 
-Punto de continuación vigente: [PROGRESO_P0](docs/PROGRESO_P0.md) — plan del circuito aislado de movilidad/verticalidad. P0-A1–A5 autorizados y en curso; no iniciar P0-B/C/D al cerrar. B0 cerrado y publicado en `0b0b68c31dda803cf9cf566b3c96f369ed893ce3`.
+Punto de continuación vigente: [PROGRESO_P0](docs/PROGRESO_P0.md) — circuito QA aislado de movilidad/verticalidad. P0-A1–A5 implementados y verificados; pendiente de prueba manual; no iniciar P0-B/C/D al cerrar. B0 cerrado y publicado en `0b0b68c31dda803cf9cf566b3c96f369ed893ce3`.

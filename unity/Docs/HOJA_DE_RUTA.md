@@ -26,9 +26,9 @@ estética retro. Megabonk sirve de referencia expresada por el autor para escala
 verticalidad y agilidad; no se han analizado sus sistemas en esta fase ni se
 presupone reproducirlos. MAMPORRO mantiene nombres, arte y diseño propios.
 
-## Primer bloque P0 propuesto, todavía sin implementar
+## P0-A implementado; pendiente de prueba manual
 
-[Plan P0](../../docs/PROGRESO_P0.md): A circuito aislado de movilidad/escalada/cámara; B rutas y amenaza de enemigos en altura; C muestra procedural geométrica conectada; D ampliación por medidas. Solo A se presenta para la próxima autorización. Balance se mantiene separado, aunque figure como P0 histórico en la tabla. No mezclar P1/P2 ni adoptar VAT/modelos B0 por defecto.
+[Checkpoint P0](../../docs/PROGRESO_P0.md): A1–A5 implementados y verificados en build QA separada; el autor probará escalada libre, bordes, sensación de movimiento y cámara. Lanzador probado: `scripts\p0.cmd jugar` desde la raíz. P0-B (rutas/amenaza), C (muestra procedural) y D (ampliación) NO están autorizados. El tejado sin acceso sigue fuera del alcance del melee: 30 s sin daño en la sonda, limitación registrada. Balance se mantiene separado, aunque figure como P0 histórico en la tabla. No mezclar P1/P2 ni adoptar VAT/modelos B0 por defecto.
 
 ## Peticiones del autor y orden propuesto
 

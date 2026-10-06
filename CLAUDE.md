@@ -126,6 +126,6 @@ U1 validó una escena técnica con 300/500/750/1000 entidades, salida 1920×1080
 
 Mundo/estructuras mayores; mesetas y rampas más marcadas; escalada libre por paredes sin imponer trepada breve ni resistencia sin consultarlo; inicio con menos enemigos pero más resistentes y crecimiento progresivo; más oro **de partida** de enemigos según tiempo/dificultad; acabado retro más profesional; iconos/ilustraciones originales; más enemigos, armas, tomos y personajes. No introducir estas mejoras dentro de U2 salvo un prototipo aislado aprobado expresamente.
 
-Cámara contra estructuras, mando/remapeo, métricas locales adicionales y servicios Steam siguen siendo propuestas/etapas futuras, no funciones ya terminadas.
+Cámara contra estructuras y métricas están implementadas solo en el circuito QA P0-A; su adopción general sigue pendiente. Mando/remapeo y servicios Steam siguen fuera del bloque autorizado.
 
-Punto de continuación vigente: [PROGRESO_P0](docs/PROGRESO_P0.md) — plan del circuito aislado de movilidad/verticalidad. P0-A1–A5 autorizados y en curso; no iniciar P0-B/C/D al cerrar. B0 cerrado y publicado en `0b0b68c31dda803cf9cf566b3c96f369ed893ce3`.
+Punto de continuación vigente: [PROGRESO_P0](docs/PROGRESO_P0.md) — circuito QA aislado de movilidad/verticalidad. P0-A1–A5 implementados y verificados; pendiente de prueba manual; no iniciar P0-B/C/D al cerrar. B0 cerrado y publicado en `0b0b68c31dda803cf9cf566b3c96f369ed893ce3`.

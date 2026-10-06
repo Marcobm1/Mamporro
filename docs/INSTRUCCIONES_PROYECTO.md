@@ -129,6 +129,6 @@ La transferencia de guardado implementada en U4 debe conservar de forma compatib
 
 No hay cantidades finales cerradas. Primero validar la migración; después aplicar mejoras por bloques, salvo prototipo aislado aprobado.
 
-Cámara contra estructuras, mando/remapeo, métricas locales y servicios Steam son propuestas o fases posteriores. No añadir telemetría externa por defecto, no comprar/publicar nada y no copiar arte de otros juegos.
+Cámara contra estructuras y métricas están implementadas solo en el circuito QA P0-A; su adopción general sigue pendiente. Mando/remapeo y servicios Steam siguen fuera del bloque autorizado. No añadir telemetría externa por defecto, no comprar/publicar nada y no copiar arte de otros juegos.
 
-Punto de continuación vigente: [PROGRESO_P0](PROGRESO_P0.md) — plan del circuito aislado de movilidad/verticalidad. P0-A1–A5 autorizados y en curso; no iniciar P0-B/C/D al cerrar. B0 cerrado y publicado en `0b0b68c31dda803cf9cf566b3c96f369ed893ce3`.
+Punto de continuación vigente: [PROGRESO_P0](PROGRESO_P0.md) — circuito QA aislado de movilidad/verticalidad. P0-A1–A5 implementados y verificados; pendiente de prueba manual; no iniciar P0-B/C/D al cerrar. B0 cerrado y publicado en `0b0b68c31dda803cf9cf566b3c96f369ed893ce3`.

@@ -1,6 +1,6 @@
 # P0 — movilidad y verticalidad antes de ampliar el mundo
 
-Estado: **P0-A1–P0-A5 AUTORIZADOS Y EN CURSO**. Preparación del 05/10/2026 (Codex). No mezcla P1 artístico ni P2 contenido. La clasificación histórica de balance en P0 no lo incluye en este primer prototipo.
+Estado: **P0-A1–P0-A5 CERRADOS TÉCNICAMENTE — PENDIENTE DE PRUEBA MANUAL** (06/10/2026, Codex). P0-B/C/D NO autorizados. No mezcla P1 artístico ni P2 contenido. La clasificación histórica de balance en P0 no lo incluye en este prototipo.
 
 ## Cómo retomar
 
@@ -8,7 +8,7 @@ Estado: **P0-A1–P0-A5 AUTORIZADOS Y EN CURSO**. Preparación del 05/10/2026 (C
 - U0–U6 cerrados y aprobados. Entrega `unity/Builds/Windows/MAMPORRO.exe` intacta; SHA-256 `96b492cb271111251fe42b8646e65370a1b7b566773a1e35b34c3f2d1ae70873`.
 - Trabajo publicado: A1 `508aa0f849eb536068359a90a6fc883a117d5937` y A2 `303b01c2a09a2d6bccb3f742f3f20ad5d8c97fe3`. Al retomar el 06/10 había WIP runtime A3 y lanzadores/build P0 sin publicar; conservado y revisado.
 - Siete ajustes Unity protegidos intactos y excluidos, según BLENDER_B0/PROGRESO_U6. No reset/clean/stash ni publicación accidental.
-- **Siguiente paso exacto:** finalizar tablas de medición normal/Development y cierre A5 para prueba manual. A3 `beb32093cd56b59bba2223199a287bea13a2c6ab` y A4 `42509c28b7994c820bf2d4c98339e7e3fafe35ad` publicados. A5 implementado: 467 Edit/46 Play, builds y lanzadores probados, evidencias válidas; ver registro inferior. Las cuatro decisiones están aprobadas; no volver a preguntarlas. P0-B/C/D no autorizados.
+- **Siguiente paso exacto:** el autor prueba `scripts\p0.cmd jugar`; esperar su revisión manual y autorización posterior. A3 `beb3209`, A4 `42509c2` y A5 `2cbb299525990e3af809ee8fd4cf46fcd6063b67` publicados. 467 Edit/46 Play, builds/lanzador/evidencias y ocho medidas válidas. Informe completo al final de este archivo. No volver a preguntar las cuatro decisiones aprobadas ni iniciar P0-B/C/D.
 - Publicación de este plan: commit «Planifica el prototipo de movilidad y verticalidad», localizable con `git log --oneline -- docs/PROGRESO_P0.md`; fetch/push normal y comprobar remoto. Un paso verificable por commit durante implementación futura.
 
 Auditoría CMD antes de continuar:
@@ -45,7 +45,7 @@ Escena QA propia, geometría sencilla generada en Unity, sin rehacer el mundo ni
 | A4 — convivencia con combate | Enemigos controlados reutilizando CombatRun/grid/pools, sin cambiar director ni curvas; rampa accesible, tejado accesible e inaccesible, proyectiles y contacto a distintas alturas. | Identificar explícitamente dónde el steering actual no alcanza; no infligir contacto a través de forjados ni fingir amenaza en lugares inaccesibles. Sin navegación masiva nueva dentro de A4. |
 | A5 — medición y cierre | Regresión, build QA, recorridos grabados/capturas, comparación de ruta y coste. Guía para prueba manual del autor. | Prototipo revisable, limitaciones concretas, U3/entrega/guardados intactos. Detenerse para aceptación antes de P0-B. |
 
-### Propuesta de control y comportamiento (pendiente de aprobación)
+### Propuesta original de control y comportamiento (aprobada en el registro inferior)
 
 - **Mantener botón derecho** para agarrarse al tocar una pared escalable próxima; no enganchar al pasar cerca sin intención. W/S sube/baja y A/D desplaza por la pared, independientes de la inclinación de cámara. Soltar baja al estado aéreo; Espacio salta separándose de la pared. No usar E para evitar conflicto con interactuables.
 - Después de salto/separación, exigir soltar y volver a pulsar agarre para evitar reenganche involuntario. Shift/C suelta pared; deslizamiento solo al tocar suelo con la regla existente. Acercarse deslizando no cambia a escalada salvo intención de agarre. Conservar salto variable/coyote fuera de la escalada.
@@ -156,3 +156,151 @@ Evidencia final: `unity/TestResults/P0/Evidence/20261006T172001`, 10 PNG reales,
 Intentos descartados, conservados localmente: build restringida falló por licencia; player restringido falló antes de obtener persistentDataPath y su proceso residual se cerró antes de medir. Evidencia oculta `114853` dio PNG negros y fue rechazada aunque el arnés inicial aceptaba la física; se añadió validación visual. `115116` reveló menú sobre el esquema y cámara bajo techo demasiado próxima, corregidos. Medida `Normal/20261006T120043` interrumpida por atasco real de reenganche a máxima distancia y proceso residual: no se usa. `Normal/20261006T171212` recorre bien las cuatro cargas, pero sobrerregistra caídas: sustituida por la pasada final tras corregir y probar el contador.
 
 **Siguiente paso de esta pieza:** terminar medidas finales normal/Development, registrar tablas y cierre técnico; no modificar más gameplay ni iniciar P0-B. Los binarios actuales indican `42509c2…+P0-WIP`: contienen el código de esta pieza antes de su commit; el cierre identificará el commit equivalente y las huellas de assemblies.
+
+## Cierre técnico P0-A — 06/10/2026 (Codex)
+
+**A1–A5 terminados y verificados; pendiente de prueba manual del autor. DETENERSE. P0-B/C/D NO autorizados.** No se declara P0 completo ni se integra esta escalada en la entrega U6.
+
+### Publicación y procedencia
+
+| Pieza | Commit |
+| --- | --- |
+| A1 — consultas/circuito | `508aa0f849eb536068359a90a6fc883a117d5937` |
+| A2 — estados/escalada | `303b01c2a09a2d6bccb3f742f3f20ad5d8c97fe3` |
+| A3 — integración/cámara | `beb32093cd56b59bba2223199a287bea13a2c6ab` |
+| A4 — combate/altura | `42509c28b7994c820bf2d4c98339e7e3fafe35ad` |
+| A5 — builds/lanzador/instrumentación | `2cbb299525990e3af809ee8fd4cf46fcd6063b67` |
+
+Todos publicados por push normal en `claude/zen-pasteur-674ik0`, sin PR ni force. Tras A5, fetch confirmó el remoto esperado A4 antes de publicar. Este cierre añade solo documentación; su HEAD se obtiene con `git log -1 --format=%H -- docs/PROGRESO_P0.md`. Confirmar igualdad HEAD/remoto al entregar, sin publicar los siete ajustes.
+
+Las builds se generaron antes del commit A5 y conservan procedencia honesta `42509c28b7994c820bf2d4c98339e7e3fafe35ad+P0-WIP`; su código es exactamente el publicado en `2cbb299` (diff de Core/U3/P0Project vacío). Manifiesto local de assemblies normal/Development: `unity/TestResults/P0/build-assemblies-sha256.json`. SHA-256 normal Core: `BE9EAAB5AA9D78B35C3D7B169AFA905F316995CB1F7749122BC260E09A2B6B73`; U3: `12513735F5ED752762D91F4AB34884C4940E2512F860861DCDEAED1C83FB715A`.
+
+### Qué probar y cómo abrirlo
+
+Desde la raíz del repositorio en **CMD**:
+
+```cmd
+scripts\p0.cmd jugar
+```
+
+Comando realmente probado, ventana abierta y cerrada correctamente, log con carpeta QA. Iniciar una partida desde el menú. Build normal `unity\Builds\P0\MAMPORRO-P0.exe`; conservar toda la carpeta. Development separado: `unity\Builds\P0Dev\MAMPORRO-P0.exe`. Progreso manual aislado en `unity\TestResults\P0\ManualSave`, sin liquidación/recompensas; huellas del progreso personal antes/después iguales. No sobrescribir `unity\Builds\Windows\MAMPORRO.exe`.
+
+Controles: mantener botón derecho para agarrarse; W/S sube/baja y A/D desplaza lateralmente; Espacio salta separándose; soltar botón o Shift/C libera. Después de separarse, soltar y volver a pulsar antes de reenganchar. E conserva su función anterior. Sin agarre por mera proximidad, stamina ni duración máxima. Velocidades reales: **4,5 m/s vertical, 3,0 lateral, diagonal normalizada; suelo 9,5 m/s** sin rebalance. Transición de borde a 4,5 m/s; separación horizontal al saltar 5 m/s.
+
+F4 alterna 0/300/500/750 enemigos controlados; F5 compara física/cámara U3 y P0 sobre la misma geometría QA; F7 rescata al inicio y marca recorrido inválido; F8 reinicia. El control F5 no sustituye las regresiones del mundo U3 original. Esc pausa; perder foco pausa y al volver requiere continuar.
+
+Circuito fijo, coordenadas del núcleo (presentación invierte Z), inicio (4,0,-10):
+
+| Caso | Ubicación/dimensión |
+| --- | --- |
+| Llano y ruta alternativa por suelo | Suelo alrededor de las estaciones; límite lógico 29 m |
+| Rampa/meseta/tejado accesible | Oeste: X -24 a -12 asciende a 4 m; cubierta X -12 a -4 a Y 4,25 |
+| Pared y tejado sin rampa | X 8..14, Z -4..4, altura 6 m |
+| Techo que bloquea salida | X 6..15, Z -1..1, cara inferior Y 7 |
+| Esquinas interior/exterior | Dos sólidos unidos: X 8..12/Z 10..16 y X 4..8/Z 14..16, altura 4 m |
+| Acantilado sólido | X -2..4, Z 16..20, altura 8 m |
+| Borde estrecho | X 20..20,5, Z -3..3, altura 5 m; no cabe la huella corporal completa |
+| Hueco/caída | X 16..22, Z 8..14, profundidad 6 m; rodeable por suelo |
+| Tipos excluidos | Follaje e interactuable en Z -12..-11; límite artificial oriental |
+
+Escalables: caras verticales de estructuras y acantilados sólidos definidos en colisión. Excluidos: follaje, interactuables, enemigos, límites y caras inferiores de techos. Consultas explícitas de contacto/normal/ID/tipo, escalabilidad, espacio corporal, soporte completo, barrido continuo, borde y techo. Un solo PlayerBody/PlayerPhysics, sin Rigidbody paralelo ni root motion.
+
+El borde se recorre en dos tramos físicos finitos (elevación y avance) tras comprobar cuerpo, soporte y barridos completos; no hay teleport. El destino se calcula desde la cara para admitir todo el alcance del agarre. Salir andando del tejado vuelve a aire. Bajo el techo central se detiene a Y≈5,45 y permite soltar/saltar. Las esquinas bloqueadas frenan o liberan al perder contacto; no hay giro automático sin barrido/contacto válidos.
+
+Cámara U3 como referencia; P0 barre pivote y brazo contra paredes/techos, retrae inmediatamente y recupera suavemente (exponencial 4/s). Bajo techo prueba brazo horizontal con el mismo azimut, sin autoorientación/cinemática. Su sensación requiere la revisión manual del autor.
+
+Antiatasco: intención sin avance ≥0,35 s contada; salto/separación siempre disponibles; transición con timeout 1,5 s y salida a aire/rearme si falla; barridos completos y soporte de toda la huella; pausa, foco, muerte y reinicio suspenden agarre/entradas. F7 o posición inválida/Y<-10 recuperan **solo QA al inicio**, con aviso, contador, ruta inválida y sin meta. No es recuperación al último punto seguro ni una finalización válida.
+
+### Pruebas y evidencias ejecutadas
+
+- Suites completas `scripts\u3.cmd edit`: **467/467**; `scripts\u3.cmd play`: **46/46**. Copias finales: `unity/TestResults/P0/edit-final.xml` y `play-final.xml`; logs originales en U3. No se inventa validación manual de controles/sensación.
+- Casos: determinismo/tick fijo, llano equivalente a U3, agarre explícito/diagonal/120 s sin límite, salto/rearme, separación, rampa/escalón, borde válido/rechazado/máximo alcance/timeout, tejado→aire, esquinas, cuerpo completo, cámaras, pausa/foco, muerte/reinicio/rescate, guardado QA y combate/alturas. P0 desactivado deja la ruta original U3 sin delegado físico.
+- `scripts\verify-historical-reference.ps1`: U0/U2/U3/U4 iguales. Instantánea `qa-results/reference-367eb89e22634e9a9f7068d7d36abf27`. Diff frente al plan en `src/` y `unity/Docs/Reference` vacío; no se regeneraron referencias.
+- Builds `scripts\p0.cmd build` / `devbuild`, apertura `jugar`, captura `evidence` y medidas `benchmark` / `devdiag` realmente ejecutadas. Editor cerrado durante las medidas y sin otras instancias P0.
+- **Evidencia final local:** `unity/TestResults/P0/Evidence/20261006T172001`, 10 PNG + `evidence.json` válido. `00-esquema-circuito`, `01-antes-borde`, `02-escalada-volumen`, `03-transicion-borde`, `04-sobre-tejado`, `05-caida-tejado`, `06-techo-bloqueado`, `07-rescate-invalida`, `08-esquina`, `09-horda-desde-tejado`. Volumen conservador magenta superpuesto al visual, no collider nuevo.
+- Secuencia de PNG en lugar de vídeo; CSV `route-edge.csv` y `route-blocked.csv`. La evidencia de techo registra atasco a 1,583 s en Y=5,449999; rescate a 3 s, conserva el atasco y suma 1 recuperación. Causa: «ascenso/borde bloqueado». Ese recorrido es inválido.
+- Artefactos binarios/CSV/PNG locales excluidos de Git, como las entregas anteriores. No se publican datos ni telemetría externa.
+
+### Métricas de recorrido
+
+Ruta automatizada repetida: subir hasta 3,5 m, bajar hasta 1 m, volver a subir, completar tejado, salir por el canto oeste, caer y regresar por suelo. Semilla P0QA y tick 1/60; el control decide por estado físico real, sin reposicionamientos dentro de la ruta. **No es un tour continuo por todas las estaciones del circuito.**
+
+En vacío, primera salida al tejado a **2,700 s**, primer ciclo terminado tras aterrizar a **3,417 s**; ciclos siguientes ~4,2 s por incluir regreso desde el aterrizaje. Cada una de las ocho pasadas completa **9 bordes y 9 caídas**, con **0 fallos de borde, 0 agarres/reenganches involuntarios, 0 atascos y 0 rescates**. Duración/distancia incluyen warmup y el último ciclo parcial; el coste por fotograma solo usa la ventana posterior de 30 s. Ascenso/descenso en metros incluye cualquier movimiento vertical; los tiempos de subir/bajar cuentan intención de escalada, sin los tramos del borde.
+
+| Build | Enemigos | Ruta s | Distancia m | Ascenso m | Descenso m | Subiendo s | Bajando s |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Normal | 0 | 39.98 | 257.23 | 84.32 | 79.52 | 18.43 | 5.67 |
+| Normal | 300 | 40.10 | 242.22 | 76.97 | 76.97 | 16.80 | 5.10 |
+| Normal | 500 | 40.10 | 241.61 | 76.97 | 76.97 | 16.80 | 5.10 |
+| Normal | 750 | 40.10 | 241.38 | 76.97 | 76.97 | 16.80 | 5.10 |
+| Development | 0 | 39.97 | 257.15 | 84.24 | 79.52 | 18.42 | 5.67 |
+| Development | 300 | 40.10 | 242.22 | 76.97 | 76.97 | 16.80 | 5.10 |
+| Development | 500 | 40.10 | 241.61 | 76.97 | 76.97 | 16.80 | 5.10 |
+| Development | 750 | 40.10 | 241.38 | 76.97 | 76.97 | 16.80 | 5.10 |
+
+Tiempo sin amenaza se mide en las sondas de A4, **no** en este benchmark invulnerable: tejado inaccesible 30 s sin daño melee; la ruta directa por rampa alcanza la cubierta y mata al jugador inmóvil a 14,45 s. Contacto a la misma altura funciona. Naftalina/Jersey y proyectiles amistosos conservan fallos XZ de altura/oclusión; proyectiles hostiles siguen heightfield+1, atraviesan sólidos y no alcanzan el tejado de 6 m. Barra y charco de fregona conservan sus filtros de altura. Sin arreglos encubiertos de P0-B, escalada/teleport de enemigos ni cambios de vida/daño/oro/director.
+
+### Rendimiento del circuito QA, no FPS generales del juego
+
+Equipo: Ryzen 7 7700X, RTX 4070 Ti SUPER; Unity 6000.6.3f1, Windows x64 Mono, D3D11, ventana 1920×1080, altura interna 360, VSync desactivado y sin límite de fotogramas. Circuito fijo, horda centralizada de cantidad exacta, armas desactivadas e invulnerabilidad **solo en arnés** para mantener las cargas. Normal y Development separados, una pasada por carga, 10 s de warmup + 30 s de muestreo, sin auto-reanudaciones por foco en las ocho medidas. HUD e instrumentación QA incluidos. No es coste aislado de consultas ni equivalencia de un combate real completo.
+
+Fuentes: `unity/TestResults/P0/Normal/20261006T172056` y `unity/TestResults/P0/Development/20261006T172419`; cuatro `load-N.json`, `frames-N.csv`, `route-N.csv` y PNG por carpeta. Todos los informes válidos. No se usan intentos anteriores. Frame time de reloj real entre LateUpdate; CPU medida de lógica/combate/presentación del tick, no CPU total del proceso. **GPU: N/D** (el nombre del dispositivo no es una medida temporal).
+
+| Build | Enemigos | Frame p50 ms | p95 ms | p99 ms | Máx ms | Frames / ticks medidos |
+| --- | --- | --- | --- | --- | --- | --- |
+| Normal | 0 | 0.310 | 0.603 | 1.010 | 8.548 | 85749 / 1800 |
+| Normal | 300 | 0.391 | 0.816 | 1.110 | 5.596 | 67228 / 1800 |
+| Normal | 500 | 0.446 | 0.996 | 1.534 | 11.971 | 57620 / 1801 |
+| Normal | 750 | 0.519 | 1.528 | 2.364 | 28.279 | 45467 / 1801 |
+| Development | 0 | 0.392 | 0.841 | 1.749 | 25.329 | 64497 / 1800 |
+| Development | 300 | 0.473 | 1.045 | 1.576 | 5.644 | 54359 / 1800 |
+| Development | 500 | 0.531 | 1.395 | 1.767 | 4.175 | 47429 / 1800 |
+| Development | 750 | 0.587 | 1.600 | 2.303 | 13.453 | 42098 / 1800 |
+
+| Build | Enemigos | CPU tick p50 ms | p95 ms | p99 ms | Máx ms |
+| --- | --- | --- | --- | --- | --- |
+| Normal | 0 | 0.009 | 0.013 | 0.015 | 0.038 |
+| Normal | 300 | 0.565 | 0.607 | 0.659 | 0.757 |
+| Normal | 500 | 1.032 | 1.094 | 1.344 | 1.550 |
+| Normal | 750 | 1.639 | 1.938 | 2.205 | 3.706 |
+| Development | 0 | 0.010 | 0.014 | 0.018 | 0.038 |
+| Development | 300 | 0.570 | 0.626 | 0.763 | 0.815 |
+| Development | 500 | 1.036 | 1.139 | 1.362 | 1.472 |
+| Development | 750 | 1.617 | 1.710 | 1.930 | 2.321 |
+
+Memoria es una instantánea al final antes de PNG/serialización, no pico ni RSS; asignada/reservada por Unity y memoria gestionada Mono. GC collections mide gen0 durante ~40 s incluidos warmup; B/frame se obtiene del ProfilerRecorder solo en Development durante los 30 s medidos. Normal B/frame **N/D**. Las colecciones son elevadas con el bucle sin límite e interfaz/instrumentación; estos datos no justifican afirmar «cero GC» ni comparar directamente las reservas de ambas builds.
+
+| Build | Enemigos | Asignada MiB | Reservada MiB | Mono MiB | GC gen0 / pasada | GC B/frame |
+| --- | --- | --- | --- | --- | --- | --- |
+| Normal | 0 | 236.31 | 282.25 | 19.47 | 662 | N/D |
+| Normal | 300 | 237.13 | 538.31 | 19.43 | 515 | N/D |
+| Normal | 500 | 237.69 | 538.31 | 18.84 | 442 | N/D |
+| Normal | 750 | 238.25 | 538.31 | 19.32 | 355 | N/D |
+| Development | 0 | 154.47 | 543.56 | 19.22 | 511 | 9181.1 |
+| Development | 300 | 154.75 | 543.56 | 19.25 | 417 | 9314.1 |
+| Development | 500 | 154.86 | 543.56 | 19.35 | 372 | 9399.1 |
+| Development | 750 | 154.84 | 543.56 | 19.59 | 331 | 9535.1 |
+
+### Integridad, límites y diferencias respecto al plan
+
+SHA-256 de la entrega U6 **antes = después**:
+`96b492cb271111251fe42b8646e65370a1b7b566773a1e35b34c3f2d1ae70873`.
+No se ejecutó build U3 para sobrescribirla. Progreso personal sin cambios; solo carpetas QA.
+
+Siete ajustes locales protegidos: exactamente los mismos cinco modificados y dos sin seguimiento, ni publicados ni revertidos. Huellas antes/después iguales:
+
+| Estado | Ruta | SHA-256 |
+| --- | --- | --- |
+| M | unity/Assets/Mamporro/Generated/RetroPipeline.asset | F88523DA037CF80DB06027F1675AC19CDCC930CEE570FA51BE80A5945A62CE0D |
+| M | unity/Assets/UniversalRenderPipelineGlobalSettings.asset | 71B8AD93611C4B9C94444409A5CBA080B8B7A903EF1E797F1B5CAD37D38E2ADE |
+| M | unity/ProjectSettings/GraphicsSettings.asset | 35DD86B42C01873514B78C0784AB29078F557769A17097371198CDCE6AFDE5F2 |
+| M | unity/ProjectSettings/ProjectAuditorSettings.asset | 9E68444B9BDA981E2927A98DF9EDF69EA88362F0C6B7F3C81B39B9D515D2A416 |
+| M | unity/ProjectSettings/ProjectSettings.asset | 4505CD0097FE03D0BEF99BA42F8E0742A0660C197CF037634908654A9A1F45DB |
+| ?? | unity/ProjectSettings/PackageManagerSettings.asset | 7698172AB4C40EEB7B992D9255CE6AFDF39F9288C1C3A31C58A96A474DC43753 |
+| ?? | unity/ProjectSettings/URPProjectSettings.asset | 68D75E5E1502DD7A4C18B7306430916B5EE8DADFDB0FBB588893FE38EAA2C056 |
+
+Diferencias concretas: escena U3 reutilizada con circuito/datos optativos y define exclusivo en la build, evitando un segundo controlador o duplicar combate. Consultas conservadoras por cajas alrededor del cuerpo: pueden rechazar diagonales muy justas; no son geometría general ni navegación definitiva. Esquinas sin giro automático; salida estrecha rechazada; foso puede requerir F7. Rescate al inicio en vez de último punto seguro; siempre inválido y visible. Cámara puede probar brazo horizontal bajo techo manteniendo azimut. Secuencia de imágenes sustituye vídeo. Subruta repetida medida, resto de estaciones mediante casos automatizados/fixtures y posterior revisión manual. No hay medida GPU fiable ni GC B/frame normal. Build sin argumentos protegida por código, apertura realmente probada mediante el CMD documentado.
+
+No se observaron penetraciones ni atascos irrecuperables en los casos fijados; eso no sustituye la prueba manual de todos los ángulos, esquinas y sensación. Refugios inaccesibles, ausencia de búsqueda de rutas alternativas y ataques XZ heredados siguen siendo limitaciones reales. Sin balance ni ampliación del mundo, cambios de src/esperados históricos, NavMeshAgent, Rigidbody/Update por enemigo, P1/P2 ni adopción VAT.
+
+**Siguiente paso exacto: el autor ejecuta `scripts\p0.cmd jugar` y revisa escalada, pared→tejado, salto/soltar/rearme, esquinas, techo y cámara. Esperar su valoración y autorización expresa. No comenzar P0-B.**

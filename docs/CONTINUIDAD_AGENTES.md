@@ -136,4 +136,4 @@ A fecha 05/10/2026:
 - U4 aprobada manualmente el 04/10/2026 (último cierre técnico `3754e31`). U5 aprobado manualmente el 04/10/2026; U6 aprobado manualmente el 05/10/2026; migración cerrada. B0.1–B0.6 cerrados y aceptados por el autor como pipeline validado técnicamente y validado para proponer adopción. No hubo revisión manual de la build ni aprobación de arte final. P0-A autorizado, B/C/D no autorizados.
 - Codex CLI y Claude Code trabajan por turnos. Leer `docs/BLENDER_B0.md`, `docs/PROGRESO_U6.md` y los cierres de U3–U5, auditar el árbol y continuar desde el checkpoint; conservar los siete ajustes locales Unity excluidos.
 
-Punto de continuación vigente: [PROGRESO_P0](PROGRESO_P0.md) — plan del circuito aislado de movilidad/verticalidad. P0-A1–A5 autorizados y en curso; no iniciar P0-B/C/D al cerrar. B0 cerrado y publicado en `0b0b68c31dda803cf9cf566b3c96f369ed893ce3`.
+Punto de continuación vigente: [PROGRESO_P0](PROGRESO_P0.md) — circuito QA aislado de movilidad/verticalidad. P0-A1–A5 implementados y verificados; pendiente de prueba manual; no iniciar P0-B/C/D al cerrar. B0 cerrado y publicado en `0b0b68c31dda803cf9cf566b3c96f369ed893ce3`.

@@ -708,3 +708,9 @@ Decisión del autor: plan de U5 aprobado e implementación autorizada (pasos 1�
 - **Capturas:** 1280×720 y 1920×1080 en ES/EN (44), mundo sin interfaz una vez, 2560×1440 solo en el ensayo.
 - **Nombre:** `Mamporro-U3.exe` y «Mamporro U1» se conservan en U5; nombre definitivo y migración de la carpeta de guardado en U6.
 - U5 sigue sin incluir las mejoras de balance pedidas tras U4 ni contenido, mundo, escalada, animaciones finales, overhaul, Steam ni telemetría.
+
+## P0-A autorizado y prototipo aislado (05–06/10/2026)
+
+El autor autoriza A1–A5, con las decisiones registradas en [PROGRESO_P0](PROGRESO_P0.md): agarre mantenido con botón derecho, WASD libre sobre pared, Espacio separa, soltar/Shift/C libera y rearmado tras soltar. Sin E, stamina ni límite temporal; 4,5 m/s vertical y 3 m/s lateral como ensayo, diagonal normalizada, suelo 9,5 m/s. Paredes de estructuras/acantilados sólidos escalables; follaje, interactuables, enemigos, límites y caras inferiores de techos excluidos. Borde automático solo con cuerpo, soporte y trayectoria completos válidos. Cámara QA contra paredes/techos autorizada, conservando U3 como referencia.
+
+Build P0 y progreso QA separados de la entrega U6. Horda existente por suelo/rampas, centralizada; sin escalada enemiga, teleport ni rebalance. Los refugios inaccesibles y fallos de filtros/oclusión quedan registrados para una propuesta posterior. P0-A implementado y verificado técnicamente; falta la prueba manual del autor. **P0-B/C/D no autorizados. Detenerse aquí**, sin ampliar mundo, empezar P1/P2 ni adoptar VAT masivamente.
