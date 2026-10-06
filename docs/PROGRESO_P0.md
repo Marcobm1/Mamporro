@@ -8,7 +8,7 @@ Estado: **P0-A1–P0-A5 AUTORIZADOS Y EN CURSO**. Preparación del 05/10/2026 (C
 - U0–U6 cerrados y aprobados. Entrega `unity/Builds/Windows/MAMPORRO.exe` intacta; SHA-256 `96b492cb271111251fe42b8646e65370a1b7b566773a1e35b34c3f2d1ae70873`.
 - Trabajo publicado: A1 `508aa0f849eb536068359a90a6fc883a117d5937` y A2 `303b01c2a09a2d6bccb3f742f3f20ad5d8c97fe3`. Al retomar el 06/10 había WIP runtime A3 y lanzadores/build P0 sin publicar; conservado y revisado.
 - Siete ajustes Unity protegidos intactos y excluidos, según BLENDER_B0/PROGRESO_U6. No reset/clean/stash ni publicación accidental.
-- **Siguiente paso exacto:** A4, combate controlado y caracterización de amenaza vertical; después A5 build, medición y regresión final. A3 integrado y probado (455 Edit, 45 Play). Lanzadores y constructor de build heredados siguen locales y sin publicar hasta probarlos. Las cuatro decisiones están aprobadas; no volver a preguntarlas. P0-B/C/D no autorizados.
+- **Siguiente paso exacto:** A5, build QA, medición/evidencias y cierre para prueba manual. A3 `beb32093cd56b59bba2223199a287bea13a2c6ab` publicado; A4 probado (464 Edit, 45 Play). Lanzadores y constructor de build heredados siguen locales y sin publicar hasta probarlos. Las cuatro decisiones están aprobadas; no volver a preguntarlas. P0-B/C/D no autorizados.
 - Publicación de este plan: commit «Planifica el prototipo de movilidad y verticalidad», localizable con `git log --oneline -- docs/PROGRESO_P0.md`; fetch/push normal y comprobar remoto. Un paso verificable por commit durante implementación futura.
 
 Auditoría CMD antes de continuar:
@@ -127,3 +127,18 @@ Integración optativa `-p0-qa`: circuito visible sobre U3, misma sesión/PlayerB
 Pruebas reales: primera `scripts\u3.cmd play` 43/44 (la prueba heredada no soltaba agarre después de pausa); corregida la secuencia de entrada, segunda **45/45**, incluidos circuito optativo, cámara/pivote, borde, foco, muerte/reinicio y guardado personal intacto. `scripts\u3.cmd edit` **453/453**, después dos pruebas nuevas detectaron atasco real en escalón y salida de tejado (**453/455**). Corregido exclusivamente el barrido P0: escalón con elevación+avance libres y conservación de componente tangencial al tocar canto. Última pasada **455/455**. XML/log en `unity/TestResults/U3`; la regresión Play final se repetirá después de A4/A5.
 
 `powershell -NoProfile -ExecutionPolicy Bypass -File scripts\verify-historical-reference.ps1`: U0/U2/U3/U4 coinciden; instantánea conservada en `qa-results/reference-367eb89e22634e9a9f7068d7d36abf27`. Sin regenerar referencias ni editar src. No se ha creado ni ejecutado todavía una build P0. Los lanzadores heredados y P0Project permanecen WIP fuera de este commit hasta probarlos en A5. A4 pendiente: caracterizar steering XZ, filtros de altura y proyectiles sin modificar reglas de combate.
+
+## Sesión 06/10/2026 — A4, combate y límites medidos (Codex)
+
+Nueve casos nuevos `VerticalCombatTests`, sin cambios en reglas, estadísticas, director ni pools. Apariciones manuales F4 evitan cuerpos dentro de sólidos y pendientes no transitables; no se añade navegación ni escalada enemiga. `scripts\u3.cmd edit` **464/464**, `scripts\u3.cmd play` **45/45**, XML/log U3. La primera pasada Edit dio 461/464: las sondas de armas no esperaban su retardo inicial de 0,3 s y una hipótesis sobre `Height` infinito era incorrecta; las sondas nuevas se corrigieron conforme al código real, sin modificar esperados históricos ni combate.
+
+Resultados (tick 1/60, semilla P0QA, geometría fija):
+
+- Igual altura: contacto causa daño conservando valores originales.
+- Rampa directa oeste → cubierta de meseta: enemigo alcanza Y=4,25 y mata al jugador inmóvil a los 14,45 s. Esta ruta directa funciona; no demuestra búsqueda de rutas alternativas.
+- Tejado oriental a Y=6 sin acceso: **30,000 s sin daño de melee**, enemigo permanece en suelo. Es refugio QA inaccesible, no aceptable como solución definitiva de amenaza.
+- Barra no daña con 6 m de diferencia. Naftalina inflige 6 y Jersey 13 en la sonda de 0,4 s: daño XZ sin oclusión/filtro vertical correspondiente. Son defectos heredados, no amenaza válida ni justificación para ampliar el mundo.
+- Proyectil amistoso puede impactar un enemigo 6 m debajo (XZ). Proyectil hostil sigue `heightfield + 1`, atraviesa el sólido y **no** alcanza el tejado de 6 m; no se adapta balísticamente a su altura. No se cambian trayectorias en A4.
+- Charco de fregona conserva altura y no daña al enemigo bajo el tejado.
+
+Pendiente de P0-B (no autorizado): rutas compartidas/geometría y política de amenaza; los filtros/oclusión de ataques requieren propuesta explícita, no parche de daño, oro, spawns ni teleport. A5 medirá coste y recorridos del circuito, no resolverá estos defectos.

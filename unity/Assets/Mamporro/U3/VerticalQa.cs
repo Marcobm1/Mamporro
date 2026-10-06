@@ -70,9 +70,12 @@ namespace Mamporro.U3
         {
             // Apariciones controladas QA, sin alterar el director ni sus reglas.
             game.Run.Enemies.Clear();
-            for(int i=0;i<count;i++){
-                double angle=i*2.399963229728653,r=5+(i%20)*.7;
-                game.Run.Spawn(0,Math.Cos(angle)*r,Math.Sin(angle)*r-5);
+            for(int i=0,sample=0;i<count;sample++){
+                double angle=sample*2.399963229728653,r=5+(sample%40)*.5;
+                double x=Math.Cos(angle)*r,z=Math.Sin(angle)*r-5,y=Circuit.Terrain.HeightAt(x,z);
+                if(!Circuit.Collision.IsInside(x,z,1)||!Circuit.Queries.Clear(new Vec3(x,y,z),.5,1.6)
+                    ||Circuit.Terrain.NormalAt(x,z).Y<.7)continue;
+                game.Run.Spawn(0,x,z);i++;
             }
         }
         public string Status=>"P0 QA · RMB agarrar · WASD pared · Espacio separar · Shift/C soltar\n"+

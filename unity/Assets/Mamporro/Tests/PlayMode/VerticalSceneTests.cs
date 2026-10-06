@@ -21,6 +21,7 @@ namespace Mamporro.Tests
             Assert.That(g.Vertical,Is.Not.Null);Assert.That(g.Session.Automatic,Is.False);Assert.That(g.Session.Cheated,Is.True);
             Assert.That(g.World.Collision,Is.SameAs(g.Vertical.Circuit.Collision));Assert.That(g.Session.PhysicsStep,Is.Not.Null);
             g.Vertical.Spawn(300);Assert.That(g.Run.Enemies.Count,Is.EqualTo(300));
+            for(int i=0;i<300;i++)Assert.That(g.Vertical.Circuit.Queries.Clear(new Vec3(g.Run.Enemies.X[i],g.Run.Enemies.Y[i],g.Run.Enemies.Z[i]),.5,1.6),Is.True);
             g.BackToTitle();Assert.That(g.Run.Enemies.Count,Is.Zero);Assert.That(g.Vertical.Motion.Grabs,Is.Zero);
             VerticalQa.RequestedForTests=false;yield return Load();
             Assert.That(Game.Vertical,Is.Null);Assert.That(Game.Session.PhysicsStep,Is.Null);Assert.That(Game.Session.Automatic,Is.True);
