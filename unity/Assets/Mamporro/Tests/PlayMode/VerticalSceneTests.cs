@@ -40,7 +40,17 @@ namespace Mamporro.Tests
             Assert.That(Vector3.Distance(pivot,free),Is.LessThan(2),"recuperación gradual");
             var low=g.Vertical.CameraPivot(new Vector3(7.598f,5.4f,0),new Vector3(7.598f,7.3f,0));
             Assert.That(low.y,Is.LessThan(6.86f),"el pivote tampoco entra en el techo");
+            var under=g.Vertical.ClipCamera(new Vector3(7.598f,6.7f,0),new Vector3(1.598f,8.7f,0),1);
+            Assert.That(under.y,Is.LessThanOrEqualTo(6.7f));Assert.That(under.x,Is.LessThan(3),"brazo libre bajo el techo, sin encerrar al avatar");
             g.Vertical.Control=true;Assert.That(g.Vertical.ClipCamera(pivot,camera),Is.EqualTo(camera));
+            LogAssert.NoUnexpectedReceived();
+        }
+        [UnityTest] public IEnumerator RoofDepartureCountsOneFallAfterLosingHeight()
+        {
+            yield return Load();var g=Game;g.StartRun("P0QA");g.SetPaused(true);g.PlaceQa(new Vec3(13,6,3));
+            g.Vertical.ScriptedInput=new VerticalIntent{Movement=new PlayerIntent{MoveX=1}};
+            for(int i=0;i<110;i++)g.Session.PhysicsStep(default,1.0/60,9.5,0);
+            Assert.That(g.Body.Y,Is.EqualTo(0).Within(.01));Assert.That(g.Vertical.Falls,Is.EqualTo(1));
             LogAssert.NoUnexpectedReceived();
         }
         [UnityTest] public IEnumerator LedgeFocusDeathAndRestartKeepQaIsolated()
@@ -60,6 +70,8 @@ namespace Mamporro.Tests
             Assert.That(g.Vertical.Motion.Armed,Is.False);
             g.BackToTitle();Assert.That(g.Vertical.Motion.Grabs,Is.Zero);Assert.That(g.Vertical.Recoveries,Is.Zero);
             Assert.That(g.Body.X,Is.EqualTo(g.Vertical.Circuit.Start.X));
+            g.Vertical.Recover();Assert.That(g.Vertical.InvalidRoute,Is.True);Assert.That(g.Vertical.Recoveries,Is.EqualTo(1));
+            Assert.That(g.LastSettlement,Is.Null);
             LogAssert.NoUnexpectedReceived();
         }
     }

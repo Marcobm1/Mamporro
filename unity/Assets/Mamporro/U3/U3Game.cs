@@ -150,7 +150,9 @@ namespace Mamporro.U3
         static readonly int SnapId=Shader.PropertyToID("_RetroSnap"),DitherId=Shader.PropertyToID("_RetroDither"),SizeId=Shader.PropertyToID("_RetroSize");
 
         public VerticalQa Vertical {get;private set;}
+        public P0Capture VerticalCapture {get;private set;}
         int verticalLoad;
+        GUIStyle verticalStyle;
         void Awake()
         {
             if(VerticalQa.Requested){VerticalQa.RequireIsolatedSave();Vertical=new VerticalQa(this);}
@@ -191,6 +193,7 @@ namespace Mamporro.U3
             if(Array.IndexOf(args,"-u6-smoke")>=0)gameObject.AddComponent<DeliverySmoke>().Game=this;
             else if(Array.IndexOf(args,"-u3-visual-check")>=0)gameObject.AddComponent<U3VisualCheck>().Game=this;
             else if(Array.IndexOf(args,"-u3-benchmark")>=0){benchmark=gameObject.AddComponent<U3Benchmark>();benchmark.Game=this;}
+            if(Vertical!=null&&(Array.IndexOf(args,"-p0-benchmark")>=0||Array.IndexOf(args,"-p0-evidence")>=0))VerticalCapture=gameObject.AddComponent<P0Capture>();
         }
 
         void OnEnable()
@@ -272,6 +275,13 @@ namespace Mamporro.U3
             currentPosition=previousPosition=WebSpace.ToUnity(Body.X,Body.Y,Body.Z);yaw=0;pitch=DefaultPitch;intent=default;SnapCamera();
             ScriptedIntent=null;Session.SyncPlayer();
         }
+        // Preparación explícita de fixtures y rescates P0, nunca transición de gameplay.
+        public void PlaceQa(Vec3 point)
+        {
+            if(Vertical==null)throw new InvalidOperationException("Solo QA P0");
+            Vertical.Suspend();Body.PlaceAt(point.X,point.Y,point.Z);Session.SyncPlayer();
+            previousPosition=currentPosition=WebSpace.ToUnity(Body.X,Body.Y,Body.Z);
+        }
 
         // Pruebas y ensayos: intención fija durante los ticks siguientes (sustituye al teclado).
         [NonSerialized] public PlayerIntent? ScriptedIntent;
@@ -290,8 +300,9 @@ namespace Mamporro.U3
         // al volver sigue en pausa, con la música atenuada hasta Continuar.
         void OnGUI()
         {
-            if(Vertical==null||State!=Screen.Playing)return;
-            GUI.Box(new Rect(12,70,660,80),Vertical.Status);
+            if(Vertical==null||State!=Screen.Playing||HideInterface)return;
+            if(verticalStyle==null)verticalStyle=new GUIStyle(GUI.skin.box){fontSize=16,alignment=TextAnchor.UpperLeft};
+            GUI.Box(new Rect(12,180,790,100),Vertical.Status,verticalStyle);
         }
         void OnApplicationFocus(bool focus){if(!focus&&State==Screen.Playing)SetPaused(true);Audio?.SetFocused(focus);}
         // Modo de música según el estado (Game.draw web): pausa y cartas atenúan; jefe o enjambre, intensa.
@@ -385,7 +396,7 @@ namespace Mamporro.U3
         void Update()
         {
             if(target==null||previousWidth!=UnityEngine.Screen.width||previousHeight!=UnityEngine.Screen.height)Resize();
-            var k=Keyboard.current;var mouse=Mouse.current;
+            var k=VerticalCapture==null?Keyboard.current:null;var mouse=VerticalCapture==null?Mouse.current:null;
             if(k!=null){
                 if(k.escapeKey.wasPressedThisFrame&&State==Screen.Playing&&!Cards.Visible)SetPaused(!Paused);
                 if(k.f8Key.wasPressedThisFrame)LoadWorld(Seed);
@@ -397,6 +408,7 @@ namespace Mamporro.U3
                 if(Vertical!=null&&!Paused){
                     if(k.f4Key.wasPressedThisFrame){verticalLoad=(verticalLoad+1)%4;Vertical.Spawn(new[]{0,300,500,750}[verticalLoad]);}
                     if(k.f5Key.wasPressedThisFrame){Vertical.Control=!Vertical.Control;Vertical.Suspend();}
+                    if(k.f7Key.wasPressedThisFrame)Vertical.Recover();
                 }
                 PresentationShortcuts(k);
             }
@@ -477,6 +489,7 @@ namespace Mamporro.U3
             logicWatch.Restart();
             Session.Step(intent,1.0/60,WebYaw,interactPressed);interactPressed=false;CombatView.Step(1.0/60);
             LogicMs=logicWatch.Elapsed.TotalMilliseconds;benchmark?.RecordTick(LogicMs);
+            VerticalCapture?.RecordTick(LogicMs);
             intent.JumpPressed=intent.SlidePressed=false;
             currentPosition=WebSpace.ToUnity(Body.X,Body.Y,Body.Z);
             if(Session.Finished){FinishRun();return;}

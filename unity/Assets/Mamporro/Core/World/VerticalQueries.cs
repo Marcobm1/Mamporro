@@ -105,7 +105,11 @@ namespace Mamporro.Core
             foreach(var s in solids)if(s.Id==wall.Id){solid=s;break;}
             if(solid==null||!solid.Climbable||Math.Abs(wall.Normal.Y)>.01)return false;
             lift=new Vec3(feet.X,solid.Max.Y+.002,feet.Z);
-            top=new Vec3(lift.X-wall.Normal.X*(radius*2+.02),lift.Y,lift.Z-wall.Normal.Z*(radius*2+.02));
+            // El agarre puede estar separado hasta Reach de la cara. El apoyo se
+            // calcula desde esa cara, no desde la distancia circunstancial del cuerpo.
+            double x=wall.Normal.X<-.5?solid.Min.X+radius+.02:wall.Normal.X>.5?solid.Max.X-radius-.02:lift.X;
+            double z=wall.Normal.Z<-.5?solid.Min.Z+radius+.02:wall.Normal.Z>.5?solid.Max.Z-radius-.02:lift.Z;
+            top=new Vec3(x,lift.Y,z);
             return Clear(feet,radius,height)&&Clear(lift,radius,height)&&Clear(top,radius,height)
                 &&!Sweep(feet,lift,radius,height,out _)&&!Sweep(lift,top,radius,height,out _)
                 &&Support(top,radius,.003,out _);

@@ -115,7 +115,7 @@ namespace Mamporro.Core
                         bool moved=Move(target);
                         if(v>0)ClimbSeconds+=dt;else if(v<0)DescendSeconds+=dt;
                         if(Length(Sub(Position,before))<1e-6&&(Math.Abs(v)+Math.Abs(h)>.1)){
-                            stalled+=dt;if(stalled>=.35){if(stalled-dt<.35)Stalls++;LastFailure="intención sin avance";}
+                            stalled+=dt;if(stalled>=.35){if(stalled-dt<.35){Stalls++;if(v>0)LedgeFailures++;}LastFailure=v>0?"ascenso/borde bloqueado":"intención sin avance";}
                         }else stalled=0;
                         double ground=world.GroundHeight(Body.X,Body.Z,Body.Y+.01);
                         if(v<0&&Body.Y<=ground){Body.Y=ground;Release(false);Body.Grounded=true;State=VerticalState.Ground;}

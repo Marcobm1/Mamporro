@@ -8,7 +8,7 @@ Estado: **P0-A1–P0-A5 AUTORIZADOS Y EN CURSO**. Preparación del 05/10/2026 (C
 - U0–U6 cerrados y aprobados. Entrega `unity/Builds/Windows/MAMPORRO.exe` intacta; SHA-256 `96b492cb271111251fe42b8646e65370a1b7b566773a1e35b34c3f2d1ae70873`.
 - Trabajo publicado: A1 `508aa0f849eb536068359a90a6fc883a117d5937` y A2 `303b01c2a09a2d6bccb3f742f3f20ad5d8c97fe3`. Al retomar el 06/10 había WIP runtime A3 y lanzadores/build P0 sin publicar; conservado y revisado.
 - Siete ajustes Unity protegidos intactos y excluidos, según BLENDER_B0/PROGRESO_U6. No reset/clean/stash ni publicación accidental.
-- **Siguiente paso exacto:** A5, build QA, medición/evidencias y cierre para prueba manual. A3 `beb32093cd56b59bba2223199a287bea13a2c6ab` publicado; A4 probado (464 Edit, 45 Play). Lanzadores y constructor de build heredados siguen locales y sin publicar hasta probarlos. Las cuatro decisiones están aprobadas; no volver a preguntarlas. P0-B/C/D no autorizados.
+- **Siguiente paso exacto:** finalizar tablas de medición normal/Development y cierre A5 para prueba manual. A3 `beb32093cd56b59bba2223199a287bea13a2c6ab` y A4 `42509c28b7994c820bf2d4c98339e7e3fafe35ad` publicados. A5 implementado: 467 Edit/46 Play, builds y lanzadores probados, evidencias válidas; ver registro inferior. Las cuatro decisiones están aprobadas; no volver a preguntarlas. P0-B/C/D no autorizados.
 - Publicación de este plan: commit «Planifica el prototipo de movilidad y verticalidad», localizable con `git log --oneline -- docs/PROGRESO_P0.md`; fetch/push normal y comprobar remoto. Un paso verificable por commit durante implementación futura.
 
 Auditoría CMD antes de continuar:
@@ -142,3 +142,17 @@ Resultados (tick 1/60, semilla P0QA, geometría fija):
 - Charco de fregona conserva altura y no daña al enemigo bajo el tejado.
 
 Pendiente de P0-B (no autorizado): rutas compartidas/geometría y política de amenaza; los filtros/oclusión de ataques requieren propuesta explícita, no parche de daño, oro, spawns ni teleport. A5 medirá coste y recorridos del circuito, no resolverá estos defectos.
+
+## A5 — instrumentación, builds y lanzador verificados, 06/10/2026 (Codex)
+
+A4 publicado en `42509c28b7994c820bf2d4c98339e7e3fafe35ad`. Añadidos P0Capture (CSV de ruta/fotogramas, 10+30 s por carga, capturas con validación de píxeles), P0Project con define exclusivo `MAMPORRO_P0_QA`, scripts/p0.cmd/ps1, métricas y rescate F7 que invalida sin liquidación. La build QA entra siempre en P0; el código de arranque sin argumentos usa `%TEMP%/MamporroP0QA/ManualSave` (esa modalidad no se ha probado manualmente). El lanzador probado usa `unity/TestResults/P0/ManualSave`.
+
+Correcciones descubiertas por las pruebas: apoyo de borde calculado desde la cara sólida, también al agarrarse al máximo alcance; brazo horizontal libre bajo techo sin cambiar azimut; contador de caída confirmado tras perder 5 cm, evitando contar varias veces la alternancia suelo/aire al abandonar un canto. No cambia el movimiento por corregir ese contador. Añadidas pruebas de timeout, paridad de llano, máximo alcance, cámara y caída única. **Edit 467/467 y Play 46/46**, `unity/TestResults/P0/edit-final.xml` y `play-final.xml`; suites completas U3 ejecutadas realmente. Referencias U0/U2/U3/U4 verificadas, sin regenerar esperados ni tocar src.
+
+`scripts\p0.cmd build` y `devbuild` completados: Windows x64 Mono normal en `unity/Builds/P0/MAMPORRO-P0.exe`, Development en `unity/Builds/P0Dev/MAMPORRO-P0.exe`. `scripts\p0.cmd jugar` probado desde la raíz: salida 0, PID 25652, ruta QA confirmada en `manual.log`, ventana cerrada con `CloseMainWindow=True`, progreso personal idéntico en `personal-before.json`/`personal-after.json`. No equivale a aprobación manual de sensación/controles. Entrega U6 conserva su SHA y los siete ajustes protegidos sus huellas históricas.
+
+Evidencia final: `unity/TestResults/P0/Evidence/20261006T172001`, 10 PNG reales, JSON válido y CSV de borde/techo. Revisadas las imágenes de esquema, volumen, transición, tejado y techo. Fixtures independientes salvo la secuencia física del borde; no se presentan como un recorrido manual continuo. `scripts\p0.cmd evidence` probado; `benchmark` y `devdiag` usan el mismo arnés con 0/300/500/750, ventanas visibles y rechazo de otra instancia P0.
+
+Intentos descartados, conservados localmente: build restringida falló por licencia; player restringido falló antes de obtener persistentDataPath y su proceso residual se cerró antes de medir. Evidencia oculta `114853` dio PNG negros y fue rechazada aunque el arnés inicial aceptaba la física; se añadió validación visual. `115116` reveló menú sobre el esquema y cámara bajo techo demasiado próxima, corregidos. Medida `Normal/20261006T120043` interrumpida por atasco real de reenganche a máxima distancia y proceso residual: no se usa. `Normal/20261006T171212` recorre bien las cuatro cargas, pero sobrerregistra caídas: sustituida por la pasada final tras corregir y probar el contador.
+
+**Siguiente paso de esta pieza:** terminar medidas finales normal/Development, registrar tablas y cierre técnico; no modificar más gameplay ni iniciar P0-B. Los binarios actuales indican `42509c2…+P0-WIP`: contienen el código de esta pieza antes de su commit; el cierre identificará el commit equivalente y las huellas de assemblies.

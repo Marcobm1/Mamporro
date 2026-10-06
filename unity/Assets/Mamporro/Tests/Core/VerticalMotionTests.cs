@@ -51,6 +51,12 @@ namespace Mamporro.Tests
             Assert.That(m.LedgeSuccess,Is.EqualTo(1));Assert.That(transitionTicks,Is.GreaterThan(2));
             Assert.That(b.Y,Is.EqualTo(6).Within(.01));Assert.That(b.X,Is.GreaterThan(8.4));
         }
+        [Test] public void EdgeSupportsWholeBodyWhenGripStartsAtMaximumReach()
+        {
+            var m=Create(out var b);b.X=7.43;
+            for(int i=0;i<160;i++)m.Step(Grip(1),1.0/60);
+            Assert.That(m.LedgeSuccess,Is.EqualTo(1));Assert.That(b.X,Is.GreaterThan(8.4));Assert.That(m.LedgeFailures,Is.Zero);
+        }
         [Test] public void BlockedEdgeDoesNotTeleportThroughCeiling()
         {
             var m=Create(out var b);b.Z=0;m.Step(Grip(),1.0/60);
@@ -58,6 +64,12 @@ namespace Mamporro.Tests
             Assert.That(m.LedgeSuccess,Is.Zero);Assert.That(b.Y+PlayerTuning.Default.Height,Is.LessThanOrEqualTo(7.00001));
             Assert.That(m.Stalls,Is.GreaterThan(0));
             var input=Grip();input.Movement.JumpPressed=true;m.Step(input,1.0/60);Assert.That(m.State,Is.EqualTo(VerticalState.Air));
+        }
+        [Test] public void LedgeTimeoutReleasesAndRequiresRearming()
+        {
+            var m=Create(out _);m.Tuning.TransitionTimeout=.01;m.Step(Grip(),1.0/60);
+            for(int i=0;i<100&&m.LedgeFailures==0;i++)m.Step(Grip(1),1.0/60);
+            Assert.That(m.LedgeFailures,Is.EqualTo(1));Assert.That(m.State,Is.EqualTo(VerticalState.Air));Assert.That(m.Armed,Is.False);
         }
         [Test] public void RepeatedInputsProduceIdenticalMotion()
         {
@@ -70,6 +82,16 @@ namespace Mamporro.Tests
             var c=new VerticalCircuit();var b=new PlayerBody();b.PlaceAt(-25,0,0);var m=new VerticalMotion(b,c.Collision,c.Queries);
             for(int i=0;i<125;i++)m.Step(new VerticalIntent{Movement=new PlayerIntent{MoveX=1}},1.0/60);
             Assert.That(b.X,Is.GreaterThan(-9));Assert.That(b.Y,Is.EqualTo(4.25).Within(.01));Assert.That(m.Grabs,Is.Zero);
+        }
+        [Test] public void FlatGroundControlMatchesOriginalPhysicsAtFixedTicks()
+        {
+            var c=new VerticalCircuit();var original=new PlayerBody();var qa=new PlayerBody();original.PlaceAt(0,0,-10);qa.PlaceAt(0,0,-10);
+            var motion=new VerticalMotion(qa,c.Collision,c.Queries);var input=new PlayerIntent{MoveX=1};
+            for(int i=0;i<60;i++){
+                PlayerPhysics.StepInCrowd(original,input,c.Collision,PlayerTuning.Default,9.5,0,1.0/60);
+                motion.Step(new VerticalIntent{Movement=input},1.0/60);
+                Assert.That(qa.X,Is.EqualTo(original.X));Assert.That(qa.Y,Is.EqualTo(original.Y));Assert.That(qa.Z,Is.EqualTo(original.Z));
+            }
         }
         [Test] public void RoofExitFallsAndCornersAllowSeparationWithoutPenetration()
         {
