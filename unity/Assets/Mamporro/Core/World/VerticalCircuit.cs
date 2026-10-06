@@ -19,6 +19,8 @@ namespace Mamporro.Core
                 double px=x-size/2,pz=z-size/2;
                 if(pz>=-4&&pz<=4&&px>=-24&&px<=-4)
                     heights[z*(cells+1)+x]=(float)(px<-12?(px+24)/3:4);
+                // Foso de ensayo, con ruta llana alrededor de sus extremos.
+                if(px>=16&&px<=22&&pz>=8&&pz<=14)heights[z*(cells+1)+x]=-6;
             }
             Terrain=new Heightfield(size,cells,heights);
             Queries=new VerticalQueries(
@@ -39,6 +41,18 @@ namespace Mamporro.Core
                     (s.Max.X-s.Min.X)/2,(s.Max.Z-s.Min.Z)/2,0,s.Min.Y,s.Max.Y,true));
             }
             Collision=new WorldCollision(Terrain,new ColliderGrid(colliders,size/2),29);
+        }
+        public WorldData Data()
+        {
+            var props=new PropSet();
+            for(int i=0;i<Queries.Count;i++){
+                var b=Queries.Solid(i);uint color=b.Climbable?0x957954u:0x705c80u;
+                props.Parts.Add(new Part{Shape="box",Material="stone",Color=color,
+                    Position=new[]{(b.Min.X+b.Max.X)/2,(b.Min.Y+b.Max.Y)/2,(b.Min.Z+b.Max.Z)/2},
+                    Size=new[]{b.Max.X-b.Min.X,b.Max.Y-b.Min.Y,b.Max.Z-b.Min.Z},Rotation=new double[3]});
+            }
+            return new WorldData{Heightfield=Terrain,Collision=Collision,Colliders=Collision.Grid.Colliders,Props=props,
+                Sites=new List<Site>(),Interactables=new List<InteractableSpot>(),Decorations=new List<Decoration>(),GroundCover=new GroundCover()};
         }
         static VerticalSolid Box(int id,VerticalSurfaceKind kind,double x,double y,double z,double xx,double yy,double zz)=>
             new VerticalSolid(id,kind,new Vec3(x,y,z),new Vec3(xx,yy,zz));

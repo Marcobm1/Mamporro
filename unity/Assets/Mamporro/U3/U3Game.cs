@@ -149,8 +149,11 @@ namespace Mamporro.U3
         ProfilerRecorder drawCalls,triangles;
         static readonly int SnapId=Shader.PropertyToID("_RetroSnap"),DitherId=Shader.PropertyToID("_RetroDither"),SizeId=Shader.PropertyToID("_RetroSize");
 
+        public VerticalQa Vertical {get;private set;}
+        int verticalLoad;
         void Awake()
         {
+            if(VerticalQa.Requested){VerticalQa.RequireIsolatedSave();Vertical=new VerticalQa(this);}
             Application.runInBackground=true;
             QualitySettings.SetQualityLevel(0);QualitySettings.vSyncCount=0;Application.targetFrameRate=-1;
             Time.fixedDeltaTime=1f/60;Time.maximumDeltaTime=.1f;
@@ -207,7 +210,7 @@ namespace Mamporro.U3
         // Mapa nuevo con esa semilla y vuelta a la pantalla de inicio.
         public void LoadWorld(string seed)
         {
-            Seed=seed;Renderer.Build(WorldData.Generate(seed),seed);
+            Seed=seed;Renderer.Build(Vertical==null?WorldData.Generate(seed):Vertical.Circuit.Data(),seed);
             BeginRun();State=Screen.Title;
         }
         // Partida nueva en el mapa actual con el personaje y la duración elegidos (beginRun).
@@ -219,7 +222,7 @@ namespace Mamporro.U3
             Session=new WorldRun(World,Seed,Array.Find(Catalog.Characters,c=>c.id==runSetup.Character),this,Minutes);
             ProgressSession.Apply(runSetup,Session);Session.Combat.Feedback=Feedback;
             FreeCamera=false;DebugVisible=false;
-            ResetPlayer();CombatView.Clear();Feedback.Clear();Cards.Hide();Hud.Reset(World);eventCursor=0;lastHp=Run.Hp;
+            ResetPlayer();Vertical?.Bind();CombatView.Clear();Feedback.Clear();Cards.Hide();Hud.Reset(World);eventCursor=0;lastHp=Run.Hp;
             Screens.ShowResults(false);SetPaused(true);UpdateHelp();
         }
         // Jugar desde el inicio: la semilla escrita (normalizada) cambia el mapa si es otra.
@@ -238,7 +241,7 @@ namespace Mamporro.U3
             // Una sola liquidación por partida terminada: el id de partida y lastRun la protegen
             // aunque se vuelva a llamar; abandonar (inicio, F8) nunca pasa por aquí.
             if(State==Screen.Results)return;
-            LastSettlement=Progress.Settle(ProgressSession.Summary(Session,runSetup.RunId));
+            LastSettlement=Vertical==null?Progress.Settle(ProgressSession.Summary(Session,runSetup.RunId)):null;
             // Como finishRun web: fuera los efectos pendientes y suena el desenlace.
             Audio.ClearEffects();Audio.Play(Run.Victory?"victory":"defeat");
             State=Screen.Results;SetPaused(true);Screens.ShowResults(true);
@@ -265,6 +268,7 @@ namespace Mamporro.U3
         public void ResetPlayer()
         {
             var hf=World.Heightfield;Body.PlaceAt(0,hf.HeightAt(0,0),0);Body.Facing=0;
+            if(Vertical!=null){var start=Vertical.Circuit.Start;Body.PlaceAt(start.X,start.Y,start.Z);}
             currentPosition=previousPosition=WebSpace.ToUnity(Body.X,Body.Y,Body.Z);yaw=0;pitch=DefaultPitch;intent=default;SnapCamera();
             ScriptedIntent=null;Session.SyncPlayer();
         }
@@ -278,12 +282,17 @@ namespace Mamporro.U3
             if(!paused&&(Run.Choosing||Session.Finished||State==Screen.Results))return;
             // Desde el inicio, continuar equivale a jugar con la partida preparada.
             if(!paused&&State==Screen.Title)State=Screen.Playing;
-            Paused=paused;intent=default;interactPressed=false;
+            Paused=paused;intent=default;interactPressed=false;if(paused)Vertical?.Suspend();
             Cursor.lockState=paused?CursorLockMode.None:CursorLockMode.Locked;Cursor.visible=paused;
             RefreshStatus();
         }
         // Sin foco: la partida se pausa y el audio se silencia sin cola de efectos (decisión U5);
         // al volver sigue en pausa, con la música atenuada hasta Continuar.
+        void OnGUI()
+        {
+            if(Vertical==null||State!=Screen.Playing)return;
+            GUI.Box(new Rect(12,70,660,80),Vertical.Status);
+        }
         void OnApplicationFocus(bool focus){if(!focus&&State==Screen.Playing)SetPaused(true);Audio?.SetFocused(focus);}
         // Modo de música según el estado (Game.draw web): pausa y cartas atenúan; jefe o enjambre, intensa.
         public MusicMode CurrentMusicMode=>State==Screen.Title?MusicMode.Menu:State==Screen.Results?MusicMode.Results:
@@ -384,6 +393,10 @@ namespace Mamporro.U3
                 // Como la web: con el panel abierto y jugando (sin pausa ni cartas).
                 if(DebugVisible&&State==Screen.Playing&&!Paused&&!Cards.Visible){
                     for(int n=1;n<=8;n++)if(k[(Key)((int)Key.Digit1+n-1)].wasPressedThisFrame){QaAction(n);break;}
+                }
+                if(Vertical!=null&&!Paused){
+                    if(k.f4Key.wasPressedThisFrame){verticalLoad=(verticalLoad+1)%4;Vertical.Spawn(new[]{0,300,500,750}[verticalLoad]);}
+                    if(k.f5Key.wasPressedThisFrame){Vertical.Control=!Vertical.Control;Vertical.Suspend();}
                 }
                 PresentationShortcuts(k);
             }
@@ -514,6 +527,7 @@ namespace Mamporro.U3
             // El pivote baja al deslizarse, con suavizado.
             pivotHeight=Mathf.Lerp(pivotHeight,Body.Sliding?PivotSliding:PivotHeight,Damp(8,dt));
             var pivot=player+Vector3.up*pivotHeight;var dir=Quaternion.Euler(pitch,yaw,0)*Vector3.forward;
+            if(Vertical!=null)pivot=Vertical.CameraPivot(player,pivot);
             // Brazo recorrido en 16 pasos desde el jugador: si el terreno lo corta, la cámara se acerca
             // de golpe (mínimo 1,1 m) y vuelve a alejarse con suavidad. Solo choca con el terreno, como la web.
             float allowed=ArmLength,step=ArmLength/CollisionSteps;
@@ -529,6 +543,7 @@ namespace Mamporro.U3
                 cameraPos+=new Vector3((float)(shakeRandom.NextDouble()*2-1)*s,(float)(shakeRandom.NextDouble()*2-1)*s,(float)(shakeRandom.NextDouble()*2-1)*s);
                 trauma=Mathf.Max(0,trauma-dt*2.5f);
             }
+            if(Vertical!=null)cameraPos=Vertical.ClipCamera(pivot,cameraPos,dt);
             worldCamera.transform.SetPositionAndRotation(cameraPos,Quaternion.LookRotation(pivot+dir-cameraPos));
             // Sensación de velocidad: el FOV se abre al superar la velocidad normal.
             float moveSpeed=(float)(Tuning.PlayerBaseMoveSpeed*(Session!=null?Run.Stats[Stat.moveSpeed]:1));

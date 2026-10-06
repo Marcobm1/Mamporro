@@ -28,6 +28,8 @@ namespace Mamporro.Core
         public bool Finished=>Combat.Dead||(Combat.Victory&&VictoryDelay<=0);
         // false = sin director (pruebas de combate controladas).
         public bool Automatic=true;
+        // P0 QA optativo: misma sesión/combate, con extensión de movimiento. Nulo conserva U3.
+        public Action<PlayerIntent,double,double,double> PhysicsStep;
         // Se han usado trucos de depuración (run.cheated).
         public bool Cheated;
         double viewYaw;
@@ -56,8 +58,9 @@ namespace Mamporro.Core
         public void Step(PlayerIntent intent,double dt,double viewYaw=0,bool interact=false)
         {
             if(Combat.Paused||(Combat.Choosing&&Combat.HoldWhileChoosing)||Finished)return;
-            PlayerPhysics.StepInCrowd(Body,intent,World.Collision,PlayerTuning.Default,
+            if(PhysicsStep==null)PlayerPhysics.StepInCrowd(Body,intent,World.Collision,PlayerTuning.Default,
                 Tuning.PlayerBaseMoveSpeed*Combat.Stats[Stat.moveSpeed],Combat.CrowdSlow,dt);
+            else PhysicsStep(intent,dt,Tuning.PlayerBaseMoveSpeed*Combat.Stats[Stat.moveSpeed],Combat.CrowdSlow);
             if(interact)Interact();
             if(!Combat.Victory){
                 SyncPlayer();this.viewYaw=viewYaw;Combat.Step(dt);

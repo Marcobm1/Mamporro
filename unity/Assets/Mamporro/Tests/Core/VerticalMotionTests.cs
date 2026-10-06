@@ -65,5 +65,22 @@ namespace Mamporro.Tests
             for(int i=0;i<150;i++){var input=Grip(i%50<30?1:0);a.Step(input,1.0/60);b.Step(input,1.0/60);}
             Assert.That(x.X,Is.EqualTo(y.X));Assert.That(x.Y,Is.EqualTo(y.Y));Assert.That(x.Z,Is.EqualTo(y.Z));Assert.That(a.State,Is.EqualTo(b.State));
         }
+        [Test] public void RampAndSmallStepRemainWalkableInQa()
+        {
+            var c=new VerticalCircuit();var b=new PlayerBody();b.PlaceAt(-25,0,0);var m=new VerticalMotion(b,c.Collision,c.Queries);
+            for(int i=0;i<125;i++)m.Step(new VerticalIntent{Movement=new PlayerIntent{MoveX=1}},1.0/60);
+            Assert.That(b.X,Is.GreaterThan(-9));Assert.That(b.Y,Is.EqualTo(4.25).Within(.01));Assert.That(m.Grabs,Is.Zero);
+        }
+        [Test] public void RoofExitFallsAndCornersAllowSeparationWithoutPenetration()
+        {
+            var c=new VerticalCircuit();var b=new PlayerBody();b.PlaceAt(13,6,3);var m=new VerticalMotion(b,c.Collision,c.Queries);
+            for(int i=0;i<80;i++){m.Step(new VerticalIntent{Movement=new PlayerIntent{MoveX=1}},1.0/60);Assert.That(c.Queries.Clear(new Vec3(b.X,b.Y,b.Z),.4,1.55),Is.True);}
+            Assert.That(b.Y,Is.LessThan(5));Assert.That(m.Grabs,Is.Zero);
+            b.PlaceAt(7.598,1,12);b.Grounded=false;b.Facing=-System.Math.PI/2;m=new VerticalMotion(b,c.Collision,c.Queries);
+            for(int i=0;i<100;i++)m.Step(new VerticalIntent{GrabHeld=true,WallHorizontal=-1},1.0/60);
+            Assert.That(c.Queries.Clear(new Vec3(b.X,b.Y,b.Z),.4,1.55),Is.True);Assert.That(m.Stalls,Is.GreaterThan(0));
+            m.Step(new VerticalIntent{GrabHeld=true,Movement=new PlayerIntent{JumpPressed=true}},1.0/60);
+            Assert.That(m.State,Is.EqualTo(VerticalState.Air));Assert.That(m.Armed,Is.False);
+        }
     }
 }

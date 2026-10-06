@@ -66,6 +66,29 @@ namespace Mamporro.Core
             if(!queries.Clear(p,physics.Radius,physics.Height))return false;
             Place(p);return fraction>.999;
         }
+        void Walk(Vec3 target,bool wasGrounded)
+        {
+            var from=Position;
+            if(!queries.Sweep(from,target,physics.Radius,physics.Height,out var hit)){Move(target);return;}
+            // Escalón U3: probar elevación y avance completos antes de aceptar el paso.
+            if(wasGrounded&&Math.Abs(hit.Normal.Y)<.01){
+                for(int i=0;i<queries.Count;i++){
+                    var s=queries.Solid(i);double rise=s.Max.Y-from.Y;
+                    if(s.Id!=hit.Id||rise<=0||rise>physics.StepHeight)continue;
+                    var lift=new Vec3(from.X,s.Max.Y+.002,from.Z);
+                    var end=new Vec3(target.X,Math.Max(target.Y,lift.Y),target.Z);
+                    if(queries.Clear(end,physics.Radius,physics.Height)&&!queries.Sweep(from,lift,physics.Radius,physics.Height,out _)
+                        &&!queries.Sweep(lift,end,physics.Radius,physics.Height,out _)){Place(end);return;}
+                }
+            }
+            Move(target);
+            // Conservar la componente tangencial: al salir del tejado el cuerpo todavía
+            // puede rozar su canto. Frenar todo el vector lo dejaría clavado en el borde.
+            var remaining=Sub(target,Position);double into=remaining.X*hit.Normal.X+remaining.Y*hit.Normal.Y+remaining.Z*hit.Normal.Z;
+            if(into<0)Move(new Vec3(Body.X+remaining.X-hit.Normal.X*into,Body.Y+remaining.Y-hit.Normal.Y*into,Body.Z+remaining.Z-hit.Normal.Z*into));
+            if(hit.Normal.Y<-.5&&Body.Vy>0)Body.Vy=0;
+            if(hit.Normal.Y>.5&&Body.Vy<=0){Body.Vy=0;Body.Grounded=true;}
+        }
         public void Step(VerticalIntent input,double dt,double moveSpeed=9.5,double crowdSlow=0)
         {
             if(dt<=0||dt>.1||double.IsNaN(dt))throw new ArgumentOutOfRangeException(nameof(dt));
@@ -103,8 +126,9 @@ namespace Mamporro.Core
                 }
             }else{
                 // Mantener exactamente PlayerPhysics cuando no está escalando; barrido adicional QA tras resolver suelo.
+                bool wasGrounded=Body.Grounded;
                 PlayerPhysics.StepInCrowd(Body,input.Movement,world,physics,moveSpeed,crowdSlow,dt);
-                var target=Position;Place(before);Move(target);
+                var target=Position;Place(before);Walk(target,wasGrounded);
                 if(Body.Y<target.Y-1e-6&&Body.Vy>0)Body.Vy=0;
                 State=Body.Grounded?VerticalState.Ground:VerticalState.Air;
                 if(input.GrabHeld&&Armed){
