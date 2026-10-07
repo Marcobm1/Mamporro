@@ -74,7 +74,7 @@ namespace Mamporro.U3
             if(phase==4&&b.Grounded){lap=m.LedgeSuccess;phase=0;}
             if(phase==3)return new VerticalIntent{Movement=new PlayerIntent{MoveX=-1}};
             if(phase==4)return default;
-            return new VerticalIntent{GrabHeld=true,WallVertical=phase==1?-1:1,Movement=new PlayerIntent{MoveX=1}};
+            return new VerticalIntent{WallVertical=phase==1?-1:1,Movement=new PlayerIntent{MoveX=1}};
         }
         void Update()
         {
@@ -156,11 +156,11 @@ namespace Mamporro.U3
             }
             yield return new WaitForSeconds(2);yield return Shot("05-caida-tejado");running=false;SaveRoute("route-edge");
             game.SetPaused(true);game.HideInterface=true;game.FreeCamera=true;game.worldCamera.transform.SetPositionAndRotation(new Vector3(0,55,0),Quaternion.Euler(90,0,0));yield return null;yield return Shot("00-esquema-circuito");
-            Prepare(new Vec3(7.598,0,0));game.FaceTowards(14,0);game.Vertical.InputProvider=()=>new VerticalIntent{GrabHeld=true,WallVertical=1,Movement=new PlayerIntent{MoveX=1}};
+            Prepare(new Vec3(7.598,0,0));game.FaceTowards(14,0);game.Vertical.InputProvider=()=>new VerticalIntent{WallVertical=1,Movement=new PlayerIntent{MoveX=1}};
             nr=0;running=true;yield return new WaitForSeconds(3);yield return Shot("06-techo-bloqueado");
             bool blocked=game.Vertical.Motion.Stalls>0&&game.Vertical.Motion.LedgeSuccess==0;
             game.Vertical.Recover();RecordTick(0);yield return Shot("07-rescate-invalida");bool rescued=game.Vertical.InvalidRoute;running=false;SaveRoute("route-blocked");
-            Prepare(new Vec3(7.598,1,12));game.FaceTowards(12,12);game.Vertical.InputProvider=()=>new VerticalIntent{GrabHeld=true,WallHorizontal=-1,Movement=new PlayerIntent{MoveX=1}};
+            Prepare(new Vec3(7.598,1,12));game.FaceTowards(12,12);game.Vertical.InputProvider=()=>new VerticalIntent{WallHorizontal=-1,Movement=new PlayerIntent{MoveX=1}};
             yield return new WaitForSeconds(2);yield return Shot("08-esquina");
             Prepare(new Vec3(11,6,3));game.Vertical.Spawn(300);game.FaceTowards(6,3);yield return new WaitForSeconds(2);yield return Shot("09-horda-desde-tejado");
             game.SetPaused(true);

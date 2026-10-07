@@ -30,10 +30,17 @@ namespace Mamporro.Tests
         }
         [TestCase(VerticalSurfaceKind.Structure,true)] [TestCase(VerticalSurfaceKind.Cliff,true)]
         [TestCase(VerticalSurfaceKind.Foliage,false)] [TestCase(VerticalSurfaceKind.Interactable,false)] [TestCase(VerticalSurfaceKind.Boundary,false)]
-        public void ClimbableKindsAreExplicit(VerticalSurfaceKind kind,bool expected)
+        [TestCase(VerticalSurfaceKind.Enemy,false)]
+        public void WallKindsUseExplicitExclusions(VerticalSurfaceKind kind,bool expected)
         {
             var w=new VerticalQueries(Box(1,0,0,-2,2,4,2,kind));
             Assert.That(w.Wall(new Vec3(-.5,1,0),new Vec3(1,0,0),.4,1.55,.3,out _),Is.EqualTo(expected));
+        }
+        [Test] public void NewSolidIsClimbableWithoutConfiguration()
+        {
+            var q=new VerticalQueries(new VerticalSolid(99,new Vec3(0,0,-2),new Vec3(2,4,2)));
+            Assert.That(q.Wall(new Vec3(-.5,1,0),new Vec3(1,0,0),.4,1.55,.18,out _),Is.True);
+            Assert.That(q.Wall(new Vec3(-.5,5,0),new Vec3(1,0,0),.4,1.55,.18,out _),Is.False);
         }
         [Test] public void CannotGrabThroughFirstNonClimbableSolid()
         {
@@ -70,7 +77,7 @@ namespace Mamporro.Tests
         {
             var c=new VerticalCircuit();Assert.That(c.Terrain.HeightAt(-24,0),Is.Zero);
             Assert.That(c.Terrain.HeightAt(-18,0),Is.EqualTo(2));Assert.That(c.Terrain.HeightAt(-8,0),Is.EqualTo(4));
-            Assert.That(c.Queries.Count,Is.EqualTo(10));
+            Assert.That(c.Queries.Count,Is.EqualTo(14));
             Assert.That(c.Collision.GroundHeight(10,0,6.01),Is.EqualTo(6));
             Assert.That(c.Collision.GroundHeight(10,0,0.45),Is.Zero,"suelo debajo del techo, sin colocar arriba");
             Assert.That(c.Queries.Clear(c.Start,.4,1.55),Is.True);

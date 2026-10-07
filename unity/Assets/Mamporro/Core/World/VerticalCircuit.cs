@@ -33,7 +33,13 @@ namespace Mamporro.Core
                 Box(7,VerticalSurfaceKind.Foliage,-6,0,-12,-5,3,-11),
                 Box(8,VerticalSurfaceKind.Interactable,-2,0,-12,-1,2,-11),
                 Box(9,VerticalSurfaceKind.Structure,20,0,-3,20.5,5,3), // borde estrecho
-                Box(10,VerticalSurfaceKind.Boundary,30,-10,-30,31,12,30));
+                Box(10,VerticalSurfaceKind.Boundary,30,-10,-30,31,12,30),
+                // Revestimiento sólido del foso: cubre las franjas interpoladas del
+                // heightfield y ofrece cara vertical y apoyo completo en los cuatro lados.
+                Box(11,VerticalSurfaceKind.Cliff,15,-6,7,16,0,15),
+                Box(12,VerticalSurfaceKind.Cliff,22,-6,7,23,0,15),
+                Box(13,VerticalSurfaceKind.Cliff,16,-6,7,22,0,8),
+                Box(14,VerticalSurfaceKind.Cliff,16,-6,14,22,0,15));
             var colliders=new List<Collider>();
             for(int i=0;i<Queries.Count;i++){
                 var s=Queries.Solid(i);

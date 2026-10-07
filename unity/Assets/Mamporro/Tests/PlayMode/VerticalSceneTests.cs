@@ -31,7 +31,9 @@ namespace Mamporro.Tests
         {
             yield return Load();var g=Game;g.StartRun("P0QA");g.SetPaused(true);
             g.Body.PlaceAt(7.598,1,-2);g.Body.Grounded=false;g.Body.Facing=-System.Math.PI/2;
-            var m=g.Vertical.Motion;m.Step(default,1.0/60);m.Step(new VerticalIntent{GrabHeld=true},1.0/60);Assert.That(m.State,Is.EqualTo(VerticalState.Climbing));
+            var m=g.Vertical.Motion;
+            for(int i=0;i<24;i++)m.Step(new VerticalIntent{Movement=new PlayerIntent{MoveX=1}},1.0/60);
+            Assert.That(m.State,Is.EqualTo(VerticalState.Climbing));
             g.SetPaused(true);Assert.That(m.Armed,Is.False);Assert.That(m.State,Is.EqualTo(VerticalState.Air));
             var pivot=new Vector3(7,2,2);var camera=new Vector3(16,2,2);
             var clipped=g.Vertical.ClipCamera(pivot,camera);Assert.That(clipped.x,Is.LessThan(7.86f));
@@ -59,7 +61,7 @@ namespace Mamporro.Tests
             g.Body.PlaceAt(7.598,1,-2);g.Body.Grounded=false;g.Body.Facing=-System.Math.PI/2;
             var m=g.Vertical.Motion;m.Step(default,1.0/60);
             for(int i=0;i<140;i++){
-                m.Step(new VerticalIntent{GrabHeld=true,WallVertical=1},1.0/60);
+                m.Step(new VerticalIntent{Movement=new PlayerIntent{MoveX=1},WallVertical=1},1.0/60);
                 Assert.That(g.Vertical.Circuit.Queries.Clear(new Vec3(g.Body.X,g.Body.Y,g.Body.Z),.4,1.55),Is.True);
             }
             Assert.That(m.LedgeSuccess,Is.EqualTo(1));

@@ -1,8 +1,13 @@
 # P0 — movilidad y verticalidad antes de ampliar el mundo
 
-Estado: **P0-A1–P0-A5 CERRADOS TÉCNICAMENTE — PENDIENTE DE PRUEBA MANUAL** (06/10/2026, Codex). P0-B/C/D NO autorizados. No mezcla P1 artístico ni P2 contenido. La clasificación histórica de balance en P0 no lo incluye en este prototipo.
+Estado: **P0-A1–A5 base técnica validada manualmente; P0-A6 EN CURSO** (07/10/2026, Codex). El autor probó P0-A y señaló que técnicamente funciona bien; solicitó A6 antes de P0-B. La movilidad no se declara definitivamente cerrada hasta su prueba manual de A6. P0-B/C/D NO autorizados. No mezcla P1 artístico ni P2 contenido. La clasificación histórica de balance en P0 no lo incluye en este prototipo.
 
 ## Cómo retomar
+
+- **07/10, A6 activo:** HEAD/remoto iniciales `ccd45c0c01e127e7d96f1fa87b52174133ae416c`, 0/0 tras fetch. WIP recibido en VerticalMotion, VerticalCircuit, sus tests, VerticalSceneTests, VerticalQa y P0Capture: conservado y revisado; no estaba registrado en el cierre A5.
+- U6 y las siete huellas protegidas coinciden exactamente con la tabla de integridad inferior antes de editar.
+- Siguiente paso vigente: completar/verificar A6 (automática, reenganche por superficie, foso, integración/evidencia/medidas/build); detenerse para prueba manual del autor. Las instrucciones de agarre con botón del historial A1–A5 quedan sustituidas por A6.
+
 
 - Cierre formal B0 publicado: `0b0b68c31dda803cf9cf566b3c96f369ed893ce3`, «Aprueba B0 y fija el pipeline 3D», sobre cierre técnico `ab9e619`. Pipeline aceptado para proponer adopción; no hubo revisión manual de la build por el autor. D/VAT candidata, C fallback; prototipos técnicos, no arte final.
 - U0–U6 cerrados y aprobados. Entrega `unity/Builds/Windows/MAMPORRO.exe` intacta; SHA-256 `96b492cb271111251fe42b8646e65370a1b7b566773a1e35b34c3f2d1ae70873`.
@@ -304,3 +309,14 @@ Diferencias concretas: escena U3 reutilizada con circuito/datos optativos y defi
 No se observaron penetraciones ni atascos irrecuperables en los casos fijados; eso no sustituye la prueba manual de todos los ángulos, esquinas y sensación. Refugios inaccesibles, ausencia de búsqueda de rutas alternativas y ataques XZ heredados siguen siendo limitaciones reales. Sin balance ni ampliación del mundo, cambios de src/esperados históricos, NavMeshAgent, Rigidbody/Update por enemigo, P1/P2 ni adopción VAT.
 
 **Siguiente paso exacto: el autor ejecuta `scripts\p0.cmd jugar` y revisa escalada, pared→tejado, salto/soltar/rearme, esquinas, techo y cámara. Esperar su valoración y autorización expresa. No comenzar P0-B.**
+
+## A6.1 — entrada automática y contrato de paredes (07/10/2026, Codex)
+
+WIP recibido integrado: sin GrabHeld ni lectura de botón derecho; entrada con input XZ > 0,1, dot(input normalizado, -normal pared) >= 0,5, barrido corporal Reach 0,18 m y volumen libre. Escalones <= 0,45 m conservan paso de suelo. Contrato VerticalSolid por exclusiones (follaje/interactuable/límite/enemigo); constructor sin categoría crea sólido normal escalable. Solo caras verticales del primer sólido alcanzado; no atravesar obstáculos para buscar otro.
+
+Espacio separa a 5 m/s y usa salto existente; protección inicial ensayada de 0,35 s sobre mismo ID y normal de cara (dot > 0,99), otra cara/pared válida puede entrar antes. Pausa/foco/reinicio aplican protección global breve y limpian input. Velocidades 4,5/3/9,5 conservadas. Foso revestido por cuatro sólidos físicos con apoyo superior completo, sin lista de IDs en detección.
+
+Pruebas: scripts\u3.cmd edit, 07/10/2026, **497/497** en unity/TestResults/U3/edit.xml y edit.log. Incluye umbral .49/.50/.51, suelo sin salto, aire, paralelo/roce, pared nueva sin configuración, cuatro caras de foso, caída desde arriba/fondo/salida, caída junto a pared, separación y contacto con otra pared durante protección. Primer ensayo: dos tests de trayecto antiguo sobrepasaban su destino; acotados al borde/salida que verifican, sin cambiar referencias históricas. Play/build/evidencia/medidas A6 pendientes. U6 y siete protegidos conservados; sin src.
+
+Pieza: «Activa la escalada automática por paredes sólidas». Siguiente: completar antiatasco, pruebas de integración y evidencia A6; no P0-B.
+

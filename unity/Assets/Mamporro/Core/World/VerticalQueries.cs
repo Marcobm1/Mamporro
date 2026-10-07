@@ -2,7 +2,7 @@ using System;
 
 namespace Mamporro.Core
 {
-    public enum VerticalSurfaceKind { Structure, Cliff, Foliage, Interactable, Boundary }
+    public enum VerticalSurfaceKind { Structure, Cliff, Foliage, Interactable, Boundary, Enemy }
 
     // P0: datos de colisión QA independientes del render. No modifica WorldCollision U3.
     public sealed class VerticalSolid
@@ -10,7 +10,11 @@ namespace Mamporro.Core
         public readonly int Id;
         public readonly VerticalSurfaceKind Kind;
         public readonly Vec3 Min,Max;
-        public bool Climbable=>Kind==VerticalSurfaceKind.Structure||Kind==VerticalSurfaceKind.Cliff;
+        // Contrato por exclusión: los sólidos del mundo ofrecen paredes por defecto.
+        public static bool IsWorldWall(VerticalSurfaceKind kind)=>kind!=VerticalSurfaceKind.Foliage
+            &&kind!=VerticalSurfaceKind.Interactable&&kind!=VerticalSurfaceKind.Boundary&&kind!=VerticalSurfaceKind.Enemy;
+        public bool Climbable=>IsWorldWall(Kind);
+        public VerticalSolid(int id,Vec3 min,Vec3 max):this(id,VerticalSurfaceKind.Structure,min,max){}
         public VerticalSolid(int id,VerticalSurfaceKind kind,Vec3 min,Vec3 max)
         {
             if(!VerticalQueries.Finite(min)||!VerticalQueries.Finite(max)||min.X>=max.X||min.Y>=max.Y||min.Z>=max.Z)
@@ -87,7 +91,7 @@ namespace Mamporro.Core
             var end=new Vec3(feet.X+toward.X/length*reach,feet.Y,feet.Z+toward.Z/length*reach);
             if(!Sweep(feet,end,radius,height,out hit)||Math.Abs(hit.Normal.Y)>.01)return false;
             // El primer sólido bloquea también la consulta: nunca buscar una pared detrás del follaje sólido.
-            return hit.Kind==VerticalSurfaceKind.Structure||hit.Kind==VerticalSurfaceKind.Cliff;
+            return VerticalSolid.IsWorldWall(hit.Kind);
         }
         public bool Support(Vec3 feet,double radius,double tolerance,out int id)
         {

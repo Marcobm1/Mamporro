@@ -6,12 +6,12 @@ namespace Mamporro.Core
     public struct VerticalIntent
     {
         public PlayerIntent Movement;
-        public bool GrabHeld;
         public double WallHorizontal,WallVertical;
     }
     public sealed class VerticalTuning
     {
         public double UpSpeed=4.5,SideSpeed=3,Reach=.18,LedgeSpeed=4.5,SeparationSpeed=5,TransitionTimeout=1.5;
+        public double JumpReattachDelay=.35,MinPushDot=.5;
     }
     // Extensión optativa P0 de la física pura. Un único PlayerBody, sin Rigidbody/root motion.
     public sealed class VerticalMotion
@@ -19,14 +19,16 @@ namespace Mamporro.Core
         public readonly PlayerBody Body;
         public readonly VerticalTuning Tuning;
         public VerticalState State {get;private set;}
-        public bool Armed {get;private set;}=true;
+        public double ReattachRemaining {get;private set;}
+        public bool Armed=>ReattachRemaining<=1e-9;
         public int Grabs,LedgeSuccess,LedgeFailures,Stalls;
         public double ClimbSeconds,DescendSeconds,Distance;
         public string LastFailure="";
         readonly IPhysicsWorld world;
         readonly VerticalQueries queries;
         readonly PlayerTuning physics;
-        VerticalHit wall;
+        VerticalHit wall,detachedWall;
+        bool blockAll;
         Vec3 lift,top;
         bool onTopLeg;
         double transitionTime,stalled;
@@ -39,22 +41,43 @@ namespace Mamporro.Core
         void Place(Vec3 p){Body.X=p.X;Body.Y=p.Y;Body.Z=p.Z;}
         static double Length(Vec3 p)=>Math.Sqrt(p.X*p.X+p.Y*p.Y+p.Z*p.Z);
         static Vec3 Sub(Vec3 a,Vec3 b)=>new Vec3(a.X-b.X,a.Y-b.Y,a.Z-b.Z);
+        public bool PushesIntoContact(PlayerIntent input)
+        {
+            double length=JsMath.Hypot(input.MoveX,input.MoveZ);
+            return length>.1&&-(input.MoveX*wall.Normal.X+input.MoveZ*wall.Normal.Z)>=Tuning.MinPushDot*length;
+        }
+        bool CanStartClimb(PlayerIntent input)
+        {
+            if(input.JumpPressed||input.SlidePressed||input.SlideHeld)return false;
+            var toward=new Vec3(input.MoveX,0,input.MoveZ);
+            if(!queries.Wall(Position,toward,physics.Radius,physics.Height,Tuning.Reach,out wall)||!PushesIntoContact(input))return false;
+            if(IsReattachBlocked(wall))return false;
+            // Los escalones transitables siguen siendo pasos de suelo, no agarres.
+            if(Body.Grounded)for(int i=0;i<queries.Count;i++)
+                if(queries.Solid(i).Id==wall.Id&&queries.Solid(i).Max.Y<=Body.Y+physics.StepHeight)return false;
+            return queries.Clear(Position,physics.Radius,physics.Height);
+        }
         void Release(bool jump)
         {
-            Armed=false;State=VerticalState.Air;Body.Grounded=false;Body.Sliding=false;Body.SlideQueued=false;
+            detachedWall=wall;blockAll=false;
+            ReattachRemaining=jump?Tuning.JumpReattachDelay:0;State=VerticalState.Air;Body.Grounded=false;Body.Sliding=false;Body.SlideQueued=false;
+            Body.Jumped=jump;
             Body.Coyote=Body.JumpBuffer=0;Body.Vy=jump?physics.JumpVelocity:0;
             Body.Vx=jump?wall.Normal.X*Tuning.SeparationSpeed:0;Body.Vz=jump?wall.Normal.Z*Tuning.SeparationSpeed:0;
             transitionTime=stalled=0;
         }
+        bool IsReattachBlocked(VerticalHit contact)=>!Armed&&(blockAll||contact.Id==detachedWall.Id
+            &&contact.Normal.X*detachedWall.Normal.X+contact.Normal.Z*detachedWall.Normal.Z>.99);
+        public bool CurrentContactBlocked=>IsReattachBlocked(wall);
         // Pausa/foco/muerte/reinicio: no conservar agarre ni entrada latente.
         public void Suspend()
         {
             if(State==VerticalState.Climbing||State==VerticalState.Ledge)Release(false);
-            Armed=false;Body.JumpBuffer=0;Body.SlideQueued=false;
+            blockAll=true;ReattachRemaining=Tuning.JumpReattachDelay;Body.JumpBuffer=0;Body.SlideQueued=false;
         }
         public void Reset()
         {
-            Armed=false;State=Body.Grounded?VerticalState.Ground:VerticalState.Air;
+            blockAll=true;ReattachRemaining=Tuning.JumpReattachDelay;State=Body.Grounded?VerticalState.Ground:VerticalState.Air;
             Grabs=LedgeSuccess=LedgeFailures=Stalls=0;ClimbSeconds=DescendSeconds=Distance=0;
             transitionTime=stalled=0;LastFailure="";Body.JumpBuffer=0;Body.SlideQueued=false;
         }
@@ -92,9 +115,9 @@ namespace Mamporro.Core
         public void Step(VerticalIntent input,double dt,double moveSpeed=9.5,double crowdSlow=0)
         {
             if(dt<=0||dt>.1||double.IsNaN(dt))throw new ArgumentOutOfRangeException(nameof(dt));
-            var before=Position;if(!input.GrabHeld)Armed=true;
+            var before=Position;ReattachRemaining=Math.Max(0,ReattachRemaining-dt);
             if(State==VerticalState.Climbing||State==VerticalState.Ledge){
-                if(!input.GrabHeld||input.Movement.JumpPressed||input.Movement.SlidePressed){Release(input.Movement.JumpPressed);return;}
+                if(input.Movement.JumpPressed||input.Movement.SlidePressed||input.Movement.SlideHeld){Release(input.Movement.JumpPressed);return;}
                 Body.Vx=Body.Vy=Body.Vz=0;Body.Grounded=false;Body.Sliding=false;
                 if(State==VerticalState.Ledge){
                     transitionTime+=dt;
@@ -103,7 +126,7 @@ namespace Mamporro.Core
                     if(length>1e-8&&!Move(new Vec3(Body.X+d.X/length*amount,Body.Y+d.Y/length*amount,Body.Z+d.Z/length*amount))){
                         LedgeFailures++;LastFailure="barrido de borde bloqueado";Release(false);return;
                     }
-                    if(length<=amount+1e-8){if(!onTopLeg)onTopLeg=true;else{State=VerticalState.Ground;Body.Grounded=true;Armed=false;LedgeSuccess++;}}
+                    if(length<=amount+1e-8){if(!onTopLeg)onTopLeg=true;else{State=VerticalState.Ground;Body.Grounded=true;LedgeSuccess++;}}
                 }else{
                     double v=input.WallVertical,h=input.WallHorizontal,n=Math.Max(1,JsMath.Hypot(v,h));v/=n;h/=n;
                     bool atEdge=false;
@@ -131,12 +154,8 @@ namespace Mamporro.Core
                 var target=Position;Place(before);Walk(target,wasGrounded);
                 if(Body.Y<target.Y-1e-6&&Body.Vy>0)Body.Vy=0;
                 State=Body.Grounded?VerticalState.Ground:VerticalState.Air;
-                if(input.GrabHeld&&Armed){
-                    var direction=new Vec3(input.Movement.MoveX,0,input.Movement.MoveZ);
-                    if(JsMath.Hypot(direction.X,direction.Z)<.01)direction=new Vec3(-Math.Sin(Body.Facing),0,-Math.Cos(Body.Facing));
-                    if(queries.Wall(Position,direction,physics.Radius,physics.Height,Tuning.Reach,out wall)&&queries.Clear(Position,physics.Radius,physics.Height)){
-                        State=VerticalState.Climbing;Grabs++;Body.Grounded=false;Body.Sliding=false;Body.SlideQueued=false;Body.Vx=Body.Vy=Body.Vz=0;
-                    }
+                if(CanStartClimb(input.Movement)){
+                    State=VerticalState.Climbing;Grabs++;Body.Grounded=false;Body.Sliding=false;Body.SlideQueued=false;Body.Vx=Body.Vy=Body.Vz=0;
                 }
             }
             world.Constrain(Body);Distance+=Length(Sub(Position,before));

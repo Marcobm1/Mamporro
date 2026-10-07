@@ -61,15 +61,15 @@ namespace Mamporro.U3
         void Step(PlayerIntent movement,double dt,double speed,double crowd)
         {
             var k=Keyboard.current;
-            var input=InputProvider!=null?InputProvider():ScriptedInput??new VerticalIntent{Movement=movement,GrabHeld=Mouse.current!=null&&Mouse.current.rightButton.isPressed,
+            var input=InputProvider!=null?InputProvider():ScriptedInput??new VerticalIntent{Movement=movement,
                 WallHorizontal=k==null?0:(k.dKey.isPressed?1:0)-(k.aKey.isPressed?1:0),
                 WallVertical=k==null?0:(k.wKey.isPressed?1:0)-(k.sKey.isPressed?1:0)};
-            var b=game.Body;double x=b.X,y=b.Y,z=b.Z;bool armed=Motion.Armed;int grabs=Motion.Grabs;
+            var b=game.Body;double x=b.X,y=b.Y,z=b.Z;int grabs=Motion.Grabs;
             if(Control)PlayerPhysics.StepInCrowd(game.Body,input.Movement,Circuit.Collision,PlayerTuning.Default,speed,crowd,dt);
             else Motion.Step(input,dt,speed,crowd);
             Seconds+=dt;double dy=b.Y-y;Ascent+=Math.Max(0,dy);Descent+=Math.Max(0,-dy);
             double moved=Math.Sqrt((b.X-x)*(b.X-x)+dy*dy+(b.Z-z)*(b.Z-z));Distance+=moved;
-            if(Motion.State!=VerticalState.Climbing&&Motion.State!=VerticalState.Ledge&&moved<1e-6&&JsMath.Hypot(input.Movement.MoveX,input.Movement.MoveZ)>.1){
+            if(Motion.Armed&&Motion.State!=VerticalState.Climbing&&Motion.State!=VerticalState.Ledge&&moved<1e-6&&JsMath.Hypot(input.Movement.MoveX,input.Movement.MoveZ)>.1){
                 blockedSeconds+=dt;if(blockedSeconds>=.35&&blockedSeconds-dt<.35)WalkStalls++;
             }else blockedSeconds=0;
             // El canto puede alternar suelo/aire antes de perder altura: una sola caída,
@@ -80,7 +80,7 @@ namespace Mamporro.U3
                 jumpedDuringAir|=b.Jumped||input.Movement.JumpPressed;
                 if(!fallCounted&&!jumpedDuringAir&&b.Y<supportedY-.05){Falls++;fallCounted=true;}
             }
-            if(Motion.Grabs>grabs){if(!input.GrabHeld)UnintendedGrabs++;if(!armed&&input.GrabHeld)UnintendedRegrabs++;}
+            if(Motion.Grabs>grabs){if(!Motion.PushesIntoContact(input.Movement))UnintendedGrabs++;if(Motion.CurrentContactBlocked)UnintendedRegrabs++;}
             if(game.Body.Y< -10||!VerticalQueries.Finite(new Vec3(game.Body.X,game.Body.Y,game.Body.Z))){
                 Recover();
             }
@@ -125,7 +125,7 @@ namespace Mamporro.U3
                 game.Run.Spawn(0,x,z);i++;
             }
         }
-        public string Status=>"P0 QA · RMB agarrar · WASD pared · Espacio separar · Shift/C soltar\n"+
+        public string Status=>"P0-A6 QA · Empuja pared: escalar · W/S vertical · A/D lateral · Espacio separar · Shift/C soltar\n"+
             "F4: 0/300/500/750 · F5: control U3/P0 · F7 rescate INVALIDA · F8 reinicio\n"+
             (Control?"CONTROL U3":Motion.State.ToString())+" · agarres "+Motion.Grabs+" · bordes "+Motion.LedgeSuccess+" · atascos "+Stalls+" · rescates "+Recoveries+"\n"+
             $"x {game.Body.X:F1}  y {game.Body.Y:F1}  z {game.Body.Z:F1} · {Seconds:F1} s · {Distance:F1} m · SIN META";

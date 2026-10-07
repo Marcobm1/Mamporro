@@ -714,3 +714,13 @@ Decisión del autor: plan de U5 aprobado e implementación autorizada (pasos 1�
 El autor autoriza A1–A5, con las decisiones registradas en [PROGRESO_P0](PROGRESO_P0.md): agarre mantenido con botón derecho, WASD libre sobre pared, Espacio separa, soltar/Shift/C libera y rearmado tras soltar. Sin E, stamina ni límite temporal; 4,5 m/s vertical y 3 m/s lateral como ensayo, diagonal normalizada, suelo 9,5 m/s. Paredes de estructuras/acantilados sólidos escalables; follaje, interactuables, enemigos, límites y caras inferiores de techos excluidos. Borde automático solo con cuerpo, soporte y trayectoria completos válidos. Cámara QA contra paredes/techos autorizada, conservando U3 como referencia.
 
 Build P0 y progreso QA separados de la entrega U6. Horda existente por suelo/rampas, centralizada; sin escalada enemiga, teleport ni rebalance. Los refugios inaccesibles y fallos de filtros/oclusión quedan registrados para una propuesta posterior. P0-A implementado y verificado técnicamente; falta la prueba manual del autor. **P0-B/C/D no autorizados. Detenerse aquí**, sin ampliar mundo, empezar P1/P2 ni adoptar VAT masivamente.
+
+## P0-A6 — movilidad continua y escalada automática (07/10/2026)
+
+Decisión expresa del autor, posterior a su prueba manual de P0-A: técnicamente funciona bien; A1–A5 quedan como base técnica validada. Antes de avanzar a P0-B solicita A6 y otra prueba manual.
+
+**La verticalidad de MAMPORRO debe favorecer el movimiento continuo y frenético. Las paredes físicas reales son escalables automáticamente al empujar contra ellas. Caer en desniveles o fosos normales puede alterar la ruta, pero no debe inmovilizar al jugador ni exigir una mecánica de rescate.**
+
+Sustituye el botón derecho y el rearme por soltar/pulsar: entrada desde suelo o aire mediante intención geométrica y contacto/barrido corporal; paredes sólidas escalables por defecto, con exclusiones semánticas para follaje, interactuables, enemigos y límites artificiales; no caras inferiores ni geometría sin pared física. Espacio separa, protección automática breve de la misma superficie; otra pared válida permite continuidad. W/S y A/D, velocidades 4,5/3,0 (suelo 9,5), diagonal normalizada, sin stamina ni límite temporal; borde automático con soporte/cuerpo/barrido libres. Cámara aprobada conservada.
+
+Los fosos normales deben permitir correr contra pared, escalar y salir sin F7. F7 permanece como rescate QA para errores y situaciones fuera de diseño. A6 no autoriza P0-B/C/D, balance, ampliación, arte masivo ni otros bloques. Movilidad pendiente de la prueba manual A6 aunque sus pruebas automáticas pasen.
