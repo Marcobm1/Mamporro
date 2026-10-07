@@ -28,7 +28,7 @@ namespace Mamporro.Core
         readonly VerticalQueries queries;
         readonly PlayerTuning physics;
         VerticalHit wall,detachedWall;
-        bool blockAll;
+        bool blockAll,descendedToGround;
         Vec3 lift,top;
         bool onTopLeg;
         double transitionTime,stalled;
@@ -73,11 +73,11 @@ namespace Mamporro.Core
         public void Suspend()
         {
             if(State==VerticalState.Climbing||State==VerticalState.Ledge)Release(false);
-            blockAll=true;ReattachRemaining=Tuning.JumpReattachDelay;Body.JumpBuffer=0;Body.SlideQueued=false;
+            descendedToGround=false;blockAll=true;ReattachRemaining=Tuning.JumpReattachDelay;Body.JumpBuffer=0;Body.SlideQueued=false;
         }
         public void Reset()
         {
-            blockAll=true;ReattachRemaining=Tuning.JumpReattachDelay;State=Body.Grounded?VerticalState.Ground:VerticalState.Air;
+            descendedToGround=false;blockAll=true;ReattachRemaining=Tuning.JumpReattachDelay;State=Body.Grounded?VerticalState.Ground:VerticalState.Air;
             Grabs=LedgeSuccess=LedgeFailures=Stalls=0;ClimbSeconds=DescendSeconds=Distance=0;
             transitionTime=stalled=0;LastFailure="";Body.JumpBuffer=0;Body.SlideQueued=false;
         }
@@ -115,6 +115,7 @@ namespace Mamporro.Core
         public void Step(VerticalIntent input,double dt,double moveSpeed=9.5,double crowdSlow=0)
         {
             if(dt<=0||dt>.1||double.IsNaN(dt))throw new ArgumentOutOfRangeException(nameof(dt));
+            if(input.WallVertical>=0)descendedToGround=false;
             var before=Position;ReattachRemaining=Math.Max(0,ReattachRemaining-dt);
             if(State==VerticalState.Climbing||State==VerticalState.Ledge){
                 if(input.Movement.JumpPressed||input.Movement.SlidePressed||input.Movement.SlideHeld){Release(input.Movement.JumpPressed);return;}
@@ -141,7 +142,7 @@ namespace Mamporro.Core
                             stalled+=dt;if(stalled>=.35){if(stalled-dt<.35){Stalls++;if(v>0)LedgeFailures++;}LastFailure=v>0?"ascenso/borde bloqueado":"intención sin avance";}
                         }else stalled=0;
                         double ground=world.GroundHeight(Body.X,Body.Z,Body.Y+.01);
-                        if(v<0&&Body.Y<=ground){Body.Y=ground;Release(false);Body.Grounded=true;State=VerticalState.Ground;}
+                        if(v<0&&Body.Y<=ground){Body.Y=ground;Release(false);descendedToGround=true;Body.Grounded=true;State=VerticalState.Ground;}
                         else if(!queries.Wall(Position,new Vec3(-wall.Normal.X,0,-wall.Normal.Z),physics.Radius,physics.Height,Tuning.Reach,out var contact)){
                             LastFailure=moved?"fin de superficie":"contacto perdido";Release(false);
                         }else wall=contact;
@@ -154,7 +155,7 @@ namespace Mamporro.Core
                 var target=Position;Place(before);Walk(target,wasGrounded);
                 if(Body.Y<target.Y-1e-6&&Body.Vy>0)Body.Vy=0;
                 State=Body.Grounded?VerticalState.Ground:VerticalState.Air;
-                if(CanStartClimb(input.Movement)){
+                if(!descendedToGround&&CanStartClimb(input.Movement)){
                     State=VerticalState.Climbing;Grabs++;Body.Grounded=false;Body.Sliding=false;Body.SlideQueued=false;Body.Vx=Body.Vy=Body.Vz=0;
                 }
             }

@@ -207,6 +207,33 @@ namespace Mamporro.Tests
             for(int i=0;i<20;i++)m.Step(new VerticalIntent{Movement=new PlayerIntent{MoveX=into,MoveZ=1}},1.0/60);
             Assert.That(m.Grabs,Is.Zero);Assert.That(b.Z,Is.GreaterThan(10));
         }
+
+        [Test] public void DescendingToFloorDoesNotAlternateGroundAndClimb()
+        {
+            var m=Create(out var b);m.Step(Grip(),1.0/60);
+            for(int i=0;i<120;i++)m.Step(Grip(-1),1.0/60);
+            Assert.That(m.Grabs,Is.EqualTo(1));Assert.That(m.State,Is.EqualTo(VerticalState.Ground));Assert.That(b.Y,Is.Zero);
+            m.Step(Grip(1),1.0/60);Assert.That(m.Grabs,Is.EqualTo(2));
+        }
+        [Test] public void CliffClimbsFromGroundWithoutJump()
+        {
+            var c=new VerticalCircuit();var b=new PlayerBody();b.PlaceAt(0,0,14);
+            var m=new VerticalMotion(b,c.Collision,c.Queries);
+            for(int i=0;i<200&&m.LedgeSuccess==0;i++)m.Step(new VerticalIntent{Movement=new PlayerIntent{MoveZ=1},WallVertical=1},1.0/60);
+            Assert.That(m.Grabs,Is.EqualTo(1));Assert.That(m.LedgeSuccess,Is.EqualTo(1));Assert.That(b.Y,Is.GreaterThanOrEqualTo(8));
+        }
+        [Test] public void PitWallJumpReturnsAndCompletesExit()
+        {
+            var c=new VerticalCircuit();var b=new PlayerBody();b.PlaceAt(21.598,-4,11);b.Grounded=false;
+            var m=new VerticalMotion(b,c.Collision,c.Queries);m.Step(Grip(),1.0/60);
+            var jump=Grip();jump.Movement.JumpPressed=true;m.Step(jump,1.0/60);double far=b.X;
+            for(int i=0;i<240&&m.LedgeSuccess==0;i++){
+                m.Step(Grip(1),1.0/60);far=System.Math.Min(far,b.X);
+                if(i<19)Assert.That(m.Grabs,Is.EqualTo(1));
+                Assert.That(c.Queries.Clear(new Vec3(b.X,b.Y,b.Z),.4,1.55),Is.True);
+            }
+            Assert.That(far,Is.LessThan(21.4));Assert.That(m.Grabs,Is.EqualTo(2));Assert.That(m.LedgeSuccess,Is.EqualTo(1));
+        }
         [Test] public void StandingClimbAtGroundDoesNotOscillate()
         {
             var c=new VerticalCircuit();var b=new PlayerBody();b.PlaceAt(7.598,0,-2);

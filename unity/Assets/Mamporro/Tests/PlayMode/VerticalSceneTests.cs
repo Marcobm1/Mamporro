@@ -51,8 +51,30 @@ namespace Mamporro.Tests
         {
             yield return Load();var g=Game;g.StartRun("P0QA");g.SetPaused(true);g.PlaceQa(new Vec3(13,6,3));
             g.Vertical.ScriptedInput=new VerticalIntent{Movement=new PlayerIntent{MoveX=1}};
-            for(int i=0;i<110;i++)g.Session.PhysicsStep(default,1.0/60,9.5,0);
+            for(int i=0;i<110;i++){if(g.Body.X>=16)g.Vertical.ScriptedInput=default(VerticalIntent);g.Session.PhysicsStep(default,1.0/60,9.5,0);}
             Assert.That(g.Body.Y,Is.EqualTo(0).Within(.01));Assert.That(g.Vertical.Falls,Is.EqualTo(1));
+            LogAssert.NoUnexpectedReceived();
+        }
+
+        [UnityTest] public IEnumerator PitFallFloorClimbJumpAndExitKeepCameraClear()
+        {
+            yield return Load();var g=Game;g.StartRun("P0QA");g.SetPaused(true);g.PlaceQa(new Vec3(19,2,11));
+            g.Body.Grounded=false;var q=g.Vertical;var m=q.Motion;
+            for(int i=0;i<150&&!g.Body.Grounded;i++){q.ScriptedInput=default(VerticalIntent);g.Session.PhysicsStep(default,1.0/60,9.5,0);}
+            Assert.That(g.Body.Y,Is.EqualTo(-6).Within(.01));Assert.That(g.Body.Grounded,Is.True);
+            bool jumped=false;int cameraSamples=0;
+            for(int i=0;i<400&&m.LedgeSuccess==0;i++){
+                var input=new VerticalIntent{Movement=new PlayerIntent{MoveX=1},WallVertical=1};
+                if(!jumped&&m.State==VerticalState.Climbing&&g.Body.Y> -4){input.Movement.JumpPressed=true;jumped=true;}
+                q.ScriptedInput=input;g.Session.PhysicsStep(default,1.0/60,9.5,0);
+                var b=g.Body;var player=new Vector3((float)b.X,(float)b.Y,-(float)b.Z);
+                var pivot=q.CameraPivot(player,player+Vector3.up*1.9f);
+                var camera=q.ClipCamera(pivot,pivot+new Vector3(-6,2,0));
+                Assert.That(q.Circuit.Queries.Clear(new Vec3(camera.x,camera.y-.15,-camera.z),.15,.3),Is.True);
+                cameraSamples++;
+            }
+            Assert.That(jumped,Is.True);Assert.That(cameraSamples,Is.GreaterThan(50));Assert.That(m.LedgeSuccess,Is.EqualTo(1));
+            Assert.That(q.Recoveries,Is.Zero);Assert.That(q.UnintendedRegrabs,Is.Zero);Assert.That(q.InvalidRoute,Is.False);
             LogAssert.NoUnexpectedReceived();
         }
         [UnityTest] public IEnumerator LedgeFocusDeathAndRestartKeepQaIsolated()
@@ -60,7 +82,7 @@ namespace Mamporro.Tests
             yield return Load();var g=Game;g.StartRun("P0QA");g.SetPaused(true);
             g.Body.PlaceAt(7.598,1,-2);g.Body.Grounded=false;g.Body.Facing=-System.Math.PI/2;
             var m=g.Vertical.Motion;m.Step(default,1.0/60);
-            for(int i=0;i<140;i++){
+            for(int i=0;i<140&&m.LedgeSuccess==0;i++){
                 m.Step(new VerticalIntent{Movement=new PlayerIntent{MoveX=1},WallVertical=1},1.0/60);
                 Assert.That(g.Vertical.Circuit.Queries.Clear(new Vec3(g.Body.X,g.Body.Y,g.Body.Z),.4,1.55),Is.True);
             }

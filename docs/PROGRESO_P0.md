@@ -320,3 +320,12 @@ Pruebas: scripts\u3.cmd edit, 07/10/2026, **497/497** en unity/TestResults/U3/ed
 
 Pieza: «Activa la escalada automática por paredes sólidas». Siguiente: completar antiatasco, pruebas de integración y evidencia A6; no P0-B.
 
+## A6.2 — antiatasco e integración del foso (07/10/2026, Codex)
+
+A6.1 publicado y remoto verificado en `0698f25ffc16f8f36bdfd542b62c9fdd62e4f57c`. Al bajar al suelo se conserva ese estado mientras siga la intención vertical negativa; al dejar de bajar se habilita automáticamente la entrada. Evita alternar suelo/escalada sin pedir rearme ni cambiar velocidad. Pruebas de acantilado desde suelo y salto/retorno/salida del foso añadidas.
+
+**Pruebas reales:** `scripts\u3.cmd edit` **500/500**; `scripts\u3.cmd play` **47/47**, XML/log en unity/TestResults/U3, 07/10/2026. Play incluye foso completo con salto, cámara fuera de sólidos en cada tick muestreado, cero rescates/reenganches indebidos; conserva pausa/foco, muerte/reinicio y P0 desactivado. La primera pasada Play detectó otro recorrido antiguo que llegaba a la segunda pared; la prueba de caída se acotó antes de ella. Un primer intento Edit de esta pieza encontró una comilla perdida en el test nuevo; corregida antes de las suites válidas. Corregida también codificación UTF-8 de textos tocados; ninguna referencia esperada histórica modificada.
+
+Regresión histórica ejecutada: `powershell -NoProfile -ExecutionPolicy Bypass -File scripts\verify-historical-reference.ps1`, U0/U2/U3/U4 coinciden. Instantánea conservada en `qa-results/reference-44ca3847f55848aba8edec1d01ee767c`; 8 guardados y 6 secuencias meta correctos. Sin cambios en src ni corpus.
+
+Pieza: «Protege el descenso y verifica la salida del foso». Siguiente: evidencia A6, build QA normal/Development y medidas comparables, cierre para prueba manual. Sin P0-B.
