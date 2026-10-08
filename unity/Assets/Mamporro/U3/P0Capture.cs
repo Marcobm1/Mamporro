@@ -23,7 +23,7 @@ namespace Mamporro.U3
         double start,previous;long rendered,allocated;int gcSamples;ProfilerRecorder gc;
         long memoryAtEnd,reservedAtEnd,monoAtEnd;int collectionsAtEnd;
         Transform volume;Material volumeMaterial;
-        struct Sample { public double t,x,y,z,cpu;public int state,phase,grabs,edges,stalls,rescues,falls;public string failure; }
+        struct Sample { public double t,x,y,z,cpu,h,v,nx,ny,nz;public int state,phase,grabs,edges,stalls,rescues,falls;public string failure; }
         [Serializable] public sealed class Report
         {
             public bool valid,development,editor;
@@ -87,6 +87,7 @@ namespace Mamporro.U3
             if(nr>=route.Length)return;
             var b=game.Body;var q=game.Vertical;var m=q.Motion;
             route[nr++]=new Sample{t=q.Seconds,x=b.X,y=b.Y,z=b.Z,cpu=cpu,state=(int)m.State,phase=phase,
+                h=q.LastInput.WallHorizontal,v=q.LastInput.WallVertical,nx=m.Contact.Normal.X,ny=m.Contact.Normal.Y,nz=m.Contact.Normal.Z,
                 grabs=m.Grabs,edges=m.LedgeSuccess,stalls=q.Stalls,rescues=q.Recoveries,falls=q.Falls,failure=m.LastFailure};
         }
         void LateUpdate()
@@ -119,8 +120,8 @@ namespace Mamporro.U3
         }
         void SaveRoute(string name)
         {
-            var csv=new StringBuilder("t,x,y,z,state,phase,grabs,edges,stalls,rescues,falls,cpuTickMs,failure\n");
-            for(int i=0;i<nr;i++){var s=route[i];csv.AppendFormat(CultureInfo.InvariantCulture,"{0:R},{1:R},{2:R},{3:R},{4},{5},{6},{7},{8},{9},{10},{11:R},{12}\n",s.t,s.x,s.y,s.z,s.state,s.phase,s.grabs,s.edges,s.stalls,s.rescues,s.falls,s.cpu,s.failure);}
+            var csv=new StringBuilder("t,x,y,z,state,phase,grabs,edges,stalls,rescues,falls,cpuTickMs,failure,wallHorizontal,wallVertical,normalX,normalY,normalZ\n");
+            for(int i=0;i<nr;i++){var s=route[i];csv.AppendFormat(CultureInfo.InvariantCulture,"{0:R},{1:R},{2:R},{3:R},{4},{5},{6},{7},{8},{9},{10},{11:R},{12},{13:R},{14:R},{15:R},{16:R},{17:R}\n",s.t,s.x,s.y,s.z,s.state,s.phase,s.grabs,s.edges,s.stalls,s.rescues,s.falls,s.cpu,s.failure,s.h,s.v,s.nx,s.ny,s.nz);}
             File.WriteAllText(Path.Combine(output,name+".csv"),csv.ToString());
         }
         int images;
@@ -142,29 +143,141 @@ namespace Mamporro.U3
             foreach(float x in new[]{-.4f,.4f})foreach(float z in new[]{-.4f,.4f})Edge(new Vector3(x,0,z),new Vector3(x,1.55f,z));
             foreach(float y in new[]{0,1.55f})foreach(float v in new[]{-.4f,.4f}){Edge(new Vector3(-.4f,y,v),new Vector3(.4f,y,v));Edge(new Vector3(v,y,-.4f),new Vector3(v,y,.4f));}
         }
+        IEnumerator Until(Func<bool> condition,string label,double seconds=8)
+        {
+            double end=Time.realtimeSinceStartupAsDouble+seconds;
+            while(!condition()&&Time.realtimeSinceStartupAsDouble<end)yield return null;
+            if(!condition()){visualValid=false;Debug.LogError("P0 A6 no completa: "+label);}
+        }
+        void BeginEvidence(Vec3 at,double faceX,double faceZ)
+        {
+            Prepare(at);game.FaceTowards(faceX,faceZ);nr=0;running=true;
+        }
+        void EndEvidence(string name){running=false;SaveRoute(name);}
         IEnumerator EvidenceSequence()
         {
-            Prepare(new Vec3(7.598,0,-2));Volume();game.FaceTowards(14,-2);nr=0;running=true;
-            game.Vertical.InputProvider=RouteInput;yield return Shot("01-antes-borde");
-            bool climb=false,edge=false,top=false;double deadline=Time.realtimeSinceStartupAsDouble+15;
-            while(Time.realtimeSinceStartupAsDouble<deadline&&!top){
-                var m=game.Vertical.Motion;
-                if(!climb&&game.Body.Y>2){climb=true;yield return Shot("02-escalada-volumen");}
-                if(!edge&&m.State==VerticalState.Ledge){edge=true;yield return Shot("03-transicion-borde");}
-                if(m.LedgeSuccess>0){top=true;yield return Shot("04-sobre-tejado");}
-                yield return null;
+            BeginEvidence(new Vec3(5,0,-2),14,-2);Volume();
+            game.Vertical.InputProvider=()=>new VerticalIntent{Movement=new PlayerIntent{MoveX=1}};
+            yield return Shot("01-aproximacion-frontal");
+            yield return Until(()=>game.Vertical.Motion.State==VerticalState.Climbing,"entrada desde suelo");
+            yield return Shot("02-entrada-automatica");
+            game.Vertical.InputProvider=()=>new VerticalIntent{Movement=new PlayerIntent{MoveX=1},WallVertical=1};
+            yield return Until(()=>game.Body.Y>2,"ascenso");
+            yield return Shot("03-escalada");
+            bool jump=true;
+            game.Vertical.InputProvider=()=>{var input=new VerticalIntent{Movement=new PlayerIntent{MoveX=1,JumpPressed=jump},WallVertical=1};jump=false;return input;};
+            yield return Until(()=>game.Vertical.Motion.State==VerticalState.Air&&game.Body.X<7.35,"salto y separacion");
+            yield return Shot("04-salto-separacion");
+            yield return Until(()=>game.Vertical.Motion.State==VerticalState.Ledge,"borde");
+            yield return Shot("05-transicion-tejado");
+            yield return Until(()=>game.Vertical.Motion.LedgeSuccess==1,"tejado");
+            game.Vertical.InputProvider=()=>default;
+            yield return Shot("06-sobre-tejado");
+            bool roof=game.Vertical.Motion.LedgeSuccess==1&&game.Vertical.Recoveries==0;
+            EndEvidence("route-roof");
+
+            BeginEvidence(new Vec3(19,2,11),23,11);game.Body.Grounded=false;
+            game.Vertical.InputProvider=()=>default;
+            yield return Shot("07-caida-foso-desde-arriba");
+            yield return Until(()=>game.Body.Y< -1,"caida foso");
+            yield return Shot("08-cayendo-foso");
+            yield return Until(()=>game.Body.Grounded&&game.Body.Y< -5.9,"fondo foso");
+            yield return Shot("09-fondo-foso");
+            game.Vertical.InputProvider=()=>new VerticalIntent{Movement=new PlayerIntent{MoveX=1},WallVertical=1};
+            yield return Until(()=>game.Vertical.Motion.State==VerticalState.Climbing,"escalada desde fondo");
+            yield return Shot("10-escalada-desde-fondo");
+            yield return Until(()=>game.Body.Y> -2,"ascenso foso");
+            yield return Shot("11-ascenso-foso");
+            yield return Until(()=>game.Vertical.Motion.LedgeSuccess==1,"salida completa foso");
+            game.Vertical.InputProvider=()=>default;
+            yield return Shot("12-salida-completa-foso");
+            bool pit=game.Vertical.Motion.LedgeSuccess==1&&game.Vertical.Recoveries==0&&!game.Vertical.InvalidRoute;
+            EndEvidence("route-pit");
+
+            BeginEvidence(new Vec3(21.598,-6,9),21.598,14);
+            game.Vertical.InputProvider=()=>default;
+            yield return Until(()=>game.Vertical.Seconds>.4,"preparacion paralelo");
+            game.Vertical.InputProvider=()=>new VerticalIntent{Movement=new PlayerIntent{MoveZ=1}};
+            yield return Until(()=>game.Body.Z>11,"paso paralelo");
+            game.Vertical.InputProvider=()=>default;
+            yield return Shot("13-paralelo-sin-enganche");
+            bool parallel=game.Vertical.Motion.Grabs==0;
+            EndEvidence("route-parallel");
+
+            BeginEvidence(new Vec3(21.598,-2,11),23,11);game.Body.Grounded=false;
+            game.Vertical.InputProvider=()=>new VerticalIntent{Movement=new PlayerIntent{MoveX=1},WallVertical=1};
+            yield return Until(()=>game.Vertical.Motion.State==VerticalState.Climbing,"caida junto pared");
+            yield return Shot("14-entrada-aerea-foso");
+            EndEvidence("route-air");
+
+            BeginEvidence(new Vec3(7.598,0,0),14,0);
+            game.Vertical.InputProvider=()=>new VerticalIntent{WallVertical=1,Movement=new PlayerIntent{MoveX=1}};
+            yield return Until(()=>game.Vertical.Motion.Stalls>0,"techo bloqueado");
+            yield return Shot("15-techo-bloqueado");
+            bool blocked=game.Vertical.Motion.LedgeSuccess==0;
+            EndEvidence("route-ceiling");
+
+            BeginEvidence(new Vec3(7.598,1,12),12,12);
+            game.Vertical.InputProvider=()=>new VerticalIntent{WallHorizontal=1,Movement=new PlayerIntent{MoveX=1}};
+            yield return Until(()=>game.Vertical.Motion.Stalls>0,"esquina");
+            yield return Shot("16-esquina");
+            EndEvidence("route-corner");
+            foreach(var normal in new[]{new Vec3(1,0,0),new Vec3(-1,0,0),new Vec3(0,0,1),new Vec3(0,0,-1)}){
+                string face=normal.X!=0?(normal.X>0?"mas-X":"menos-X"):(normal.Z>0?"mas-Z":"menos-Z");
+                BeginEvidence(new Vec3(11+normal.X*3.402,2,normal.Z*4.402),11,0);
+                game.Vertical.InputProvider=()=>new VerticalIntent{Movement=new PlayerIntent{MoveX=-normal.X,MoveZ=-normal.Z}};
+                yield return Until(()=>game.Vertical.Motion.State==VerticalState.Climbing,"agarre "+face);
+                game.Vertical.InputProvider=()=>new VerticalIntent{WallVertical=1};
+                yield return Until(()=>game.Body.Y>=2,"altura A/D "+face);
+                game.Vertical.InputProvider=()=>default;yield return null;
+                // Solo fixture: cámara fija para comparar desplazamiento en pantalla.
+                // Los demás recorridos conservan la cámara jugable y sus colisiones.
+                game.FreeCamera=true;
+                game.Hud.Notice("Pared "+face+" · A izquierda / D derecha",false);
+                yield return Shot("17-"+face+"-antes");
+                double x=game.Body.X,z=game.Body.Z;
+                game.Vertical.InputProvider=()=>new VerticalIntent{WallHorizontal=-1};
+                yield return Until(()=>Math.Abs(game.Body.X-x)+Math.Abs(game.Body.Z-z)>=.75,"A izquierda "+face);
+                game.Vertical.InputProvider=()=>default;game.Hud.Notice("A: desplazamiento hacia la izquierda · "+face,false);yield return Shot("18-"+face+"-A-izquierda");
+                bool left=(game.Body.X-x)*normal.Z-(game.Body.Z-z)*normal.X<-.7;
+                x=game.Body.X;z=game.Body.Z;
+                game.Vertical.InputProvider=()=>new VerticalIntent{WallHorizontal=1};
+                yield return Until(()=>Math.Abs(game.Body.X-x)+Math.Abs(game.Body.Z-z)>=1.5,"D derecha "+face);
+                game.Vertical.InputProvider=()=>default;game.Hud.Notice("D: desplazamiento hacia la derecha · "+face,false);yield return Shot("19-"+face+"-D-derecha");
+                visualValid&=left&&(game.Body.X-x)*normal.Z-(game.Body.Z-z)*normal.X>1.4;
+                EndEvidence("route-AD-"+face);
             }
-            yield return new WaitForSeconds(2);yield return Shot("05-caida-tejado");running=false;SaveRoute("route-edge");
-            game.SetPaused(true);game.HideInterface=true;game.FreeCamera=true;game.worldCamera.transform.SetPositionAndRotation(new Vector3(0,55,0),Quaternion.Euler(90,0,0));yield return null;yield return Shot("00-esquema-circuito");
-            Prepare(new Vec3(7.598,0,0));game.FaceTowards(14,0);game.Vertical.InputProvider=()=>new VerticalIntent{WallVertical=1,Movement=new PlayerIntent{MoveX=1}};
-            nr=0;running=true;yield return new WaitForSeconds(3);yield return Shot("06-techo-bloqueado");
-            bool blocked=game.Vertical.Motion.Stalls>0&&game.Vertical.Motion.LedgeSuccess==0;
-            game.Vertical.Recover();RecordTick(0);yield return Shot("07-rescate-invalida");bool rescued=game.Vertical.InvalidRoute;running=false;SaveRoute("route-blocked");
-            Prepare(new Vec3(7.598,1,12));game.FaceTowards(12,12);game.Vertical.InputProvider=()=>new VerticalIntent{WallHorizontal=-1,Movement=new PlayerIntent{MoveX=1}};
-            yield return new WaitForSeconds(2);yield return Shot("08-esquina");
-            Prepare(new Vec3(11,6,3));game.Vertical.Spawn(300);game.FaceTowards(6,3);yield return new WaitForSeconds(2);yield return Shot("09-horda-desde-tejado");
-            game.SetPaused(true);
-            var report=new Evidence{valid=visualValid&&climb&&edge&&top&&blocked&&rescued,images=images};
+            foreach(double side in new[]{-1.0,1.0}){
+                string face=side>0?"mas-Z":"menos-Z";
+                BeginEvidence(new Vec3(-8,0,side*7),-8,0);
+                game.Hud.Notice("Meseta: pared del terreno antes omitida",false);
+                game.Vertical.InputProvider=()=>new VerticalIntent{Movement=new PlayerIntent{MoveZ=-side},WallVertical=1};
+                yield return Until(()=>game.Vertical.Motion.State==VerticalState.Climbing,"meseta "+face);
+                yield return Shot("20-meseta-"+face+"-entrada");
+                yield return Until(()=>game.Body.Y>2,"meseta ascenso "+face);
+                yield return Shot("21-meseta-"+face+"-ascenso");
+                yield return Until(()=>game.Vertical.Motion.LedgeSuccess==1,"meseta borde "+face);
+                game.Vertical.InputProvider=()=>default;yield return Shot("22-meseta-"+face+"-salida");
+                visualValid&=game.Vertical.Motion.LedgeSuccess==1&&game.Vertical.Recoveries==0;
+                EndEvidence("route-meseta-"+face);
+            }
+            foreach(var direction in new[]{new Vec3(-1,0,0),new Vec3(0,0,1),new Vec3(0,0,-1)}){
+                string face=direction.X<0?"oeste":direction.Z>0?"sur":"norte";
+                BeginEvidence(new Vec3(19,2,11),19+direction.X*5,11+direction.Z*5);game.Body.Grounded=false;
+                game.Vertical.InputProvider=()=>default;
+                yield return Until(()=>game.Body.Grounded&&game.Body.Y< -5.9,"caida foso "+face);
+                game.Vertical.InputProvider=()=>new VerticalIntent{Movement=new PlayerIntent{MoveX=direction.X,MoveZ=direction.Z},WallVertical=1};
+                yield return Until(()=>game.Vertical.Motion.State==VerticalState.Climbing,"foso entrada "+face);
+                yield return Shot("23-foso-"+face+"-entrada");
+                yield return Until(()=>game.Vertical.Motion.LedgeSuccess==1,"foso salida "+face);
+                game.Vertical.InputProvider=()=>default;yield return Shot("24-foso-"+face+"-salida");
+                visualValid&=game.Vertical.Motion.LedgeSuccess==1&&game.Vertical.Recoveries==0;
+                EndEvidence("route-pit-"+face);
+            }
+            game.SetPaused(true);game.HideInterface=true;game.FreeCamera=true;
+            game.worldCamera.transform.SetPositionAndRotation(new Vector3(0,55,0),Quaternion.Euler(90,0,0));
+            yield return Shot("00-esquema-circuito");
+            var report=new Evidence{valid=visualValid&&roof&&pit&&parallel&&blocked,images=images};
             File.WriteAllText(Path.Combine(output,"evidence.json"),JsonUtility.ToJson(report,true));
         }
         void OnDestroy(){if(gc.Valid)gc.Dispose();if(volume)Destroy(volume.gameObject);if(volumeMaterial)Destroy(volumeMaterial);}
