@@ -23,6 +23,7 @@ namespace Mamporro.U3
         public VerticalMotion Motion {get;private set;}
         public VerticalIntent? ScriptedInput;
         public Func<VerticalIntent> InputProvider;
+        public VerticalIntent LastInput {get;private set;}
         public int Recoveries;
         public int Falls,UnintendedGrabs,UnintendedRegrabs;
         public double Seconds,Ascent,Descent,Distance;
@@ -64,6 +65,7 @@ namespace Mamporro.U3
             var input=InputProvider!=null?InputProvider():ScriptedInput??new VerticalIntent{Movement=movement,
                 WallHorizontal=k==null?0:(k.dKey.isPressed?1:0)-(k.aKey.isPressed?1:0),
                 WallVertical=k==null?0:(k.wKey.isPressed?1:0)-(k.sKey.isPressed?1:0)};
+            LastInput=input;
             var b=game.Body;double x=b.X,y=b.Y,z=b.Z;int grabs=Motion.Grabs;
             if(Control)PlayerPhysics.StepInCrowd(game.Body,input.Movement,Circuit.Collision,PlayerTuning.Default,speed,crowd,dt);
             else Motion.Step(input,dt,speed,crowd);

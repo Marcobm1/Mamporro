@@ -28,6 +28,7 @@ namespace Mamporro.Core
         readonly VerticalQueries queries;
         readonly PlayerTuning physics;
         VerticalHit wall,detachedWall;
+        public VerticalHit Contact=>wall;
         bool blockAll,descendedToGround;
         Vec3 lift,top;
         bool onTopLeg;
@@ -51,7 +52,8 @@ namespace Mamporro.Core
         public bool PushesIntoContact(PlayerIntent input)
         {
             double length=JsMath.Hypot(input.MoveX,input.MoveZ);
-            return length>.1&&-(input.MoveX*wall.Normal.X+input.MoveZ*wall.Normal.Z)>=Tuning.MinPushDot*length;
+            double horizontal=JsMath.Hypot(wall.Normal.X,wall.Normal.Z);
+            return length>.1&&horizontal>1e-9&&-(input.MoveX*wall.Normal.X+input.MoveZ*wall.Normal.Z)>=Tuning.MinPushDot*length*horizontal;
         }
         bool CanStartClimb(PlayerIntent input)
         {
@@ -60,7 +62,7 @@ namespace Mamporro.Core
             if(!queries.Wall(Position,toward,physics.Radius,physics.Height,Tuning.Reach,out wall)||!PushesIntoContact(input))return false;
             if(IsReattachBlocked(wall))return false;
             // Los escalones transitables siguen siendo pasos de suelo, no agarres.
-            if(Body.Grounded)for(int i=0;i<queries.Count;i++)
+            if(Body.Grounded&&!wall.Terrain)for(int i=0;i<queries.Count;i++)
                 if(queries.Solid(i).Id==wall.Id&&queries.Solid(i).Max.Y<=Body.Y+physics.StepHeight)return false;
             return queries.Clear(Position,physics.Radius,physics.Height);
         }
@@ -70,11 +72,15 @@ namespace Mamporro.Core
             ReattachRemaining=jump?Tuning.JumpReattachDelay:0;State=VerticalState.Air;Body.Grounded=false;Body.Sliding=false;Body.SlideQueued=false;
             Body.Jumped=jump;
             Body.Coyote=Body.JumpBuffer=0;Body.Vy=jump?physics.JumpVelocity:0;
-            Body.Vx=jump?wall.Normal.X*Tuning.SeparationSpeed:0;Body.Vz=jump?wall.Normal.Z*Tuning.SeparationSpeed:0;
+            double horizontal=JsMath.Hypot(wall.Normal.X,wall.Normal.Z);
+            Body.Vx=jump?wall.Normal.X/horizontal*Tuning.SeparationSpeed:0;Body.Vz=jump?wall.Normal.Z/horizontal*Tuning.SeparationSpeed:0;
             transitionTime=stalled=0;
         }
-        bool IsReattachBlocked(VerticalHit contact)=>!Armed&&(blockAll||contact.Id==detachedWall.Id
-            &&contact.Normal.X*detachedWall.Normal.X+contact.Normal.Z*detachedWall.Normal.Z>.99);
+        bool IsReattachBlocked(VerticalHit contact)=>!Armed&&(blockAll||contact.Terrain==detachedWall.Terrain
+            &&(contact.Id==detachedWall.Id||contact.Terrain&&SameTerrainPlane(contact,detachedWall))
+            &&contact.Normal.X*detachedWall.Normal.X+contact.Normal.Y*detachedWall.Normal.Y+contact.Normal.Z*detachedWall.Normal.Z>.99);
+        static bool SameTerrainPlane(VerticalHit a,VerticalHit b)=>Math.Abs((a.Point.X-b.Point.X)*b.Normal.X
+            +(a.Point.Y-b.Point.Y)*b.Normal.Y+(a.Point.Z-b.Point.Z)*b.Normal.Z)<.05;
         public bool CurrentContactBlocked=>IsReattachBlocked(wall);
         // Pausa/foco/muerte/reinicio: no conservar agarre ni entrada latente.
         public void Suspend()
@@ -101,7 +107,7 @@ namespace Mamporro.Core
             var from=Position;
             if(!queries.Sweep(from,target,physics.Radius,physics.Height,out var hit)){Move(target);return;}
             // Escalón U3: probar elevación y avance completos antes de aceptar el paso.
-            if(wasGrounded&&Math.Abs(hit.Normal.Y)<.01){
+            if(wasGrounded&&!hit.Terrain&&Math.Abs(hit.Normal.Y)<.01){
                 for(int i=0;i<queries.Count;i++){
                     var s=queries.Solid(i);double rise=s.Max.Y-from.Y;
                     if(s.Id!=hit.Id||rise<=0||rise>physics.StepHeight)continue;
@@ -137,13 +143,15 @@ namespace Mamporro.Core
                     if(length<=amount+1e-8){if(!onTopLeg)onTopLeg=true;else{State=VerticalState.Ground;Body.Grounded=true;LedgeSuccess++;}}
                 }else{
                     double v=input.WallVertical,h=input.WallHorizontal,n=Math.Max(1,JsMath.Hypot(v,h));v/=n;h/=n;
-                    bool atEdge=false;
-                    for(int i=0;i<queries.Count;i++)if(queries.Solid(i).Id==wall.Id)atEdge=Body.Y>=queries.Solid(i).Max.Y-.2;
+                    bool atEdge=queries.NearEdge(Position,wall);
                     if(v>0&&atEdge&&queries.Ledge(Position,wall,physics.Radius,physics.Height,out lift,out top)){
                         State=VerticalState.Ledge;transitionTime=0;onTopLeg=false;
                     }else{
                         var right=WallRight(wall.Normal);
-                        var target=new Vec3(Body.X+right.X*h*Tuning.SideSpeed*dt,Body.Y+v*Tuning.UpSpeed*dt,Body.Z+right.Z*h*Tuning.SideSpeed*dt);
+                        double dy=v*Tuning.UpSpeed*dt,horizontal2=wall.Normal.X*wall.Normal.X+wall.Normal.Z*wall.Normal.Z;
+                        double slope=wall.Normal.Y*dy/horizontal2;
+                        var target=new Vec3(Body.X+right.X*h*Tuning.SideSpeed*dt-wall.Normal.X*slope,Body.Y+dy,
+                            Body.Z+right.Z*h*Tuning.SideSpeed*dt-wall.Normal.Z*slope);
                         bool moved=Move(target);
                         if(v>0)ClimbSeconds+=dt;else if(v<0)DescendSeconds+=dt;
                         if(Length(Sub(Position,before))<1e-6&&(Math.Abs(v)+Math.Abs(h)>.1)){

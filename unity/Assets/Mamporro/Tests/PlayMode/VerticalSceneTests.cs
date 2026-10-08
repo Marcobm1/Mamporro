@@ -5,16 +5,76 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.LowLevel;
+using System.Reflection;
 
 namespace Mamporro.Tests
 {
     public sealed class VerticalSceneTests
     {
-        QaSave save;
+        QaSave save;Keyboard keyboard;
         [SetUp] public void Setup(){save=QaSave.UseAllUnlocked();VerticalQa.RequestedForTests=true;}
-        [TearDown] public void Teardown(){VerticalQa.RequestedForTests=false;save.Dispose();}
+        [TearDown] public void Teardown(){if(keyboard!=null){InputSystem.RemoveDevice(keyboard);keyboard=null;}VerticalQa.RequestedForTests=false;save.Dispose();}
         static U3Game Game=>Object.FindAnyObjectByType<U3Game>();
         static IEnumerator Load(){yield return SceneManager.LoadSceneAsync("U3_Partida");yield return null;}
+        [UnityTest] public IEnumerator KeyboardLeftRightMatchesScreenAtEveryWallAndPitch()
+        {
+            yield return Load();var g=Game;g.StartRun("P0QA");g.SetPaused(true);
+            keyboard=InputSystem.AddDevice<Keyboard>("Teclado A6 QA");
+            foreach(var normal in new[]{Vector3.right,Vector3.left,Vector3.forward,Vector3.back})
+            foreach(float pitch in new[]{-15f,20f,60f})foreach(var key in new[]{Key.A,Key.D}){
+                g.PlaceQa(new Vec3(11+normal.x*3.402,2,normal.z*4.402));g.Body.Grounded=false;
+                g.FaceTowards(11,0);typeof(U3Game).GetField("pitch",BindingFlags.Instance|BindingFlags.NonPublic).SetValue(g,pitch);
+                g.Vertical.ScriptedInput=new VerticalIntent{Movement=new PlayerIntent{MoveX=-normal.x,MoveZ=-normal.z}};
+                for(int i=0;i<25;i++)g.Session.PhysicsStep(default,1.0/60,9.5,0);
+                Assert.That(g.Vertical.Motion.State,Is.EqualTo(VerticalState.Climbing));
+                g.Vertical.ScriptedInput=null;
+                InputSystem.QueueStateEvent(keyboard,new KeyboardState(key));InputSystem.Update();
+                var before=new Vector3((float)g.Body.X,(float)g.Body.Y,-(float)g.Body.Z);
+                g.Session.PhysicsStep(default,1.0/60,9.5,0);
+                var after=new Vector3((float)g.Body.X,(float)g.Body.Y,-(float)g.Body.Z);
+                // Oráculo independiente de WallRight: base de cámara Unity mirando la pared.
+                var facing=new Vector3(-normal.x,0,normal.z);var right=Vector3.Cross(Vector3.up,facing);
+                var rotation=Quaternion.LookRotation(facing)*Quaternion.Euler(pitch,0,0);
+                Assert.That(Vector3.Dot(rotation*Vector3.right,right),Is.GreaterThan(.999f));
+                Assert.That(Vector3.Dot(after-before,right),Is.EqualTo(key==Key.D?.05f:-.05f).Within(.00001));
+                var pivot=g.Vertical.CameraPivot(after,after+Vector3.up*1.9f);
+                var camera=g.Vertical.ClipCamera(pivot,pivot-rotation*Vector3.forward*6,1);
+                Assert.That(g.Vertical.Circuit.Queries.Clear(new Vec3(camera.x,camera.y-.15,-camera.z),.15,.3),Is.True);
+                InputSystem.QueueStateEvent(keyboard,new KeyboardState());InputSystem.Update();
+            }
+            LogAssert.NoUnexpectedReceived();
+        }
+        [UnityTest] public IEnumerator AllPitSidesAndPlateauSidesCompleteWithCameraAndNoRescue()
+        {
+            yield return Load();var g=Game;g.StartRun("P0QA");g.SetPaused(true);
+            foreach(var direction in new[]{Vector3.right,Vector3.left,Vector3.forward,Vector3.back}){
+                g.StartRun("P0QA");g.SetPaused(true);
+                g.PlaceQa(new Vec3(19,2,11));g.Body.Grounded=false;
+                for(int i=0;i<180&&!g.Body.Grounded;i++){g.Vertical.ScriptedInput=default(VerticalIntent);g.Session.PhysicsStep(default,1.0/60,9.5,0);}
+                Assert.That(g.Body.Y,Is.EqualTo(-6).Within(.01));
+                yield return CompleteRoute(g,direction.x,direction.z);
+            }
+            foreach(double side in new[]{-1.0,1.0}){
+                g.StartRun("P0QA");g.SetPaused(true);
+                g.PlaceQa(new Vec3(-8,0,side*7));yield return CompleteRoute(g,0,-side);
+            }
+            LogAssert.NoUnexpectedReceived();
+        }
+        static IEnumerator CompleteRoute(U3Game g,double dx,double dz)
+        {
+            var q=g.Vertical;
+            for(int i=0;i<400&&q.Motion.LedgeSuccess==0;i++){
+                q.ScriptedInput=new VerticalIntent{Movement=new PlayerIntent{MoveX=dx,MoveZ=dz},WallVertical=1};g.Session.PhysicsStep(default,1.0/60,9.5,0);
+                var b=g.Body;var player=new Vector3((float)b.X,(float)b.Y,-(float)b.Z);
+                var pivot=q.CameraPivot(player,player+Vector3.up*1.9f);
+                var camera=q.ClipCamera(pivot,pivot+new Vector3((float)-dx*6,2,(float)dz*6));
+                Assert.That(q.Circuit.Queries.Clear(new Vec3(camera.x,camera.y-.15,-camera.z),.15,.3),Is.True);
+            }
+            Assert.That(q.Motion.LedgeSuccess,Is.EqualTo(1));Assert.That(q.Recoveries,Is.Zero);Assert.That(q.InvalidRoute,Is.False);
+            yield break;
+        }
         [UnityTest] public IEnumerator CircuitIsOptInAndUsesExistingSession()
         {
             yield return Load();var g=Game;g.StartRun("P0QA");g.SetPaused(true);

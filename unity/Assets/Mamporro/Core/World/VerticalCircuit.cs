@@ -23,7 +23,7 @@ namespace Mamporro.Core
                 if(px>=16&&px<=22&&pz>=8&&pz<=14)heights[z*(cells+1)+x]=-6;
             }
             Terrain=new Heightfield(size,cells,heights);
-            Queries=new VerticalQueries(
+            Queries=new VerticalQueries(Terrain,Tuning.PlayerMaxSlopeDeg,
                 Box(1,VerticalSurfaceKind.Structure,8,0,-4,14,6,4), // pared y tejado
                 Box(2,VerticalSurfaceKind.Structure,6,7,-1,15,8,1), // techo que bloquea la salida central
                 Box(3,VerticalSurfaceKind.Structure,8,0,10,12,4,16),

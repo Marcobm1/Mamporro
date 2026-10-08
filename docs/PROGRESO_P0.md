@@ -4,6 +4,9 @@ Estado: **P0-A1–A5 base técnica validada manualmente; P0-A6 EN CURSO** (07/10
 
 ## Cómo retomar
 
+- **08/10, corrección A6 tras feedback manual (Codex):** auditado HEAD/remoto `603a225dbf4ecc89e5359528bdf54d24c6dbd49d`, 0/0. A6.1 `0698f25` y A6.2 `603a225` ya publicados; A6.3 dejó WIP en P0Capture y nueve documentos, conservado. XML históricos 500 Edit/47 Play, 17 PNG y ocho informes de cargas válidos comprobados. U6 y siete huellas coinciden. El autor identifica los muros omitidos como meseta/rampa: Heightfield participa en colisión pero no en las consultas de cajas de escalada. A/D invertido por tangente incompatible con la reflexión Z de presentación; los tests anteriores solo verificaban magnitud absoluta.
+- Corrección A/D en commit local `53658e4`, Edit 506/506 ejecutado. Adaptador optativo de triángulos del terreno completado: verificación final de código `scripts\u3.cmd edit` **538/538**, `scripts\u3.cmd play` **49/49**, 08/10. Copias XML/log en `unity/TestResults/P0/A6Correccion`. Pasadas intermedias 532/534 Edit y 49 Play también correctas. Referencias U0/U2/U3/U4 verificadas con `powershell -NoProfile -ExecutionPolicy Bypass -File scripts\verify-historical-reference.ps1`, instantánea `qa-results/reference-298452535d744484b9401c1a26e0d674`. En curso: evidencia/build/medidas nuevas; el arnés conserva el WIP anterior y añade A/D, meseta y cuatro caras de foso. No interpretar este punto intermedio como cierre ni aprobación manual. No iniciar P0-B.
+
 - **07/10, A6 activo:** HEAD/remoto iniciales `ccd45c0c01e127e7d96f1fa87b52174133ae416c`, 0/0 tras fetch. WIP recibido en VerticalMotion, VerticalCircuit, sus tests, VerticalSceneTests, VerticalQa y P0Capture: conservado y revisado; no estaba registrado en el cierre A5.
 - U6 y las siete huellas protegidas coinciden exactamente con la tabla de integridad inferior antes de editar.
 - Siguiente paso vigente: completar/verificar A6 (automática, reenganche por superficie, foso, integración/evidencia/medidas/build); detenerse para prueba manual del autor. Las instrucciones de agarre con botón del historial A1–A5 quedan sustituidas por A6.
@@ -329,3 +332,58 @@ A6.1 publicado y remoto verificado en `0698f25ffc16f8f36bdfd542b62c9fdd62e4f57c`
 Regresión histórica ejecutada: `powershell -NoProfile -ExecutionPolicy Bypass -File scripts\verify-historical-reference.ps1`, U0/U2/U3/U4 coinciden. Instantánea conservada en `qa-results/reference-44ca3847f55848aba8edec1d01ee767c`; 8 guardados y 6 secuencias meta correctos. Sin cambios en src ni corpus.
 
 Pieza: «Protege el descenso y verifica la salida del foso». Siguiente: evidencia A6, build QA normal/Development y medidas comparables, cierre para prueba manual. Sin P0-B.
+
+## A6.3 — evidencia, builds y medidas (07/10/2026, Codex)
+
+A6.2 publicado y remoto verificado en `603a225dbf4ecc89e5359528bdf54d24c6dbd49d` (SHA corregido al auditar el 08/10). Se amplió exclusivamente el arnés P0Capture: 17 PNG y seis trazas CSV, fixtures separados y rutas continuas dentro de cada fixture. Compilación y ejecución reales con `scripts\p0.cmd build`, `evidence`, `benchmark`, `devbuild`, `devdiag`. Informes válidos: 1/1 evidencia y 8/8 cargas. Builds normal `unity/Builds/P0/MAMPORRO-P0.exe` y Development `unity/Builds/P0Dev/MAMPORRO-P0.exe`; fuente registrada `603a225+P0-WIP`: el arnés quedó sin commit al agotarse la sesión anterior. Los artefactos existen, pero esta pieza no había sido publicada; conservada e integrada en la corrección del 08/10.
+
+Evidencia: `unity/TestResults/P0/Evidence/20261007T174932`. Revisadas imágenes de entrada, salto, transición, caída, fondo, salida, paralelo, techo y esquina; se conserva volumen magenta de consulta, sin collider adicional. PNG 01–06: aproximación frontal, entrada automática, ascenso, salto/separación, transición y tejado; 07–12: caída al foso, fondo, escalada y salida; 13: paralelo sin agarre; 14: entrada aérea; 15–16: techo bloqueado/esquina; 00: vista del circuito. No vídeo: secuencia fiable con infraestructura existente, no validación de sensación manual.
+
+Traza continua del foso: caída desde (19,2,11), fondo y=-6 a 0,617 s, entrada desde fondo a 0,933 s, borde a 2,250 s, salida completa con apoyo a 2,517 s en (22,42; 0,002; 11), cero rescates/atascos/reenganches indebidos. Tejado: entrada a 0,333 s, salto a 0,800 s, reenganche a 1,150 s (0,350 s), borde a 2,050 s y apoyo completo a 2,283 s. Son tiempos de estos fixtures automatizados, no tiempos universales ni prueba humana.
+
+Lanzador probado realmente con shell `cmd.exe`: `scripts\p0.cmd jugar`, salida 0, ventana/proceso respondiente desde la ruta P0 y log `unity/TestResults/P0/manual.log`, guardado `unity/TestResults/P0/ManualSave`. Cerrado después de comprobar arranque. No se escribe progreso personal ni se sustituye U6.
+
+### Método y resultados A6
+
+Misma metodología A5: Ryzen 7 7700X / RTX 4070 Ti SUPER, Mono Windows x64 D3D11, 1920x1080, interna 360, VSync 0, sin límite de frames, 10 s warmup + 30 s medidos por carga, tick 1/60, semilla P0QA, horda exacta centralizada, armas off e invulnerabilidad solo QA. Se conserva el recorrido de subir/bajar/tejado/caída/regreso; cambia la entrada a automática y se añaden cuatro sólidos del foso. Las ocho pasadas completan 9 bordes y 9 caídas, con 0 fallos de borde, atascos, rescates, agarres indebidos y reanudaciones por foco. No es coste aislado de consultas ni FPS generales.
+
+Fuentes: `unity/TestResults/P0/Normal/20261007T175005` y `unity/TestResults/P0/Development/20261007T175340`; load-N.json, frames-N.csv, route-N.csv y PNG. Comparación con carpetas A5 20261006T172056 (Normal) y 20261006T172419 (Development), sin regenerarlas.
+
+| Build | Enemigos | Frame p50 ms | p95 | p99 | Máximo | Delta p95 vs A5 ms |
+| --- | --- | --- | --- | --- | --- | --- |
+| Normal | 0 | 0.306 | 0.518 | 0.979 | 26.610 | -0.085 |
+| Normal | 300 | 0.402 | 0.984 | 1.385 | 5.346 | +0.168 |
+| Normal | 500 | 0.447 | 1.084 | 1.602 | 5.573 | +0.088 |
+| Normal | 750 | 0.515 | 1.177 | 2.254 | 8.208 | -0.351 |
+| Development | 0 | 0.384 | 0.800 | 1.071 | 6.370 | -0.041 |
+| Development | 300 | 0.472 | 0.983 | 1.244 | 3.836 | -0.062 |
+| Development | 500 | 0.524 | 1.129 | 1.634 | 4.437 | -0.267 |
+| Development | 750 | 0.586 | 1.315 | 2.308 | 3.697 | -0.285 |
+
+CPU es el tiempo de lógica/combate/presentación del tick, no CPU total del proceso. GPU **N/D**.
+
+| Build | Enemigos | CPU p50 ms | p95 | p99 | Máximo | Delta p95 vs A5 ms |
+| --- | --- | --- | --- | --- | --- | --- |
+| Normal | 0 | 0.010 | 0.015 | 0.019 | 0.095 | +0.002 |
+| Normal | 300 | 0.580 | 0.697 | 0.791 | 0.983 | +0.090 |
+| Normal | 500 | 1.038 | 1.137 | 1.375 | 2.193 | +0.043 |
+| Normal | 750 | 1.642 | 1.806 | 2.115 | 2.716 | -0.131 |
+| Development | 0 | 0.009 | 0.013 | 0.015 | 0.037 | -0.001 |
+| Development | 300 | 0.572 | 0.619 | 0.710 | 0.840 | -0.007 |
+| Development | 500 | 1.034 | 1.094 | 1.279 | 1.391 | -0.046 |
+| Development | 750 | 1.624 | 1.715 | 1.853 | 2.144 | +0.005 |
+
+| Build | Enemigos | Asignada MiB | Reservada MiB | Mono MiB | GC gen0 | GC B/frame |
+| --- | --- | --- | --- | --- | --- | --- |
+| Normal | 0 | 244.47 | 282.25 | 19.25 | 674 | N/D |
+| Normal | 300 | 245.28 | 538.31 | 19.23 | 479 | N/D |
+| Normal | 500 | 245.72 | 538.31 | 19.54 | 438 | N/D |
+| Normal | 750 | 250.34 | 538.31 | 19.16 | 374 | N/D |
+| Development | 0 | 154.26 | 543.56 | 19.51 | 540 | 9514.6 |
+| Development | 300 | 154.35 | 543.56 | 19.15 | 428 | 9650.4 |
+| Development | 500 | 154.51 | 543.56 | 19.45 | 383 | 9776.6 |
+| Development | 750 | 154.42 | 543.56 | 19.71 | 336 | 9959.7 |
+
+Memoria: instantánea final Unity/Mono, no pico/RSS/VRAM; GC gen0 durante ~40 s, B/frame del recorder solo fiable en Development. HUD/instrumentación están incluidos. Una pasada por carga: no atribuir ruido o picos aislados exclusivamente a detección. En Normal, CPU p95 cambia +0,002/+0,090/+0,043/-0,131 ms; no aparece crecimiento sostenido causado por la entrada automática. El vacío tiene un pico real de 26,610 ms (1/87033 frames >16,67 ms); 300/500/750 no tienen frames >16,67 ms. No se oculta el pico ni se promete ausencia de regresiones en otros equipos. Las reservas de memoria se mantienen comparables; asignación final Normal aumenta aproximadamente 8–12 MiB frente a A5.
+
+Integridad tras builds: U6 SHA idéntico al inicial y 7/7 protegidos coinciden byte a byte con la tabla histórica. Informe `unity/TestResults/P0/A6/integrity.json`; XML/log Edit y Play archivados allí. Sin src ni corpus, sin P0-B/C/D. Siguiente: cierre documental y detenerse para la prueba manual A6.
