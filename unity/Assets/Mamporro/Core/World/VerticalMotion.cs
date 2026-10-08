@@ -41,6 +41,13 @@ namespace Mamporro.Core
         void Place(Vec3 p){Body.X=p.X;Body.Y=p.Y;Body.Z=p.Z;}
         static double Length(Vec3 p)=>Math.Sqrt(p.X*p.X+p.Y*p.Y+p.Z*p.Z);
         static Vec3 Sub(Vec3 a,Vec3 b)=>new Vec3(a.X-b.X,a.Y-b.Y,a.Z-b.Z);
+        // Derecha mirando hacia la pared. El núcleo usa Z web; Unity refleja ese eje.
+        // En Unity equivale a Cross(up, -normal). No depende de yaw ni pitch.
+        public static Vec3 WallRight(Vec3 normal)
+        {
+            double length=JsMath.Hypot(normal.X,normal.Z);
+            return length>1e-9?new Vec3(normal.Z/length,0,-normal.X/length):default;
+        }
         public bool PushesIntoContact(PlayerIntent input)
         {
             double length=JsMath.Hypot(input.MoveX,input.MoveZ);
@@ -135,7 +142,8 @@ namespace Mamporro.Core
                     if(v>0&&atEdge&&queries.Ledge(Position,wall,physics.Radius,physics.Height,out lift,out top)){
                         State=VerticalState.Ledge;transitionTime=0;onTopLeg=false;
                     }else{
-                        var target=new Vec3(Body.X-wall.Normal.Z*h*Tuning.SideSpeed*dt,Body.Y+v*Tuning.UpSpeed*dt,Body.Z+wall.Normal.X*h*Tuning.SideSpeed*dt);
+                        var right=WallRight(wall.Normal);
+                        var target=new Vec3(Body.X+right.X*h*Tuning.SideSpeed*dt,Body.Y+v*Tuning.UpSpeed*dt,Body.Z+right.Z*h*Tuning.SideSpeed*dt);
                         bool moved=Move(target);
                         if(v>0)ClimbSeconds+=dt;else if(v<0)DescendSeconds+=dt;
                         if(Length(Sub(Position,before))<1e-6&&(Math.Abs(v)+Math.Abs(h)>.1)){

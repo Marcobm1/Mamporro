@@ -130,7 +130,7 @@ namespace Mamporro.Tests
             for(int i=0;i<40;i++){m.Step(new VerticalIntent{Movement=new PlayerIntent{MoveX=1}},1.0/60);Assert.That(c.Queries.Clear(new Vec3(b.X,b.Y,b.Z),.4,1.55),Is.True);}
             Assert.That(b.Y,Is.LessThan(5));Assert.That(m.Grabs,Is.Zero);
             b.PlaceAt(7.598,1,12);b.Grounded=false;b.Facing=-System.Math.PI/2;m=new VerticalMotion(b,c.Collision,c.Queries);
-            for(int i=0;i<100;i++)m.Step(Grip(0,-1),1.0/60);
+            for(int i=0;i<100;i++)m.Step(Grip(0,1),1.0/60);
             Assert.That(c.Queries.Clear(new Vec3(b.X,b.Y,b.Z),.4,1.55),Is.True);Assert.That(m.Stalls,Is.GreaterThan(0));
             m.Step(new VerticalIntent{Movement=new PlayerIntent{JumpPressed=true}},1.0/60);
             Assert.That(m.State,Is.EqualTo(VerticalState.Air));Assert.That(m.Armed,Is.False);
@@ -240,6 +240,27 @@ namespace Mamporro.Tests
             var m=new VerticalMotion(b,c.Collision,c.Queries);
             for(int i=0;i<120;i++)m.Step(Grip(),1.0/60);
             Assert.That(m.Grabs,Is.EqualTo(1));Assert.That(m.State,Is.EqualTo(VerticalState.Climbing));
+        }
+        [TestCase(1,0,0,-1)] [TestCase(-1,0,0,1)]
+        [TestCase(0,1,1,0)] [TestCase(0,-1,-1,0)]
+        public void LeftAndRightHaveSignedDisplacementOnEveryBoxFace(double nx,double nz,double rx,double rz)
+        {
+            foreach(double side in new[]{-1.0,1.0}){
+                var c=new VerticalCircuit();var b=new PlayerBody();
+                b.PlaceAt(11+nx*3.402,2,nz*4.402);b.Grounded=false;
+                var m=new VerticalMotion(b,c.Collision,c.Queries);
+                m.Step(new VerticalIntent{Movement=new PlayerIntent{MoveX=-nx,MoveZ=-nz}},1.0/60);
+                Assert.That(m.State,Is.EqualTo(VerticalState.Climbing));double x=b.X,z=b.Z;
+                for(int i=0;i<10;i++)m.Step(new VerticalIntent{WallHorizontal=side},1.0/60);
+                Assert.That(b.X-x,Is.EqualTo(rx*side*.5).Within(1e-8));
+                Assert.That(b.Z-z,Is.EqualTo(rz*side*.5).Within(1e-8));
+            }
+        }
+        [TestCase(.6,.8,.8,-.6)] [TestCase(-.6,-.8,-.8,.6)]
+        public void ObliqueWallBasisPreservesHandedness(double nx,double nz,double rx,double rz)
+        {
+            var right=VerticalMotion.WallRight(new Vec3(nx,.3,nz));
+            Assert.That(right.X,Is.EqualTo(rx).Within(1e-10));Assert.That(right.Z,Is.EqualTo(rz).Within(1e-10));
         }
         [Test] public void VerticalAndLateralSpeedsAreIndependentParameters()
         {
