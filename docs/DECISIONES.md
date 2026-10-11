@@ -750,3 +750,7 @@ Corrección dentro del contrato autorizado por el autor: la protección tras sal
 Decisión expresa del autor tras probar A6: todo el comportamiento es correcto, incluidos A/D según la cámara de `dc4739c` (la propuesta anterior queda así confirmada). Único cambio pedido: escalar a la velocidad efectiva de movimiento del personaje en todas las direcciones, mejoras incluidas, sin diferencia con la carrera.
 
 Concreción: `PlayerPhysics.EffectiveSpeed(Tuning.PlayerBaseMoveSpeed * Stats[moveSpeed], CrowdSlow)`, la misma fórmula y fuente que la carrera, leída cada tick; sustituye 4,5/3,0 m/s y la velocidad de borde. Módulo igual sobre la superficie para W/S/A/D y diagonal normalizada. Por seguridad, el recorrido se resuelve en tramos de 0,075 m con borde, barrido y contacto en cada uno. Sin estadísticas, mejoras ni balance nuevos. Pendiente de prueba manual de la velocidad; P0-B/C/D no autorizados.
+
+## P0-A6 aprobado manualmente (11/10/2026)
+
+Decisión expresa del autor tras probar `373620d`: «Todo bien». P0-A6 queda aprobado, incluida la velocidad de escalada igual a la velocidad efectiva de carrera (`PlayerPhysics.EffectiveSpeed`, mejoras incluidas), la escalada automática sin botón, todas las paredes físicas apropiadas, A/D según cámara, transiciones, salida de fosos y protección tras salto, sin resistencia ni límite temporal. No reabrir estas decisiones sin un problema real. P0-A cerrado. Siguiente bloque: P0-B (rutas de enemigos en altura), solo plan hasta su aprobación; P0-C/D no autorizados.

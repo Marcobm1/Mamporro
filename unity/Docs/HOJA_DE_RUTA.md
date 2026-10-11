@@ -26,9 +26,9 @@ estética retro. Megabonk sirve de referencia expresada por el autor para escala
 verticalidad y agilidad; no se han analizado sus sistemas en esta fase ni se
 presupone reproducirlos. MAMPORRO mantiene nombres, arte y diseño propios.
 
-## P0-A6 corregido y verificado; pendiente de nueva prueba manual
+## P0-A cerrado; P0-B en planificación
 
-[Checkpoint P0](../../docs/PROGRESO_P0.md): A1–A5 validados técnicamente por el autor; A6 corregido y verificado en build QA separada. El autor debe confirmar A/D, escalada automática de las paredes físicas y salida de fosos. Lanzador probado: `scripts\p0.cmd jugar` desde la raíz. P0-B (rutas/amenaza), C (muestra procedural) y D (ampliación) NO están autorizados. El tejado sin acceso sigue fuera del alcance del melee: 30 s sin daño en la sonda, limitación registrada. Balance se mantiene separado, aunque figure como P0 histórico en la tabla. No mezclar P1/P2 ni adoptar VAT/modelos B0 por defecto.
+[Checkpoint P0](../../docs/PROGRESO_P0.md): A1–A5 validados técnicamente; A6 aprobado manualmente por el autor el 11/10/2026 (escalada automática, A/D según cámara, velocidad efectiva de carrera). Siguiente: plan de P0-B (rutas de enemigos en altura), pendiente de aprobación del autor antes de programar. Lanzador probado: `scripts\p0.cmd jugar` desde la raíz. P0-B (rutas/amenaza) solo en planificación; C (muestra procedural) y D (ampliación) NO están autorizados. El tejado sin acceso sigue fuera del alcance del melee: 30 s sin daño en la sonda, limitación registrada. Balance se mantiene separado, aunque figure como P0 histórico en la tabla. No mezclar P1/P2 ni adoptar VAT/modelos B0 por defecto.
 
 ## Peticiones del autor y orden propuesto
 

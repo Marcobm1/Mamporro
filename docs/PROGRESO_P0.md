@@ -1,8 +1,10 @@
 # P0 — movilidad y verticalidad antes de ampliar el mundo
 
-Estado: **P0-A1–A5 base técnica validada manualmente; P0-A6 corregido y verificado, pendiente de prueba manual** (11/10/2026, Codex; refinado por Claude Code el mismo día en `dc4739c`). **Actualización 11/10 noche:** el autor probó A6 y aprueba todo salvo la velocidad; escalada a velocidad efectiva de carrera en `373620d`, pendiente de su prueba. La movilidad no se declara aceptada hasta la nueva prueba del autor. P0-B/C/D NO autorizados. No mezcla P1 artístico ni P2 contenido. La clasificación histórica de balance en P0 no lo incluye en este prototipo.
+Estado: **P0-A1–A5 base técnica validada manualmente; P0-A6 corregido y verificado, pendiente de prueba manual** (11/10/2026, Codex; refinado por Claude Code el mismo día en `dc4739c`). **Actualización 11/10 noche:** el autor probó A6 y aprueba todo salvo la velocidad; escalada a velocidad efectiva de carrera en `373620d`. **Cierre 11/10: P0-A6 aprobado manualmente por el autor («Todo bien»), velocidad incluida. P0-A cerrado. Siguiente bloque: P0-B, solo plan hasta su aprobación.** La movilidad no se declara aceptada hasta la nueva prueba del autor. P0-B/C/D NO autorizados. No mezcla P1 artístico ni P2 contenido. La clasificación histórica de balance en P0 no lo incluye en este prototipo.
 
 ## Cómo retomar
+
+- **Punto vigente (cierre P0-A, 11/10/2026):** A6 aprobado manualmente. Código `373620d`, cierre documental `dc8ab26` y este cierre. Siguiente: plan de P0-B (rutas de enemigos en altura) entregado al autor; **no programar P0-B hasta su aprobación**; C/D no autorizados. Los puntos siguientes son historial.
 
 - **Punto vigente 11/10 noche (Claude Code):** A6 probado manualmente y aprobado salvo velocidad. Nueva decisión confirmada: escalar a la velocidad efectiva de carrera, mejoras incluidas. Implementado en `373620d`; builds Normal/Development de ese commit; Edit 583/583, Play 51/51. Detalle en «Velocidad de escalada = velocidad efectiva» al final. **Siguiente paso: el autor prueba la velocidad con `scripts\p0.cmd jugar`; detenerse. No iniciar P0-B/C/D.**
 
@@ -634,3 +636,21 @@ Benchmark Normal (lógica y frame del arnés, no FPS generales del juego; mismo 
 U6 `96b492cb271111251fe42b8646e65370a1b7b566773a1e35b34c3f2d1ae70873` antes y después; siete ajustes protegidos con las huellas de la tabla A6, fuera de commits (`unity/TestResults/P0/A6Velocidad/integrity-after.json`). Sin cambios en `src/` ni en `unity/Docs/Reference/`.
 
 Prueba: `scripts\p0.cmd jugar`. Escalar W/S/A/D y diagonales a la misma rapidez que corriendo; tejado, meseta, rampa y foso sin atascos; con F4 la horda frena igual que en carrera. El circuito QA no ofrece mejoras de velocidad durante la partida; la integración con la estadística está cubierta por las pruebas automáticas. **Detenerse; no iniciar P0-B/C/D.**
+
+## Cierre de P0-A6 — aprobación manual del autor (11/10/2026)
+
+El autor probó la build P0 de `373620d` y aprueba A6 sin reservas («Todo bien»). Queda aprobado:
+
+- Escalada automática al correr contra una pared sólida, sin botón ni salto previo; sin enganche al rozar o correr en paralelo.
+- Todas las paredes físicas apropiadas (cajas y triángulos abruptos del terreno) por contrato de exclusión, sin listas de IDs; follaje, interactuables, enemigos, límites, suelos, tapas y caras inferiores excluidos.
+- A/D según la pantalla, con la cámara hacia o de espaldas a la pared (`dc4739c`).
+- W/S/A/D y diagonal normalizada a la velocidad efectiva de carrera: `PlayerPhysics.EffectiveSpeed(Tuning.PlayerBaseMoveSpeed * Stats[moveSpeed], CrowdSlow)`, misma fuente que la carrera, mejoras incluidas, en tramos de 0,075 m con borde/barrido/contacto (`373620d`).
+- Transición a tejados y bordes, salida de fosos sin F7, salto con 0,35 s de protección por plano, sin resistencia ni límite de tiempo, cámara con retracción.
+
+Últimos resultados verificados (11/10, sobre `373620d`): Edit 583/583, Play 51/51, referencias U0/U2/U3/U4 coincidentes, evidencia `20261011T203110` válida, benchmark Normal `20261011T203140` válido 0/300/500/750 con cero fallos. Este cierre es documental: no se han repetido pruebas ni builds; el código no cambia.
+
+Integridad al cerrar: U6 `96b492cb271111251fe42b8646e65370a1b7b566773a1e35b34c3f2d1ae70873` y las siete huellas protegidas iguales a la tabla A6.
+
+Limitaciones conocidas aceptadas, no bloqueantes: en una esquina exterior el agarre se suelta al agotarse la cara (sin giro automático); cajas del circuito alineadas a ejes, paredes oblicuas solo en el terreno; sin importador de meshes arbitrarios ni escalada en la entrega U6; refugio en tejado sin acceso fuera del alcance de la horda (limitación A4, materia de P0-B).
+
+**Continuación: P0-B (rutas de enemigos en altura). Primero plan para el autor; no programar hasta su aprobación. P0-C/D no autorizados.**
