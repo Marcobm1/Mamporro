@@ -4,6 +4,8 @@ Estado: **P0-A1–A5 base técnica validada manualmente; P0-A6 corregido y verif
 
 ## Cómo retomar
 
+- **Punto vigente (P0-B, 11/10/2026):** navegación vertical y escalada de todos los enemigos implementadas y verificadas técnicamente en el circuito QA B (F10); cierre técnico `a9cac92`. Edit 635/635, Play 52/52, referencias coincidentes, benchmark/evidencias válidos. Detalle, desviaciones (p95 0,61 ms y pico 1,49 ms frente a 0,5/1 ms) y guía en «P0-B — … cierre técnico» al final. **Siguiente paso: prueba manual del autor; detenerse. No iniciar P0-C/D.**
+
 - **Punto vigente (cierre P0-A, 11/10/2026):** A6 aprobado manualmente. Código `373620d`, cierre documental `dc8ab26` y este cierre. Siguiente: plan de P0-B (rutas de enemigos en altura) en [PLAN_P0B](PLAN_P0B.md), **revisado el 11/10 tras la decisión de que todos los enemigos escalen**, con cinco dudas abiertas en su sección 10; **no programar P0-B hasta su aprobación**; C/D no autorizados. Los puntos siguientes son historial.
 
 - **Punto vigente 11/10 noche (Claude Code):** A6 probado manualmente y aprobado salvo velocidad. Nueva decisión confirmada: escalar a la velocidad efectiva de carrera, mejoras incluidas. Implementado en `373620d`; builds Normal/Development de ese commit; Edit 583/583, Play 51/51. Detalle en «Velocidad de escalada = velocidad efectiva» al final. **Siguiente paso: el autor prueba la velocidad con `scripts\p0.cmd jugar`; detenerse. No iniciar P0-B/C/D.**
@@ -654,3 +656,83 @@ Integridad al cerrar: U6 `96b492cb271111251fe42b8646e65370a1b7b566773a1e35b34c3f
 Limitaciones conocidas aceptadas, no bloqueantes: en una esquina exterior el agarre se suelta al agotarse la cara (sin giro automático); cajas del circuito alineadas a ejes, paredes oblicuas solo en el terreno; sin importador de meshes arbitrarios ni escalada en la entrega U6; refugio en tejado sin acceso fuera del alcance de la horda (limitación A4, materia de P0-B).
 
 **Continuación: P0-B (rutas de enemigos en altura). Primero plan para el autor; no programar hasta su aprobación. P0-C/D no autorizados.**
+
+## P0-B — navegación vertical y escalada de todos los enemigos: cierre técnico (11/10/2026, Claude Code)
+
+Plan aprobado: [PLAN_P0B](PLAN_P0B.md) (`ba33333`) con las cinco decisiones de [DECISIONES](DECISIONES.md). **Pendiente de la prueba manual del autor.** Solo en el circuito QA B; U3 y la entrega U6 conservan literalmente el comportamiento heredado.
+
+### Commits
+
+| Fase | Commit |
+| --- | --- |
+| Registro de la aprobación | `0384a2b` |
+| B0 — circuito B y persecución heredada fijada | `dc9988d` |
+| B1 — grafo multinivel por tamaño | `96ed2bd` |
+| B2 — campo de distancias compartido | `9737f9b` |
+| B3 — navegación en todos los enemigos | `86b8e87` |
+| B5 — combate vertical (antes que B4 para medir el coste final) | `0ba69ab` |
+| B4 — circuito B en la build QA (F10) y su arnés | `9e02220`, `9d1a56a` |
+| Correcciones tras el benchmark (penetraciones, picos) | `a77db33`, `a9cac92` |
+
+### Qué hace
+
+- **Circuito B** (F10 alterna con el A; el HUD indica el activo): tejado con rampa, tejado solo escalando de cuatro paredes, tejado amplio donde cabe el jefe, torre estrecha donde no cabe, meseta y acantilado del terreno sin rampa, pasillo de 3 m, muro en L, pilares, pared con techo encima (sin salida) y seta inaccesible incluso escalando. F4: horda mixta 0/300/500/750 (jefe desde 300).
+- **Grafo** (`NavGraph`), uno por clase de cuerpo deducida del catálogo (S pelusa/cucaracha/paloma, M táper/rata, L jefe): rejilla de 0,5 m con capas por altura, nodos con cuerpo libre en toda la celda (escalones de 0,6 m permitidos; en pendiente se comprueba el volumen entre la altura mínima y la máxima de la celda) y huella apoyada. Aristas de caminar (≤48°, escalón, sin cortar esquinas), escalar (misma física que el jugador: cara continua, columna libre, Ledge) y caer. Toda trayectoria se valida por muestreo con el cuerpo de la clase. Sin listas de IDs.
+- **Campo compartido** (`NavField`): Dijkstra inverso desde el jugador por clase, doble búfer, un único presupuesto de 3000 nodos por tick entre las tres clases (prioridad a la más numerosa), máximo cinco recálculos por segundo y clase. Inaccesible: cada enemigo va al punto de su región más cercano al jugador y se detiene.
+- **Movimiento** (`EnemyNavigation`, arrays por hueco): caminar solo por celdas conectadas del grafo; escalar y borde por trayectorias validadas a la **velocidad efectiva propia** de cada enemigo; caer con gravedad (la del jugador) apoyándose en el suelo real; un empuje existente hacia fuera mayor que su velocidad lo suelta (0,35 s sin reengancharse a ese plano); recuperación con barrido. Contacto a 1 mm de la cara y holgura de 0,5 mm para que el redondeo float no meta un cuerpo en un sólido.
+- **Comportamientos**: la paloma dispara solo estable y con línea de visión; la rata carga solo en línea transitable; el jefe deja como máximo un ataque pendiente mientras no está estable y sus esbirros aparecen sobre su superficie; nadie golpea cuerpo a cuerpo escalando.
+- **Combate vertical (modo P0)**: disparo hostil desde la altura real del tirador, en línea recta 3D hacia el jugador en el disparo, sin seguimiento, detenido por sólidos y suelo; estornudo a la altura del jefe; proyectil amistoso a su altura, detenido por muros y con la banda de 1,8 m de la Barra, igual que Naftalina y el Jersey. Daño, alcance, cadencia y velocidad sin cambios.
+
+### Pruebas ejecutadas (11/10, código final `a9cac92`)
+
+| Comando (CMD, raíz) | Resultado |
+| --- | --- |
+| `scripts\u3.cmd edit` | **635/635** (583 al empezar P0-B) |
+| `scripts\u3.cmd play` | **52/52** (51 al empezar) |
+| `powershell -NoProfile -ExecutionPolicy Bypass -File scripts\verify-historical-reference.ps1` | U0/U2/U3/U4 coinciden; 8 guardados y 6 secuencias meta |
+| `scripts\p0.cmd build` / `devbuild` | correctas, ambas `a9cac92e99deb4db2cf8cac1c3004de4b329f3a1` |
+| `scripts\p0.cmd benchmarkb` | válido (8 informes), `unity/TestResults/P0/PursuitNormal/20261011T224227` |
+| `scripts\p0.cmd devdiagb` | válido, `unity/TestResults/P0/PursuitDevelopment/20261011T224827` |
+| `scripts\p0.cmd evidenceb` | válida, 10 PNG, `unity/TestResults/P0/PursuitEvidence/20261011T225353` |
+| `scripts\p0.cmd evidence` / `benchmark` (circuito A, regresión) | válidos, `Evidence/20261011T225430`, `Normal/20261011T225451`: 12–14 bordes, 0 fallos, atascos y rescates |
+| `scripts\p0.cmd jugar` | salida 0, ventana respondiendo, `unity/Builds/P0/MAMPORRO-P0.exe`, progreso `ManualSave` |
+
+Pruebas nuevas: `PursuitBaselineTests` (4), `NavGraphTests` (12), `NavFieldTests` (9), `EnemyNavigationTests` (18), `VerticalCombatP0Tests` (7), `PursuitStressTests` (315 y 765 enemigos recorriendo las seis posiciones, verificando cada tick cuerpos dentro de sólidos o bajo el terreno) y un PlayMode del cambio de circuito. XML/log en `unity/TestResults/P0/B`. Las sondas A4 (`VerticalCombatTests`) siguen documentando el heredado. Resultados destacados:
+
+- Tejado solo escalando: un enemigo común golpea a los 3,27 s (heredado: nunca). Rampa desde el este: 2,35 s (heredado 7,00 s por desvíos ciegos). Bajada desde un tejado: 0,29 m por tick con gravedad (heredado 4 m de golpe). Los cinco tipos comunes, élite y a distancia escalan; el jefe sube al tejado amplio y espera junto a la torre estrecha. La escalada va exactamente a la velocidad propia (cucaracha 7,58 m/s, táper 2,74 m/s en esa semilla).
+- Cuatro sectores con 40 enemigos: 40/40 llegan dentro de 1,5 × (coste de ruta / su velocidad) + 3 s (p50 7,2 s). Seta inaccesible: sin daño, esperan junto a ella (0,02 m de movimiento en 2 s). Estrés 765: 0 incidencias, pico de atascados 5/765 (0,65 %).
+
+### Rendimiento (lógica del arnés, no FPS del juego; GPU N/D)
+
+Ryzen 7 7700X / RTX 4070 Ti SUPER, Windows x64 Mono D3D11, 1920×1080 interna 360, VSync 0, 10 s + 30 s por carga, armas desactivadas e invulnerabilidad QA, horda mixta con jefe desde 300, jugador recorriendo seis posiciones. Misma build y condiciones para heredado y navegación.
+
+| Carga | Tick p50/p95 heredado (ms) | Tick p50/p95 navegación | Navegación p50/p95/p99/máx | Penetraciones | Atascados (pico) | Aglomerados (pico) |
+| --- | --- | --- | --- | --- | --- | --- |
+| 0 | 0,012/0,015 | 0,013/0,017 | 0,000/0,001/0,001/0,001 | 0 | 0 % | 0 % |
+| 300 | 0,319/0,447 | 0,371/0,482 | 0,133/0,228/0,578/1,053 | 0 de 49 025 | 0 % | 50,6 % |
+| 500 | 0,611/0,876 | 0,626/0,827 | 0,283/0,402/0,695/1,465 | 0 de 80 975 | 0,2 % | 37,8 % |
+| 750 | 1,051/1,420 | 0,979/1,251 | 0,443/0,608/0,899/1,490 | 0 de 120 855 | 0,4 % | 31,9 % |
+
+Enemigos a la altura del jugador al final de cada posición (≈6,7 s), heredado → navegación, 300: tejado solo escalando 0 → 13 %, tejado amplio 0 → 48 %, rampa 68 → 57 %, meseta 24 → 17 % (el heredado sube la pared de 79° caminando), seta 3 → 0 %. 750: tejado solo escalando 0 → 8,5 %, tejado amplio 0 → 31 %.
+
+Construcción de los tres grafos: 648 ms, una vez al cargar el circuito B (objetivo estimado 150 ms; no se ha optimizado). Memoria Unity asignada 248 MiB en ambos modos. Development: GC 8,0–8,1 KB/frame heredado frente a 9,4–10,6 KB/frame con navegación (+1,4 KB sin enemigos, atribuible al texto del HUD QA del circuito B; ~1 B por enemigo y frame más, origen sin aislar; el cálculo del campo asigna 0 B medidos).
+
+**Objetivos no cumplidos, sin ocultar:** navegación p95 con 750 = 0,608 ms (objetivo 0,5) y máximo aislado 1,49 ms (objetivo de pico 1 ms; p99 0,90). La primera medición (`20261011T220942`) tenía picos de 2,6–2,8 ms porque los tres campos podían recalcularse en el mismo tick; el presupuesto compartido los redujo a la mitad a cambio de repartir el trabajo en más ticks (p95 0,53 → 0,61). Contexto: esta cifra incluye el movimiento que el heredado también paga (empuje contra colliders); el tick total con navegación es menor que el heredado desde 500 enemigos. Propuesta de corrección si el autor lo pide: reducir el coste por enemigo (~0,59 µs, la mayor parte del p50) y recalcular el campo de forma incremental cuando el jugador solo se desplaza a nodos vecinos.
+
+Primer benchmark no válido por dos defectos reales, corregidos y verificados: penetraciones (66/68/1 cuerpos en sólidos por redondeo float del contacto de escalada) y un umbral de validez que no admitía los esbirros del jefe.
+
+### Limitaciones conocidas
+
+- Aglomeración: con cientos de enemigos persiguiendo un tejado, la mayoría espera su turno al pie de las paredes; es capacidad física de la pared, no ruta inválida. Una cola impide trepar sobre otro escalador.
+- El mapa de cada clase cubre el circuito entero (80 m); la ventana local alrededor del jugador prevista para mundos grandes no se ha implementado (P0-D).
+- Paredes oblicuas solo del terreno; el circuito usa cajas alineadas a ejes, como A6.
+- La captura B01 de la evidencia no encuadra bien a los escaladores (la cámara mira desde el tejado); el HUD confirma la escalada.
+- Recogida de gemas y monedas sigue siendo en planta (fuera de alcance).
+
+### Integridad
+
+U6 SHA-256 `96b492cb271111251fe42b8646e65370a1b7b566773a1e35b34c3f2d1ae70873` antes y después; siete ajustes protegidos con las huellas de la tabla A6, fuera de todos los commits (`unity/TestResults/P0/B/integrity-after.json`). Sin cambios en `src/` ni en `unity/Docs/Reference/`.
+
+### Prueba manual
+
+`scripts\p0.cmd jugar`, F10 para el circuito B, F4 para cargar la horda. Subir al tejado solo escalando (−11, −11), al de la rampa (11, −11), a la meseta (16, 10) y al tejado amplio (0, 16) y comprobar que la horda escala, entra arriba y ataca; bajar y ver que caen y siguen. La seta (20, 20) y la placa sobre la pared con techo no son alcanzables para nadie (pruebas automáticas). Observar palomas disparando solo con línea de visión y la rata y el jefe escalando. **Detenerse: no iniciar P0-C/D.**
