@@ -125,7 +125,7 @@ namespace Mamporro.U3
         // ------------------------------------------------------------ evidencias del circuito B
         IEnumerator PursuitEvidence()
         {
-            var e=game.Run.Enemies;
+            // Cada fixture crea una partida nueva: la lista de enemigos se lee tras prepararla.
             PursuitFixture(-11,5,-8.6,-11,0);SpawnGroup(12,-11,-1.5);
             yield return Until(()=>AnyIn(EnemyNavigation.Climb),"escalada de pared",12);
             game.FaceTowards(-11,0);yield return Shot("B01-escalan-la-pared");
@@ -140,13 +140,13 @@ namespace Mamporro.U3
             yield return Until(()=>AnyIn(EnemyNavigation.Climb),"pared de la meseta",12);yield return Shot("B04-meseta-de-terreno");
             yield return Until(()=>CountAbove(4.9)>0,"cima de la meseta",15);bool plateau=CountAbove(4.9)>0;
 
-            PursuitFixture(0,4,16,0,4);game.Run.SpawnBoss(-12,0);int boss=e.Count-1;
+            PursuitFixture(0,4,16,0,4);var e=game.Run.Enemies;game.Run.SpawnBoss(-12,0);int boss=e.Count-1;
             yield return Until(()=>game.Vertical.Navigation.State(boss)==EnemyNavigation.Climb,"jefe escalando",25);
             game.FaceTowards(e.X[boss],e.Z[boss]);yield return Shot("B05-jefe-escalando");
             yield return Until(()=>e.Y[boss]>3.9&&game.Vertical.Navigation.Stable(boss),"jefe en el tejado",25);
             yield return Shot("B06-jefe-en-el-tejado");bool bossUp=e.Y[boss]>3.9;
 
-            PursuitFixture(0,4,16,0,4);for(int k=0;k<8;k++){int i=game.Run.Spawn(k%3,-3+k*.9,14);e.Y[i]=4;e.Py[i]=4;}
+            PursuitFixture(0,4,16,0,4);e=game.Run.Enemies;for(int k=0;k<8;k++){int i=game.Run.Spawn(k%3,-3+k*.9,14);e.Y[i]=4;e.Py[i]=4;}
             game.PlaceQa(new Vec3(0,0,4));
             yield return Until(()=>AnyIn(EnemyNavigation.Drop),"bajada desde el tejado",8);game.FaceTowards(0,12);yield return Shot("B07-bajan-cayendo");
             yield return Until(()=>CountBelow(.1)>=4,"aterrizaje",8);bool drop=CountBelow(.1)>=4;
