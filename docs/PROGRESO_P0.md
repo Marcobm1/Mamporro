@@ -1,8 +1,10 @@
 # P0 — movilidad y verticalidad antes de ampliar el mundo
 
-Estado: **P0-A1–A5 base técnica validada manualmente; P0-A6 corregido y verificado, pendiente de prueba manual** (11/10/2026, Codex). La movilidad no se declara aceptada hasta la nueva prueba del autor. P0-B/C/D NO autorizados. No mezcla P1 artístico ni P2 contenido. La clasificación histórica de balance en P0 no lo incluye en este prototipo.
+Estado: **P0-A1–A5 base técnica validada manualmente; P0-A6 corregido y verificado, pendiente de prueba manual** (11/10/2026, Codex; refinado por Claude Code el mismo día en `dc4739c`). La movilidad no se declara aceptada hasta la nueva prueba del autor. P0-B/C/D NO autorizados. No mezcla P1 artístico ni P2 contenido. La clasificación histórica de balance en P0 no lo incluye en este prototipo.
 
 ## Cómo retomar
+
+- **Punto vigente 11/10 tarde (Claude Code):** builds Normal/Development de `dc4739c2517f206496876527afeac8b33f2b79b7`: A/D siguen la cámara también de espaldas a la pared y barrido exhaustivo de caras. Edit 555/555, Play 50/50, evidencia válida `unity/TestResults/P0/Evidence/20261011T193637`. Detalle en «Refinamiento A6 — Claude Code» al final. **Siguiente paso: prueba manual del autor con `scripts\p0.cmd jugar`; detenerse. No iniciar P0-B/C/D.**
 
 - **Punto vigente 11/10:** correcciones A/D y terreno conservadas y verificadas; protección de pared compuesta añadida en `38d29a9ced593bc94e3a55638363b70978db822c`. Edit 542/542 y Play 49/49; builds Normal/Development y evidencia final de 41 PNG/15 CSV correspondientes a ese código. Cierre completo, métricas, integridad y publicación al final de este documento. **Siguiente paso: el autor prueba `scripts\p0.cmd jugar`; detenerse y esperar su confirmación de A/D, paredes y salida de fosos. No iniciar P0-B/C/D.** Los puntos del 07/10 y 08/10 siguientes son historial de reanudación, no tareas pendientes actuales.
 
@@ -542,3 +544,49 @@ scripts\p0.cmd jugar
 Camina contra las paredes de las cuatro caras del edificio, meseta/rampa y foso; comprueba A/D, pitch de cámara, entrada frontal y rechazo del paralelo, salto y salida completa del foso sin F7. W/S subir/bajar, A/D lateral, Espacio separa; Shift/C permite caer. Build y progreso QA independientes.
 
 **Detenerse aquí para la prueba manual del autor.** No iniciar P0-B/C/D hasta que confirme A/D, todas las paredes apropiadas del circuito y salida de fosos. Limitaciones restantes: esquina sin giro automático, cajas alineadas a ejes y oblicuas mediante terreno; sin importador de meshes arbitrarios ni integración en el mundo U6. Horda/amenaza y refugios mantienen las limitaciones históricas de A4; no se han ampliado ni rebalanceado.
+
+## Refinamiento A6 — Claude Code (11/10/2026, tarde)
+
+### Estado recibido
+
+Tras fetch: HEAD = origin = `38d29a9ced593bc94e3a55638363b70978db822c`, 0/0. Nueve documentos de cierre de Codex sin commit (el apartado anterior decía publicarlos aparte; no se había hecho): publicados intactos en `18dc151` «Cierra la verificación de A6 para prueba manual». U6 y las siete huellas protegidas coincidían con la tabla anterior antes de editar. Sin reset, clean, stash ni force-push.
+
+El autor volvió a describir A/D invertido y paredes no escalables. Las builds del 11/10 17:40 ya incluían las correcciones de Codex (`53658e4` A/D, `bb726db` terreno, `38d29a9` juntas), y el único `manual.log` posterior es el de la comprobación automática del lanzador (17:54). No hay constancia de una sesión manual con esa build: probablemente el informe corresponde a la build del 07/10. No se presupone; se revisaron las dos causas desde cero.
+
+### A/D: verificación y hueco restante
+
+La tangente de Codex `(n.Z, 0, -n.X)` (núcleo, Z reflejada respecto a Unity) es correcta: recalculada como `Cross(up, haciaPared)` en Unity y comprobada contra el mapeo real de WASD en suelo (`U3Game.Update`, `MoveZ=-dir.y`). Pero solo coincide con la pantalla **si la cámara mira hacia la pared**. El ratón sigue girando la cámara durante la escalada: girada más allá del costado (de espaldas a la pared, cámara retraída junto al avatar), la derecha visible es la contraria y A/D vuelven a percibirse invertidos.
+
+Cambio `dc4739c` «Hace que A y D sigan la cámara también de espaldas a la pared»: `VerticalIntent` lleva la derecha horizontal de la cámara (misma guiñada que orienta WASD en suelo). `VerticalMotion.ScreenMirrored` invierte el signo lateral solo si `dot(derechaCámara, WallRight) < -0,25`, y lo restaura al superar `+0,25`; mirando a lo largo de la pared se conserva el sentido (sin parpadeo). Cada agarre parte de la base de pared. Sin cámara (entradas guionizadas del arnés/evidencia) el comportamiento es exactamente el anterior. Con la cámara hacia la pared, idéntico al de Codex. Velocidades 4,5/3,0/9,5 m/s sin cambios; no se ha invertido ningún signo global.
+
+### Paredes: barrido exhaustivo
+
+Causa ya corregida por Codex (consultas sin el Heightfield). Para comprobar que no quedan paredes fuera del contrato, `2ac58bc` añade `VerticalCoverageTests`, que deduce las caras de la geometría del circuito (nunca de IDs): cada cara de caja expuesta que se alza desde suelo transitable más de un escalón, y cada triángulo abrupto del Heightfield, debe engancharse al correr contra ella desde el suelo; follaje, interactuables y límite no. Muestras reales: **68 caras escalables, 24 excluidas, 85 triángulos abruptos** (meseta, rampa, esquinas oblicuas del terreno). Todas correctas; no apareció ninguna pared omitida.
+
+### Pruebas ejecutadas
+
+| Comando (CMD, raíz) | Resultado |
+| --- | --- |
+| `scripts\u3.cmd edit` (línea base) | 542/542 |
+| `scripts\u3.cmd edit` (final) | **555/555** |
+| `scripts\u3.cmd play` | **50/50** |
+| `powershell -NoProfile -ExecutionPolicy Bypass -File scripts\verify-historical-reference.ps1` | U0/U2/U3/U4 coinciden; 8 guardados y 6 secuencias meta; `qa-results/reference-c1fcb238836d403280d4ee01660894ef` |
+| `scripts\p0.cmd build` / `devbuild` | correctas; ambas `dc4739c2517f206496876527afeac8b33f2b79b7` |
+| `scripts\p0.cmd evidence` | válida: `unity/TestResults/P0/Evidence/20261011T193637`, 41 PNG / 15 CSV |
+| `scripts\p0.cmd jugar` | salida 0, ventana MAMPORRO respondiendo, `unity/Builds/P0/MAMPORRO-P0.exe`, progreso `unity/TestResults/P0/ManualSave`; cerrada con `CloseMainWindow` |
+
+XML/log en `unity/TestResults/P0/A6Claude`. Nuevas pruebas (13 Edit + 1 Play): A/D según cámara en ±X/±Z con cámara hacia/de espaldas a la pared; histéresis y banda a lo largo de la pared; barrido de cámara 0–540° con D siempre a la derecha visible fuera de la banda y exactamente dos cambios; agarre nuevo desde base de pared; barridos de cajas y terreno; roce/paralelo en las cuatro caras del edificio; límite invisible. Play: teclado real A/D en cuatro paredes con giros 0/±45/±135/180°, oráculo con la derecha de la cámara Unity.
+
+**Mutaciones comprobadas** (temporales, revertidas antes de commit; restaurado verificado con diff): quitar el terreno de `Wall()` hace fallar el barrido de terreno y las pruebas de Codex; desactivar la inversión por cámara hace fallar las cuatro caras de espaldas y el barrido a 195°. Las pruebas nuevas detectan ambas regresiones.
+
+Primera pasada de evidencia `20261011T193440` **no válida**: en la pared +Z el agarre se soltó a 0,9 m sin fallo de escalada y no se reenganchó. Mecanismo: pérdida de foco de Windows → `SetPaused(true)` → `Suspend()` suelta el agarre; `P0Capture` reanuda (línea 81) pero ese fixture solo envía entrada vertical. Repetida sin cambios de código: válida, 93 ticks idénticos a la pasada de Codex. Se conserva la no válida como registro.
+
+Rendimiento: no se repiten benchmarks. El cambio añade un producto escalar por tick solo durante la escalada y no toca enemigos, director ni colisiones; las medidas de `38d29a9` (sección anterior) siguen siendo la referencia. No son FPS generales del juego.
+
+### Integridad
+
+U6 SHA-256 antes y después `96b492cb271111251fe42b8646e65370a1b7b566773a1e35b34c3f2d1ae70873`; siete ajustes protegidos con las mismas huellas de la tabla anterior, fuera de todos los commits (`unity/TestResults/P0/A6Claude/integrity-after.json`). Sin cambios en `src/` ni en `unity/Docs/Reference/`.
+
+### Prueba manual pendiente
+
+`scripts\p0.cmd jugar`. Casos: (1) corre de frente contra cada cara del edificio, meseta, rampa, acantilado y foso: debe engancharse sin saltar ni pulsar nada; (2) con la cámara hacia la pared, A izquierda y D derecha en pantalla; (3) gira el ratón mientras escalas hasta mirar de espaldas a la pared: A/D siguen yendo a izquierda/derecha de la pantalla; (4) corre en paralelo pegado a una pared: no engancha; (5) Espacio separa y no reengancha de inmediato; (6) cae al foso y sal por cualquier lado sin F7; (7) llega arriba del edificio por una cara sin techo encima. Límites conocidos sin cambios: esquina exterior suelta el agarre (sin giro automático), cajas alineadas a ejes, oblicuas solo en terreno, sin escalada en U6. **Detenerse; no iniciar P0-B/C/D.**

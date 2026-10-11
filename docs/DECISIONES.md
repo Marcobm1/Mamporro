@@ -740,3 +740,7 @@ Intención frontal conservada (dot horizontal >= 0,5, alcance 0,18 m); paralelo/
 ## A6: protección en paredes compuestas (11/10/2026)
 
 Corrección dentro del contrato autorizado por el autor: la protección tras salto pertenece a la superficie física, también cuando está dividida en varias cajas o en cajas y terreno coplanares. La coincidencia geométrica de plano y normal se aplica a todos los contactos; cambiar de ID no anula los 0,35 s. Otra orientación válida conserva la posibilidad de agarre inmediato. No se añaden permisos por ID, botones ni costes. P0 sigue limitado al circuito QA y pendiente de prueba manual; no activa escalada en U6 ni inicia P0-B/C/D.
+
+## A6: A/D según la pantalla con la cámara girada (11/10/2026, propuesta técnica)
+
+**Pendiente de confirmación del autor.** Refinamiento dentro de su petición de que A/D correspondan al desplazamiento que percibe el jugador. Con la cámara hacia la pared se mantiene la base de la concreción del 08/10 (`(n.Z, 0, -n.X)`). Si el jugador gira la cámara hasta mirar de espaldas a la pared, el signo lateral se invierte para seguir la pantalla, con histéresis (±0,25 sobre la derecha de cámara) para no alternar al mirar a lo largo de la pared; cada agarre parte de la base de pared. La cámara en sí no cambia. Es reversible en un solo commit (`dc4739c`) si el autor prefiere la base fija de pared.
