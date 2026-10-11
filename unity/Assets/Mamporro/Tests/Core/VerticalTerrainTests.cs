@@ -50,9 +50,13 @@ namespace Mamporro.Tests
                 Assert.That(q.Wall(new Vec3(b.X,b.Y,b.Z),new Vec3(dx,0,dz),.4,1.55,.18,out var hit),Is.True);
                 var right=VerticalMotion.WallRight(hit.Normal);double x=b.X,y=b.Y,z=b.Z;
                 m.Step(new VerticalIntent{WallHorizontal=side},1.0/60);
-                Assert.That((b.X-x)*right.X+(b.Z-z)*right.Z,Is.EqualTo(side*3/60).Within(1e-6));
-                y=b.Y;m.Step(new VerticalIntent{WallVertical=1},1.0/60);
-                Assert.That(b.Y-y,Is.EqualTo(4.5/60).Within(1e-6));
+                Assert.That((b.X-x)*right.X+(b.Z-z)*right.Z,Is.EqualTo(side*9.5/60).Within(1e-6));
+                // Pared inclinada: el módulo sobre la superficie es la velocidad de carrera,
+                // con la componente vertical reducida por la pendiente (no la suma de ambas).
+                x=b.X;y=b.Y;z=b.Z;m.Step(new VerticalIntent{WallVertical=1},1.0/60);
+                double moved=System.Math.Sqrt((b.X-x)*(b.X-x)+(b.Y-y)*(b.Y-y)+(b.Z-z)*(b.Z-z));
+                Assert.That(moved,Is.EqualTo(9.5/60).Within(1e-6));
+                Assert.That(b.Y-y,Is.EqualTo(9.5/60*VerticalMotion.WallUp(hit.Normal).Y).Within(1e-6));
             }
         }
         [TestCase(47.99,false)] [TestCase(48,false)] [TestCase(48.01,true)] [TestCase(90,true)] [TestCase(100,false)] [TestCase(0,false)] [TestCase(180,false)]
@@ -106,9 +110,9 @@ namespace Mamporro.Tests
             var q=new VerticalQueries(new VerticalSolid(201,new Vec3(0,0,-3),new Vec3(2,4,0)),new VerticalSolid(712,new Vec3(0,0,0),new Vec3(2,4,3)));
             var c=new VerticalCircuit();var b=new PlayerBody();b.PlaceAt(-.402,1,-1);b.Grounded=false;
             var m=new VerticalMotion(b,c.Collision,q);m.Step(new VerticalIntent{Movement=new PlayerIntent{MoveX=1}},1.0/60);
-            for(int i=0;i<40;i++){double z=b.Z;m.Step(new VerticalIntent{WallHorizontal=1},1.0/60);Assert.That(b.Z,Is.GreaterThan(z));}
+            for(int i=0;i<40;i++){double z=b.Z;m.Step(new VerticalIntent{WallHorizontal=1},1.0/60,3);Assert.That(b.Z,Is.GreaterThan(z));}
             Assert.That(b.Z,Is.GreaterThan(.9));Assert.That(m.State,Is.EqualTo(VerticalState.Climbing));Assert.That(m.Grabs,Is.EqualTo(1));
-            for(int i=0;i<40;i++){double z=b.Z;m.Step(new VerticalIntent{WallHorizontal=-1},1.0/60);Assert.That(b.Z,Is.LessThan(z));}
+            for(int i=0;i<40;i++){double z=b.Z;m.Step(new VerticalIntent{WallHorizontal=-1},1.0/60,3);Assert.That(b.Z,Is.LessThan(z));}
         }
         [Test] public void PlateauRegressionDemonstratesMissingGeometryInBoxesOnlyQueries()
         {

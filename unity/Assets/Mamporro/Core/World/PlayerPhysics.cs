@@ -229,9 +229,12 @@ namespace Mamporro.Core
         }
 
         // stepPlayerInCrowd: baja la velocidad de carrera y frena lo que vaya más rápido.
+        // Velocidad efectiva de carrera: estadística de movimiento menos la frenada de la horda.
+        // Fuente única también para la escalada P0.
+        public static double EffectiveSpeed(double moveSpeed,double crowdSlow)=>moveSpeed*(1-crowdSlow);
         public static void StepInCrowd(PlayerBody b,PlayerIntent intent,IPhysicsWorld world,PlayerTuning t,double moveSpeed,double crowdSlow,double dt)
         {
-            double speed=moveSpeed*(1-crowdSlow);
+            double speed=EffectiveSpeed(moveSpeed,crowdSlow);
             Step(b,intent,world,t,speed,dt);
             if(crowdSlow>0)BrakeHorizontal(b,speed,Tuning.CrowdBrake*(crowdSlow/Tuning.CrowdMaxSlow)*dt);
         }

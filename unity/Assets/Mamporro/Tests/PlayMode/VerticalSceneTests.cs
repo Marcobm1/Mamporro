@@ -38,7 +38,7 @@ namespace Mamporro.Tests
                 var facing=new Vector3(-normal.x,0,normal.z);var right=Vector3.Cross(Vector3.up,facing);
                 var rotation=Quaternion.LookRotation(facing)*Quaternion.Euler(pitch,0,0);
                 Assert.That(Vector3.Dot(rotation*Vector3.right,right),Is.GreaterThan(.999f));
-                Assert.That(Vector3.Dot(after-before,right),Is.EqualTo(key==Key.D?.05f:-.05f).Within(.00001));
+                Assert.That(Vector3.Dot(after-before,right),Is.EqualTo(key==Key.D?9.5f/60:-9.5f/60).Within(.00001));
                 var pivot=g.Vertical.CameraPivot(after,after+Vector3.up*1.9f);
                 var camera=g.Vertical.ClipCamera(pivot,pivot-rotation*Vector3.forward*6,1);
                 Assert.That(g.Vertical.Circuit.Queries.Clear(new Vec3(camera.x,camera.y-.15,-camera.z),.15,.3),Is.True);
@@ -68,9 +68,35 @@ namespace Mamporro.Tests
                 var cameraRight=Quaternion.Euler(0,yaw,0)*Vector3.right;
                 var tangent=Vector3.Cross(Vector3.up,new Vector3(-normal.x,0,normal.z));
                 float visible=Mathf.Abs(Vector3.Dot(cameraRight,tangent));
-                Assert.That(Vector3.Dot(after-before,cameraRight),Is.EqualTo((key==Key.D?.05f:-.05f)*visible).Within(.0001),
+                Assert.That(Vector3.Dot(after-before,cameraRight),Is.EqualTo((key==Key.D?9.5f/60:-9.5f/60)*visible).Within(.0001),
                     $"pared {normal}, giro {offset}°, {key}");
                 InputSystem.QueueStateEvent(keyboard,new KeyboardState());InputSystem.Update();
+            }
+            LogAssert.NoUnexpectedReceived();
+        }
+        [UnityTest] public IEnumerator ClimbSpeedFollowsMoveSpeedStatThroughTheRealRun()
+        {
+            // Tick real de WorldRun: PlayerBaseMoveSpeed*Stats[moveSpeed] y CrowdSlow llegan a la
+            // escalada igual que a la carrera. Mejora aplicada, ampliada y retirada en caliente.
+            yield return Load();var g=Game;g.StartRun("P0QA");g.SetPaused(true);
+            Assert.That(g.Run.Paused,Is.False);
+            g.PlaceQa(new Vec3(11+3.402,2,0));g.Body.Grounded=false;
+            g.Vertical.ScriptedInput=new VerticalIntent{Movement=new PlayerIntent{MoveX=-1}};
+            for(int i=0;i<25;i++)g.Session.PhysicsStep(default,1.0/60,9.5,0);
+            Assert.That(g.Vertical.Motion.State,Is.EqualTo(VerticalState.Climbing));
+            // A media altura de la pared, lejos del suelo y del techo.
+            g.Vertical.ScriptedInput=new VerticalIntent{WallVertical=1};
+            for(int i=0;i<16;i++)g.Session.PhysicsStep(default,1.0/60,9.5,0);
+            Assert.That(g.Body.Y,Is.GreaterThan(2));
+            int tick=0;
+            foreach(var (stat,crowd) in new[]{(1.0,0.0),(1.26,0.0),(1.8,0.0),(1.8,.25),(1.0,0.0)}){
+                g.Run.Stats[Stat.moveSpeed]=stat;g.Run.CrowdSlow=crowd;
+                g.Vertical.ScriptedInput=new VerticalIntent{WallVertical=tick++%2==0?1:-1};
+                double y=g.Body.Y;g.Session.Step(default,1.0/60);
+                Assert.That(g.Vertical.Motion.State,Is.EqualTo(VerticalState.Climbing),
+                    $"estadística {stat}: {g.Body.X:F3},{g.Body.Y:F3},{g.Body.Z:F3} {g.Vertical.Motion.LastFailure}");
+                Assert.That(System.Math.Abs(g.Body.Y-y),Is.EqualTo(PlayerPhysics.EffectiveSpeed(Tuning.PlayerBaseMoveSpeed*stat,crowd)/60).Within(1e-9),
+                    $"estadística {stat}, horda {crowd}");
             }
             LogAssert.NoUnexpectedReceived();
         }

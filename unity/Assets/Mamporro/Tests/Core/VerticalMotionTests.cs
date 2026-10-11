@@ -29,11 +29,11 @@ namespace Mamporro.Tests
             var m=Create(out _);m.Step(new VerticalIntent{Movement=new PlayerIntent{MoveX=x,MoveZ=z}},1.0/60);
             Assert.That(m.State,Is.EqualTo(VerticalState.Climbing));Assert.That(m.Grabs,Is.EqualTo(1));
         }
-        [Test] public void ClimbUsesApprovedSpeedAndHasNoDurationLimit()
+        [Test] public void ClimbUsesBaseRunSpeedAndHasNoDurationLimit()
         {
             var m=Create(out var b);m.Step(Grip(),1.0/60);double y=b.Y;
-            for(int i=0;i<30;i++)m.Step(Grip(1),1.0/60);
-            Assert.That(b.Y-y,Is.EqualTo(2.25).Within(1e-8));Assert.That(m.State,Is.EqualTo(VerticalState.Climbing));
+            for(int i=0;i<15;i++)m.Step(Grip(1),1.0/60);
+            Assert.That(b.Y-y,Is.EqualTo(Tuning.PlayerBaseMoveSpeed/4).Within(1e-8));Assert.That(m.State,Is.EqualTo(VerticalState.Climbing));
             for(int i=0;i<7200;i++)m.Step(default,1.0/60);
             Assert.That(m.State,Is.EqualTo(VerticalState.Climbing));
         }
@@ -41,8 +41,8 @@ namespace Mamporro.Tests
         {
             var m=Create(out var b);m.Step(Grip(),1.0/60);double y=b.Y,z=b.Z;
             m.Step(Grip(1,1),1.0/60);
-            Assert.That(b.Y-y,Is.EqualTo(4.5/60/System.Math.Sqrt(2)).Within(1e-8));
-            Assert.That(System.Math.Abs(b.Z-z),Is.EqualTo(3.0/60/System.Math.Sqrt(2)).Within(1e-8));
+            Assert.That(b.Y-y,Is.EqualTo(9.5/60/System.Math.Sqrt(2)).Within(1e-8));
+            Assert.That(System.Math.Abs(b.Z-z),Is.EqualTo(9.5/60/System.Math.Sqrt(2)).Within(1e-8));
         }
         [TestCase(.1)] [TestCase(.35)] [TestCase(.6)]
         public void WallJumpProtectsForConfiguredTimeThenAutomaticallyRegrabs(double delay)
@@ -279,8 +279,8 @@ namespace Mamporro.Tests
                 m.Step(new VerticalIntent{Movement=new PlayerIntent{MoveX=-nx,MoveZ=-nz}},1.0/60);
                 Assert.That(m.State,Is.EqualTo(VerticalState.Climbing));double x=b.X,z=b.Z;
                 for(int i=0;i<10;i++)m.Step(new VerticalIntent{WallHorizontal=side},1.0/60);
-                Assert.That(b.X-x,Is.EqualTo(rx*side*.5).Within(1e-8));
-                Assert.That(b.Z-z,Is.EqualTo(rz*side*.5).Within(1e-8));
+                Assert.That(b.X-x,Is.EqualTo(rx*side*9.5/6).Within(1e-8));
+                Assert.That(b.Z-z,Is.EqualTo(rz*side*9.5/6).Within(1e-8));
             }
         }
         [TestCase(.6,.8,.8,-.6)] [TestCase(-.6,-.8,-.8,.6)]
@@ -304,7 +304,7 @@ namespace Mamporro.Tests
                 var wallRight=VerticalMotion.WallRight(m.Contact.Normal);double cx=wallRight.X*facing,cz=wallRight.Z*facing;
                 double x=b.X,z=b.Z;
                 for(int i=0;i<10;i++)m.Step(new VerticalIntent{WallHorizontal=side,CameraRightX=cx,CameraRightZ=cz},1.0/60);
-                Assert.That((b.X-x)*cx+(b.Z-z)*cz,Is.EqualTo(side*.5).Within(1e-8),$"lado {side}, cámara {facing}");
+                Assert.That((b.X-x)*cx+(b.Z-z)*cz,Is.EqualTo(side*9.5/6).Within(1e-8),$"lado {side}, cámara {facing}");
                 Assert.That(m.LateralMirrored,Is.EqualTo(facing<0));
             }
         }
@@ -339,7 +339,7 @@ namespace Mamporro.Tests
             int flips=0;bool last=m.LateralMirrored;var wallRight=VerticalMotion.WallRight(m.Contact.Normal);
             for(int deg=0;deg<=540;deg+=5){
                 double a=deg*Math.PI/180,cx=Math.Cos(a),cz=-Math.Sin(a),x=b.X,z=b.Z;
-                m.Step(new VerticalIntent{WallHorizontal=1,CameraRightX=cx,CameraRightZ=cz},1.0/60);
+                m.Step(new VerticalIntent{WallHorizontal=1,CameraRightX=cx,CameraRightZ=cz},1.0/60,3);
                 Assert.That(m.State,Is.EqualTo(VerticalState.Climbing),$"{deg}°");
                 double screen=wallRight.X*cx+wallRight.Z*cz;
                 if(Math.Abs(screen)>VerticalMotion.ScreenFlipDot)
@@ -351,14 +351,6 @@ namespace Mamporro.Tests
             m.Step(new VerticalIntent{Movement=new PlayerIntent{JumpPressed=true}},1.0/60);
             for(int i=0;i<240&&m.Grabs<2;i++)m.Step(new VerticalIntent{Movement=new PlayerIntent{MoveX=-1}},1.0/60);
             Assert.That(m.Grabs,Is.EqualTo(2));Assert.That(m.LateralMirrored,Is.False);
-        }
-        [Test] public void VerticalAndLateralSpeedsAreIndependentParameters()
-        {
-            var m=Create(out var b);m.Tuning.UpSpeed=2;m.Tuning.SideSpeed=1;m.Step(Grip(),1.0/60);
-            double y=b.Y,z=b.Z;for(int i=0;i<30;i++)m.Step(Grip(1),1.0/60);
-            Assert.That(b.Y-y,Is.EqualTo(1).Within(1e-8));
-            for(int i=0;i<30;i++)m.Step(Grip(0,1),1.0/60);
-            Assert.That(System.Math.Abs(b.Z-z),Is.EqualTo(.5).Within(1e-8));
         }
     }
 }

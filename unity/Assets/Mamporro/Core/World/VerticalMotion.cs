@@ -12,7 +12,8 @@ namespace Mamporro.Core
     }
     public sealed class VerticalTuning
     {
-        public double UpSpeed=4.5,SideSpeed=3,Reach=.18,LedgeSpeed=4.5,SeparationSpeed=5,TransitionTimeout=1.5;
+        // Sin velocidades propias: escalar usa la velocidad efectiva de carrera (PlayerPhysics.EffectiveSpeed).
+        public double Reach=.18,SeparationSpeed=5,TransitionTimeout=1.5;
         public double JumpReattachDelay=.35,MinPushDot=.5;
     }
     // Extensión optativa P0 de la física pura. Un único PlayerBody, sin Rigidbody/root motion.
@@ -63,6 +64,13 @@ namespace Mamporro.Core
         }
         bool mirrored;
         public bool LateralMirrored=>mirrored;
+        // Tangente ascendente de la cara, perpendicular a WallRight: vertical en muros rectos.
+        public static Vec3 WallUp(Vec3 normal)
+        {
+            var u=new Vec3(-normal.X*normal.Y,normal.X*normal.X+normal.Z*normal.Z,-normal.Z*normal.Y);
+            double length=Math.Sqrt(u.X*u.X+u.Y*u.Y+u.Z*u.Z);
+            return length>1e-9?new Vec3(u.X/length,u.Y/length,u.Z/length):new Vec3(0,1,0);
+        }
         public bool PushesIntoContact(PlayerIntent input)
         {
             double length=JsMath.Hypot(input.MoveX,input.MoveZ);
@@ -141,45 +149,60 @@ namespace Mamporro.Core
             if(hit.Normal.Y<-.5&&Body.Vy>0)Body.Vy=0;
             if(hit.Normal.Y>.5&&Body.Vy<=0){Body.Vy=0;Body.Grounded=true;}
         }
+        public const double MaxClimbSubstep=4.5/60;
+        // Un tramo de escalada sobre la superficie: W/S/A/D con el mismo módulo y diagonal
+        // ya normalizada, también en paredes inclinadas del terreno.
+        void ClimbSubstep(double v,double h,double step)
+        {
+            if(v>0&&queries.NearEdge(Position,wall)&&queries.Ledge(Position,wall,physics.Radius,physics.Height,out lift,out top)){
+                State=VerticalState.Ledge;transitionTime=0;onTopLeg=false;return;
+            }
+            var right=WallRight(wall.Normal);var up=WallUp(wall.Normal);double climb=v*step;
+            if(climb*up.Y<0){
+                // Bajar sin hundirse en el suelo: el último tramo se detiene en él.
+                double floor=world.GroundHeight(Body.X,Body.Z,Body.Y+.01);
+                if(Body.Y+climb*up.Y<floor)climb=Math.Min(0,floor-Body.Y)/up.Y;
+            }
+            bool moved=Move(new Vec3(Body.X+right.X*h*step+up.X*climb,Body.Y+up.Y*climb,Body.Z+right.Z*h*step+up.Z*climb));
+            double ground=world.GroundHeight(Body.X,Body.Z,Body.Y+.01);
+            if(v<0&&Body.Y<=ground){Body.Y=ground;Release(false);descendedToGround=true;Body.Grounded=true;State=VerticalState.Ground;}
+            else if(!queries.Wall(Position,new Vec3(-wall.Normal.X,0,-wall.Normal.Z),physics.Radius,physics.Height,Tuning.Reach,out var contact)){
+                LastFailure=moved?"fin de superficie":"contacto perdido";Release(false);
+            }else wall=contact;
+        }
         public void Step(VerticalIntent input,double dt,double moveSpeed=9.5,double crowdSlow=0)
         {
             if(dt<=0||dt>.1||double.IsNaN(dt))throw new ArgumentOutOfRangeException(nameof(dt));
             if(input.WallVertical>=0)descendedToGround=false;
             var before=Position;ReattachRemaining=Math.Max(0,ReattachRemaining-dt);
+            // Misma fuente que la carrera: estadística moveSpeed (tomos, objetos, santuarios) y
+            // frenada de horda. No es la velocidad horizontal instantánea, nula contra la pared.
+            double speed=PlayerPhysics.EffectiveSpeed(moveSpeed,crowdSlow);
             if(State==VerticalState.Climbing||State==VerticalState.Ledge){
                 if(input.Movement.JumpPressed||input.Movement.SlidePressed||input.Movement.SlideHeld){Release(input.Movement.JumpPressed);return;}
                 Body.Vx=Body.Vy=Body.Vz=0;Body.Grounded=false;Body.Sliding=false;
                 if(State==VerticalState.Ledge){
                     transitionTime+=dt;
                     if(transitionTime>Tuning.TransitionTimeout){LedgeFailures++;LastFailure="transición agotada";Release(false);return;}
-                    var target=onTopLeg?top:lift;var d=Sub(target,Position);double length=Length(d),amount=Math.Min(length,Tuning.LedgeSpeed*dt);
+                    var target=onTopLeg?top:lift;var d=Sub(target,Position);double length=Length(d),amount=Math.Min(length,speed*dt);
                     if(length>1e-8&&!Move(new Vec3(Body.X+d.X/length*amount,Body.Y+d.Y/length*amount,Body.Z+d.Z/length*amount))){
                         LedgeFailures++;LastFailure="barrido de borde bloqueado";Release(false);return;
                     }
                     if(length<=amount+1e-8){if(!onTopLeg)onTopLeg=true;else{State=VerticalState.Ground;Body.Grounded=true;LedgeSuccess++;}}
                 }else{
                     double v=input.WallVertical,h=input.WallHorizontal,n=Math.Max(1,JsMath.Hypot(v,h));v/=n;h/=n;
-                    bool atEdge=queries.NearEdge(Position,wall);
-                    if(v>0&&atEdge&&queries.Ledge(Position,wall,physics.Radius,physics.Height,out lift,out top)){
-                        State=VerticalState.Ledge;transitionTime=0;onTopLeg=false;
-                    }else{
-                        mirrored=ScreenMirrored(wall.Normal,input.CameraRightX,input.CameraRightZ,mirrored);
-                        if(mirrored)h=-h;
-                        var right=WallRight(wall.Normal);
-                        double dy=v*Tuning.UpSpeed*dt,horizontal2=wall.Normal.X*wall.Normal.X+wall.Normal.Z*wall.Normal.Z;
-                        double slope=wall.Normal.Y*dy/horizontal2;
-                        var target=new Vec3(Body.X+right.X*h*Tuning.SideSpeed*dt-wall.Normal.X*slope,Body.Y+dy,
-                            Body.Z+right.Z*h*Tuning.SideSpeed*dt-wall.Normal.Z*slope);
-                        bool moved=Move(target);
+                    mirrored=ScreenMirrored(wall.Normal,input.CameraRightX,input.CameraRightZ,mirrored);
+                    if(mirrored)h=-h;
+                    // Recorrido del tick con módulo speed, en tramos no mayores que el paso aprobado
+                    // a 4,5 m/s: cada tramo repite borde, barrido y contacto, así una velocidad alta
+                    // no salta la ventana del borde ni el final de una cara inclinada.
+                    double travel=speed*dt;int count=Math.Max(1,(int)Math.Ceiling(travel/MaxClimbSubstep-1e-9));
+                    for(int i=0;i<count&&State==VerticalState.Climbing;i++)ClimbSubstep(v,h,travel/count);
+                    if(State!=VerticalState.Ledge){
                         if(v>0)ClimbSeconds+=dt;else if(v<0)DescendSeconds+=dt;
                         if(Length(Sub(Position,before))<1e-6&&(Math.Abs(v)+Math.Abs(h)>.1)){
                             stalled+=dt;if(stalled>=.35){if(stalled-dt<.35){Stalls++;if(v>0)LedgeFailures++;}LastFailure=v>0?"ascenso/borde bloqueado":"intención sin avance";}
                         }else stalled=0;
-                        double ground=world.GroundHeight(Body.X,Body.Z,Body.Y+.01);
-                        if(v<0&&Body.Y<=ground){Body.Y=ground;Release(false);descendedToGround=true;Body.Grounded=true;State=VerticalState.Ground;}
-                        else if(!queries.Wall(Position,new Vec3(-wall.Normal.X,0,-wall.Normal.Z),physics.Radius,physics.Height,Tuning.Reach,out var contact)){
-                            LastFailure=moved?"fin de superficie":"contacto perdido";Release(false);
-                        }else wall=contact;
                     }
                 }
             }else{
