@@ -21,7 +21,7 @@ namespace Mamporro.Core
         public readonly NavGraph Graph;
         int[] dist,parent,work,workParent;
         readonly int[] heapKey,heapNode;
-        int heapCount,phase,building=-1;
+        int heapCount,phase,building=-1,seedCursor=-1;
         double cooldown,playerX,playerY,playerZ;
         public int Goal {get;private set;}=-1;
         public int Version {get;private set;}
@@ -40,8 +40,9 @@ namespace Mamporro.Core
         public int Parent(int node)=>parent[node];
         public bool Reachable(int node)=>dist[node]<Fallback;
 
-        // Pide (si cambió) y avanza el cálculo. budget = nodos extraídos como máximo en este tick.
-        public void Update(int goal,double px,double py,double pz,double dt,int budget)
+        // Pide (si cambió) y avanza el cálculo. budget = nodos procesados como máximo en este tick;
+        // devuelve los usados para repartir un único presupuesto entre clases.
+        public int Update(int goal,double px,double py,double pz,double dt,int budget)
         {
             cooldown-=dt;
             if(phase==0&&goal>=0&&(goal!=Goal||Version==0)&&cooldown<=0){
@@ -49,19 +50,22 @@ namespace Mamporro.Core
                 for(int i=0;i<work.Length;i++){work[i]=Unreached;workParent[i]=-1;}
                 heapCount=0;work[goal]=0;Push(0,goal);phase=1;
             }
-            if(phase!=0)Advance(budget);
+            return phase!=0||budget>0?Advance(budget):0;
         }
         // Completa el cálculo en curso sin límite (pruebas y arranque).
         public void Complete(int goal,double px,double py,double pz)
         {
-            cooldown=0;if(phase==0)Update(goal,px,py,pz,0,0);while(phase!=0)Advance(int.MaxValue);
+            cooldown=0;if(phase==0)Update(goal,px,py,pz,0,0);while(phase!=0)Advance(1<<20);
         }
-        void Advance(int budget)
+        int Advance(int budget)
         {
-            long start=System.Diagnostics.Stopwatch.GetTimestamp();var g=Graph;
+            if(phase==0)return 0;
+            long start=System.Diagnostics.Stopwatch.GetTimestamp();var g=Graph;int initial=budget;
             while(phase!=0&&budget>0){
+                // Siembra de destinos sustitutos por tramos dentro del presupuesto; termina antes de extraer.
+                if(seedCursor>=0){budget=SeedFallback(budget);continue;}
                 if(heapCount==0){
-                    if(phase==1&&SeedFallback())continue;
+                    if(phase==1){phase=2;seedCursor=0;continue;}
                     var t=dist;dist=work;work=t;t=parent;parent=workParent;workParent=t;
                     Goal=building;Version++;Recomputes++;phase=0;break;
                 }
@@ -75,18 +79,21 @@ namespace Mamporro.Core
                 }
             }
             LastTicks=System.Diagnostics.Stopwatch.GetTimestamp()-start;TotalTicks+=LastTicks;
+            return initial-budget;
         }
         // Nodos sin ruta: su coste propio es la distancia al jugador ponderada; propagado entre
         // ellos, cada uno se dirige al punto de su región más cercano al jugador y allí se detiene.
-        bool SeedFallback()
+        // Por tramos: cada nodo recorrido consume una unidad del presupuesto del tick.
+        int SeedFallback(int budget)
         {
-            var g=Graph;bool any=false;
-            for(int n=0;n<work.Length;n++){
-                if(work[n]!=Unreached)continue;
+            var g=Graph;
+            while(seedCursor<work.Length&&budget>0){
+                int n=seedCursor++;budget--;if(work[n]!=Unreached)continue;
                 double dx=g.NodeX(n)-playerX,dy=g.NodeY[n]-playerY,dz=g.NodeZ(n)-playerZ;
-                work[n]=Fallback+(int)Math.Round(Math.Sqrt(dx*dx+dy*dy+dz*dz)*NavGraph.Scale*FallbackWeight);Push(work[n],n);any=true;
+                work[n]=Fallback+(int)Math.Round(Math.Sqrt(dx*dx+dy*dy+dz*dz)*NavGraph.Scale*FallbackWeight);Push(work[n],n);
             }
-            phase=2;return any;
+            if(seedCursor>=work.Length)seedCursor=-1;
+            return budget;
         }
         void Push(int key,int node)
         {

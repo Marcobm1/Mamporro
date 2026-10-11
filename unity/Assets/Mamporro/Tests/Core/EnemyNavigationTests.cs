@@ -137,7 +137,8 @@ namespace Mamporro.Tests
             // Criterio de P0-B: ≥95 % llega en ≤ 1,5 × (coste de su ruta / su velocidad) + 3 s.
             var r=Run(11,4,-11,out var nav);var e=r.Combat.Enemies;r.Combat.Invincible=true;
             foreach(var (x,z) in new[]{(-20.0,-2.0),(24.0,-14.0),(-15.0,18.0),(25.0,6.0)})for(int k=0;k<10;k++)Spawn(r,k%3,x+(k%5-2)*1.2,0,z+(k/5)*1.2);
-            Simulate(r,nav,.2);
+            // Los campos se publican en los primeros ticks (presupuesto compartido entre clases).
+            Simulate(r,nav,1,()=>{for(int i=0;i<e.Count;i++)if(!nav.Reachable(i))return false;return true;});
             var deadline=new double[e.Count];var arrival=new double[e.Count];double latest=0;
             for(int i=0;i<e.Count;i++){
                 Assert.That(nav.Reachable(i),Is.True,$"enemigo {i} con ruta");arrival[i]=-1;
@@ -164,6 +165,21 @@ namespace Mamporro.Tests
             r.Body.PlaceAt(0,0,-4);r.SyncPlayer();
             Simulate(r,nav,25,()=>{int n=0;for(int i=0;i<e.Count;i++)if(e.Y[i]<.01&&Rules.Hypot(e.X[i],e.Z[i]+4)<4)n++;return n==e.Count;});
             for(int i=0;i<e.Count;i++)Assert.That(e.Y[i],Is.LessThan(.01),"bajan tras el jugador");
+        }
+        [Test] public void ThreeFieldsShareOneTickBudgetAndTheBiggestClassPublishesInTime()
+        {
+            var r=Run(0,0,-4,out var nav);r.Combat.Invincible=true;
+            for(int k=0;k<20;k++)Spawn(r,k%2,-12+k,0,6);Spawn(r,2,8,0,4);r.Combat.SpawnBoss(-12,4);
+            Simulate(r,nav,1);
+            foreach(var (x,y,z) in new[]{(11.0,4.0,-11.0),(0.0,0.0,-4.0),(20.0,5.5,20.0),(0.0,4.0,16.0)}){
+                r.Body.PlaceAt(x,y,z);r.SyncPlayer();int v=nav.Fields[0].Version;double t=0;int peak=0;
+                while(nav.Fields[0].Version==v||nav.Fields[0].Goal!=nav.GoalFor(0,r.Combat.Player)){
+                    int before=nav.Fields[0].Pops+nav.Fields[1].Pops+nav.Fields[2].Pops;r.Step(default,1.0/60);t+=1.0/60;
+                    peak=Math.Max(peak,nav.Fields[0].Pops+nav.Fields[1].Pops+nav.Fields[2].Pops-before);Assert.That(t,Is.LessThan(1));
+                }
+                TestContext.Out.WriteLine($"meta ({x},{y},{z}): campo S publicado en {t:F3} s; mayor trabajo en un tick {peak} nodos");
+                Assert.That(t,Is.LessThanOrEqualTo(.25+1e-9));Assert.That(peak,Is.LessThanOrEqualTo(nav.Budget));
+            }
         }
         [Test] public void NavigationIsDeterministic()
         {

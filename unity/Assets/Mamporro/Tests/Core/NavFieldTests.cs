@@ -83,7 +83,7 @@ namespace Mamporro.Tests
                 Assert.That(elapsed,Is.LessThanOrEqualTo(.25+1e-9));
             }
         }
-        const int EnemyNavigationBudget=4000;
+        const int EnemyNavigationBudget=3000;
         [Test] public void FieldIsDeterministicAndAllocationFree()
         {
             var g=G();var a=new NavField(g);var b=new NavField(g);int goal=Node(g,11,4,-11);

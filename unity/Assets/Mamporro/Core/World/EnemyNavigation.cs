@@ -13,8 +13,9 @@ namespace Mamporro.Core
         // double) no puede quedar dentro de ella al redondear las posiciones float de la horda
         // (~1e-5 m). Menor que el hueco de 1 mm de la escalada para poder soltarse de la pared.
         const double Pad=.0005;
-        // Nodos extraídos por tick y clase al recalcular el campo (presupuesto repartido).
-        public int Budget=4000;
+        // Nodos procesados por tick entre los tres campos al recalcular (~0,3 ms medidos).
+        public int Budget=3000;
+        int order;
         public readonly VerticalCircuit Circuit;
         public readonly NavGraph[] Graphs;
         public readonly NavField[] Fields;
@@ -73,10 +74,16 @@ namespace Mamporro.Core
             long start=System.Diagnostics.Stopwatch.GetTimestamp();enemies=e;player=p;
             classCount[0]=classCount[1]=classCount[2]=0;
             for(int i=0;i<e.Count;i++){classCount[cls[i]]++;if(blockTimer[i]>0)blockTimer[i]=(float)(blockTimer[i]-dt);losAge[i]=(float)(losAge[i]-dt);}
-            for(int k=0;k<Fields.Length;k++){
+            // Un único presupuesto por tick para los tres campos (sin picos por coincidir), con
+            // prioridad a la clase con más enemigos; orden determinista en empates.
+            int remaining=Budget;
+            for(int rank=0;rank<Fields.Length;rank++){
+                int k=-1;for(int c=0;c<Fields.Length;c++)if((order&(1<<c))==0&&(k<0||classCount[c]>classCount[k]))k=c;
+                order|=1<<k;
                 if(classCount[k]==0&&Fields[k].Version>0&&!Fields[k].Computing)continue;
-                goal[k]=GoalFor(k,p);Fields[k].Update(goal[k],p.X,p.Y,p.Z,dt,Budget);
+                goal[k]=GoalFor(k,p);remaining-=Fields[k].Update(goal[k],p.X,p.Y,p.Z,dt,Math.Max(0,remaining));
             }
+            order=0;
             Ticks+=System.Diagnostics.Stopwatch.GetTimestamp()-start;
         }
         public void End(){}
