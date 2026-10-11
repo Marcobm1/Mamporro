@@ -1,3 +1,4 @@
+using System;
 using Mamporro.Core;
 using NUnit.Framework;
 
@@ -287,6 +288,69 @@ namespace Mamporro.Tests
         {
             var right=VerticalMotion.WallRight(new Vec3(nx,.3,nz));
             Assert.That(right.X,Is.EqualTo(rx).Within(1e-10));Assert.That(right.Z,Is.EqualTo(rz).Within(1e-10));
+        }
+        // A/D según la pantalla en las cuatro caras: cámara hacia la pared, de espaldas a ella
+        // y a lo largo de ella. La derecha visible es siempre la derecha de la cámara.
+        [TestCase(1,0)] [TestCase(-1,0)] [TestCase(0,1)] [TestCase(0,-1)]
+        public void LeftRightFollowTheCameraOnEveryBoxFace(double nx,double nz)
+        {
+            foreach(double side in new[]{-1.0,1.0})foreach(double facing in new[]{1.0,-1.0}){
+                var c=new VerticalCircuit();var b=new PlayerBody();
+                b.PlaceAt(11+nx*3.402,2,nz*4.402);b.Grounded=false;
+                var m=new VerticalMotion(b,c.Collision,c.Queries);
+                m.Step(new VerticalIntent{Movement=new PlayerIntent{MoveX=-nx,MoveZ=-nz}},1.0/60);
+                Assert.That(m.State,Is.EqualTo(VerticalState.Climbing));
+                // facing=1: cámara hacia la pared; -1: girada 180°, mirando hacia fuera.
+                var wallRight=VerticalMotion.WallRight(m.Contact.Normal);double cx=wallRight.X*facing,cz=wallRight.Z*facing;
+                double x=b.X,z=b.Z;
+                for(int i=0;i<10;i++)m.Step(new VerticalIntent{WallHorizontal=side,CameraRightX=cx,CameraRightZ=cz},1.0/60);
+                Assert.That((b.X-x)*cx+(b.Z-z)*cz,Is.EqualTo(side*.5).Within(1e-8),$"lado {side}, cámara {facing}");
+                Assert.That(m.LateralMirrored,Is.EqualTo(facing<0));
+            }
+        }
+        [Test] public void ScreenLateralKeepsDirectionWhileLookingAlongTheWall()
+        {
+            var n=new Vec3(1,0,0);var right=VerticalMotion.WallRight(n);
+            Assert.That(VerticalMotion.ScreenMirrored(n,right.X,right.Z,false),Is.False);
+            Assert.That(VerticalMotion.ScreenMirrored(n,-right.X,-right.Z,false),Is.True);
+            // Sin cámara: base de pared, nunca invierte.
+            Assert.That(VerticalMotion.ScreenMirrored(n,0,0,true),Is.False);
+            // A lo largo de la pared (derecha de cámara = ±normal): conserva el estado previo.
+            foreach(bool previous in new[]{false,true}){
+                Assert.That(VerticalMotion.ScreenMirrored(n,n.X,n.Z,previous),Is.EqualTo(previous));
+                Assert.That(VerticalMotion.ScreenMirrored(n,-n.X,-n.Z,previous),Is.EqualTo(previous));
+            }
+            // Banda de histéresis: solo cambia pasado ±ScreenFlipDot.
+            double inside=VerticalMotion.ScreenFlipDot-.01,outside=VerticalMotion.ScreenFlipDot+.01;
+            Vec3 Mix(double dot)=>new Vec3(right.X*dot+n.X*Math.Sqrt(1-dot*dot),0,right.Z*dot+n.Z*Math.Sqrt(1-dot*dot));
+            var v=Mix(-inside);Assert.That(VerticalMotion.ScreenMirrored(n,v.X,v.Z,false),Is.False);
+            v=Mix(-outside);Assert.That(VerticalMotion.ScreenMirrored(n,v.X,v.Z,false),Is.True);
+            v=Mix(inside);Assert.That(VerticalMotion.ScreenMirrored(n,v.X,v.Z,true),Is.True);
+            v=Mix(outside);Assert.That(VerticalMotion.ScreenMirrored(n,v.X,v.Z,true),Is.False);
+        }
+        [Test] public void NewGrabStartsFromTheWallBasisAndCameraSweepIsContinuous()
+        {
+            // Girar la cámara 360° mientras se pulsa D: el desplazamiento nunca va hacia la
+            // izquierda visible y solo cambia de sentido fuera de la banda a lo largo de la pared.
+            var c=new VerticalCircuit();var b=new PlayerBody();b.PlaceAt(11+3.402,2,0);b.Grounded=false;
+            var m=new VerticalMotion(b,c.Collision,c.Queries);
+            m.Step(new VerticalIntent{Movement=new PlayerIntent{MoveX=-1}},1.0/60);
+            Assert.That(m.State,Is.EqualTo(VerticalState.Climbing));
+            int flips=0;bool last=m.LateralMirrored;var wallRight=VerticalMotion.WallRight(m.Contact.Normal);
+            for(int deg=0;deg<=540;deg+=5){
+                double a=deg*Math.PI/180,cx=Math.Cos(a),cz=-Math.Sin(a),x=b.X,z=b.Z;
+                m.Step(new VerticalIntent{WallHorizontal=1,CameraRightX=cx,CameraRightZ=cz},1.0/60);
+                Assert.That(m.State,Is.EqualTo(VerticalState.Climbing),$"{deg}°");
+                double screen=wallRight.X*cx+wallRight.Z*cz;
+                if(Math.Abs(screen)>VerticalMotion.ScreenFlipDot)
+                    Assert.That((b.X-x)*cx+(b.Z-z)*cz,Is.GreaterThan(0),$"D hacia la derecha visible a {deg}°");
+                if(m.LateralMirrored!=last){flips++;last=m.LateralMirrored;}
+            }
+            Assert.That(flips,Is.EqualTo(2),"un cambio al dar la espalda y otro al volver");
+            // Agarre nuevo: vuelve a partir de la base de pared.
+            m.Step(new VerticalIntent{Movement=new PlayerIntent{JumpPressed=true}},1.0/60);
+            for(int i=0;i<240&&m.Grabs<2;i++)m.Step(new VerticalIntent{Movement=new PlayerIntent{MoveX=-1}},1.0/60);
+            Assert.That(m.Grabs,Is.EqualTo(2));Assert.That(m.LateralMirrored,Is.False);
         }
         [Test] public void VerticalAndLateralSpeedsAreIndependentParameters()
         {

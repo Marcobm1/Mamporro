@@ -46,6 +46,34 @@ namespace Mamporro.Tests
             }
             LogAssert.NoUnexpectedReceived();
         }
+        [UnityTest] public IEnumerator KeyboardLeftRightFollowsTheCameraWhenTurnedAwayFromTheWall()
+        {
+            yield return Load();var g=Game;g.StartRun("P0QA");g.SetPaused(true);
+            keyboard=InputSystem.AddDevice<Keyboard>("Teclado A6 cámara");
+            var yawField=typeof(U3Game).GetField("yaw",BindingFlags.Instance|BindingFlags.NonPublic);
+            foreach(var normal in new[]{Vector3.right,Vector3.left,Vector3.forward,Vector3.back})
+            foreach(float offset in new[]{0f,45f,-45f,135f,-135f,180f})foreach(var key in new[]{Key.A,Key.D}){
+                g.PlaceQa(new Vec3(11+normal.x*3.402,2,normal.z*4.402));g.Body.Grounded=false;
+                g.Vertical.ScriptedInput=new VerticalIntent{Movement=new PlayerIntent{MoveX=-normal.x,MoveZ=-normal.z}};
+                for(int i=0;i<25;i++)g.Session.PhysicsStep(default,1.0/60,9.5,0);
+                Assert.That(g.Vertical.Motion.State,Is.EqualTo(VerticalState.Climbing));
+                g.Vertical.ScriptedInput=null;
+                // Cámara girada con el ratón respecto a la vista frontal de la pared.
+                g.FaceTowards(11,0);float yaw=(float)yawField.GetValue(g)+offset;yawField.SetValue(g,yaw);
+                InputSystem.QueueStateEvent(keyboard,new KeyboardState(key));InputSystem.Update();
+                var before=new Vector3((float)g.Body.X,(float)g.Body.Y,-(float)g.Body.Z);
+                g.Session.PhysicsStep(default,1.0/60,9.5,0);
+                var after=new Vector3((float)g.Body.X,(float)g.Body.Y,-(float)g.Body.Z);
+                // Oráculo Unity: derecha de la cámara real y tangente horizontal de la pared.
+                var cameraRight=Quaternion.Euler(0,yaw,0)*Vector3.right;
+                var tangent=Vector3.Cross(Vector3.up,new Vector3(-normal.x,0,normal.z));
+                float visible=Mathf.Abs(Vector3.Dot(cameraRight,tangent));
+                Assert.That(Vector3.Dot(after-before,cameraRight),Is.EqualTo((key==Key.D?.05f:-.05f)*visible).Within(.0001),
+                    $"pared {normal}, giro {offset}°, {key}");
+                InputSystem.QueueStateEvent(keyboard,new KeyboardState());InputSystem.Update();
+            }
+            LogAssert.NoUnexpectedReceived();
+        }
         [UnityTest] public IEnumerator AllPitSidesAndPlateauSidesCompleteWithCameraAndNoRescue()
         {
             yield return Load();var g=Game;g.StartRun("P0QA");g.SetPaused(true);

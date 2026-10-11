@@ -62,9 +62,12 @@ namespace Mamporro.U3
         void Step(PlayerIntent movement,double dt,double speed,double crowd)
         {
             var k=Keyboard.current;
+            // Misma guiñada que orienta WASD en suelo; derecha de cámara en coordenadas núcleo.
+            double yaw=game.WebYaw;
             var input=InputProvider!=null?InputProvider():ScriptedInput??new VerticalIntent{Movement=movement,
                 WallHorizontal=k==null?0:(k.dKey.isPressed?1:0)-(k.aKey.isPressed?1:0),
-                WallVertical=k==null?0:(k.wKey.isPressed?1:0)-(k.sKey.isPressed?1:0)};
+                WallVertical=k==null?0:(k.wKey.isPressed?1:0)-(k.sKey.isPressed?1:0),
+                CameraRightX=Math.Cos(yaw),CameraRightZ=-Math.Sin(yaw)};
             LastInput=input;
             var b=game.Body;double x=b.X,y=b.Y,z=b.Z;int grabs=Motion.Grabs;
             if(Control)PlayerPhysics.StepInCrowd(game.Body,input.Movement,Circuit.Collision,PlayerTuning.Default,speed,crowd,dt);

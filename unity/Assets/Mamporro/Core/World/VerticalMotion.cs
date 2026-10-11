@@ -7,6 +7,8 @@ namespace Mamporro.Core
     {
         public PlayerIntent Movement;
         public double WallHorizontal,WallVertical;
+        // Derecha horizontal de la cámara en coordenadas núcleo; cero = sin cámara (base de pared).
+        public double CameraRightX,CameraRightZ;
     }
     public sealed class VerticalTuning
     {
@@ -49,6 +51,18 @@ namespace Mamporro.Core
             double length=JsMath.Hypot(normal.X,normal.Z);
             return length>1e-9?new Vec3(normal.Z/length,0,-normal.X/length):default;
         }
+        // A/D siguen la pantalla. Con la cámara hacia la pared coincide con WallRight; si
+        // el jugador gira la cámara hasta mirar de espaldas a la pared, la derecha visible es
+        // la contraria. Histéresis: mirando a lo largo de la pared se conserva el sentido.
+        public const double ScreenFlipDot=.25;
+        public static bool ScreenMirrored(Vec3 normal,double cameraRightX,double cameraRightZ,bool previous)
+        {
+            double length=JsMath.Hypot(cameraRightX,cameraRightZ);if(length<1e-9)return false;
+            var right=WallRight(normal);double dot=(right.X*cameraRightX+right.Z*cameraRightZ)/length;
+            return previous?dot<ScreenFlipDot:dot< -ScreenFlipDot;
+        }
+        bool mirrored;
+        public bool LateralMirrored=>mirrored;
         public bool PushesIntoContact(PlayerIntent input)
         {
             double length=JsMath.Hypot(input.MoveX,input.MoveZ);
@@ -149,6 +163,8 @@ namespace Mamporro.Core
                     if(v>0&&atEdge&&queries.Ledge(Position,wall,physics.Radius,physics.Height,out lift,out top)){
                         State=VerticalState.Ledge;transitionTime=0;onTopLeg=false;
                     }else{
+                        mirrored=ScreenMirrored(wall.Normal,input.CameraRightX,input.CameraRightZ,mirrored);
+                        if(mirrored)h=-h;
                         var right=WallRight(wall.Normal);
                         double dy=v*Tuning.UpSpeed*dt,horizontal2=wall.Normal.X*wall.Normal.X+wall.Normal.Z*wall.Normal.Z;
                         double slope=wall.Normal.Y*dy/horizontal2;
@@ -174,7 +190,7 @@ namespace Mamporro.Core
                 if(Body.Y<target.Y-1e-6&&Body.Vy>0)Body.Vy=0;
                 State=Body.Grounded?VerticalState.Ground:VerticalState.Air;
                 if(!descendedToGround&&CanStartClimb(input.Movement)){
-                    State=VerticalState.Climbing;Grabs++;Body.Grounded=false;Body.Sliding=false;Body.SlideQueued=false;Body.Vx=Body.Vy=Body.Vz=0;
+                    State=VerticalState.Climbing;Grabs++;mirrored=false;Body.Grounded=false;Body.Sliding=false;Body.SlideQueued=false;Body.Vx=Body.Vy=Body.Vz=0;
                 }
             }
             world.Constrain(Body);Distance+=Length(Sub(Position,before));
