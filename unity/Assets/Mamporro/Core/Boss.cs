@@ -41,7 +41,7 @@ namespace Mamporro.Core
             if(Attack=="slam"){r.Emit("slam",x,y,z,5.5,life:.5);r.Notify(FeedbackKind.BossSlam,x,y,z,radius:5.5);if(Rules.Hypot(r.Player.X-x,r.Player.Z-z)<=5.5+CombatPlayer.Radius&&Math.Abs(r.Player.Y-y)<3)r.Hurt(32);}
             else if(Attack=="sneeze"){
                 int n=Enraged?24:16;double a0=rng.Next()*Math.PI*2,radius=e.Radius(i);
-                for(int k=0;k<n;k++){double a=a0+k/(double)n*Math.PI*2,dx=Math.Cos(a),dz=Math.Sin(a),sx=x+dx*radius,sz=z+dz*radius;r.EnemyShots.Spawn(sx,r.World.Height(sx,sz)+1,sz,dx,dz,8,4,.45,damage:10,kind:1);}
+                for(int k=0;k<n;k++){double a=a0+k/(double)n*Math.PI*2,dx=Math.Cos(a),dz=Math.Sin(a),sx=x+dx*radius,sz=z+dz*radius;r.EnemyShots.Spawn(sx,r.Vertical!=null?y+1:r.World.Height(sx,sz)+1,sz,dx,dz,8,4,.45,damage:10,kind:1);}
                 for(int k=0;k<5;k++){double a=a0+(k+.5)/5*Math.PI*2,sx=x+Math.Cos(a)*(radius+1.2),sz=z+Math.Sin(a)*(radius+1.2);r.SpawnMinion(sx,sz,y);}
             }
             Recover(i,e);

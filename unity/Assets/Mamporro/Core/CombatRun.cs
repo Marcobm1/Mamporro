@@ -131,7 +131,9 @@ namespace Mamporro.Core
         public void Shoot(int i,double dx,double dz)
         {
             var d=Enemies.Def(i);var r=d.ranged;double x=Enemies.X[i]+dx*d.radius,z=Enemies.Z[i]+dz*d.radius;
-            EnemyShots.Spawn(x,World.Height(x,z)+1,z,dx,dz,r.projectileSpeed,r.range/r.projectileSpeed+.6,r.projectileRadius,damage:r.projectileDamage);
+            // P0-B5: sale a la altura real del tirador (+1, la misma referencia del heredado sobre su suelo).
+            int shot=EnemyShots.Spawn(x,Vertical!=null?Enemies.Y[i]+1:World.Height(x,z)+1,z,dx,dz,r.projectileSpeed,r.range/r.projectileSpeed+.6,r.projectileRadius,damage:r.projectileDamage);
+            if(Vertical!=null&&shot>=0)EnemyShots.Aim3D(shot,Player.X,Player.Y+1,Player.Z,r.projectileSpeed);
             Notify(FeedbackKind.EnemyShot,x,Enemies.Y[i]+d.height*.6,z);
         }
         public void Hit(int weapon,int enemy,double dx,double dz)

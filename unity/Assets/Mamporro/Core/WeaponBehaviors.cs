@@ -28,9 +28,13 @@ namespace Mamporro.Core
         sealed class FreshFilter : ITargetFilter
         {
             readonly CombatRun run; public FreshFilter(CombatRun run){this.run=run;}
-            public bool Accept(int i){if(!run.Enemies.Accept(i))return false;uint id=run.Enemies.Id[i];for(int j=0;j<run.chosenCount;j++)if(run.chosen[j]==id)return false;return true;}
+            public bool Accept(int i){if(!run.Enemies.Accept(i))return false;
+                // P0-B5: el salto del Jersey respeta la misma banda vertical de 1,8 m desde su origen.
+                if(run.Vertical!=null&&Math.Abs(run.Enemies.Y[i]-run.chainFromY)>1.8)return false;
+                uint id=run.Enemies.Id[i];for(int j=0;j<run.chosenCount;j++)if(run.chosen[j]==id)return false;return true;}
         }
         public WeaponState StateOf(int slot)=>states[slot];
+        double chainFromY;
         int FreshNearest(double x,double z,double radius)
         {if(fresh==null)fresh=new FreshFilter(this);return Enemies.Grid.Nearest(x,z,radius,fresh);}
         void StepWeapon(Weapon w,WeaponState state,double dt)
@@ -58,11 +62,11 @@ namespace Mamporro.Core
                 case "chain":
                     chosenCount=0;bool fired=false;int jumps=Math.Max(0,(int)Rules.Round(w[WStat.pierce]));
                     for(int c=0;c<count;c++){
-                        int current=FreshNearest(Player.X,Player.Z,16);if(current<0)break;fired=true;double fx=Player.X,fy=Player.Y+1.2,fz=Player.Z;
+                        chainFromY=Player.Y;int current=FreshNearest(Player.X,Player.Z,16);if(current<0)break;fired=true;double fx=Player.X,fy=Player.Y+1.2,fz=Player.Z;
                         for(int j=0;j<=jumps&&current>=0;j++){
                             double ex=Enemies.X[current],ez=Enemies.Z[current],ey=Enemies.Y[current]+Enemies.Def(current).height*.6,dx=ex-fx,dz=ez-fz,d=Rules.Nonzero(Rules.Hypot(dx,dz));
                             chosen[chosenCount++]=Enemies.Id[current];DamageEnemy(current,w,dx/d,dz/d);Emit("chain",fx,fy,fz,x2:ex,y2:ey,z2:ez);
-                            fx=ex;fy=ey;fz=ez;current=j<jumps?FreshNearest(ex,ez,5.5*area):-1;
+                            fx=ex;fy=ey;fz=ez;chainFromY=Enemies.Y[current];current=j<jumps?FreshNearest(ex,ez,5.5*area):-1;
                         }
                     }
                     if(!fired){w.Timer=.2;w.SincePulse=elapsed;}break;
@@ -73,7 +77,7 @@ namespace Mamporro.Core
         {
             int n=Enemies.Query(Player.X,Player.Z,radius,range);
             for(int k=0;k<n;k++){
-                int i=range[k];if(!Enemies.Accept(i))continue;if(arc&&Math.Abs(Enemies.Y[i]-Player.Y)>1.8)continue;
+                int i=range[k];if(!Enemies.Accept(i))continue;if((arc||Vertical!=null)&&Math.Abs(Enemies.Y[i]-Player.Y)>1.8)continue;
                 double dx=Enemies.X[i]-Player.X,dz=Enemies.Z[i]-Player.Z,d=Rules.Hypot(dx,dz);if(d>radius+Enemies.Radius(i))continue;
                 bool hit=!arc||d<.9;
                 for(int j=0;j<swings&&!hit;j++){double angle=Player.Facing+j*Math.PI*2/swings;if((dx*-Math.Sin(angle)+dz*-Math.Cos(angle))/Rules.Nonzero(d)>=Math.Cos(75*Math.PI/180))hit=true;}
