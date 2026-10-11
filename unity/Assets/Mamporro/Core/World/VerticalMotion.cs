@@ -76,10 +76,12 @@ namespace Mamporro.Core
             Body.Vx=jump?wall.Normal.X/horizontal*Tuning.SeparationSpeed:0;Body.Vz=jump?wall.Normal.Z/horizontal*Tuning.SeparationSpeed:0;
             transitionTime=stalled=0;
         }
-        bool IsReattachBlocked(VerticalHit contact)=>!Armed&&(blockAll||contact.Terrain==detachedWall.Terrain
-            &&(contact.Id==detachedWall.Id||contact.Terrain&&SameTerrainPlane(contact,detachedWall))
+        // La pared puede estar dividida en cajas o triángulos: una junta coplanar no
+        // termina la protección. Otra orientación o plano conserva el agarre inmediato.
+        bool IsReattachBlocked(VerticalHit contact)=>!Armed&&(blockAll
+            ||(contact.Terrain==detachedWall.Terrain&&contact.Id==detachedWall.Id||SameWallPlane(contact,detachedWall))
             &&contact.Normal.X*detachedWall.Normal.X+contact.Normal.Y*detachedWall.Normal.Y+contact.Normal.Z*detachedWall.Normal.Z>.99);
-        static bool SameTerrainPlane(VerticalHit a,VerticalHit b)=>Math.Abs((a.Point.X-b.Point.X)*b.Normal.X
+        static bool SameWallPlane(VerticalHit a,VerticalHit b)=>Math.Abs((a.Point.X-b.Point.X)*b.Normal.X
             +(a.Point.Y-b.Point.Y)*b.Normal.Y+(a.Point.Z-b.Point.Z)*b.Normal.Z)<.05;
         public bool CurrentContactBlocked=>IsReattachBlocked(wall);
         // Pausa/foco/muerte/reinicio: no conservar agarre ni entrada latente.

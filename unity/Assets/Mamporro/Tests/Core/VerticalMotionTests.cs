@@ -65,6 +65,32 @@ namespace Mamporro.Tests
             }
             Assert.That(m.Grabs,Is.EqualTo(2));Assert.That(b.X,Is.LessThanOrEqualTo(7.6));
         }
+        [TestCase(1,0)] [TestCase(-1,0)] [TestCase(0,1)] [TestCase(0,-1)]
+        public void WallJumpProtectionSpansCoplanarCompoundColliders(double nx,double nz)
+        {
+            var c=new VerticalCircuit();var b=new PlayerBody();
+            // Dos piezas verticales coplanares. Sonda del contrato de contacto durante
+            // la protección, como WallJumpProtectsForConfiguredTime; no es una ruta jugable.
+            double x0=nx<0?0:nx>0?-2:-3,x1=nx<0?2:nx>0?0:3;
+            double z0=nz<0?0:nz>0?-2:-3,z1=nz<0?2:nz>0?0:3;
+            var q=new VerticalQueries(new VerticalSolid(901,new Vec3(x0,0,z0),new Vec3(x1,2,z1)),
+                new VerticalSolid(902,new Vec3(x0,2,z0),new Vec3(x1,6,z1)));
+            b.PlaceAt(nx*.402,1,nz*.402);b.Grounded=false;
+            var m=new VerticalMotion(b,c.Collision,q);
+            var push=new VerticalIntent{Movement=new PlayerIntent{MoveX=-nx,MoveZ=-nz},WallVertical=1};
+            m.Step(push,1.0/60);Assert.That(m.Contact.Id,Is.EqualTo(901));
+            var jump=push;jump.Movement.JumpPressed=true;m.Step(jump,1.0/60);
+            bool crossed=false;
+            for(int i=0;i<20;i++){
+                b.PlaceAt(nx*.402,2.1,nz*.402);b.Grounded=false;
+                m.Step(push,1.0/60);
+                crossed|=m.Contact.Id==902;
+                Assert.That(m.Grabs,Is.EqualTo(1),"La junta no debe anular la protección del salto");
+            }
+            Assert.That(crossed,Is.True,"La sonda debe consultar la segunda pieza");
+            for(int i=0;i<180&&m.LedgeSuccess==0;i++)m.Step(push,1.0/60);
+            Assert.That(m.Grabs,Is.EqualTo(2));Assert.That(m.LedgeSuccess,Is.EqualTo(1));
+        }
         [Test] public void ReleaseSlideAndSuspendClearClimb()
         {
             var m=Create(out _);m.Step(Grip(),1.0/60);var input=Grip();input.Movement.SlidePressed=true;m.Step(input,1.0/60);
