@@ -8,7 +8,17 @@ namespace Mamporro.Core
     internal sealed class TerrainWallGeometry
     {
         readonly Heightfield terrain;
-        public TerrainWallGeometry(Heightfield terrain){this.terrain=terrain;}
+        // Menor componente vertical de las normales de cada celda: una celda cuyo mínimo
+        // supera el umbral no tiene caras abruptas y las consultas la saltan (mismo resultado).
+        readonly float[] minNormalY;
+        public TerrainWallGeometry(Heightfield terrain)
+        {
+            this.terrain=terrain;minNormalY=new float[terrain.Cells*terrain.Cells];
+            for(int z=0;z<terrain.Cells;z++)for(int x=0;x<terrain.Cells;x++){
+                Triangle(x,z,0,out _,out _,out _,out var a);Triangle(x,z,1,out _,out _,out _,out var b);
+                minNormalY[z*terrain.Cells+x]=(float)Math.Min(a.Y,b.Y)-1e-6f;
+            }
+        }
         static Vec3 Sub(Vec3 a,Vec3 b)=>new Vec3(a.X-b.X,a.Y-b.Y,a.Z-b.Z);
         static Vec3 Cross(Vec3 a,Vec3 b)=>new Vec3(a.Y*b.Z-a.Z*b.Y,a.Z*b.X-a.X*b.Z,a.X*b.Y-a.Y*b.X);
         static double Dot(Vec3 a,Vec3 b)=>a.X*b.X+a.Y*b.Y+a.Z*b.Z;
@@ -60,6 +70,7 @@ namespace Mamporro.Core
             Bounds(from,to,radius,out int x0,out int x1,out int z0,out int z1);
             var delta=Sub(to,from);
             for(int z=z0;z<=z1;z++)for(int x=x0;x<=x1;x++)for(int face=0;face<2;face++){
+                if(minNormalY[z*terrain.Cells+x]>=wallCos)break;
                 Triangle(x,z,face,out var a,out var b,out var c,out var normal);
                 if(normal.Y>=wallCos)continue;
                 if(!stationary&&Dot(delta,normal)>=-1e-10)continue;

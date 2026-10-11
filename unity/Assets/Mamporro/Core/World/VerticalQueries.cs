@@ -76,6 +76,18 @@ namespace Mamporro.Core
                 &&feet.Z>s.Min.Z-radius+Epsilon&&feet.Z<s.Max.Z+radius-Epsilon)return false;
             return terrain==null||!terrain.Query(feet,feet,radius,height,WallCos,true,out _);
         }
+        // P0-B: como Clear, pero los sólidos cuya tapa queda a un escalón o menos de los pies no
+        // cuentan como obstáculo: se suben andando (regla heredada de los enemigos, +0,6).
+        public bool ClearAboveStep(Vec3 feet,double radius,double height,double step)
+        {
+            Validate(feet,radius,height);
+            foreach(var s in solids)if(s.Max.Y>feet.Y+step&&feet.X>s.Min.X-radius+Epsilon&&feet.X<s.Max.X+radius-Epsilon
+                &&feet.Y>s.Min.Y-height+Epsilon&&feet.Y<s.Max.Y-Epsilon
+                &&feet.Z>s.Min.Z-radius+Epsilon&&feet.Z<s.Max.Z+radius-Epsilon)return false;
+            return terrain==null||!terrain.Query(feet,feet,radius,height,WallCos,true,out _);
+        }
+        // P0-B: ninguna cara abrupta del terreno bajo la huella (sin voladizo sobre un acantilado).
+        public bool TerrainFootprintWalkable(Vec3 feet,double radius)=>terrain==null||terrain.SupportHeight(feet,radius,WallCos,out _);
         static bool Slab(double start,double delta,double min,double max,Vec3 low,Vec3 high,ref double enter,ref double exit,ref Vec3 normal)
         {
             if(Math.Abs(delta)<Epsilon)return start>min+Epsilon&&start<max-Epsilon;

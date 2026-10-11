@@ -69,8 +69,9 @@ namespace Mamporro.Core
             var heights=new float[(cells+1)*(cells+1)];
             for(int z=0;z<=cells;z++)for(int x=0;x<=cells;x++){
                 double px=x-size/2,pz=z-size/2;float h=0;
-                // Rampa transitable hasta el tejado del edificio R (y=4 en x=8).
-                if(px>=0&&px<=8&&pz>=-13&&pz<=-9)h=(float)(px/2);
+                // Rampa transitable (29,7°) que llega a y=4 un metro antes del edificio R y sigue
+                // plana bajo él: la junta con el tejado queda al mismo nivel, sin caras ocultas.
+                if(px>=0&&px<=13&&pz>=-13&&pz<=-9)h=(float)System.Math.Min(4,px*4/7);
                 // Meseta de paredes abruptas en todos sus lados.
                 if(px>=12&&px<=20&&pz>=6&&pz<=14)h=5;
                 // Acantilado sin rampa: repisa elevada hasta el límite.
