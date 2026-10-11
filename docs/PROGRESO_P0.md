@@ -4,7 +4,7 @@ Estado: **P0-A1–A5 base técnica validada manualmente; P0-A6 corregido y verif
 
 ## Cómo retomar
 
-- **Punto vigente (cierre P0-A, 11/10/2026):** A6 aprobado manualmente. Código `373620d`, cierre documental `dc8ab26` y este cierre. Siguiente: plan de P0-B (rutas de enemigos en altura) entregado al autor en [PLAN_P0B](PLAN_P0B.md), con seis dudas abiertas; **no programar P0-B hasta su aprobación**; C/D no autorizados. Los puntos siguientes son historial.
+- **Punto vigente (cierre P0-A, 11/10/2026):** A6 aprobado manualmente. Código `373620d`, cierre documental `dc8ab26` y este cierre. Siguiente: plan de P0-B (rutas de enemigos en altura) en [PLAN_P0B](PLAN_P0B.md), **revisado el 11/10 tras la decisión de que todos los enemigos escalen**, con cinco dudas abiertas en su sección 10; **no programar P0-B hasta su aprobación**; C/D no autorizados. Los puntos siguientes son historial.
 
 - **Punto vigente 11/10 noche (Claude Code):** A6 probado manualmente y aprobado salvo velocidad. Nueva decisión confirmada: escalar a la velocidad efectiva de carrera, mejoras incluidas. Implementado en `373620d`; builds Normal/Development de ese commit; Edit 583/583, Play 51/51. Detalle en «Velocidad de escalada = velocidad efectiva» al final. **Siguiente paso: el autor prueba la velocidad con `scripts\p0.cmd jugar`; detenerse. No iniciar P0-B/C/D.**
 

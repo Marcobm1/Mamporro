@@ -754,3 +754,17 @@ Concreción: `PlayerPhysics.EffectiveSpeed(Tuning.PlayerBaseMoveSpeed * Stats[mo
 ## P0-A6 aprobado manualmente (11/10/2026)
 
 Decisión expresa del autor tras probar `373620d`: «Todo bien». P0-A6 queda aprobado, incluida la velocidad de escalada igual a la velocidad efectiva de carrera (`PlayerPhysics.EffectiveSpeed`, mejoras incluidas), la escalada automática sin botón, todas las paredes físicas apropiadas, A/D según cámara, transiciones, salida de fosos y protección tras salto, sin resistencia ni límite temporal. No reabrir estas decisiones sin un problema real. P0-A cerrado. Siguiente bloque: P0-B (rutas de enemigos en altura), solo plan hasta su aprobación; P0-C/D no autorizados.
+
+## P0-B: todos los enemigos escalan (11/10/2026)
+
+Decisión expresa del autor tras revisar la propuesta inicial de P0-B: **todos los enemigos podrán escalar paredes para perseguir al jugador**, cuerpo a cuerpo, a distancia, élite, jefe y especiales. Sustituye expresamente la restricción anterior que prohibía la escalada enemiga (P0-A4/A5 y el plan inicial). Motivo: si solo escala el jugador, tejados y acantilados serían refugios demasiado fáciles. La verticalidad sirve para maniobrar, escapar temporalmente y ganar posición, no para volverse invulnerable.
+
+Condiciones confirmadas:
+- Reglas geométricas generales compatibles con las paredes escalables del jugador, adaptadas al tamaño de cada enemigo, sin listas de IDs.
+- 48° como límite para caminar; las superficies más inclinadas se escalan.
+- Escalada física sin teletransportes, sin atravesar geometría y sin ascensos instantáneos; no golpear cuerpo a cuerpo desde una altura imposible.
+- Si el jugador es inaccesible incluso escalando, los enemigos van al punto alcanzable más cercano y el caso se registra para P0-C.
+- Se acepta corregir el combate vertical de forma geométricamente coherente, incluidos los proyectiles hostiles dirigidos a la altura del jugador cuando haya trayectoria válida, sin seguimiento ni cambios de daño, alcance, cadencia, velocidad ni balance.
+- P0-B optativo y aislado en QA, con un segundo circuito seleccionable.
+
+La velocidad de escalada enemiga **no** está fijada: propuesta pendiente en [PLAN_P0B](PLAN_P0B.md), sección 10. Plan revisado pendiente de aprobación; no programar hasta entonces.
