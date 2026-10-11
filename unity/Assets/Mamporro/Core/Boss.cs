@@ -19,6 +19,9 @@ namespace Mamporro.Core
             var e=r.Enemies;int i=e.IndexOf(EnemyId);if(i<0)return false;Enraged=e.Hp[i]<=e.MaxHp[i]*.5;Timer-=dt;
             switch(Phase){
                 case "idle":e.SetState(i,0,0);if(Timer<=0){
+                    // P0-B: escalando, cayendo o en el borde no se inicia ataque; queda como máximo
+                    // uno pendiente (el reloj no acumula) que empieza, con su aviso, al estabilizarse.
+                    if(r.Vertical!=null&&!r.Vertical.Stable(i)){Timer=0;break;}
                     // Mismo orden del filtro BOSS_ATTACKS y un único sorteo.
                     int selected=rng.Int(0,last==null?2:1);string attack=null;
                     foreach(string a in Attacks)if(a!=last&&selected--==0){attack=a;break;}
@@ -39,7 +42,7 @@ namespace Mamporro.Core
             else if(Attack=="sneeze"){
                 int n=Enraged?24:16;double a0=rng.Next()*Math.PI*2,radius=e.Radius(i);
                 for(int k=0;k<n;k++){double a=a0+k/(double)n*Math.PI*2,dx=Math.Cos(a),dz=Math.Sin(a),sx=x+dx*radius,sz=z+dz*radius;r.EnemyShots.Spawn(sx,r.World.Height(sx,sz)+1,sz,dx,dz,8,4,.45,damage:10,kind:1);}
-                for(int k=0;k<5;k++){double a=a0+(k+.5)/5*Math.PI*2,sx=x+Math.Cos(a)*(radius+1.2),sz=z+Math.Sin(a)*(radius+1.2);r.SpawnMinion(sx,sz);}
+                for(int k=0;k<5;k++){double a=a0+(k+.5)/5*Math.PI*2,sx=x+Math.Cos(a)*(radius+1.2),sz=z+Math.Sin(a)*(radius+1.2);r.SpawnMinion(sx,sz,y);}
             }
             Recover(i,e);
         }

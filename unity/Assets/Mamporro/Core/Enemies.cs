@@ -5,7 +5,7 @@ namespace Mamporro.Core
     public interface IEnemyActions { void Shoot(int enemy,double dx,double dz); }
     // Float32 en los mismos límites de almacenamiento que los TypedArray web.
     // Los cálculos intermedios son double, como Number de JavaScript.
-    public sealed class Enemies : ITargetFilter
+    public sealed partial class Enemies : ITargetFilter
     {
         public readonly int Capacity;
         public int Count,BigCount;
@@ -36,7 +36,7 @@ namespace Mamporro.Core
             Hp[i]=MaxHp[i]=(float)(d.hp*hp);Xp[i]=(float)(d.xp*xp);Gold[i]=(float)gold;Speed[i]=(float)(d.speed*variation);
             Phase[i]=(float)((id*.618)%1*Math.PI*2); State[i]=Detour[i]=0;
             ActionCd[i]=(float)(d.charge!=null?d.charge.cooldown*.25:(d.ranged?.cooldown??0)*(.5+(variation-.9)*2.5));
-            AimZ[i]=-1;HitDamage[i]=(float)d.damage;Type[i]=type;Id[i]=id;return i;
+            AimZ[i]=-1;HitDamage[i]=(float)d.damage;Type[i]=type;Id[i]=id;Navigation?.Spawned(this,i);return i;
         }
         public void ApplySlow(int i,double amount,double seconds)
         {
@@ -45,13 +45,13 @@ namespace Mamporro.Core
         }
         public void SetState(int i,int state,double time) {State[i]=state;StateTime[i]=(float)time;}
         public void Remove(int i)
-        {int last=--Count;if(i==last)return;foreach(var a in arrays)a[i]=a[last];Type[i]=Type[last];State[i]=State[last];Detour[i]=Detour[last];Id[i]=Id[last];}
-        public void Clear() {Count=0;nextId=1;Rebuild();}
+        {int last=--Count;if(i==last)return;foreach(var a in arrays)a[i]=a[last];Type[i]=Type[last];State[i]=State[last];Detour[i]=Detour[last];Id[i]=Id[last];Navigation?.Moved(last,i);}
+        public void Clear() {Count=0;nextId=1;Navigation?.Cleared();Rebuild();}
         // SpawnSystem.relocate de la web: conserva identidad, vida y estado de IA.
         public void Relocate(int i,double x,double y,double z)
         {
             X[i]=Px[i]=(float)x;Y[i]=Py[i]=(float)y;Z[i]=Pz[i]=(float)z;
-            Vx[i]=Vz[i]=Kx[i]=Kz[i]=0;
+            Vx[i]=Vz[i]=Kx[i]=Kz[i]=0;Navigation?.Spawned(this,i);
         }
         public int IndexOf(uint id) {for(int i=0;i<Count;i++)if(Id[i]==id)return i;return -1;}
         public void Rebuild()
@@ -81,6 +81,7 @@ namespace Mamporro.Core
         }
         public double Step(double dt,CombatPlayer p,ICombatWorld world,IEnemyActions actions)
         {
+            if(Navigation!=null)return StepNavigated(dt,p,world,actions);
             double decay=Math.Exp(-7*dt),contact=0,pressure=0,pushX=0,pushZ=0,playerSpeed=Rules.Hypot(p.Vx,p.Vz);
             for(int i=0;i<Count;i++) {
                 var d=Def(i);double x=X[i],z=Z[i];Px[i]=(float)x;Py[i]=Y[i];Pz[i]=(float)z;

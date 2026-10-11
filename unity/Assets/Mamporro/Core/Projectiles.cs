@@ -10,6 +10,8 @@ namespace Mamporro.Core
         public readonly int[] Pierce,Weapon,HitCount,Kind;
         readonly uint[] hits; readonly float[][] arrays;readonly int[] scratch=new int[64];
         int current;Enemies enemies;
+        // P0-B5: geometría vertical (nula en U3/U6).
+        public IVerticalCombat Vertical;
         public Projectiles(int capacity)
         {
             Capacity=capacity;arrays=new float[14][];for(int k=0;k<14;k++)arrays[k]=new float[capacity];

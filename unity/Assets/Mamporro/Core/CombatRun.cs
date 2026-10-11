@@ -110,8 +110,16 @@ namespace Mamporro.Core
         public int SpawnScaled(int type,double x,double z)
         {RefreshSpawnParams();int i=Enemies.Spawn(type,x,World.Height(x,z),z,SpawnHp,SpawnXp,SpawnGold);if(i>=0)Spawned++;Enemies.Rebuild();return i;}
         // Pelusa hija del estornudo del jefe; la rejilla se reconstruye al final del paso, como en la web.
-        public void SpawnMinion(double x,double z)
-        {if(World.IsInside(x,z,2)&&Enemies.Spawn(0,x,World.Height(x,z),z,SpawnHp,SpawnXp,SpawnGold)>=0)Spawned++;}
+        public void SpawnMinion(double x,double z,double nearY=double.NaN)
+        {
+            double y=World.Height(x,z);
+            // P0-B: sobre la superficie válida más cercana a la altura del jefe (p. ej. su tejado).
+            if(Vertical!=null&&!double.IsNaN(nearY)&&Vertical.SpawnPoint(ref x,ref z,nearY,out double surface))y=surface;
+            if(World.IsInside(x,z,2)&&Enemies.Spawn(0,x,y,z,SpawnHp,SpawnXp,SpawnGold)>=0)Spawned++;
+        }
+        // P0-B: combate en altura (nulo en U3/U6). Al asignarlo lo reciben también los proyectiles.
+        IVerticalCombat vertical;
+        public IVerticalCombat Vertical{get=>vertical;set{vertical=value;Projectiles.Vertical=value;EnemyShots.Vertical=value;}}
         public bool SpawnBoss(double x,double z)
         {
             if(Boss!=null||Victory)return false;if(Enemies.Count>=Enemies.Capacity)Enemies.Remove(Enemies.Count-1);
