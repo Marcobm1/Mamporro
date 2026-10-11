@@ -128,4 +128,4 @@ Mundo/estructuras mayores; mesetas y rampas más marcadas; escalada libre por pa
 
 Cámara contra estructuras y métricas están implementadas solo en el circuito QA P0-A; su adopción general sigue pendiente. Mando/remapeo y servicios Steam siguen fuera del bloque autorizado.
 
-Punto de continuación vigente: [PROGRESO_P0](docs/PROGRESO_P0.md) — circuito QA aislado de movilidad/verticalidad. P0-A1–A5 validados técnicamente por el autor; P0-A6 corregido y verificado el 11/10; pendiente de nueva prueba manual. No iniciar P0-B/C/D. B0 cerrado y publicado en `0b0b68c31dda803cf9cf566b3c96f369ed893ce3`.
+Punto de continuación vigente: [PROGRESO_P0](docs/PROGRESO_P0.md) — circuito QA aislado de movilidad/verticalidad. P0-A1–A5 validados técnicamente por el autor; P0-A6 probado manualmente y aprobado salvo velocidad; escalada a la velocidad efectiva de carrera (`373620d`, 11/10), pendiente de su prueba manual. No iniciar P0-B/C/D. B0 cerrado y publicado en `0b0b68c31dda803cf9cf566b3c96f369ed893ce3`.

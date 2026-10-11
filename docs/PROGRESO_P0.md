@@ -1,8 +1,10 @@
 # P0 — movilidad y verticalidad antes de ampliar el mundo
 
-Estado: **P0-A1–A5 base técnica validada manualmente; P0-A6 corregido y verificado, pendiente de prueba manual** (11/10/2026, Codex; refinado por Claude Code el mismo día en `dc4739c`). La movilidad no se declara aceptada hasta la nueva prueba del autor. P0-B/C/D NO autorizados. No mezcla P1 artístico ni P2 contenido. La clasificación histórica de balance en P0 no lo incluye en este prototipo.
+Estado: **P0-A1–A5 base técnica validada manualmente; P0-A6 corregido y verificado, pendiente de prueba manual** (11/10/2026, Codex; refinado por Claude Code el mismo día en `dc4739c`). **Actualización 11/10 noche:** el autor probó A6 y aprueba todo salvo la velocidad; escalada a velocidad efectiva de carrera en `373620d`, pendiente de su prueba. La movilidad no se declara aceptada hasta la nueva prueba del autor. P0-B/C/D NO autorizados. No mezcla P1 artístico ni P2 contenido. La clasificación histórica de balance en P0 no lo incluye en este prototipo.
 
 ## Cómo retomar
+
+- **Punto vigente 11/10 noche (Claude Code):** A6 probado manualmente y aprobado salvo velocidad. Nueva decisión confirmada: escalar a la velocidad efectiva de carrera, mejoras incluidas. Implementado en `373620d`; builds Normal/Development de ese commit; Edit 583/583, Play 51/51. Detalle en «Velocidad de escalada = velocidad efectiva» al final. **Siguiente paso: el autor prueba la velocidad con `scripts\p0.cmd jugar`; detenerse. No iniciar P0-B/C/D.**
 
 - **Punto vigente 11/10 tarde (Claude Code):** builds Normal/Development de `dc4739c2517f206496876527afeac8b33f2b79b7`: A/D siguen la cámara también de espaldas a la pared y barrido exhaustivo de caras. Edit 555/555, Play 50/50, evidencia válida `unity/TestResults/P0/Evidence/20261011T193637`. Detalle en «Refinamiento A6 — Claude Code» al final. **Siguiente paso: prueba manual del autor con `scripts\p0.cmd jugar`; detenerse. No iniciar P0-B/C/D.**
 
@@ -590,3 +592,45 @@ U6 SHA-256 antes y después `96b492cb271111251fe42b8646e65370a1b7b566773a1e35b34
 ### Prueba manual pendiente
 
 `scripts\p0.cmd jugar`. Casos: (1) corre de frente contra cada cara del edificio, meseta, rampa, acantilado y foso: debe engancharse sin saltar ni pulsar nada; (2) con la cámara hacia la pared, A izquierda y D derecha en pantalla; (3) gira el ratón mientras escalas hasta mirar de espaldas a la pared: A/D siguen yendo a izquierda/derecha de la pantalla; (4) corre en paralelo pegado a una pared: no engancha; (5) Espacio separa y no reengancha de inmediato; (6) cae al foso y sal por cualquier lado sin F7; (7) llega arriba del edificio por una cara sin techo encima. Límites conocidos sin cambios: esquina exterior suelta el agarre (sin giro automático), cajas alineadas a ejes, oblicuas solo en terreno, sin escalada en U6. **Detenerse; no iniciar P0-B/C/D.**
+
+## Velocidad de escalada = velocidad efectiva (11/10/2026, noche, Claude Code)
+
+Partida: HEAD = origin = `4b2fbc7`, 0/0, solo los siete ajustes protegidos sin commit. El autor probó A6 manualmente: todo correcto salvo la velocidad. Decisión confirmada: escalar a la velocidad efectiva de movimiento en todas las direcciones, mejoras incluidas.
+
+### Fuente y fórmula
+
+`WorldRun.Step` ya pasa a la física `Tuning.PlayerBaseMoveSpeed * Combat.Stats[Stat.moveSpeed]` (9,5 m/s × estadística de tomos, objetos y santuarios, tope ×1,8) y `Combat.CrowdSlow`; la carrera aplica `moveSpeed·(1−crowdSlow)` en `StepInCrowd`. Esa expresión se extrae a `PlayerPhysics.EffectiveSpeed` (resultado idéntico para la carrera) y la escalada la usa cada tick:
+
+`velocidad de escalada = PlayerPhysics.EffectiveSpeed(9,5 · Stats[moveSpeed], CrowdSlow)`
+
+No es la velocidad horizontal instantánea (nula contra la pared) ni una copia de la estadística: una mejora aplicada o retirada cambia el siguiente tick. Se retiran `UpSpeed` 4,5, `SideSpeed` 3,0 y `LedgeSpeed` 4,5; no hay estadísticas, mejoras ni balance nuevos. La frenada de horda afecta igual que en la carrera.
+
+Desplazamiento por tick: `velocidad · dt · (v·t_arriba + h·t_derecha) / max(1, |(v,h)|)`. `t_derecha` es la base A/D de `dc4739c` (cámara incluida); `t_arriba` (`VerticalMotion.WallUp`) es la tangente ascendente de la cara: vertical en muros, inclinada en paredes del terreno. W/S/A/D tienen el mismo módulo y las diagonales no lo superan, también en pendiente (antes la subida vertical se mantenía y el módulo total crecía). La transición al tejado recorre sus dos tramos barridos a la misma velocidad.
+
+### Seguridad a velocidad alta
+
+Hasta 17,1 m/s (tope ×1,8) un tick avanza 0,285 m. El barrido ya era continuo (sin atravesar), pero la ventana de borde de 0,2 m y el final de caras inclinadas sí podían saltarse: en pruebas, a 9,5 m/s ya fallaban la salida de la rampa y de acantilados oblicuos («fin de superficie»). Corrección: el recorrido del tick se divide en tramos de como mucho 0,075 m (`MaxClimbSubstep`, el paso aprobado a 4,5 m/s) y cada tramo repite comprobación de borde, barrido y contacto, igual que la versión probada. Al bajar, el último tramo se detiene en el suelo (antes podía hundirse hasta un paso y recolocarse). Reenganche: los 0,35 s son tiempo, independientes de la velocidad.
+
+### Pruebas ejecutadas
+
+| Comando (CMD, raíz) | Resultado |
+| --- | --- |
+| `scripts\u3.cmd edit` | **583/583** (antes 555) |
+| `scripts\u3.cmd play` | **51/51** (antes 50) |
+| `powershell -NoProfile -ExecutionPolicy Bypass -File scripts\verify-historical-reference.ps1` | U0/U2/U3/U4 coinciden; 8 guardados y 6 secuencias meta |
+| `scripts\p0.cmd build` / `devbuild` | correctas; ambas `373620d7b83bc57cdc4540ef8b734e7c58b9dd97` |
+| `scripts\p0.cmd evidence` | válida, `unity/TestResults/P0/Evidence/20261011T203110`, 41 PNG / 15 CSV |
+| `scripts\p0.cmd benchmark` | válido 0/300/500/750, `unity/TestResults/P0/Normal/20261011T203140` |
+| `scripts\p0.cmd jugar` | salida 0, ventana respondiendo, `unity/Builds/P0/MAMPORRO-P0.exe`, progreso `ManualSave`; cerrada normalmente |
+
+XML/log en `unity/TestResults/P0/A6Velocidad`. `VerticalSpeedTests` (nuevo): módulo en W/S/A/D y cuatro diagonales con estadística 1,0/1,26/1,5/1,8 y horda 0/0,15/0,3; igualdad con la velocidad estable de carrera real de `PlayerPhysics` con la misma estadística; mejora aplicada, ampliada y retirada en plena escalada; cadena de `PlayerStats` con tomos hasta el tope; tejado desde 14 fases de tick a 1,0/1,4/1,8 sin penetración; foso por las cuatro caras, meseta, rampa y extremo de meseta a 17,1 m/s; techo y esquina interior sin penetración; junta entre cajas; descenso rápido sin hundirse; protección de salto; A/D con cámara hacia/de espaldas a 17,1 m/s. Play: tick real de `WorldRun.Step` con `Stats[moveSpeed]` 1,0→1,26→1,8, horda 0,25 y retirada a 1,0.
+
+Las pruebas de A/D, diagonal y pared inclinada se actualizaron al nuevo módulo (decisión nueva, no expectativas históricas). Dos pruebas de dirección que recorren una cara acotada (junta entre cajas y barrido de cámara 0–540°) pasan una velocidad explícita de 3 m/s para seguir probando la junta y la cámara, no la velocidad. Mutación comprobada: sin tramos fallan 6 pruebas (tejado a 1,4/1,8, rampa, acantilados oblicuos); restaurado.
+
+Benchmark Normal (lógica y frame del arnés, no FPS generales del juego; mismo equipo y condiciones que la sección de rendimiento A6, una pasada por carga): bordes 14/13/13/12 en 30 s (antes 9, por escalar más rápido), cero fallos de borde, atascos, rescates y agarres/reenganches indebidos. CPU de tick p50 0,019/0,575/1,061/1,660 ms; p95 0,022/0,645/1,200/1,795 ms. Con 0 enemigos +0,006 ms p50 por los tramos y consultas; con horda, dentro de la variación previa. Frame p95 0,675/0,840/0,977/1,125 ms; máximos aislados 5,0/4,2/11,6/14,1 ms, no atribuibles exclusivamente al cambio.
+
+### Integridad y prueba manual
+
+U6 `96b492cb271111251fe42b8646e65370a1b7b566773a1e35b34c3f2d1ae70873` antes y después; siete ajustes protegidos con las huellas de la tabla A6, fuera de commits (`unity/TestResults/P0/A6Velocidad/integrity-after.json`). Sin cambios en `src/` ni en `unity/Docs/Reference/`.
+
+Prueba: `scripts\p0.cmd jugar`. Escalar W/S/A/D y diagonales a la misma rapidez que corriendo; tejado, meseta, rampa y foso sin atascos; con F4 la horda frena igual que en carrera. El circuito QA no ofrece mejoras de velocidad durante la partida; la integración con la estadística está cubierta por las pruebas automáticas. **Detenerse; no iniciar P0-B/C/D.**

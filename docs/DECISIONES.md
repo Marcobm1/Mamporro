@@ -744,3 +744,9 @@ Corrección dentro del contrato autorizado por el autor: la protección tras sal
 ## A6: A/D según la pantalla con la cámara girada (11/10/2026, propuesta técnica)
 
 **Pendiente de confirmación del autor.** Refinamiento dentro de su petición de que A/D correspondan al desplazamiento que percibe el jugador. Con la cámara hacia la pared se mantiene la base de la concreción del 08/10 (`(n.Z, 0, -n.X)`). Si el jugador gira la cámara hasta mirar de espaldas a la pared, el signo lateral se invierte para seguir la pantalla, con histéresis (±0,25 sobre la derecha de cámara) para no alternar al mirar a lo largo de la pared; cada agarre parte de la base de pared. La cámara en sí no cambia. Es reversible en un solo commit (`dc4739c`) si el autor prefiere la base fija de pared.
+
+## A6: prueba manual y velocidad de escalada (11/10/2026, noche)
+
+Decisión expresa del autor tras probar A6: todo el comportamiento es correcto, incluidos A/D según la cámara de `dc4739c` (la propuesta anterior queda así confirmada). Único cambio pedido: escalar a la velocidad efectiva de movimiento del personaje en todas las direcciones, mejoras incluidas, sin diferencia con la carrera.
+
+Concreción: `PlayerPhysics.EffectiveSpeed(Tuning.PlayerBaseMoveSpeed * Stats[moveSpeed], CrowdSlow)`, la misma fórmula y fuente que la carrera, leída cada tick; sustituye 4,5/3,0 m/s y la velocidad de borde. Módulo igual sobre la superficie para W/S/A/D y diagonal normalizada. Por seguridad, el recorrido se resuelve en tramos de 0,075 m con borde, barrido y contacto en cada uno. Sin estadísticas, mejoras ni balance nuevos. Pendiente de prueba manual de la velocidad; P0-B/C/D no autorizados.
