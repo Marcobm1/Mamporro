@@ -100,6 +100,24 @@ namespace Mamporro.Tests
             }
             LogAssert.NoUnexpectedReceived();
         }
+        [UnityTest] public IEnumerator CircuitBTogglesNavigationAndRunsTheMixedHorde()
+        {
+            yield return Load();var g=Game;g.StartRun("P0QA");g.SetPaused(true);
+            Assert.That(g.Vertical.Circuit.Layout,Is.EqualTo(VerticalLayout.Escalada));Assert.That(g.Vertical.Navigation,Is.Null);
+            // Lo mismo que F10: circuito B, mundo recargado y partida nueva con navegación P0.
+            g.Vertical.ToggleLayout();g.LoadWorld(g.Seed);g.StartRun(g.Seed);g.SetPaused(true);
+            Assert.That(g.Vertical.Circuit.Layout,Is.EqualTo(VerticalLayout.Persecucion));
+            Assert.That(g.Vertical.Navigation,Is.Not.Null);Assert.That(g.Run.Enemies.Navigation,Is.SameAs(g.Vertical.Navigation));
+            Assert.That(g.Vertical.Status,Does.Contain("B · persecución vertical"));
+            g.Vertical.Spawn(300);Assert.That(g.Run.Enemies.Count,Is.EqualTo(300));Assert.That(g.Run.Boss,Is.Not.Null,"jefe desde 300");
+            g.Run.Invincible=true;g.Run.WeaponsOff=true;g.Vertical.ScriptedInput=default(VerticalIntent);
+            for(int i=0;i<120;i++)g.Session.Step(default,1.0/60);
+            var e=g.Run.Enemies;var q=g.Vertical.Circuit.Queries;
+            for(int i=0;i<e.Count;i++)Assert.That(q.ClearAboveStep(new Vec3(e.X[i],e.Y[i],e.Z[i]),e.Def(i).radius,e.Def(i).height,NavGraph.Step),Is.True,$"enemigo {i}");
+            g.Vertical.ToggleLayout();g.LoadWorld(g.Seed);g.StartRun(g.Seed);g.SetPaused(true);
+            Assert.That(g.Vertical.Circuit.Layout,Is.EqualTo(VerticalLayout.Escalada));Assert.That(g.Vertical.Navigation,Is.Null);Assert.That(g.Run.Enemies.Navigation,Is.Null);
+            LogAssert.NoUnexpectedReceived();
+        }
         [UnityTest] public IEnumerator AllPitSidesAndPlateauSidesCompleteWithCameraAndNoRescue()
         {
             yield return Load();var g=Game;g.StartRun("P0QA");g.SetPaused(true);

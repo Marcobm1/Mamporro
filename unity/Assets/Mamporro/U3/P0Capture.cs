@@ -13,7 +13,7 @@ namespace Mamporro.U3
 {
     // Instrumentación local del circuito, nunca FPS generales del juego.
     [DefaultExecutionOrder(1000)]
-    public sealed class P0Capture : MonoBehaviour
+    public sealed partial class P0Capture : MonoBehaviour
     {
         const double Warmup=10,Duration=30;
         readonly double[] frames=new double[300000],ticks=new double[10000];
@@ -42,6 +42,11 @@ namespace Mamporro.U3
             if(game.Vertical==null||string.IsNullOrEmpty(output)){Debug.LogError("P0 necesita QA y salida aislada");Application.Quit(2);yield break;}
             Directory.CreateDirectory(output);benchmark=Has("-p0-benchmark");
             yield return null;
+            // P0-B: el circuito B tiene su propio recorrido de medidas y evidencias (P0PursuitCapture).
+            if(game.Vertical.Circuit.Layout==VerticalLayout.Persecucion){
+                if(benchmark)yield return PursuitBenchmark();else yield return PursuitEvidence();
+                Application.Quit(0);yield break;
+            }
             if(benchmark){
                 gc=ProfilerRecorder.StartNew(ProfilerCategory.Memory,"GC Allocated In Frame");
                 foreach(int count in Loads){
@@ -83,6 +88,7 @@ namespace Mamporro.U3
         public void RecordTick(double cpu)
         {
             if(!running)return;
+            if(pursuit){RecordPursuitTick(cpu);return;}
             if(benchmark&&Time.realtimeSinceStartupAsDouble-start>=Warmup&&nt<ticks.Length)ticks[nt++]=cpu;
             if(nr>=route.Length)return;
             var b=game.Body;var q=game.Vertical;var m=q.Motion;

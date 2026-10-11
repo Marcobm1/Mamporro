@@ -19,7 +19,15 @@ namespace Mamporro.U3
 #endif
             }
         }
-        public readonly VerticalCircuit Circuit=new VerticalCircuit();
+        // A: escalada (P0-A, aprobado, intacto). B: persecución vertical (P0-B), elegido con F10
+        // o -p0-circuit B. Los grafos de B se construyen una vez y se reutilizan entre partidas.
+        readonly VerticalCircuit climbing=new VerticalCircuit();
+        VerticalCircuit pursuit;NavGraph[] pursuitGraphs;
+        public VerticalCircuit Circuit {get;private set;}
+        public EnemyNavigation Navigation {get;private set;}
+        // Solo QA: false repite el circuito B con la persecución heredada (línea base B0).
+        public bool NavigationEnabled=true;
+        public double GraphBuildMs {get;private set;}
         public VerticalMotion Motion {get;private set;}
         public VerticalIntent? ScriptedInput;
         public Func<VerticalIntent> InputProvider;
@@ -36,7 +44,22 @@ namespace Mamporro.U3
         public bool Control;
         float cameraDistance=float.PositiveInfinity;
         readonly U3Game game;
-        public VerticalQa(U3Game game){this.game=game;}
+        public VerticalQa(U3Game game)
+        {
+            this.game=game;Circuit=climbing;
+            var args=Environment.GetCommandLineArgs();int i=Array.IndexOf(args,"-p0-circuit");
+            if(i>=0&&i+1<args.Length&&args[i+1].Equals("B",StringComparison.OrdinalIgnoreCase))Select(VerticalLayout.Persecucion);
+        }
+        public void Select(VerticalLayout layout)
+        {
+            if(layout==VerticalLayout.Escalada){Circuit=climbing;return;}
+            if(pursuit==null){
+                pursuit=new VerticalCircuit(VerticalLayout.Persecucion);var watch=System.Diagnostics.Stopwatch.StartNew();
+                pursuitGraphs=EnemyNavigation.BuildGraphs(pursuit);GraphBuildMs=watch.Elapsed.TotalMilliseconds;
+            }
+            Circuit=pursuit;
+        }
+        public void ToggleLayout()=>Select(Circuit.Layout==VerticalLayout.Escalada?VerticalLayout.Persecucion:VerticalLayout.Escalada);
         public static void RequireIsolatedSave()
         {
             var args=Environment.GetCommandLineArgs();int i=Array.IndexOf(args,"-u4-save-dir");
@@ -54,6 +77,12 @@ namespace Mamporro.U3
         {
             game.Session.Automatic=false;game.Session.Cheated=true;
             Motion=new VerticalMotion(game.Body,Circuit.Collision,Circuit.Queries);Recoveries=0;ScriptedInput=null;
+            // Navegación de la horda solo en el circuito B; el A conserva la horda heredada aprobada.
+            Navigation=null;
+            if(Circuit.Layout==VerticalLayout.Persecucion&&NavigationEnabled){
+                Navigation=new EnemyNavigation(Circuit,game.Run.Enemies.Capacity,pursuitGraphs);
+                game.Run.Enemies.Navigation=Navigation;game.Run.Vertical=Navigation;
+            }
             InputProvider=null;Falls=UnintendedGrabs=UnintendedRegrabs=WalkStalls=0;Seconds=Ascent=Descent=Distance=blockedSeconds=0;
             supportedY=game.Body.Y;fallCounted=jumpedDuringAir=false;
             cameraDistance=float.PositiveInfinity;
@@ -120,6 +149,7 @@ namespace Mamporro.U3
         }
         public void Spawn(int count)
         {
+            if(Circuit.Layout==VerticalLayout.Persecucion){SpawnPursuit(count);return;}
             // Apariciones controladas QA, sin alterar el director ni sus reglas.
             game.Run.Enemies.Clear();
             for(int i=0,sample=0;i<count;sample++){
@@ -130,7 +160,29 @@ namespace Mamporro.U3
                 game.Run.Spawn(0,x,z);i++;
             }
         }
-        public string Status=>"P0-A6 QA · Empuja pared: escalar · W/S vertical · A/D lateral · Espacio separar · Shift/C soltar\n"+
+        // Horda mixta QA del circuito B: la mitad pelusas, cucarachas, táperes y palomas, una rata
+        // por cada 100 y el jefe desde 300. Puntos de suelo deterministas donde cabe el cuerpo de
+        // cada tipo (nodo de su grafo). Sin tocar director ni reglas.
+        public void SpawnPursuit(int count)
+        {
+            var run=game.Run;run.Enemies.Clear();if(count==0)return;
+            int boss=count>=300?1:0,elites=count/100,placed=0;
+            for(int sample=0;placed<count-boss&&sample<count*40;sample++){
+                double angle=sample*2.399963229728653,r=4+(sample%60)*.38,x=Math.Cos(angle)*r,z=Math.Sin(angle)*r;
+                int type=placed<elites?4:(placed%10<5?0:placed%10<7?1:placed%10<9?2:3);
+                var g=pursuitGraphs[NavClass.Of(Catalog.Enemies[type])];double y=Circuit.Terrain.HeightAt(x,z);
+                int n=g.NodeAt(x,y+.01,z,.01);
+                if(n<0||!g.NodeTerrain[n]||Math.Abs(g.SurfaceY(n,x,z)-y)>.01)continue;
+                run.Spawn(type,x,z);placed++;
+            }
+            if(boss>0)run.SpawnBoss(-12,0);
+        }
+        public string Status=>Circuit.Layout==VerticalLayout.Persecucion?PursuitStatus:ClimbingStatus;
+        string PursuitStatus=>"P0-B QA · circuito "+Circuit.Name+" · F10 cambia de circuito · horda "+(Navigation!=null?"con navegación P0":"heredada")+"\n"+
+            "F4: 0/300/500/750 (mixta; jefe desde 300) · F7 rescate INVALIDA · F8 reinicio\n"+
+            (Navigation==null?"":$"escaladas {Navigation.ClimbStarts} · bordes {Navigation.LedgesDone} · caídas {Navigation.DropsStarted} · sueltas {Navigation.Detaches} · recálculos {Navigation.Fields[0].Recomputes+Navigation.Fields[1].Recomputes+Navigation.Fields[2].Recomputes}\n")+
+            $"x {game.Body.X:F1}  y {game.Body.Y:F1}  z {game.Body.Z:F1} · enemigos {game.Run.Enemies.Count} · {Seconds:F1} s · SIN META";
+        string ClimbingStatus=>"P0-A6 QA · circuito "+Circuit.Name+" · F10 cambia de circuito · Empuja pared: escalar · W/S vertical · A/D lateral · Espacio separar · Shift/C soltar\n"+
             "F4: 0/300/500/750 · F5: control U3/P0 · F7 rescate INVALIDA · F8 reinicio\n"+
             (Control?"CONTROL U3":Motion.State.ToString())+" · agarres "+Motion.Grabs+" · bordes "+Motion.LedgeSuccess+" · atascos "+Stalls+" · rescates "+Recoveries+"\n"+
             $"x {game.Body.X:F1}  y {game.Body.Y:F1}  z {game.Body.Z:F1} · {Seconds:F1} s · {Distance:F1} m · SIN META";
