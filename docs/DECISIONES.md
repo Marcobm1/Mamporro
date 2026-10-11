@@ -768,3 +768,15 @@ Condiciones confirmadas:
 - P0-B optativo y aislado en QA, con un segundo circuito seleccionable.
 
 La velocidad de escalada enemiga **no** está fijada: propuesta pendiente en [PLAN_P0B](PLAN_P0B.md), sección 10. Plan revisado pendiente de aprobación; no programar hasta entonces.
+
+## P0-B aprobado: cinco decisiones definitivas (11/10/2026)
+
+El autor aprueba el plan revisado de `ba33333` y autoriza implementar P0-B0–B6 con estas decisiones:
+
+1. **Velocidad de escalada enemiga:** cada enemigo escala a su propia velocidad efectiva en suelo, con los modificadores existentes (`Speed[i]` con variación por id y ralentización vigente). Sin multiplicador global ni estadísticas nuevas.
+2. **Disparos:** los enemigos a distancia no disparan agarrados a una pared ni durante la transición al borde. Disparan desde suelo o plataformas estables con línea de visión real. Todos conservan la capacidad de escalar.
+3. **Jefes escalando:** su reloj de ataques sigue avanzando, pero no ejecutan ataques incompatibles con la escalada. Como máximo un ataque pendiente, sin acumulación. Avisos y condiciones habituales respetados. Rodar o cargar solo sobre superficie válida y transitable.
+4. **Empuje sobre escaladores:** un empuje suficientemente fuerte hacia fuera de la pared los suelta y caen con gravedad y colisiones, usando las fuerzas de empuje existentes, sin valores nuevos de balance ni daño de caída. Protección breve contra reengancharse a la misma pared; después retoman la persecución.
+5. **Descenso:** bajan saltando desde los bordes y cayendo con gravedad, sin daño de caída, respetando colisiones y sin teletransportes; siguen persiguiendo tras aterrizar.
+
+Condiciones generales confirmadas: todos los enemigos escalan conservando tamaños, velocidades, ataques y diferencias; 48° como límite para caminar; navegación centralizada y compartida, compatible con 750 enemigos; circuito A6 intacto y circuito B con F10; combate vertical según el plan sin cambios arbitrarios de daño, alcance ni cadencia; U3, U6, referencia web y siete ajustes protegidos. Las decisiones nuevas de diseño o alcance se consultan antes.
