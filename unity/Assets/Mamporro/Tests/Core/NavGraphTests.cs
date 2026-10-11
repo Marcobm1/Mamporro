@@ -99,6 +99,21 @@ namespace Mamporro.Tests
                 }
                 Assert.That(checkedPaths,Is.GreaterThan(0));}
         }
+        [Test] public void AnyPointOfATerrainNodeCellIsFreeForTheBodyAtTheRealHeight()
+        {
+            // Caminar sigue la altura exacta del terreno dentro de la celda: en rampas y pendientes el
+            // cuerpo no debe tocar caras abruptas vecinas en ningún punto de la celda, no solo en el centro.
+            for(int k=0;k<3;k++){var g=G(k);int failures=0;string first="";
+                for(int n=0;n<g.NodeCount;n++){
+                    if(!g.NodeTerrain[n])continue;double cx=g.NodeX(n),cz=g.NodeZ(n);
+                    for(int a=0;a<5;a++)for(int b=0;b<5;b++){
+                        double x=cx-NavGraph.Cell/2+NavGraph.Cell*a/4,z=cz-NavGraph.Cell/2+NavGraph.Cell*b/4;
+                        if(circuit.Queries.ClearAboveStep(new Vec3(x,circuit.Terrain.HeightAt(x,z),z),g.Class.Radius,g.Class.Height,NavGraph.Step))continue;
+                        if(failures++==0)first=$"nodo {n} punto ({x:F2},{circuit.Terrain.HeightAt(x,z):F3},{z:F2})";
+                    }
+                }
+                Assert.That(failures,Is.Zero,$"clase {k}: {failures} puntos; primero {first}");}
+        }
         [Test] public void WalkEdgesNeverExceedTheStepAndAreSymmetric()
         {
             var g=G(0);

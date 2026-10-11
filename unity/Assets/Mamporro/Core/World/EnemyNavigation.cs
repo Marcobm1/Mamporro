@@ -9,6 +9,10 @@ namespace Mamporro.Core
     public sealed class EnemyNavigation : IEnemyNavigation,IVerticalCombat
     {
         public const byte Walk=0,Climb=1,Ledge=2,Drop=3,Fall=4,Recover=5;
+        // Holgura de 0,5 mm en caídas y recuperación: un cuerpo que toca una superficie (válido en
+        // double) no puede quedar dentro de ella al redondear las posiciones float de la horda
+        // (~1e-5 m). Menor que el hueco de 1 mm de la escalada para poder soltarse de la pared.
+        const double Pad=.0005;
         // Nodos extraídos por tick y clase al recalcular el campo (presupuesto repartido).
         public int Budget=4000;
         public readonly VerticalCircuit Circuit;
@@ -19,7 +23,7 @@ namespace Mamporro.Core
         static readonly double Gravity=Tuning.PlayerGravity*Tuning.PlayerFallGravityMultiplier,MaxFall=Tuning.PlayerMaxFallSpeed;
         readonly int[] node,cls,edge,seg,target,neighbors=new int[64],classCount=new int[3];
         readonly byte[] state,los;
-        readonly float[] vy,blockTimer,blockNX,blockNZ,blockD,losAge;
+        readonly float[] vy,blockTimer,blockNX,blockNZ,blockD,losAge,blocked;
         readonly int[] goal={-1,-1,-1};
         Enemies enemies;CombatPlayer player;
         public int ClimbStarts,LedgesDone,DropsStarted,Landings,Detaches,Recoveries,RecoverFailures,Stuck,QueueWaits;
@@ -38,7 +42,7 @@ namespace Mamporro.Core
             for(int k=0;k<Graphs.Length;k++)Fields[k]=new NavField(Graphs[k]);
             node=new int[capacity];cls=new int[capacity];edge=new int[capacity];seg=new int[capacity];target=new int[capacity];
             state=new byte[capacity];los=new byte[capacity];vy=new float[capacity];blockTimer=new float[capacity];
-            blockNX=new float[capacity];blockNZ=new float[capacity];blockD=new float[capacity];losAge=new float[capacity];
+            blockNX=new float[capacity];blockNZ=new float[capacity];blockD=new float[capacity];losAge=new float[capacity];blocked=new float[capacity];
         }
         public double BuildMs{get{double t=0;foreach(var g in Graphs)t+=g.BuildMs;return t;}}
         public byte State(int i)=>state[i];
@@ -50,13 +54,16 @@ namespace Mamporro.Core
         public void Spawned(Enemies e,int i)
         {
             enemies=e;cls[i]=NavClass.Of(e.Def(i));node[i]=-1;edge[i]=-1;seg[i]=0;target[i]=-1;state[i]=Walk;vy[i]=0;blockTimer[i]=0;
-            los[i]=0;losAge[i]=(i%12)/60f;
+            los[i]=0;losAge[i]=(i%12)/60f;blocked[i]=0;
         }
+        // Segundos seguidos sin poder avanzar contra la geometría teniendo intención de moverse
+        // (no cuenta esperar en la cola de una pared ni detenerse en el destino sustituto).
+        public double GeometryBlockedSeconds(int i)=>blocked[i];
         public void Moved(int from,int to)
         {
             node[to]=node[from];cls[to]=cls[from];edge[to]=edge[from];seg[to]=seg[from];target[to]=target[from];state[to]=state[from];
             vy[to]=vy[from];blockTimer[to]=blockTimer[from];blockNX[to]=blockNX[from];blockNZ[to]=blockNZ[from];blockD[to]=blockD[from];
-            los[to]=los[from];losAge[to]=losAge[from];
+            los[to]=los[from];losAge[to]=losAge[from];blocked[to]=blocked[from];
         }
         public void Cleared(){for(int k=0;k<goal.Length;k++)goal[k]=-1;}
 
@@ -159,7 +166,12 @@ namespace Mamporro.Core
                     if(node[i]<0&&!Assign(i)){state[i]=Recover;target[i]=-1;blocked=RecoverStep(i,speed,dt);break;}
                     int e=BestEdge(i,node[i]);var g=Graphs[cls[i]];
                     if(e>=0&&g.EdgeKind[e]!=(byte)NavEdgeKind.Walk&&!dash&&!still){BeginEdge(i,e);blocked=Traverse(i,speed,kx,kz,dt);}
-                    else blocked=WalkMove(i,(vx+kx)*dt,(vz+kz)*dt);
+                    else{
+                        var en=enemies;double ox=en.X[i],oz=en.Z[i],want=Rules.Hypot((vx+kx)*dt,(vz+kz)*dt);
+                        blocked=WalkMove(i,(vx+kx)*dt,(vz+kz)*dt);
+                        bool stopped=Rules.Hypot(en.X[i]-ox,en.Z[i]-oz)<1e-4;
+                        this.blocked[i]=blocked&&stopped&&want>1e-4&&!still?(float)(this.blocked[i]+dt):0;
+                    }
                     break;
                 case Climb:case Ledge:case Drop:blocked=Traverse(i,speed,kx,kz,dt);break;
                 case Fall:blocked=FallStep(i,kx,kz,dt);break;
@@ -226,7 +238,7 @@ namespace Mamporro.Core
         // y bajarlo 1 cm no toca ningún sólido. Nunca baja del suelo ni entra en un sólido.
         bool DropStep(int i,NavGraph g,int p,int start,double speed,double dt)
         {
-            var en=enemies;var q=Circuit.Queries;double r=g.Class.Radius,h=g.Class.Height;
+            var en=enemies;var q=Circuit.Queries;double r=g.Class.Radius+Pad,h=g.Class.Height;
             double x=en.X[i],y=en.Y[i],z=en.Z[i],ox=g.PathX[start+1],oz=g.PathZ[start+1],landY=g.PathY[start+2];
             double dx=ox-x,dz=oz-z,d=Rules.Hypot(dx,dz),step=Math.Min(d,speed*dt);
             if(d>1e-9){double nx=x+dx/d*step,nz=z+dz/d*step;
@@ -248,7 +260,7 @@ namespace Mamporro.Core
         // Caída libre tras un empuje: gravedad, empuje horizontal existente y barrido contra sólidos.
         bool FallStep(int i,double kx,double kz,double dt)
         {
-            var en=enemies;var g=Graphs[cls[i]];var q=Circuit.Queries;double r=g.Class.Radius,h=g.Class.Height;
+            var en=enemies;var g=Graphs[cls[i]];var q=Circuit.Queries;double r=g.Class.Radius+Pad,h=g.Class.Height;
             double x=en.X[i],y=en.Y[i],z=en.Z[i];vy[i]=(float)Math.Max(vy[i]-Gravity*dt,-MaxFall);
             var from=new Vec3(x,y,z);var to=new Vec3(x+kx*dt,y,z+kz*dt);
             if(q.Sweep(from,to,r,h,out var hit)){double f=Math.Max(0,hit.Fraction-1e-5);to=new Vec3(x+kx*dt*f,y,z+kz*dt*f);}
@@ -267,7 +279,7 @@ namespace Mamporro.Core
         // hacia el nodo cercano más próximo. Sin teletransporte.
         bool RecoverStep(int i,double speed,double dt)
         {
-            var en=enemies;var g=Graphs[cls[i]];var q=Circuit.Queries;double r=g.Class.Radius,h=g.Class.Height;
+            var en=enemies;var g=Graphs[cls[i]];var q=Circuit.Queries;double r=g.Class.Radius+Pad,h=g.Class.Height;
             double x=en.X[i],y=en.Y[i],z=en.Z[i];
             if(target[i]<0){Recoveries++;target[i]=g.Nearest(x,y,z,8,NavGraph.Step,NavGraph.Step);if(target[i]<0)target[i]=g.Nearest(x,y,z,16,4,NavGraph.Step);}
             int t=target[i];if(t<0){RecoverFailures++;return true;}
@@ -287,7 +299,8 @@ namespace Mamporro.Core
             for(int k=0;k<n;k++){
                 int j=neighbors[k];if(j==i||j>=en.Count||(state[j]!=Climb&&state[j]!=Ledge))continue;
                 double dx=en.X[j]-en.X[i],dz=en.Z[j]-en.Z[i],min=en.Radius(i)+en.Radius(j),dy=en.Y[j]-en.Y[i];
-                if(dx*dx+dz*dz<min*min&&dy>0&&dy<en.Def(i).height)return true;
+                // Solo si está prácticamente encima (no al lado): sin trepar sobre otro escalador.
+                min*=.6;if(dx*dx+dz*dz<min*min&&dy>0&&dy<en.Def(i).height)return true;
             }
             return false;
         }

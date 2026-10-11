@@ -30,7 +30,7 @@ namespace Mamporro.Core
         // Escalón que ya suben los enemigos (Enemies.Step: PushOut y Height con +0,6).
         public const double Step=.6;
         public const int TransitionCost=50,Scale=100;
-        const double ClimbStep=.15,EdgeWindow=.35,Reach=.18;
+        const double ClimbStep=.15,EdgeWindow=.35,Reach=.18,ContactGap=.001;
 
         public readonly NavClass Class;
         public readonly VerticalQueries Queries;
@@ -88,8 +88,13 @@ namespace Mamporro.Core
                     bool duplicate=false;for(int b=0;b<a;b++)if(Math.Abs(candidates[a]-candidates[b])<.05)duplicate=true;
                     var feet=new Vec3(x,candidates[a],z);
                     // Cuerpo libre en toda la celda (los escalones no cuentan) y huella apoyada: sin
-                    // sobresalir de un tejado ni de un acantilado.
-                    if(duplicate||!Queries.ClearAboveStep(feet,r,h,Step))continue;
+                    // sobresalir de un tejado ni de un acantilado. En terreno inclinado los pies van de
+                    // la altura mínima a la máxima de la celda: se comprueba ese volumen completo.
+                    if(duplicate)continue;
+                    if(fromTerrain[a]){
+                        CellHeightRange(x,z,out double low,out double high);
+                        if(!Queries.ClearAboveStep(new Vec3(x,low,z),r,h+(high-low),Step))continue;
+                    }else if(!Queries.ClearAboveStep(feet,r,h,Step))continue;
                     if(fromTerrain[a]?!Queries.TerrainFootprintWalkable(feet,Class.Radius):!Queries.Support(feet,Class.Radius,.01,out _))continue;
                     ys.Add((float)candidates[a]);terrainFlags.Add(fromTerrain[a]);cells.Add(c);
                 }
@@ -101,6 +106,18 @@ namespace Mamporro.Core
             }
             cellStart[W*H]=ys.Count;
             CellStart=cellStart;NodeY=ys.ToArray();NodeTerrain=terrainFlags.ToArray();NodeCell=cells.ToArray();NodeCount=NodeY.Length;
+        }
+        // Alturas extremas del terreno lineal a trozos dentro de la celda: esquinas, centro y
+        // vértices del heightfield que caen dentro (las celdas de 0,5 m contienen como mucho uno).
+        void CellHeightRange(double x,double z,out double low,out double high)
+        {
+            double lo=double.MaxValue,hi=double.MinValue,hc=Cell/2;
+            void At(double px,double pz){double y=Terrain.HeightAt(px,pz);if(y<lo)lo=y;if(y>hi)hi=y;}
+            At(x-hc,z-hc);At(x+hc,z-hc);At(x-hc,z+hc);At(x+hc,z+hc);At(x,z);
+            double s=Terrain.CellSize;
+            for(double vx=Math.Ceiling((x-hc+Terrain.Half)/s)*s-Terrain.Half;vx<=x+hc;vx+=s)
+                for(double vz=Math.Ceiling((z-hc+Terrain.Half)/s)*s-Terrain.Half;vz<=z+hc;vz+=s)At(vx,vz);
+            low=lo;high=hi;
         }
         // Nodo de la celda cuya superficie está más alta sin superar y+tolerancia.
         public int NodeAt(double x,double y,double z,double tolerance)
@@ -194,7 +211,9 @@ namespace Mamporro.Core
             double r=Class.Radius,h=Class.Height;var dir=new Vec3(-n.X,0,-n.Z);double reach=Margin+Cell;
             var end=new Vec3(feet.X+dir.X*reach,feet.Y,feet.Z+dir.Z*reach);
             if(!Queries.Sweep(feet,end,r,h,out var hit)){ClimbFailNoContact++;return;}
-            double f=Math.Max(0,hit.Fraction-1e-5);var c=new Vec3(feet.X+dir.X*reach*f,feet.Y,feet.Z+dir.Z*reach*f);
+            // Contacto a 1 mm de la cara: holgura muy superior al error de redondeo de las posiciones
+            // float de la horda (~1e-5 m), para que la escalada nunca quede dentro de la pared.
+            double f=Math.Max(0,hit.Fraction-ContactGap/reach);var c=new Vec3(feet.X+dir.X*reach*f,feet.Y,feet.Z+dir.Z*reach*f);
             if(!Queries.Wall(c,dir,r,h,Reach,out var wall)){ClimbFailNoContact++;return;}
             int path=BeginPath(n.X,n.Z,n.X*c.X+n.Z*c.Z);Point(feet);Point(c);
             Vec3 lift=default,top=default;bool ok=false;Vec3 lastDir=default;

@@ -20,7 +20,7 @@ namespace Mamporro.U3
         readonly double[] navTicks=new double[10000];int nnav;long navLast;
         readonly List<string> heightBySpot=new List<string>();
         readonly float[] lastDist=new float[WorldRun.EnemyCapacity];readonly double[] lastImprove=new double[WorldRun.EnemyCapacity];
-        int penetrations,belowTerrain,penetrationChecks,frameCounter;double reachableSum,stuckPeak;int reachableSamples;
+        int penetrations,belowTerrain,penetrationChecks,frameCounter;double reachableSum,stuckPeak,crowdedPeak;int reachableSamples;
         // Seis posiciones del jugador (fixtures QA, no gameplay) recorridas durante los 40 s.
         static readonly (string name,double x,double y,double z,bool reachable)[] Spots={
             ("suelo",0,0,-4,true),("tejado-rampa",11,4,-11,true),("tejado-solo-escalando",-11,5,-11,true),
@@ -30,7 +30,7 @@ namespace Mamporro.U3
             public bool valid,development,navigation;
             public string source,unity,cpu,gpu,mode,scenario="Circuito B: horda mixta (jefe desde 300) persiguiendo al jugador por seis posiciones, armas desactivadas, invulnerabilidad QA",gpuTime="N/D";
             public int count,frames,ticks,navigationTicks,resumes,gcCollections,recomputes,climbs,ledges,drops,landings,detaches,recoverFailures,queueWaits,penetrations,belowTerrain,penetrationChecks;
-            public double warmup=Warmup,duration=Duration,p50,p95,p99,max,cpuTickP50,cpuTickP95,cpuTickP99,cpuTickMax,navTickP50,navTickP95,navTickP99,navTickMax,gcBytesPerFrame,graphBuildMs,reachablePct,stuckPeakPct;
+            public double warmup=Warmup,duration=Duration,p50,p95,p99,max,cpuTickP50,cpuTickP95,cpuTickP99,cpuTickMax,navTickP50,navTickP95,navTickP99,navTickMax,gcBytesPerFrame,graphBuildMs,reachablePct,stuckPeakPct,crowdedPeakPct;
             public long allocatedMemory,reservedMemory,monoMemory;
             public string[] atPlayerHeightBySpot;
         }
@@ -58,7 +58,7 @@ namespace Mamporro.U3
             var s=Spots[0];game.PlaceQa(new Vec3(s.x,s.y,s.z));game.AutoChoose=true;game.SetPaused(false);
             game.Vertical.InputProvider=()=>default;game.Vertical.Spawn(count);load=count;pursuitNav=game.Vertical.Navigation!=null;
             n=nt=nnav=resumes=gcSamples=0;allocated=0;gcStart=GC.CollectionCount(0);rendered=game.RenderedFrames;spotIndex=0;lastSample=0;
-            heightBySpot.Clear();penetrations=belowTerrain=penetrationChecks=frameCounter=0;reachableSum=stuckPeak=0;reachableSamples=0;
+            heightBySpot.Clear();penetrations=belowTerrain=penetrationChecks=frameCounter=0;reachableSum=stuckPeak=crowdedPeak=0;reachableSamples=0;
             for(int i=0;i<lastDist.Length;i++){lastDist[i]=float.MaxValue;lastImprove[i]=0;}
             navLast=pursuitNav?game.Vertical.Navigation.Ticks:0;
             previous=start=Time.realtimeSinceStartupAsDouble;pursuit=true;running=true;
@@ -82,19 +82,21 @@ namespace Mamporro.U3
                 if(e.Y[i]<terrain.HeightAt(e.X[i],e.Z[i])-1e-3)belowTerrain++;
             }
         }
-        // Por segundo: % con ruta válida y pico de atascados (con ruta, a más de 3 m de su meta y sin
-        // acortar su distancia de campo en 2 s, caminando). Solo en posiciones alcanzables.
+        // Por segundo, en posiciones alcanzables: % con ruta válida; atascados = con ruta y bloqueados
+        // contra la geometría más de 2 s; aglomerados = sin acortar su distancia de campo en 2 s
+        // caminando a más de 3 m de su meta (esperan tras otros enemigos o en la cola de una pared).
         void SamplePursuit(double elapsed)
         {
             var nav=game.Vertical.Navigation;var e=game.Run.Enemies;if(nav==null||e.Count==0||!Spots[spotIndex].reachable)return;
-            int reachable=0,stuck=0;
+            int reachable=0,stuck=0,crowded=0;
             for(int i=0;i<e.Count;i++){
                 if(!nav.Reachable(i))continue;reachable++;
                 int d=nav.Fields[nav.ClassOf(i)].Dist(nav.Node(i));
                 if(d<lastDist[i]-20){lastDist[i]=d;lastImprove[i]=elapsed;}
-                else if(d>300&&elapsed-lastImprove[i]>2&&nav.State(i)==EnemyNavigation.Walk)stuck++;
+                else if(d>300&&elapsed-lastImprove[i]>2&&nav.State(i)==EnemyNavigation.Walk)crowded++;
+                if(nav.GeometryBlockedSeconds(i)>2)stuck++;
             }
-            if(elapsed>=Warmup){reachableSum+=100.0*reachable/e.Count;reachableSamples++;stuckPeak=Math.Max(stuckPeak,100.0*stuck/e.Count);}
+            if(elapsed>=Warmup){reachableSum+=100.0*reachable/e.Count;reachableSamples++;stuckPeak=Math.Max(stuckPeak,100.0*stuck/e.Count);crowdedPeak=Math.Max(crowdedPeak,100.0*crowded/e.Count);}
         }
         void RecordSpotHeight()
         {
@@ -114,10 +116,11 @@ namespace Mamporro.U3
                 gcBytesPerFrame=Debug.isDebugBuild&&gcSamples>0?(double)allocated/gcSamples:-1,gcCollections=collectionsAtEnd,
                 allocatedMemory=memoryAtEnd,reservedMemory=reservedAtEnd,monoMemory=monoAtEnd,graphBuildMs=game.Vertical.GraphBuildMs,
                 penetrations=penetrations,belowTerrain=belowTerrain,penetrationChecks=penetrationChecks,
-                reachablePct=reachableSamples>0?reachableSum/reachableSamples:-1,stuckPeakPct=pursuitNav?stuckPeak:-1,atPlayerHeightBySpot=heightBySpot.ToArray()};
+                reachablePct=reachableSamples>0?reachableSum/reachableSamples:-1,stuckPeakPct=pursuitNav?stuckPeak:-1,crowdedPeakPct=pursuitNav?crowdedPeak:-1,atPlayerHeightBySpot=heightBySpot.ToArray()};
             if(nav!=null){report.recomputes=nav.Fields[0].Recomputes+nav.Fields[1].Recomputes+nav.Fields[2].Recomputes;report.climbs=nav.ClimbStarts;report.ledges=nav.LedgesDone;
                 report.drops=nav.DropsStarted;report.landings=nav.Landings;report.detaches=nav.Detaches;report.recoverFailures=nav.RecoverFailures;report.queueWaits=nav.QueueWaits;}
-            report.valid=n>100&&nt>1500&&game.Run.Enemies.Count==count&&(!pursuitNav||penetrations==0&&belowTerrain==0&&report.recoverFailures==0&&nnav>1500);
+            // Los esbirros del estornudo del jefe pueden sumar enemigos a la carga pedida.
+            report.valid=n>100&&nt>1500&&game.Run.Enemies.Count>=count&&(!pursuitNav||penetrations==0&&belowTerrain==0&&report.recoverFailures==0&&nnav>1500);
             File.WriteAllText(Path.Combine(output,$"load-{report.mode}-{count}.json"),JsonUtility.ToJson(report,true));
             Debug.Log($"P0-B {report.mode} {count} valid={report.valid} penetraciones={penetrations} navP95={report.navTickP95:F3}");
         }
