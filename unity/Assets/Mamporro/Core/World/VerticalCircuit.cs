@@ -2,16 +2,35 @@ using System.Collections.Generic;
 
 namespace Mamporro.Core
 {
-    // P0-A: circuito fijo QA, no sustituye el generador procedural U3.
+    // A: escalada del jugador (P0-A, aprobado). B: persecución vertical de la horda (P0-B).
+    public enum VerticalLayout { Escalada, Persecucion }
+    // P0: circuitos fijos QA, no sustituyen el generador procedural U3.
     // Coordenadas web; la inversión de Z sigue perteneciendo a presentación.
     public sealed class VerticalCircuit
     {
+        public readonly VerticalLayout Layout;
         public readonly Heightfield Terrain;
         public readonly VerticalQueries Queries;
         public readonly WorldCollision Collision;
-        public readonly Vec3 Start=new Vec3(4,0,-10);
-        public VerticalCircuit()
+        public readonly Vec3 Start;
+        public string Name=>Layout==VerticalLayout.Escalada?"A · escalada":"B · persecución vertical";
+        public VerticalCircuit():this(VerticalLayout.Escalada){}
+        public VerticalCircuit(VerticalLayout layout)
         {
+            Layout=layout;
+            if(layout==VerticalLayout.Persecucion)BuildPursuit(out Terrain,out Queries,out Start);
+            else BuildClimbing(out Terrain,out Queries,out Start);
+            var colliders=new List<Collider>();
+            for(int i=0;i<Queries.Count;i++){
+                var s=Queries.Solid(i);
+                colliders.Add(Collider.Oriented((s.Min.X+s.Max.X)/2,(s.Min.Z+s.Max.Z)/2,
+                    (s.Max.X-s.Min.X)/2,(s.Max.Z-s.Min.Z)/2,0,s.Min.Y,s.Max.Y,true));
+            }
+            Collision=new WorldCollision(Terrain,new ColliderGrid(colliders,Terrain.Size/2),29);
+        }
+        static void BuildClimbing(out Heightfield terrain,out VerticalQueries queries,out Vec3 start)
+        {
+            start=new Vec3(4,0,-10);
             const int cells=80;const double size=80;
             var heights=new float[(cells+1)*(cells+1)];
             // Rampa oeste de 12 m, meseta de 4 m; no es el tamaño del mundo futuro.
@@ -22,8 +41,8 @@ namespace Mamporro.Core
                 // Foso de ensayo, con ruta llana alrededor de sus extremos.
                 if(px>=16&&px<=22&&pz>=8&&pz<=14)heights[z*(cells+1)+x]=-6;
             }
-            Terrain=new Heightfield(size,cells,heights);
-            Queries=new VerticalQueries(Terrain,Tuning.PlayerMaxSlopeDeg,
+            terrain=new Heightfield(size,cells,heights);
+            queries=new VerticalQueries(terrain,Tuning.PlayerMaxSlopeDeg,
                 Box(1,VerticalSurfaceKind.Structure,8,0,-4,14,6,4), // pared y tejado
                 Box(2,VerticalSurfaceKind.Structure,6,7,-1,15,8,1), // techo que bloquea la salida central
                 Box(3,VerticalSurfaceKind.Structure,8,0,10,12,4,16),
@@ -40,13 +59,43 @@ namespace Mamporro.Core
                 Box(12,VerticalSurfaceKind.Cliff,22,-6,7,23,0,15),
                 Box(13,VerticalSurfaceKind.Cliff,16,-6,7,22,0,8),
                 Box(14,VerticalSurfaceKind.Cliff,16,-6,14,22,0,15));
-            var colliders=new List<Collider>();
-            for(int i=0;i<Queries.Count;i++){
-                var s=Queries.Solid(i);
-                colliders.Add(Collider.Oriented((s.Min.X+s.Max.X)/2,(s.Min.Z+s.Max.Z)/2,
-                    (s.Max.X-s.Min.X)/2,(s.Max.Z-s.Min.Z)/2,0,s.Min.Y,s.Max.Y,true));
+        }
+        // B: escenarios de persecución vertical. Terreno de celdas de 1 m: un salto de altura en
+        // una celda es una pared abrupta (>48°) que se escala; la rampa (26,6°) se camina.
+        static void BuildPursuit(out Heightfield terrain,out VerticalQueries queries,out Vec3 start)
+        {
+            start=new Vec3(0,0,-4);
+            const int cells=80;const double size=80;
+            var heights=new float[(cells+1)*(cells+1)];
+            for(int z=0;z<=cells;z++)for(int x=0;x<=cells;x++){
+                double px=x-size/2,pz=z-size/2;float h=0;
+                // Rampa transitable hasta el tejado del edificio R (y=4 en x=8).
+                if(px>=0&&px<=8&&pz>=-13&&pz<=-9)h=(float)(px/2);
+                // Meseta de paredes abruptas en todos sus lados.
+                if(px>=12&&px<=20&&pz>=6&&pz<=14)h=5;
+                // Acantilado sin rampa: repisa elevada hasta el límite.
+                if(px>=20&&pz>=-22&&pz<=-4)h=4;
+                heights[z*(cells+1)+x]=h;
             }
-            Collision=new WorldCollision(Terrain,new ColliderGrid(colliders,size/2),29);
+            terrain=new Heightfield(size,cells,heights);
+            queries=new VerticalQueries(terrain,Tuning.PlayerMaxSlopeDeg,
+                Box(1,VerticalSurfaceKind.Structure,8,0,-14,14,4,-8),      // R: tejado con rampa al oeste y paredes
+                Box(2,VerticalSurfaceKind.Structure,-14,0,-14,-8,5,-8),    // C: tejado solo escalando, cuatro paredes
+                Box(3,VerticalSurfaceKind.Structure,-6,0,10,6,4,22),       // G: tejado amplio, cabe el jefe
+                Box(4,VerticalSurfaceKind.Structure,-23,0,8,-19,4,12),     // T: torre estrecha, no cabe el jefe
+                Box(5,VerticalSurfaceKind.Structure,14,0,-4,22,3,-2.5),    // pasillo de 3 m entre dos muros
+                Box(6,VerticalSurfaceKind.Structure,14,0,.5,22,3,2),
+                Box(7,VerticalSurfaceKind.Structure,-6,0,-22,2,2.5,-21),   // muro en L: esquinas interior/exterior
+                Box(8,VerticalSurfaceKind.Structure,1,0,-21,2,2.5,-16),
+                Box(9,VerticalSurfaceKind.Structure,-6,0,-3,-5,3,-2),      // pilares
+                Box(10,VerticalSurfaceKind.Structure,5,0,1,6,3,2),
+                Box(11,VerticalSurfaceKind.Structure,-22,0,-14,-18,3,-10), // pared con techo encima: sin salida
+                Box(12,VerticalSurfaceKind.Structure,-23,3.6,-15,-17,4,-9),
+                Box(13,VerticalSurfaceKind.Structure,19,0,19,21,5,21),     // seta: cima inaccesible incluso escalando
+                Box(14,VerticalSurfaceKind.Structure,17.5,5,17.5,22.5,5.5,22.5),
+                Box(15,VerticalSurfaceKind.Foliage,-2,0,4,-1,3,5),
+                Box(16,VerticalSurfaceKind.Interactable,2,0,4,3,2,5),
+                Box(17,VerticalSurfaceKind.Boundary,30,-10,-30,31,12,30));
         }
         public WorldData Data()
         {
