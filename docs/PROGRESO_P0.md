@@ -1,15 +1,19 @@
 # P0 — movilidad y verticalidad antes de ampliar el mundo
 
-Estado: **P0-A1–A5 base técnica validada manualmente; P0-A6 EN CURSO** (07/10/2026, Codex). El autor probó P0-A y señaló que técnicamente funciona bien; solicitó A6 antes de P0-B. La movilidad no se declara definitivamente cerrada hasta su prueba manual de A6. P0-B/C/D NO autorizados. No mezcla P1 artístico ni P2 contenido. La clasificación histórica de balance en P0 no lo incluye en este prototipo.
+Estado: **P0-A1–A5 base técnica validada manualmente; P0-A6 corregido y verificado, pendiente de prueba manual** (11/10/2026, Codex). La movilidad no se declara aceptada hasta la nueva prueba del autor. P0-B/C/D NO autorizados. No mezcla P1 artístico ni P2 contenido. La clasificación histórica de balance en P0 no lo incluye en este prototipo.
 
 ## Cómo retomar
+
+- **Punto vigente 11/10:** correcciones A/D y terreno conservadas y verificadas; protección de pared compuesta añadida en `38d29a9ced593bc94e3a55638363b70978db822c`. Edit 542/542 y Play 49/49; builds Normal/Development y evidencia final de 41 PNG/15 CSV correspondientes a ese código. Cierre completo, métricas, integridad y publicación al final de este documento. **Siguiente paso: el autor prueba `scripts\p0.cmd jugar`; detenerse y esperar su confirmación de A/D, paredes y salida de fosos. No iniciar P0-B/C/D.** Los puntos del 07/10 y 08/10 siguientes son historial de reanudación, no tareas pendientes actuales.
+
+- **11/10, reanudación real de A6 (Codex):** HEAD recibido `452c956f2c72dd8c9cb15bed5a0000305b6aefbb`, remoto tras fetch `603a225dbf4ecc89e5359528bdf54d24c6dbd49d`, ahead/behind 3/0, índice vacío. Conservados los tres commits locales `53658e4`, `bb726db`, `452c956`, nueve documentos WIP y siete ajustes protegidos. Builds Normal/Development ya corresponden a `452c956`; evidencia de 41 PNG/15 CSV y benchmark Normal `20261008T181133` existentes. Falta diagnóstico Development de esa corrección y cierre/publicación. Integridad al retomar en `unity/TestResults/P0/A6Correccion/integrity-resume-before.json`: U6 y 7/7 huellas iguales al checkpoint. Auditoría adicional: la protección tras salto se debe extender también a piezas coplanares de colliders compuestos; regresión en curso. No iniciar P0-B/C/D.
 
 - **08/10, corrección A6 tras feedback manual (Codex):** auditado HEAD/remoto `603a225dbf4ecc89e5359528bdf54d24c6dbd49d`, 0/0. A6.1 `0698f25` y A6.2 `603a225` ya publicados; A6.3 dejó WIP en P0Capture y nueve documentos, conservado. XML históricos 500 Edit/47 Play, 17 PNG y ocho informes de cargas válidos comprobados. U6 y siete huellas coinciden. El autor identifica los muros omitidos como meseta/rampa: Heightfield participa en colisión pero no en las consultas de cajas de escalada. A/D invertido por tangente incompatible con la reflexión Z de presentación; los tests anteriores solo verificaban magnitud absoluta.
 - Corrección A/D en commit local `53658e4`, Edit 506/506 ejecutado. Adaptador optativo de triángulos del terreno completado: verificación final de código `scripts\u3.cmd edit` **538/538**, `scripts\u3.cmd play` **49/49**, 08/10. Copias XML/log en `unity/TestResults/P0/A6Correccion`. Pasadas intermedias 532/534 Edit y 49 Play también correctas. Referencias U0/U2/U3/U4 verificadas con `powershell -NoProfile -ExecutionPolicy Bypass -File scripts\verify-historical-reference.ps1`, instantánea `qa-results/reference-298452535d744484b9401c1a26e0d674`. En curso: evidencia/build/medidas nuevas; el arnés conserva el WIP anterior y añade A/D, meseta y cuatro caras de foso. No interpretar este punto intermedio como cierre ni aprobación manual. No iniciar P0-B.
 
 - **07/10, A6 activo:** HEAD/remoto iniciales `ccd45c0c01e127e7d96f1fa87b52174133ae416c`, 0/0 tras fetch. WIP recibido en VerticalMotion, VerticalCircuit, sus tests, VerticalSceneTests, VerticalQa y P0Capture: conservado y revisado; no estaba registrado en el cierre A5.
 - U6 y las siete huellas protegidas coinciden exactamente con la tabla de integridad inferior antes de editar.
-- Siguiente paso vigente: completar/verificar A6 (automática, reenganche por superficie, foso, integración/evidencia/medidas/build); detenerse para prueba manual del autor. Las instrucciones de agarre con botón del historial A1–A5 quedan sustituidas por A6.
+- Paso pendiente al retomar el 07/10 (resuelto el 11/10): completar/verificar A6 (automática, reenganche por superficie, foso, integración/evidencia/medidas/build); detenerse para prueba manual del autor. Las instrucciones de agarre con botón del historial A1–A5 quedan sustituidas por A6.
 
 
 - Cierre formal B0 publicado: `0b0b68c31dda803cf9cf566b3c96f369ed893ce3`, «Aprueba B0 y fija el pipeline 3D», sobre cierre técnico `ab9e619`. Pipeline aceptado para proponer adopción; no hubo revisión manual de la build por el autor. D/VAT candidata, C fallback; prototipos técnicos, no arte final.
@@ -387,3 +391,154 @@ CPU es el tiempo de lógica/combate/presentación del tick, no CPU total del pro
 Memoria: instantánea final Unity/Mono, no pico/RSS/VRAM; GC gen0 durante ~40 s, B/frame del recorder solo fiable en Development. HUD/instrumentación están incluidos. Una pasada por carga: no atribuir ruido o picos aislados exclusivamente a detección. En Normal, CPU p95 cambia +0,002/+0,090/+0,043/-0,131 ms; no aparece crecimiento sostenido causado por la entrada automática. El vacío tiene un pico real de 26,610 ms (1/87033 frames >16,67 ms); 300/500/750 no tienen frames >16,67 ms. No se oculta el pico ni se promete ausencia de regresiones en otros equipos. Las reservas de memoria se mantienen comparables; asignación final Normal aumenta aproximadamente 8–12 MiB frente a A5.
 
 Integridad tras builds: U6 SHA idéntico al inicial y 7/7 protegidos coinciden byte a byte con la tabla histórica. Informe `unity/TestResults/P0/A6/integrity.json`; XML/log Edit y Play archivados allí. Sin src ni corpus, sin P0-B/C/D. Siguiente: cierre documental y detenerse para la prueba manual A6.
+
+## Corrección A6 — feedback A/D y meseta/rampa (08/10/2026, Codex)
+
+### Estado recibido y piezas conservadas
+
+Retomado tras fetch en `603a225dbf4ecc89e5359528bdf54d24c6dbd49d`, igual a origin, 0/0. Dos commits A6 existentes reutilizados sin duplicarlos: `0698f25` y `603a225`. Diez archivos WIP válidos (P0Capture y nueve documentos), además de los siete protegidos; índice vacío. A6.3 sí había generado builds, evidencia y ocho medidas, pero su código/documentación seguían sin commit. El SHA erróneo y la afirmación de publicación de ese apartado se han corregido, conservando las métricas históricas. No se descartó WIP.
+
+Commits de implementación nuevos: `53658e4` («Corrige izquierda y derecha sobre todas las caras de pared»), `bb726db` («Incluye las paredes del terreno en la escalada automática»), `452c956` («Amplía la evidencia de controles, meseta y salidas del foso»). Publicación final y cierre se registran debajo.
+
+### Causas y comportamiento corregido
+
+**A/D:** el núcleo empleaba `(-normal.Z, 0, normal.X)` como derecha, sin compensar la reflexión Z hacia Unity. D apuntaba a la izquierda visible. Las pruebas de velocidad lateral usaban valor absoluto y no detectaban el signo. Ahora `WallRight` normaliza la proyección horizontal y devuelve `(normal.Z, 0, -normal.X)`: derecha del jugador erguido mirando hacia la pared, equivalente a `Cross(up, forwardHaciaPared)` en Unity. No cambia con pitch/yaw. A es negativo y D positivo.
+
+| Normal exterior (coordenadas núcleo) | A izquierda | D derecha |
+| --- | --- | --- |
+| +X | +Z | -Z |
+| -X | -Z | +Z |
+| +Z | -X | +X |
+| -Z | +X | -X |
+
+**Muros omitidos:** el autor confirmó meseta/rampa. Su pared física está en Heightfield, pero VerticalQueries solo recibía las 14 cajas del circuito. No era un permiso `climbable` por muro ni un umbral de intención demasiado estricto. Prueba de regresión explícita: mismas cajas sin terreno no detectan la pared en (-8,1,5.152); con el adaptador del terreno sí. Corregidos ambos laterales y el extremo elevado de meseta y los laterales de rampa, sin modificar el visual ni añadir colliders particulares a sus IDs.
+
+**Contrato:** semántica sólida permitida y normal de cara con pendiente >48° y `n.Y >= 0`; parámetro central `WallMinSlopeDegrees`. Caras abruptas triangulares reales del Heightfield y cajas comparten contacto/barrido/volumen/soporte P0. Se recorren solo celdas de la envolvente, usando SAT continuo; no hay whitelist ni alta manual por pared. Datos generados con ±X/±Z y direcciones oblicuas usan el mismo adaptador. IDs solo identifican contactos. Suelo/pendientes transitables, tapas y caras inferiores no son paredes; follaje, interactuables, enemigos y límites quedan excluidos por semántica. Las superficies superiores siguen ofreciendo soporte para borde.
+
+Entrada frontal automática desde suelo/aire; dot horizontal >=0,5 y Reach 0,18 conservados, sin botón/salto previo. Paralelo y roce siguen sin enganchar. W/S vertical, A/D lateral, diagonal normalizada, 4,5/3/9,5 m/s conservados. Las paredes inclinadas acompañan la pendiente manteniendo 4,5 m/s verticales y movimiento barrido.
+
+Espacio conserva separación de 5 m/s y 0,35 s de protección automática. En terreno la protección reconoce triángulos coplanares contiguos para que cambiar de ID no la evada. Otra cara válida conserva continuidad. Descenso, salto existente y rearme sin soltar/re-pulsar se mantienen.
+
+Borde conserva ascenso exterior y avance barridos, cuerpo completo y apoyo válido. El apoyo puede abarcar tapas coplanares contiguas o toda la huella sobre terreno transitable; en rampa se usa su altura máxima bajo la huella para no introducir el cuerpo. Esquinas interiores bloqueadas detienen el avance; A permite retroceder y Espacio separar. En exterior se pierde agarre al agotarse la superficie: no hay giro automático alrededor del canto ni teleport. Cambiar de contacto recalcula la misma base lateral, sin invertir input. Cámara jugable sin rediseño; únicamente incorpora la geometría del terreno en sus consultas P0.
+
+### Verificación ejecutada y evidencia
+
+- `scripts\u3.cmd edit`: **538/538**; `scripts\u3.cmd play`: **49/49**, 08/10. XML y logs finales en `unity/TestResults/P0/A6Correccion/{edit,play}.{xml,log}`. Pasadas intermedias también correctas; no se cambiaron expected históricos para lograrlo.
+- A/D con signo en ±X/±Z, base oblicua y desplazamiento real sobre terreno oblicuo, magnitudes/diagonal. Play inyecta teclas A/D: 24 combinaciones de cuatro paredes, pitch -15/20/60 y dos teclas, con oráculo independiente de base Unity. Cámara fuera de sólidos.
+- Contrato generado sin registro de IDs, categorías permitidas/excluidas, umbral 47,99/48/48,01/90/100/0/180°, barrido de alta velocidad, tangencia, caras superiores, apoyo con/sin hueco entre colliders, cruce lateral entre colliders y esquinas interior/exterior. Meseta y rampa completan borde; aire frontal funciona, paralelo/roce no engancha.
+- Foso: caída, aterrizaje, entrada y borde por las cuatro orientaciones; cámara libre, cero rescates. Salto/retorno/salida y protección entre triángulos del terreno. Conservadas pausa/foco, muerte/reinicio, combate QA y P0 desactivado.
+- `powershell -NoProfile -ExecutionPolicy Bypass -File scripts\verify-historical-reference.ps1`: U0/U2/U3/U4 coinciden, 8 guardados y 6 secuencias meta; instantánea `qa-results/reference-298452535d744484b9401c1a26e0d674`. Sin modificaciones de src ni referencias.
+- `scripts\p0.cmd build`, `devbuild` y `evidence` ejecutados. Ambas builds finales registran **452c956f2c72dd8c9cb15bed5a0000305b6aefbb**, sin WIP runtime. Un intento de recompilación dentro del sandbox terminó por licencia Unity (198); reintentado fuera del sandbox, build correcta. No fue un fallo de compilación del código.
+- Evidencia final: **`unity/TestResults/P0/Evidence/20261008T181005`**, informe válido, **41 PNG y 15 CSV**. La pasada anterior `20261008T180719` también fue válida y se conserva. La final mejora legibilidad de A/D con cámara fija solo en esos fixtures y jugador a media altura; los demás recorridos usan cámara jugable. CSV incluye input lateral/vertical, normal y posición por tick.
+- PNG 17/18/19 de cada normal: antes, A izquierda y D derecha; 20–22 meseta ±Z: entrada, ascenso, salida; 23/24 foso: caras oeste/norte/sur además de la este ya mostrada en 07–12. Se conservan entrada aérea, salto/reenganche, paralelo, techo bloqueado, esquina y tejado. Imágenes representativas inspeccionadas; **evidencia automatizada, no aprobación manual**.
+
+Limitación de alcance: adaptador de las cajas y Heightfield físicos del circuito, no importador de meshes arbitrarios Unity ni activación de escalada en el mundo U6. Las oblicuas se verifican mediante triángulos del terreno; las cajas actuales siguen alineadas a ejes. No hay nueva geometría de casas procedurales, navegación enemiga, mundo ampliado ni otros bloques. El mapa y las pendientes existentes se conservan.
+
+## Cierre técnico A6 — 11/10/2026 (Codex)
+
+### Estado conservado y última corrección
+
+Reanudación desde `452c956f2c72dd8c9cb15bed5a0000305b6aefbb`, tres commits por delante de origin `603a225` tras fetch, nueve documentos modificados y siete ajustes protegidos; índice vacío. Se conservaron los commits A/D `53658e4`, terreno `bb726db` y evidencia `452c956`, sus pruebas, builds y medidas. Los documentos WIP se completan en este cierre. Sin reset, clean, stash, cambios de rama ni modificaciones de src/corpus.
+
+La auditoría encontró una omisión adicional: `IsReattachBlocked` extendía la protección entre triángulos del terreno, pero dos cajas de una misma pared seguían dependiendo del ID. Corregido en `38d29a9ced593bc94e3a55638363b70978db822c`, «Protege el salto entre piezas de una misma pared»: misma comprobación de plano/normal para cualquier contacto, sin cambiar los 0,35 s ni el agarre a una cara distinta. Cuatro regresiones ±X/±Z fuerzan contacto disponible en la segunda pieza durante la protección; son sondas del contrato, no una trayectoria de gameplay. Fallaban antes de la corrección (538/542) y pasan después. Un primer fixture no alcanzaba la junta y se corrigió antes de reproducir el defecto; ambos resultados fallidos están conservados y no se presentan como pruebas válidas.
+
+### Comportamiento final y cobertura
+
+- A izquierda y D derecha mirando hacia la pared. Tangente normalizada `(n.Z, 0, -n.X)` en coordenadas núcleo, equivalente a `Cross(up, haciaPared)` tras reflejar Z en Unity. Ver tabla de las cuatro normales en la sección anterior. Play inyecta A/D en 24 combinaciones (cuatro paredes, pitch −15/20/60, dos teclas) con oráculo Unity independiente. Oblicuas del terreno y cambios entre colliders también pasan.
+- Paredes sólidas de estructura/acantilado por defecto, sin permisos por ID. Las consultas reciben cajas y triángulos físicos del Heightfield: la omisión del terreno era la causa de meseta/rampa no escalables. Normal no inferior y pendiente >48°; suelo transitable y tapas son apoyo, no escalada. Follaje, interactuables, enemigos y límites artificiales excluidos por categoría. El borde estrecho tiene colisión válida, pero no permite terminar arriba porque no cabe la huella completa; el techo central bloquea el ascenso deliberadamente. No se alteró el visual para ocultar una colisión defectuosa.
+- Correr frontalmente entra desde suelo o aire, sin salto ni botón especial. Dot horizontal ≥0,5 y alcance 0,18 m conservados; paralelo y roce leve no agarran. W/S vertical, A/D lateral, diagonal normalizada, velocidades 4,5/3,0/9,5 m/s. Sin stamina, límite temporal ni coste.
+- Foso: caída al fondo, aproximación, ascenso y salida con apoyo completo por las cuatro caras, cero F7; también entrada aérea junto a pared, salto/retorno y rechazo del movimiento paralelo. No es aprobación manual.
+- Espacio separa y protege automáticamente la misma superficie, incluidas juntas coplanares. Borde con cuerpo completo, soporte y dos tramos barridos; techo inferior bloquea, sin teleport ni penetración en las pruebas. Cámara aprobada conservada; pausa, foco, muerte/reinicio y ruta histórica sin P0 pasan.
+- Esquinas: interior bloquea y permite retroceder/separarse; exterior termina el agarre al agotarse la cara. No hay giro automático alrededor del canto. No se introduce soporte de meshes arbitrarios ni se activa escalada en la entrega U6; integración de mundo/procedural sigue fuera de A6.
+
+### Verificación final del código
+
+Ejecutados el 11/10 sobre el contenido final de `38d29a9`:
+
+| Comando desde CMD | Resultado | Evidencia local |
+| --- | --- | --- |
+| `scripts\u3.cmd edit` | 542/542, 0 fallos | `unity/TestResults/P0/A6Cierre/edit.xml`, `edit.log` |
+| `scripts\u3.cmd play` | 49/49, 0 fallos | `unity/TestResults/P0/A6Cierre/play.xml`, `play.log` |
+| `powershell -NoProfile -ExecutionPolicy Bypass -File scripts\verify-historical-reference.ps1` | U0/U2/U3/U4 coinciden; 8 guardados y 6 secuencias meta | `qa-results/reference-a50b90a8e5dc4b63b3360150710e1f31` |
+| `scripts\p0.cmd build` | Normal correcta | `unity/TestResults/P0/build.log`, `unity/Builds/P0/P0-source.txt` |
+| `scripts\p0.cmd devbuild` | Development correcta | `unity/TestResults/P0/devbuild.log`, `unity/Builds/P0Dev/P0-source.txt` |
+| `scripts\p0.cmd evidence` | Informe válido, 41 PNG y 15 CSV | `unity/TestResults/P0/Evidence/20261011T174056` |
+
+El primer intento Edit en sandbox terminó por licencia Unity (198), antes de ejecutar pruebas. Fuera del sandbox se completaron las suites. Regresión roja real archivada como `edit-contact-red.xml/log`, primer fixture insuficiente como `edit-red.xml/log`. No se cambiaron referencias esperadas históricas.
+
+Ambas builds registran `38d29a9ced593bc94e3a55638363b70978db822c`, sin WIP runtime. La evidencia final vuelve a ejecutar todos los fixtures sobre esa build; se inspeccionaron capturas A/D, salida de meseta y foso. Las capturas A/D usan cámara fija exclusivamente para hacer visible el signo del movimiento; los demás recorridos conservan cámara jugable. Son capturas automatizadas, no vídeo ni prueba humana. Se conservan las evidencias del 07/10 y 08/10 como historial.
+
+### Rendimiento final
+
+Nuevas pasadas del código final: `scripts\p0.cmd benchmark` → `unity/TestResults/P0/Normal/20261011T174138`; `scripts\p0.cmd devdiag` → `unity/TestResults/P0/Development/20261011T174438`. Ambas registran `38d29a9`, informes válidos para 0/300/500/750. Cada pasada: 9 bordes y 9 caídas, cero fallos de borde, atascos, rescates, agarres/reenganches indebidos y reanudaciones por foco.
+
+Mismo equipo Ryzen 7 7700X / RTX 4070 Ti SUPER, Windows x64 Mono D3D11, 1920×1080, interna 360, VSync 0, ilimitado, semilla P0QA, tick 1/60, 10 s de warmup + 30 s medidos por carga; armas desactivadas e invulnerabilidad QA. Sin builds ni suites simultáneas. Una pasada por carga; no es coste aislado de consultas ni FPS generales del juego. Las medidas del 07/10 y Normal del 08/10 se conservan como comparación histórica; estas tablas corresponden al código final.
+
+| Build | Enemigos | Frame p50 ms | p95 | p99 | Máximo |
+| --- | --- | --- | --- | --- | --- |
+| Normal | 0 | 0.325 | 0.693 | 1.281 | 8.152 |
+| Normal | 300 | 0.409 | 0.885 | 1.224 | 8.069 |
+| Normal | 500 | 0.458 | 1.044 | 1.578 | 4.225 |
+| Normal | 750 | 0.520 | 1.297 | 2.247 | 7.586 |
+| Development | 0 | 0.407 | 0.636 | 1.139 | 12.940 |
+| Development | 300 | 0.491 | 0.955 | 1.204 | 8.972 |
+| Development | 500 | 0.546 | 1.058 | 1.668 | 4.128 |
+| Development | 750 | 0.582 | 1.317 | 2.281 | 5.731 |
+
+CPU del tick de lógica/combate/presentación, no CPU total del proceso. GPU N/D.
+
+| Build | Enemigos | CPU p50 ms | p95 | p99 | Máximo |
+| --- | --- | --- | --- | --- | --- |
+| Normal | 0 | 0.013 | 0.019 | 0.022 | 0.042 |
+| Normal | 300 | 0.578 | 0.687 | 0.761 | 0.877 |
+| Normal | 500 | 1.050 | 1.157 | 1.351 | 1.503 |
+| Normal | 750 | 1.649 | 1.834 | 2.035 | 2.365 |
+| Development | 0 | 0.013 | 0.019 | 0.022 | 0.047 |
+| Development | 300 | 0.587 | 0.673 | 0.768 | 0.812 |
+| Development | 500 | 1.061 | 1.174 | 1.360 | 1.471 |
+| Development | 750 | 1.624 | 1.785 | 2.005 | 2.219 |
+
+| Build | Enemigos | Asignada MiB | Reservada MiB | Mono MiB | GC gen0 | GC B/frame |
+| --- | --- | --- | --- | --- | --- | --- |
+| Normal | 0 | 244.406 | 282.250 | 20.293 | 585 | N/D |
+| Normal | 300 | 245.406 | 538.313 | 19.758 | 462 | N/D |
+| Normal | 500 | 245.906 | 538.313 | 20.414 | 403 | N/D |
+| Normal | 750 | 246.469 | 538.313 | 20.332 | 343 | N/D |
+| Development | 0 | 154.675 | 543.563 | 20.004 | 474 | 9532.159 |
+| Development | 300 | 154.792 | 543.563 | 20.090 | 394 | 9670.752 |
+| Development | 500 | 154.974 | 543.563 | 20.359 | 350 | 9815.187 |
+| Development | 750 | 154.912 | 543.563 | 20.020 | 313 | 9945.483 |
+
+Memoria es instantánea final Unity/Mono, no pico/RSS/VRAM. GC gen0 abarca unos 40 s; bytes/frame solo fiables en Development. HUD y arnés incluidos. Normal p95 final frente a la corrección del 08/10: ver JSON originales para los deltas; no atribuir variaciones entre sesiones exclusivamente al cambio de reenganche. Máximos y colas se conservan completos; no se extrapola a equipos modestos.
+
+### Lanzador, integridad y entrega
+
+`scripts\p0.cmd jugar` ejecutado realmente desde CMD el 11/10: salida 0; PID 30908, ventana MAMPORRO respondiente, handle 527136 y ejecutable `unity/Builds/P0/MAMPORRO-P0.exe`. Log confirma progreso `unity/TestResults/P0/ManualSave`. Cerrado normalmente con `CloseMainWindow=True`. Registro `unity/TestResults/P0/A6Cierre/launcher.json` y copia de `manual.log`. No equivale a prueba manual de controles.
+
+U6 SHA-256 antes y después: `96b492cb271111251fe42b8646e65370a1b7b566773a1e35b34c3f2d1ae70873`. Integridad inicial `unity/TestResults/P0/A6Correccion/integrity-resume-before.json`, final `unity/TestResults/P0/A6Cierre/integrity-after.json`. Progreso personal: un archivo encontrado en Progress, SHA idéntico antes/después (`personal-before.json` y `personal-after.json` locales).
+
+Los siete ajustes protegidos conservan estas huellas antes y después, byte a byte; quedan fuera de todos los commits. Cinco modificados y dos no seguidos. Los avisos de espacios finales de `git diff --check` global pertenecen a estos ajustes previos, que no se limpian. La comprobación del índice de entrega se realiza por separado.
+
+| Archivo protegido | SHA-256 antes = después |
+| --- | --- |
+| `unity/Assets/Mamporro/Generated/RetroPipeline.asset` | `f88523da037cf80db06027f1675ac19cdcc930cee570fa51be80a5945a62ce0d` |
+| `unity/Assets/UniversalRenderPipelineGlobalSettings.asset` | `71b8ad93611c4b9c94444409a5cba080b8b7a903ef1e797f1b5cad37d38e2ade` |
+| `unity/ProjectSettings/GraphicsSettings.asset` | `35dd86b42c01873514b78c0784ab29078f557769a17097371198cdce6afde5f2` |
+| `unity/ProjectSettings/ProjectAuditorSettings.asset` | `9e68444b9bda981e2927a98df9edf69ea88362f0c6b7f3c81b39b9d515d2a416` |
+| `unity/ProjectSettings/ProjectSettings.asset` | `4505cd0097fe03d0bef99ba42f8e0742a0660c197cf037634908654a9a1f45db` |
+| `unity/ProjectSettings/PackageManagerSettings.asset` | `7698172ab4c40eeb7b992d9255ce6afdf39f9288c1c3a31c58a96a474dc43753` |
+| `unity/ProjectSettings/URPProjectSettings.asset` | `68d75e5e1502dd7a4c18b7306430916b5ee8dadfdb0fbb588893fe38eaa2c056` |
+
+### Git y siguiente paso
+
+Publicados mediante push normal, tras fetch y comprobación 4/0, los commits `53658e4`, `bb726db`, `452c956` y `38d29a9`. Último runtime publicado: `38d29a9ced593bc94e3a55638363b70978db822c`; las builds/evidencias corresponden a él. El cierre documental se publica por separado como «Cierra la verificación de A6 para prueba manual»; localizar su SHA con `git log -1 --format=%H -- docs/PROGRESO_P0.md`. Resultado final remoto/local en `unity/TestResults/P0/A6Cierre/git-final.json`. Sin PR ni force-push.
+
+Para probar desde CMD en la raíz del repositorio:
+
+```cmd
+scripts\p0.cmd jugar
+```
+
+Camina contra las paredes de las cuatro caras del edificio, meseta/rampa y foso; comprueba A/D, pitch de cámara, entrada frontal y rechazo del paralelo, salto y salida completa del foso sin F7. W/S subir/bajar, A/D lateral, Espacio separa; Shift/C permite caer. Build y progreso QA independientes.
+
+**Detenerse aquí para la prueba manual del autor.** No iniciar P0-B/C/D hasta que confirme A/D, todas las paredes apropiadas del circuito y salida de fosos. Limitaciones restantes: esquina sin giro automático, cajas alineadas a ejes y oblicuas mediante terreno; sin importador de meshes arbitrarios ni integración en el mundo U6. Horda/amenaza y refugios mantienen las limitaciones históricas de A4; no se han ampliado ni rebalanceado.
