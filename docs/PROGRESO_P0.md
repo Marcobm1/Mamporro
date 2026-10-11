@@ -4,6 +4,8 @@ Estado: **P0-A1–A5 base técnica validada manualmente; P0-A6 corregido y verif
 
 ## Cómo retomar
 
+- **Punto vigente (cierre de P0-B, 12/10/2026):** P0-B aprobado manualmente por el autor; código `a9cac92`, cierre técnico `5688e90` y este cierre documental. Siguiente: plan de P0-C en [PLAN_P0C](PLAN_P0C.md); **no programar P0-C hasta su aprobación**; D no autorizado. Los puntos siguientes son historial.
+
 - **Punto vigente (P0-B, 11/10/2026):** navegación vertical y escalada de todos los enemigos implementadas y verificadas técnicamente en el circuito QA B (F10); cierre técnico `a9cac92`. Edit 635/635, Play 52/52, referencias coincidentes, benchmark/evidencias válidos. Detalle, desviaciones (p95 0,61 ms y pico 1,49 ms frente a 0,5/1 ms) y guía en «P0-B — … cierre técnico» al final. **Siguiente paso: prueba manual del autor; detenerse. No iniciar P0-C/D.**
 
 - **Punto vigente (cierre P0-A, 11/10/2026):** A6 aprobado manualmente. Código `373620d`, cierre documental `dc8ab26` y este cierre. Siguiente: plan de P0-B (rutas de enemigos en altura) en [PLAN_P0B](PLAN_P0B.md), **revisado el 11/10 tras la decisión de que todos los enemigos escalen**, con cinco dudas abiertas en su sección 10; **no programar P0-B hasta su aprobación**; C/D no autorizados. Los puntos siguientes son historial.
@@ -736,3 +738,15 @@ U6 SHA-256 `96b492cb271111251fe42b8646e65370a1b7b566773a1e35b34c3f2d1ae70873` an
 ### Prueba manual
 
 `scripts\p0.cmd jugar`, F10 para el circuito B, F4 para cargar la horda. Subir al tejado solo escalando (−11, −11), al de la rampa (11, −11), a la meseta (16, 10) y al tejado amplio (0, 16) y comprobar que la horda escala, entra arriba y ataca; bajar y ver que caen y siguen. La seta (20, 20) y la placa sobre la pared con techo no son alcanzables para nadie (pruebas automáticas). Observar palomas disparando solo con línea de visión y la rata y el jefe escalando. **Detenerse: no iniciar P0-C/D.**
+
+## Cierre de P0-B — aprobación manual del autor (12/10/2026)
+
+El autor probó la build P0 de `a9cac92` y aprueba P0-B definitivamente. Queda aprobado: escalada física de paredes, edificios, tejados y acantilados por todos los enemigos (comunes, a distancia, rata, jefe y esbirros) a su velocidad efectiva propia; navegación compartida por tres tamaños con caminar, escalar, borde y caída con gravedad; combate vertical y colisiones de proyectiles corregidos; circuito QA B con F10, compatible con el circuito A y con las referencias históricas.
+
+Últimos resultados técnicos (11/10, sobre `a9cac92`, ya registrados arriba): Edit 635/635, Play 52/52, referencias U0/U2/U3/U4 coincidentes, estrés de 765 enemigos sin penetraciones (atascados ≤ 0,65 %), benchmark/diagnóstico/evidencias válidos. Este cierre es documental: no se han repetido pruebas ni builds y el código no cambia.
+
+Limitaciones aceptadas por el autor (no son objetivos cumplidos): navegación con 750 enemigos 0,61 ms p95 y 1,49 ms de pico (objetivos 0,5/1 ms); construcción de los tres mapas 648 ms al cargar el circuito; unos 2 KB más por frame en Development sin causa totalmente aislada; aglomeración de enemigos al pie de las paredes cuando cientos persiguen un tejado; mapas que cubren el circuito entero, por lo que un mundo mayor necesitará navegación por regiones (P0-D); recogida de gemas y monedas sin comprobación de altura, pendiente y sin corregir. Los benchmarks de lógica no equivalen a FPS reales. No optimizar P0-B sin una razón concreta y aprobación.
+
+Integridad al cerrar: U6 `96b492cb271111251fe42b8646e65370a1b7b566773a1e35b34c3f2d1ae70873` y las siete huellas protegidas iguales a la tabla A6.
+
+**P0-B cerrado. Continuación: plan de P0-C ([PLAN_P0C](PLAN_P0C.md)); no programar hasta su aprobación. P0-D no autorizado.**

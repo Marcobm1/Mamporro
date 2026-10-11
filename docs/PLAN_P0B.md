@@ -1,6 +1,6 @@
 # P0-B — navegación vertical y escalada de todos los enemigos: plan revisado
 
-Estado: **APROBADO E IMPLEMENTADO; PENDIENTE DE PRUEBA MANUAL** (11/10/2026). Resultados reales, desviaciones y orden aplicado (B5 antes que B4) en [PROGRESO_P0](PROGRESO_P0.md#p0-b--navegación-vertical-y-escalada-de-todos-los-enemigos-cierre-técnico-11102026-claude-code). Texto original del plan: Sustituye la propuesta inicial de `89ee76d`, preparada antes de que el autor confirmara la escalada de todos los enemigos. No programar nada de P0-B hasta que el autor apruebe este plan y responda a la sección 10. P0-C/D no autorizados.
+Estado: **CERRADO: implementado y aprobado manualmente por el autor el 12/10/2026.** Resultados reales, desviaciones y orden aplicado (B5 antes que B4) en [PROGRESO_P0](PROGRESO_P0.md#p0-b--navegación-vertical-y-escalada-de-todos-los-enemigos-cierre-técnico-11102026-claude-code). Texto original del plan: Sustituye la propuesta inicial de `89ee76d`, preparada antes de que el autor confirmara la escalada de todos los enemigos. No programar nada de P0-B hasta que el autor apruebe este plan y responda a la sección 10. P0-C/D no autorizados.
 
 ## 0. Decisiones ya confirmadas por el autor (no volver a preguntar)
 

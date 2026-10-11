@@ -26,9 +26,9 @@ estética retro. Megabonk sirve de referencia expresada por el autor para escala
 verticalidad y agilidad; no se han analizado sus sistemas en esta fase ni se
 presupone reproducirlos. MAMPORRO mantiene nombres, arte y diseño propios.
 
-## P0-A cerrado; P0-B implementado, pendiente de prueba manual
+## P0-A y P0-B cerrados; P0-C en planificación
 
-[Checkpoint P0](../../docs/PROGRESO_P0.md): A1–A5 validados técnicamente; A6 aprobado manualmente por el autor el 11/10/2026 (escalada automática, A/D según cámara, velocidad efectiva de carrera). P0-B (navegación vertical y escalada de todos los enemigos) implementado en el circuito QA B (F10), pendiente de la prueba manual del autor. Lanzador probado: `scripts\p0.cmd jugar` desde la raíz. C (muestra procedural) y D (ampliación) NO están autorizados. Con P0-B la horda escala; solo una zona inaccesible incluso escalando queda segura frente al cuerpo a cuerpo (registrada para P0-C). Balance se mantiene separado, aunque figure como P0 histórico en la tabla. No mezclar P1/P2 ni adoptar VAT/modelos B0 por defecto.
+[Checkpoint P0](../../docs/PROGRESO_P0.md): A1–A5 validados técnicamente; A6 aprobado manualmente por el autor el 11/10/2026 (escalada automática, A/D según cámara, velocidad efectiva de carrera). P0-B (navegación vertical y escalada de todos los enemigos, circuito QA B con F10) aprobado manualmente por el autor el 12/10/2026. Siguiente: plan de P0-C (generación procedural conectada, [PLAN_P0C](../../docs/PLAN_P0C.md)), pendiente de aprobación antes de programar. Lanzador probado: `scripts\p0.cmd jugar` desde la raíz. C solo en planificación; D (ampliación) NO está autorizado. Con P0-B la horda escala; solo una zona inaccesible incluso escalando queda segura frente al cuerpo a cuerpo (registrada para P0-C). Balance se mantiene separado, aunque figure como P0 histórico en la tabla. No mezclar P1/P2 ni adoptar VAT/modelos B0 por defecto.
 
 ## Peticiones del autor y orden propuesto
 
