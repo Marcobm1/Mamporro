@@ -4,7 +4,7 @@ Estado: **P0-A1–A5 base técnica validada manualmente; P0-A6 corregido y verif
 
 ## Cómo retomar
 
-- **Punto vigente (cierre de P0-B, 12/10/2026):** P0-B aprobado manualmente por el autor; código `a9cac92`, cierre técnico `5688e90` y este cierre documental. Siguiente: plan de P0-C en [PLAN_P0C](PLAN_P0C.md); **no programar P0-C hasta su aprobación**; D no autorizado. Los puntos siguientes son historial.
+- **Punto vigente (cierre de P0-B, 12/10/2026):** P0-B aprobado manualmente por el autor; código `a9cac92`, cierre técnico `5688e90` y este cierre documental. Siguiente: plan de P0-C entregado en [PLAN_P0C](PLAN_P0C.md), con diez decisiones abiertas en su sección 14; **no programar P0-C hasta su aprobación**; D no autorizado. Los puntos siguientes son historial.
 
 - **Punto vigente (P0-B, 11/10/2026):** navegación vertical y escalada de todos los enemigos implementadas y verificadas técnicamente en el circuito QA B (F10); cierre técnico `a9cac92`. Edit 635/635, Play 52/52, referencias coincidentes, benchmark/evidencias válidos. Detalle, desviaciones (p95 0,61 ms y pico 1,49 ms frente a 0,5/1 ms) y guía en «P0-B — … cierre técnico» al final. **Siguiente paso: prueba manual del autor; detenerse. No iniciar P0-C/D.**
 
