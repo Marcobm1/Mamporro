@@ -409,8 +409,10 @@ namespace Mamporro.U3
                     if(k.f4Key.wasPressedThisFrame){verticalLoad=(verticalLoad+1)%4;Vertical.Spawn(new[]{0,300,500,750}[verticalLoad]);}
                     if(k.f5Key.wasPressedThisFrame){Vertical.Control=!Vertical.Control;Vertical.Suspend();}
                     if(k.f7Key.wasPressedThisFrame)Vertical.Recover();
-                    // P0-B: alterna el circuito A (escalada) y el B (persecución vertical) y empieza en él.
+                    // P0-B/C: recorre los circuitos A (escalada), B (persecución vertical) y C (procedural).
                     if(k.f10Key.wasPressedThisFrame){Vertical.ToggleLayout();LoadWorld(Seed);StartRun(Seed);}
+                    // P0-C: siguiente semilla QA del circuito C.
+                    if(k.f11Key.wasPressedThisFrame){Vertical.NextSeed();LoadWorld(Seed);StartRun(Seed);}
                 }
                 PresentationShortcuts(k);
             }

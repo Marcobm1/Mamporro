@@ -114,8 +114,32 @@ namespace Mamporro.Tests
             for(int i=0;i<120;i++)g.Session.Step(default,1.0/60);
             var e=g.Run.Enemies;var q=g.Vertical.Circuit.Queries;
             for(int i=0;i<e.Count;i++)Assert.That(q.ClearAboveStep(new Vec3(e.X[i],e.Y[i],e.Z[i]),e.Def(i).radius,e.Def(i).height,NavGraph.Step),Is.True,$"enemigo {i}");
+            // P0-C: F10 sigue al circuito C y después vuelve al A.
+            g.Vertical.ToggleLayout();g.LoadWorld(g.Seed);g.StartRun(g.Seed);g.SetPaused(true);
+            Assert.That(g.Vertical.Circuit.Layout,Is.EqualTo(VerticalLayout.Procedural));Assert.That(g.Vertical.Navigation,Is.Not.Null);
             g.Vertical.ToggleLayout();g.LoadWorld(g.Seed);g.StartRun(g.Seed);g.SetPaused(true);
             Assert.That(g.Vertical.Circuit.Layout,Is.EqualTo(VerticalLayout.Escalada));Assert.That(g.Vertical.Navigation,Is.Null);Assert.That(g.Run.Enemies.Navigation,Is.Null);
+            LogAssert.NoUnexpectedReceived();
+        }
+        [UnityTest] public IEnumerator CircuitCRunsTheValidatedMapAndF11CyclesSeeds()
+        {
+            yield return Load();var g=Game;g.StartRun("P0QA");g.SetPaused(true);
+            // Lo mismo que F11 desde el circuito A: circuito C con la primera semilla QA.
+            g.Vertical.NextSeed();g.LoadWorld(g.Seed);g.StartRun(g.Seed);g.SetPaused(true);
+            var c=g.Vertical.Circuit;
+            Assert.That(c.Layout,Is.EqualTo(VerticalLayout.Procedural));Assert.That(c.Seed,Is.EqualTo("P0QA"));Assert.That(c.Map.Check.Passed,Is.True);
+            Assert.That(g.World.Collision,Is.SameAs(c.Collision));Assert.That(g.Vertical.Navigation.Graphs,Is.SameAs(c.Map.Graphs),"grafos de la validación reutilizados");
+            Assert.That(g.Vertical.Status,Does.Contain("C · procedural"));Assert.That(g.Vertical.Status,Does.Contain("semilla P0QA"));
+            Assert.That(g.Body.X,Is.EqualTo(c.Start.X));Assert.That(g.Body.Z,Is.EqualTo(c.Start.Z));
+            g.Vertical.Spawn(300);Assert.That(g.Run.Enemies.Count,Is.EqualTo(300));Assert.That(g.Run.Boss,Is.Not.Null,"jefe desde 300");
+            g.Run.Invincible=true;g.Run.WeaponsOff=true;g.Vertical.ScriptedInput=default(VerticalIntent);
+            for(int i=0;i<120;i++)g.Session.Step(default,1.0/60);
+            var e=g.Run.Enemies;
+            for(int i=0;i<e.Count;i++)Assert.That(c.Queries.ClearAboveStep(new Vec3(e.X[i],e.Y[i],e.Z[i]),e.Def(i).radius,e.Def(i).height,NavGraph.Step),Is.True,$"enemigo {i}");
+            g.Vertical.NextSeed();g.LoadWorld(g.Seed);g.StartRun(g.Seed);g.SetPaused(true);
+            Assert.That(g.Vertical.Circuit.Seed,Is.EqualTo("MAMPORRO"));Assert.That(g.Vertical.Circuit,Is.Not.SameAs(c));Assert.That(g.Vertical.Status,Does.Contain("semilla MAMPORRO"));
+            g.Vertical.ToggleLayout();g.LoadWorld(g.Seed);g.StartRun(g.Seed);g.SetPaused(true);
+            Assert.That(g.Vertical.Circuit.Layout,Is.EqualTo(VerticalLayout.Escalada));
             LogAssert.NoUnexpectedReceived();
         }
         [UnityTest] public IEnumerator AllPitSidesAndPlateauSidesCompleteWithCameraAndNoRescue()

@@ -3,7 +3,8 @@ using System.Collections.Generic;
 namespace Mamporro.Core
 {
     // A: escalada del jugador (P0-A, aprobado). B: persecución vertical de la horda (P0-B).
-    public enum VerticalLayout { Escalada, Persecucion }
+    // C: mapa procedural validado (P0-C), elegido por semilla.
+    public enum VerticalLayout { Escalada, Persecucion, Procedural }
     // P0: circuitos fijos QA, no sustituyen el generador procedural U3.
     // Coordenadas web; la inversión de Z sigue perteneciendo a presentación.
     public sealed class VerticalCircuit
@@ -13,20 +14,34 @@ namespace Mamporro.Core
         public readonly VerticalQueries Queries;
         public readonly WorldCollision Collision;
         public readonly Vec3 Start;
-        public string Name=>Layout==VerticalLayout.Escalada?"A · escalada":"B · persecución vertical";
+        // Solo C: el mapa validado (trazado, estructuras, grafos S/M/L listos para reutilizar).
+        public readonly ProceduralMap Map;
+        public string Seed=>Map?.Seed;
+        public string Name=>Layout==VerticalLayout.Escalada?"A · escalada":Layout==VerticalLayout.Persecucion?"B · persecución vertical":"C · procedural";
         public VerticalCircuit():this(VerticalLayout.Escalada){}
         public VerticalCircuit(VerticalLayout layout)
         {
             Layout=layout;
+            if(layout==VerticalLayout.Procedural)throw new System.ArgumentException("El circuito C se crea con su mapa: new VerticalCircuit(new ProceduralMap(semilla))");
             if(layout==VerticalLayout.Persecucion)BuildPursuit(out Terrain,out Queries,out Start);
             else BuildClimbing(out Terrain,out Queries,out Start);
+            Collision=BuildCollision(Terrain,Queries,29);
+        }
+        public VerticalCircuit(ProceduralMap map)
+        {
+            Layout=VerticalLayout.Procedural;Map=map;Terrain=map.Layout.Terrain;Queries=map.Queries;
+            Start=new Vec3(0,Terrain.HeightAt(0,0),0);
+            Collision=BuildCollision(Terrain,Queries,map.Layout.Settings.Limit);
+        }
+        static WorldCollision BuildCollision(Heightfield terrain,VerticalQueries queries,double limit)
+        {
             var colliders=new List<Collider>();
-            for(int i=0;i<Queries.Count;i++){
-                var s=Queries.Solid(i);
+            for(int i=0;i<queries.Count;i++){
+                var s=queries.Solid(i);
                 colliders.Add(Collider.Oriented((s.Min.X+s.Max.X)/2,(s.Min.Z+s.Max.Z)/2,
                     (s.Max.X-s.Min.X)/2,(s.Max.Z-s.Min.Z)/2,0,s.Min.Y,s.Max.Y,true));
             }
-            Collision=new WorldCollision(Terrain,new ColliderGrid(colliders,Terrain.Size/2),29);
+            return new WorldCollision(terrain,new ColliderGrid(colliders,terrain.Size/2),limit);
         }
         static void BuildClimbing(out Heightfield terrain,out VerticalQueries queries,out Vec3 start)
         {
@@ -100,9 +115,15 @@ namespace Mamporro.Core
         }
         public WorldData Data()
         {
-            var props=new PropSet();
+            var props=new PropSet();var kinds=new Dictionary<int,StructureKind>();
+            if(Map!=null)foreach(var st in Map.World.Structures)if(!st.Removed)foreach(var v in st.Solids)kinds[v.Id]=st.Kind;
             for(int i=0;i<Queries.Count;i++){
                 var b=Queries.Solid(i);uint color=b.Climbable?0x957954u:0x705c80u;
+                // C: árboles verdes y marcadores QA de color propio para reconocerlos en las capturas.
+                if(kinds.TryGetValue(b.Id,out var kind))switch(kind){
+                    case StructureKind.Tree:color=0x3d6b35u;break;case StructureKind.Chest:color=0xc9a227u;break;
+                    case StructureKind.Shrine:color=0x4fb3c9u;break;case StructureKind.Totem:color=0xb5473au;break;case StructureKind.Portal:color=0x8a5cc9u;break;
+                }
                 props.Parts.Add(new Part{Shape="box",Material="stone",Color=color,
                     Position=new[]{(b.Min.X+b.Max.X)/2,(b.Min.Y+b.Max.Y)/2,(b.Min.Z+b.Max.Z)/2},
                     Size=new[]{b.Max.X-b.Min.X,b.Max.Y-b.Min.Y,b.Max.Z-b.Min.Z},Rotation=new double[3]});

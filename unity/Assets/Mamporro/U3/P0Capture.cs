@@ -47,6 +47,11 @@ namespace Mamporro.U3
                 if(benchmark)yield return PursuitBenchmark();else yield return PursuitEvidence();
                 Application.Quit(0);yield break;
             }
+            // P0-C: el circuito C se mide y documenta en varias semillas (P0ProceduralCapture).
+            if(game.Vertical.Circuit.Layout==VerticalLayout.Procedural){
+                if(benchmark)yield return ProceduralBenchmark();else yield return ProceduralEvidence();
+                Application.Quit(0);yield break;
+            }
             if(benchmark){
                 gc=ProfilerRecorder.StartNew(ProfilerCategory.Memory,"GC Allocated In Frame");
                 foreach(int count in Loads){

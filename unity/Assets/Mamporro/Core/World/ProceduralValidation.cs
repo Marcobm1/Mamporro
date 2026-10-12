@@ -26,6 +26,8 @@ namespace Mamporro.Core
     public sealed class ProceduralMap
     {
         public const int MaxRepairRounds=2,MaxRejections=4;
+        // Semillas QA fijas del circuito C (F11 las recorre). Mismo formato de texto que el juego.
+        public static readonly string[] QaSeeds={"P0QA","MAMPORRO","COLINAS7","Z9K2","MESETA","ACANTILADO","RAMPA42","HORDA750"};
         // Umbrales en nodos de 0,25 m²: grupos inaccesibles de hasta 32 m² para M y L (huecos donde el
         // cuerpo apenas cabe; el del jefe ocupa ~23 m²). El suelo principal y las mesetas amplias superan
         // con mucho ese tamaño, así que deben ser alcanzables.
@@ -140,6 +142,54 @@ namespace Mamporro.Core
             MapsMs+=watch.Elapsed.TotalMilliseconds;
         }
         public int SpawnNode(int k)=>Graphs[k].Nearest(0,0,0,6,1,1);
+
+        // Puntos clave del mapa para el arnés QA (capturas y medidas), todos sobre nodos S válidos:
+        // inicio, la meseta mayor de cada nivel, un tejado y suelo lejano.
+        public List<(string name,Vec3 at)> KeySpots()
+        {
+            var list=new List<(string,Vec3)>();var g=Graphs[0];var to=Reach(g,SpawnNode(0));var back=Reach(g,SpawnNode(0),true);
+            Vec3 At(int n)=>new Vec3(g.NodeX(n),g.NodeY[n],g.NodeZ(n));
+            list.Add(("inicio",At(SpawnNode(0))));
+            for(int level=1;level<Layout.Settings.Levels;level++){
+                ProceduralRegion best=null;foreach(var r in Layout.Regions)if(r.Level==level&&(best==null||r.Area>best.Area))best=r;
+                if(best==null)continue;
+                double cx=Layout.MacroX(best.MinX)+(best.MaxX-best.MinX+1)*Layout.Settings.MacroCell/2,cz=Layout.MacroZ(best.MinZ)+(best.MaxZ-best.MinZ+1)*Layout.Settings.MacroCell/2;
+                int pick=-1;double bestD=double.MaxValue;
+                for(int n=0;n<g.NodeCount;n++){if(!to[n]||!back[n]||!g.NodeTerrain[n]||Math.Abs(g.NodeY[n]-Layout.LevelY(level))>.01)continue;
+                    int m=Layout.MacroAt(g.NodeX(n),g.NodeZ(n));if(m<0||Layout.RegionOf[m]!=best.Id)continue;
+                    double d=(g.NodeX(n)-cx)*(g.NodeX(n)-cx)+(g.NodeZ(n)-cz)*(g.NodeZ(n)-cz);if(d<bestD){bestD=d;pick=n;}}
+                if(pick>=0)list.Add(("meseta-"+level,At(pick)));
+            }
+            foreach(var st in World.Structures){
+                if(st.Removed||(st.Kind!=StructureKind.House&&st.Kind!=StructureKind.Stack&&st.Kind!=StructureKind.Tower))continue;
+                int pick=-1;
+                for(int n=0;n<g.NodeCount&&pick<0;n++){double x=g.NodeX(n),z=g.NodeZ(n);
+                    if(to[n]&&back[n]&&!g.NodeTerrain[n]&&x>st.X0&&x<st.X1&&z>st.Z0&&z<st.Z1&&g.NodeY[n]>st.BaseY+2)pick=n;}
+                if(pick>=0){list.Add(("tejado",At(pick)));break;}
+            }
+            int far=-1;double farD=0;
+            for(int n=0;n<g.NodeCount;n++){if(!to[n]||!back[n]||!g.NodeTerrain[n]||Math.Abs(g.NodeY[n])>.01)continue;
+                double d=g.NodeX(n)*g.NodeX(n)+g.NodeZ(n)*g.NodeZ(n);if(d>farD&&d<45*45){farD=d;far=n;}}
+            if(far>=0)list.Add(("suelo-lejano",At(far)));
+            return list;
+        }
+        // Para el jefe: el centro de la meseta más amplia que alcanza (nodos L con entrada y salida).
+        public bool BossPlateau(out Vec3 at)
+        {
+            var g=Graphs[2];int spawn=SpawnNode(2);var to=Reach(g,spawn);var back=Reach(g,spawn,true);at=default;
+            var count=new Dictionary<int,int>();var sumX=new Dictionary<int,double>();var sumZ=new Dictionary<int,double>();
+            bool Top(int n,out int region){
+                region=-1;if(!to[n]||!back[n]||!g.NodeTerrain[n])return false;int m=Layout.MacroAt(g.NodeX(n),g.NodeZ(n));
+                if(m<0||Layout.Level[m]==0||Math.Abs(g.NodeY[n]-Layout.LevelY(Layout.Level[m]))>.01)return false;region=Layout.RegionOf[m];return true;}
+            for(int n=0;n<g.NodeCount;n++){if(!Top(n,out int r))continue;
+                count[r]=count.TryGetValue(r,out int c)?c+1:1;sumX[r]=(sumX.TryGetValue(r,out double x)?x:0)+g.NodeX(n);sumZ[r]=(sumZ.TryGetValue(r,out double z)?z:0)+g.NodeZ(n);}
+            int best=-1,most=0;foreach(var kv in count)if(kv.Value>most||kv.Value==most&&kv.Key<best){most=kv.Value;best=kv.Key;}
+            if(best<0)return false;
+            double cx=sumX[best]/most,cz=sumZ[best]/most,bd=double.MaxValue;int pick=-1;
+            for(int n=0;n<g.NodeCount;n++){if(!Top(n,out int r)||r!=best)continue;
+                double d=(g.NodeX(n)-cx)*(g.NodeX(n)-cx)+(g.NodeZ(n)-cz)*(g.NodeZ(n)-cz);if(d<bd){bd=d;pick=n;}}
+            at=new Vec3(g.NodeX(pick),g.NodeY[pick],g.NodeZ(pick));return true;
+        }
 
         public static bool[] Reach(NavGraph g,int start,bool reverse=false)
         {

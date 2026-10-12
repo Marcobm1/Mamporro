@@ -17,6 +17,8 @@ namespace Mamporro.U3
     public sealed partial class P0Capture
     {
         bool pursuit;bool pursuitNav;int spotIndex;double lastSample;
+        // Posición actual del arnés (B: Spots; C: puntos clave del mapa).
+        string spotName="suelo";bool spotReachable=true;
         readonly double[] navTicks=new double[10000];int nnav;long navLast;
         readonly List<string> heightBySpot=new List<string>();
         readonly float[] lastDist=new float[WorldRun.EnemyCapacity];readonly double[] lastImprove=new double[WorldRun.EnemyCapacity];
@@ -42,7 +44,7 @@ namespace Mamporro.U3
                 while(Time.realtimeSinceStartupAsDouble-start<Warmup+Duration){
                     double elapsed=Time.realtimeSinceStartupAsDouble-start;
                     int spot=Math.Min(Spots.Length-1,(int)(elapsed/((Warmup+Duration)/Spots.Length)));
-                    if(spot!=spotIndex){RecordSpotHeight();spotIndex=spot;var s=Spots[spot];game.PlaceQa(new Vec3(s.x,s.y,s.z));}
+                    if(spot!=spotIndex){RecordSpotHeight();spotIndex=spot;var s=Spots[spot];spotName=s.name;spotReachable=s.reachable;game.PlaceQa(new Vec3(s.x,s.y,s.z));}
                     if(elapsed-lastSample>=1){lastSample=elapsed;SamplePursuit(elapsed);}
                     yield return null;
                 }
@@ -58,7 +60,7 @@ namespace Mamporro.U3
             var s=Spots[0];game.PlaceQa(new Vec3(s.x,s.y,s.z));game.AutoChoose=true;game.SetPaused(false);
             game.Vertical.InputProvider=()=>default;game.Vertical.Spawn(count);load=count;pursuitNav=game.Vertical.Navigation!=null;
             n=nt=nnav=resumes=gcSamples=0;allocated=0;gcStart=GC.CollectionCount(0);rendered=game.RenderedFrames;spotIndex=0;lastSample=0;
-            heightBySpot.Clear();penetrations=belowTerrain=penetrationChecks=frameCounter=0;reachableSum=stuckPeak=crowdedPeak=0;reachableSamples=0;
+            spotName=Spots[0].name;spotReachable=true;heightBySpot.Clear();penetrations=belowTerrain=penetrationChecks=frameCounter=0;reachableSum=stuckPeak=crowdedPeak=0;reachableSamples=0;
             for(int i=0;i<lastDist.Length;i++){lastDist[i]=float.MaxValue;lastImprove[i]=0;}
             navLast=pursuitNav?game.Vertical.Navigation.Ticks:0;
             previous=start=Time.realtimeSinceStartupAsDouble;pursuit=true;running=true;
@@ -87,7 +89,7 @@ namespace Mamporro.U3
         // caminando a más de 3 m de su meta (esperan tras otros enemigos o en la cola de una pared).
         void SamplePursuit(double elapsed)
         {
-            var nav=game.Vertical.Navigation;var e=game.Run.Enemies;if(nav==null||e.Count==0||!Spots[spotIndex].reachable)return;
+            var nav=game.Vertical.Navigation;var e=game.Run.Enemies;if(nav==null||e.Count==0||!spotReachable)return;
             int reachable=0,stuck=0,crowded=0;
             for(int i=0;i<e.Count;i++){
                 if(!nav.Reachable(i))continue;reachable++;
@@ -102,7 +104,7 @@ namespace Mamporro.U3
         {
             var e=game.Run.Enemies;var b=game.Body;int near=0;
             for(int i=0;i<e.Count;i++)if(Math.Abs(e.Y[i]-b.Y)<1&&Rules.Hypot(e.X[i]-b.X,e.Z[i]-b.Z)<20)near++;
-            heightBySpot.Add($"{Spots[spotIndex].name}={(e.Count==0?0:100.0*near/e.Count):F1}%");
+            heightBySpot.Add($"{spotName}={(e.Count==0?0:100.0*near/e.Count):F1}%");
             for(int i=0;i<lastDist.Length;i++){lastDist[i]=float.MaxValue;lastImprove[i]=Time.realtimeSinceStartupAsDouble-start;}
         }
         void SavePursuitReport(int count)
