@@ -123,7 +123,7 @@ namespace Mamporro.U3
                 if(map.BossPlateau(out var plateau)){
                     PursuitFixture(plateau.X,plateau.Y,plateau.Z,0,0);game.Vertical.BossStart(out double bx,out double bz);
                     var e=game.Run.Enemies;game.Run.SpawnBoss(bx,bz);int boss=e.Count-1;
-                    yield return Until(()=>e.Y[boss]>plateau.Y-.2&&game.Vertical.Navigation.Stable(boss),$"{seed}: jefe en la meseta",45);
+                    yield return Until(()=>e.Y[boss]>plateau.Y-.2&&game.Vertical.Navigation.Stable(boss),$"{seed}: jefe en la meseta",90); // HORDA750: ~70 s (ruta con varias escaladas)
                     game.FaceTowards(e.X[boss],e.Z[boss]);yield return Shot($"C-{seed}-02-jefe-en-la-meseta");bossUp=e.Y[boss]>plateau.Y-.2;
                 }
 

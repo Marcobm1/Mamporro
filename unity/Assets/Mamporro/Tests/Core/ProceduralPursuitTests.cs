@@ -91,5 +91,18 @@ namespace Mamporro.Tests
                 if(budget==3000)for(int k=0;k<3;k++)Assert.That(worst[k],Is.LessThan(2),$"clase {k}: sin regresión (medido 0,5/0,9/1,3 s)");
             }
         }
+        // El jefe llega a la meseta amplia que alcanza (la misma fixture que evidencec), y cuánto tarda.
+        [TestCase("P0QA")] [TestCase("COLINAS7")] [TestCase("HORDA750")]
+        public void BossReachesTheWidestPlateauItFits(string seed)
+        {
+            var c=Circuit(seed);Assert.That(c.Map.BossPlateau(out var at),Is.True);var r=Run(c,at,out var nav);var e=r.Combat.Enemies;
+            var gl=c.Map.Graphs[2];var to=ProceduralMap.Reach(gl,c.Map.SpawnNode(2));var back=ProceduralMap.Reach(gl,c.Map.SpawnNode(2),true);double bx=-12,bz=0,best=double.MaxValue;
+            for(int n=0;n<gl.NodeCount;n++){if(!to[n]||!back[n]||!gl.NodeTerrain[n]||Math.Abs(gl.NodeY[n])>.01)continue;double dx=gl.NodeX(n)+14,dz=gl.NodeZ(n),d=dx*dx+dz*dz;if(d<best){best=d;bx=gl.NodeX(n);bz=gl.NodeZ(n);}}
+            r.Combat.SpawnBoss(bx,bz);int boss=e.Count-1;double t=0;
+            while(t<120&&!(e.Y[boss]>at.Y-.2&&nav.Stable(boss))){r.Step(default,1.0/60);t+=1.0/60;}
+            int goal=nav.Goal(2);int node=nav.Node(boss);
+            TestContext.Out.WriteLine($"{seed}: meseta ({at.X:F1},{at.Y:F1},{at.Z:F1}), jefe desde ({bx:F1},{bz:F1}), distancia de campo {(node>=0?nav.Fields[2].Dist(node):-1)}, llega en {t:F1} s; posición final ({e.X[boss]:F1},{e.Y[boss]:F1},{e.Z[boss]:F1}), estado {nav.State(boss)}, escaladas {nav.ClimbStarts}");
+            Assert.That(e.Y[boss],Is.GreaterThan(at.Y-.2),"el jefe sube a la meseta");
+        }
     }
 }
