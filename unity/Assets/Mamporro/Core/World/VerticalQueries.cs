@@ -142,7 +142,9 @@ namespace Mamporro.Core
             return terrain==null||!terrain.Query(feet,feet,radius,height,WallCos,true,out _);
         }
         // P0-B: ninguna cara abrupta del terreno bajo la huella (sin voladizo sobre un acantilado).
-        public bool TerrainFootprintWalkable(Vec3 feet,double radius)=>terrain==null||terrain.SupportHeight(feet,radius,WallCos,out _);
+        public bool TerrainFootprintWalkable(Vec3 feet,double radius)=>terrain==null||terrain.FootprintWalkable(feet,radius,WallCos);
+        // Pruebas: compara la tabla de celdas abruptas con el recorrido completo.
+        public bool UseSteepTable{get=>terrain==null||terrain.UseSteepTable;set{if(terrain!=null)terrain.UseSteepTable=value;}}
         static bool Slab(double start,double delta,double min,double max,Vec3 low,Vec3 high,ref double enter,ref double exit,ref Vec3 normal)
         {
             if(Math.Abs(delta)<Epsilon)return start>min+Epsilon&&start<max-Epsilon;

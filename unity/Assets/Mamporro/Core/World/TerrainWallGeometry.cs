@@ -19,6 +19,23 @@ namespace Mamporro.Core
                 minNormalY[z*terrain.Cells+x]=(float)Math.Min(a.Y,b.Y)-1e-6f;
             }
         }
+        // P0-C4: tabla de áreas sumadas de celdas abruptas (minNormalY < wallCos) para un wallCos.
+        // Si un rectángulo de celdas no tiene ninguna, Query no encuentra cara (sus bucles saltarían
+        // todas) y la huella es transitable: mismo resultado sin recorrer las celdas.
+        internal bool UseSteepTable=true;
+        double steepCos=double.NaN;int[] steep;
+        int SteepCount(int x0,int x1,int z0,int z1,double wallCos)
+        {
+            var table=steep;
+            if(table==null||steepCos!=wallCos){
+                int n=terrain.Cells,w=n+1;table=new int[w*w];
+                for(int z=0;z<n;z++)for(int x=0;x<n;x++)
+                    table[(z+1)*w+x+1]=(minNormalY[z*n+x]<wallCos?1:0)+table[z*w+x+1]+table[(z+1)*w+x]-table[z*w+x];
+                steep=table;steepCos=wallCos;
+            }
+            int s=terrain.Cells+1;
+            return table[(z1+1)*s+x1+1]-table[z0*s+x1+1]-table[(z1+1)*s+x0]+table[z0*s+x0];
+        }
         static Vec3 Sub(Vec3 a,Vec3 b)=>new Vec3(a.X-b.X,a.Y-b.Y,a.Z-b.Z);
         static Vec3 Cross(Vec3 a,Vec3 b)=>new Vec3(a.Y*b.Z-a.Z*b.Y,a.Z*b.X-a.X*b.Z,a.X*b.Y-a.Y*b.X);
         static double Dot(Vec3 a,Vec3 b)=>a.X*b.X+a.Y*b.Y+a.Z*b.Z;
@@ -68,6 +85,7 @@ namespace Mamporro.Core
         {
             hit=new VerticalHit{Id=-1,Fraction=1};bool found=false;
             Bounds(from,to,radius,out int x0,out int x1,out int z0,out int z1);
+            if(UseSteepTable&&SteepCount(x0,x1,z0,z1,wallCos)==0)return false;
             var delta=Sub(to,from);
             for(int z=z0;z<=z1;z++)for(int x=x0;x<=x1;x++)for(int face=0;face<2;face++){
                 if(minNormalY[z*terrain.Cells+x]>=wallCos)break;
@@ -112,6 +130,14 @@ namespace Mamporro.Core
                 }
             }
             y=highest;return !double.IsNegativeInfinity(y);
+        }
+        // Solo la condición de SupportHeight (dentro del mapa y sin cara abrupta bajo la huella), sin
+        // calcular la altura: con la tabla, O(1) donde no hay celdas abruptas cerca.
+        public bool FootprintWalkable(Vec3 feet,double radius,double wallCos)
+        {
+            if(feet.X-radius< -terrain.Half||feet.X+radius>terrain.Half||feet.Z-radius< -terrain.Half||feet.Z+radius>terrain.Half)return false;
+            if(UseSteepTable&&radius>1e-9){Bounds(feet,feet,radius,out int x0,out int x1,out int z0,out int z1);if(SteepCount(x0,x1,z0,z1,wallCos)==0)return true;}
+            return SupportHeight(feet,radius,wallCos,out _);
         }
         public double Height(double x,double z)=>terrain.HeightAt(x,z);
     }

@@ -57,5 +57,36 @@ namespace Mamporro.Tests
             Assert.That(grid.EdgeTo,Is.EqualTo(linear.EdgeTo));Assert.That(grid.EdgeCost,Is.EqualTo(linear.EdgeCost));Assert.That(grid.PathX,Is.EqualTo(linear.PathX));
             if(extra>0)Assert.That(gridMs,Is.LessThan(linearMs),"la rejilla abarata la construcción con muchos sólidos");
         }
+        // P0-C4: la tabla de celdas abruptas del terreno devuelve exactamente lo mismo que el recorrido
+        // de celdas (consultas aleatorias en el circuito B y en un mapa procedural) y los mapas S/M/L
+        // salen idénticos.
+        [TestCase("B")] [TestCase("P0QA")]
+        public void SteepTableMatchesTheFullTerrainScan(string source)
+        {
+            Heightfield terrain=source=="B"?new VerticalCircuit(VerticalLayout.Persecucion).Terrain:new ProceduralLayout(source).Terrain;
+            var q=new VerticalQueries(terrain,Tuning.PlayerMaxSlopeDeg);var rng=new Rng("p0c-c4-terreno-"+source);double half=terrain.Half-3;
+            for(int t=0;t<6000;t++){
+                var a=new Vec3(rng.Range(-half,half),0,rng.Range(-half,half));a.Y=terrain.HeightAt(a.X,a.Z)+rng.Range(-.5,1.5);
+                var b=new Vec3(a.X+rng.Range(-3,3),a.Y+rng.Range(-2,2),a.Z+rng.Range(-3,3));
+                double r=rng.Range(0,2.7),h=rng.Range(.2,4.5),step=rng.Range(0,.7);var dir=new Vec3(rng.Range(-1,1),0,rng.Range(-1,1));
+                q.UseSteepTable=false;
+                bool clear=q.Clear(a,r,h),above=q.ClearAboveStep(a,r,h,step),sweep=q.Sweep(a,b,r,h,out var hit),foot=q.TerrainFootprintWalkable(a,r),wall=q.Wall(a,dir,r,h,.6,out var w);
+                q.UseSteepTable=true;
+                Assert.That(q.Clear(a,r,h),Is.EqualTo(clear),$"Clear {t}");
+                Assert.That(q.ClearAboveStep(a,r,h,step),Is.EqualTo(above),$"ClearAboveStep {t}");
+                Assert.That(q.Sweep(a,b,r,h,out var hit2),Is.EqualTo(sweep),$"Sweep {t}");
+                Assert.That(hit2.Id,Is.EqualTo(hit.Id));Assert.That(hit2.Fraction,Is.EqualTo(hit.Fraction));
+                Assert.That(q.TerrainFootprintWalkable(a,r),Is.EqualTo(foot),$"Huella {t}");
+                Assert.That(q.Wall(a,dir,r,h,.6,out var w2),Is.EqualTo(wall),$"Wall {t}");Assert.That(w2.Id,Is.EqualTo(w.Id));
+            }
+            if(source=="B")return;
+            var l=new ProceduralLayout(source);Func<double,double,double,bool> inside=(x,z,m)=>WorldMath.Squircle(x,z)<=l.Settings.Limit-m;
+            var slow=new VerticalQueries(l.Terrain,Tuning.PlayerMaxSlopeDeg){UseSteepTable=false};var fast=new VerticalQueries(l.Terrain,Tuning.PlayerMaxSlopeDeg);
+            for(int k=0;k<3;k++){
+                var gs=new NavGraph(slow,l.Terrain,inside,NavClass.All[k]);var gf=new NavGraph(fast,l.Terrain,inside,NavClass.All[k]);
+                Assert.That(gf.NodeY,Is.EqualTo(gs.NodeY));Assert.That(gf.EdgeTo,Is.EqualTo(gs.EdgeTo));Assert.That(gf.EdgeCost,Is.EqualTo(gs.EdgeCost));Assert.That(gf.PathX,Is.EqualTo(gs.PathX));
+                TestContext.Out.WriteLine($"clase {k}: sin tabla {gs.BuildMs:F0} ms (nodos {gs.NodesMs:F0}), con tabla {gf.BuildMs:F0} ms (nodos {gf.NodesMs:F0})");
+            }
+        }
     }
 }
