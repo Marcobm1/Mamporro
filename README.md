@@ -61,3 +61,5 @@ U6 no añade balance, mundo ampliado, escalada, arte/animación final, contenido
 [Instrucciones del proyecto](docs/INSTRUCCIONES_PROYECTO.md), [continuidad](docs/CONTINUIDAD_AGENTES.md), [decisiones](docs/DECISIONES.md) y [estado actual](docs/ESTADO_ACTUAL.md). Rama única `claude/zen-pasteur-674ik0`; preservar cambios locales y referencias. Tras cada bloque verificable, checkpoint y commit; U6 aprobado, B0 aceptado técnicamente. P0-A/B/C cerrados y aprobados; C aprobado manualmente el 12/10/2026 con limitaciones aceptadas provisionalmente y 3000 nodos/tick. P0-D solo en planificación autorizada, sin implementación.
 
 **Circuito C aprobado el 12/10/2026:** `scripts\p0.cmd jugar`, F10 A/B/C, F11 semillas, F4 0/300/500/750, F7 rescate que invalida y F8 reinicio. Código/builds QA `9a24b6f`, cierre técnico `369fdff`; no sustituyen U3 ni U6. [Cierre y limitaciones](docs/PROGRESO_P0.md).
+
+Plan de continuación: [P0-D — escala y navegación regional](docs/PLAN_P0D.md), **propuesta pendiente de decisiones y autorización de implementación**. Cierre formal P0-C publicado en `b755987`; mantener 3000 nodos/tick.

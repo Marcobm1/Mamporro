@@ -125,3 +125,5 @@ Megabonk sirve como referencia de escala, verticalidad y lectura espacial, mante
 ## Ampliación tras aprobar U4 (04/10/2026)
 
 El autor confirma la dirección completa para después de terminar la migración (U6): mundo y estructuras notablemente mayores; terreno más rectangular/geométrico, grandes mesetas, rampas y más verticalidad; escalada libre; menos enemigos al inicio pero más resistentes, con aumento progresivo; más oro de partida; visual retro bastante más profesional; animaciones; arte e iconos originales; más enemigos, armas, tomos y personajes. Megabonk es referencia de escala, verticalidad, geometría/lectura espacial y agilidad, sin copiar arte, mapas, modelos, assets, contenido ni diseño exacto. Las cifras de balance se decidirán con pruebas en su bloque. U5 no las incluye.
+
+Plan de continuación: [P0-D — escala y navegación regional](../../docs/PLAN_P0D.md), **propuesta pendiente de decisiones y autorización de implementación**. Cierre formal P0-C publicado en `b755987`; mantener 3000 nodos/tick.
