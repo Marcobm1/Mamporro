@@ -56,12 +56,13 @@ namespace Mamporro.Core
         public int Attempt {get;private set;}
         public const int MaxAttempts=8;
 
-        public ProceduralLayout(string seed,ProceduralSettings settings=null)
+        // firstAttempt: primer intento (el rechazo por validación de C4 continúa la serie determinista).
+        public ProceduralLayout(string seed,ProceduralSettings settings=null,int firstAttempt=0)
         {
             var watch=System.Diagnostics.Stopwatch.StartNew();
             Seed=seed;Settings=settings??ProceduralSettings.Default;var s=Settings;
             N=(int)Math.Round(s.Size/s.MacroCell);Level=new int[N*N];RampOf=new int[N*N];RegionOf=new int[N*N];Eligible=new bool[N*N];
-            for(Attempt=0;Attempt<MaxAttempts;Attempt++){
+            for(Attempt=firstAttempt;Attempt<firstAttempt+MaxAttempts;Attempt++){
                 for(int m=0;m<N*N;m++){RampOf[m]=-1;Level[m]=0;}
                 Ramps.Clear();MissingRamps=0;
                 var rng=new Rng(seed).Derive(Attempt==0?"p0c-layout":"p0c-layout-"+Attempt);
@@ -70,7 +71,7 @@ namespace Mamporro.Core
                 PlaceRamps(rng.Derive("rampas"));
                 if(MissingRamps==0)break;
             }
-            if(Attempt==MaxAttempts)Attempt=MaxAttempts-1;
+            if(Attempt==firstAttempt+MaxAttempts)Attempt--;
             Terrain=BuildTerrain(new Rng(seed).Derive("p0c-layout-bordes-"+Attempt));
             Milliseconds=watch.Elapsed.TotalMilliseconds;
         }
@@ -89,9 +90,9 @@ namespace Mamporro.Core
             var s=Settings;var noise=new SimplexNoise2D(rng.Next);var values=new double[N*N];var eligibleValues=new List<double>();
             for(int mz=0;mz<N;mz++)for(int mx=0;mx<N;mx++){
                 int m=mz*N+mx;double cx=MacroX(mx)+s.MacroCell/2,cz=MacroZ(mz)+s.MacroCell/2;
-                // Zona de inicio y franja de 8 m junto al límite: nivel 0 siempre (espacio para la horda
-                // y sin bolsas entre una meseta y el borde del mapa).
-                Eligible[m]=WorldMath.Squircle(cx,cz)<=s.Limit-2*s.MacroCell&&JsMath.Hypot(cx,cz)>s.SpawnRadius+s.MacroCell*.75;
+                // Zona de inicio y franja de 12 m junto al límite: nivel 0 siempre (espacio para la horda,
+                // paso del jefe alrededor de las mesetas y sin bolsas entre una meseta y el borde).
+                Eligible[m]=WorldMath.Squircle(cx,cz)<=s.Limit-3*s.MacroCell&&JsMath.Hypot(cx,cz)>s.SpawnRadius+s.MacroCell*.75;
                 double v=0,amp=1,freq=1/7.0,norm=0;
                 for(int o=0;o<3;o++){v+=amp*noise.Noise(mx*freq,mz*freq);norm+=amp;amp*=.5;freq*=2;}
                 values[m]=v/norm;if(Eligible[m])eligibleValues.Add(values[m]);
@@ -103,29 +104,28 @@ namespace Mamporro.Core
                 masks[k]=new bool[N*N];
                 // La forma (anchura mínima, anidado) quita celdas: se calibra el umbral de cada nivel,
                 // de forma determinista, hasta acercarse a la fracción pedida tras darle forma.
+                // Las mesetas de más de 40 m se dividen con un pasillo de dos macroceldas (8 m, cabe el
+                // jefe) dentro de la calibración, para que la fracción medida sea la final.
                 double input=fractions[k];
                 for(int iteration=0;iteration<10;iteration++){
                     double t=Threshold(Math.Min(1,input));
                     for(int m=0;m<N*N;m++)masks[k][m]=Eligible[m]&&values[m]>=t&&(k==1||masks[k-1][m]);
-                    Shape(masks[k],k>1?masks[k-1]:null);
+                    Shape(masks[k],k>1?masks[k-1]:null,k==1);
+                    var cuts=rng.Derive("cortes-"+k+"-"+iteration);
+                    for(int guard=0;guard<64;guard++)if(!SplitLargest(masks[k],cuts))break;
+                    Shape(masks[k],k>1?masks[k-1]:null,k==1);
                     int count=0;for(int m=0;m<N*N;m++)if(masks[k][m])count++;
                     double actual=eligible==0?0:(double)count/eligible;
                     if(Math.Abs(actual-fractions[k])<=.01||input>=1)break;
                     input*=actual>0?fractions[k]/actual:1.5;
                 }
             }
-            // Mesetas de más de 40 m: un pasillo de una macrocelda las divide en caminos naturales.
-            for(int k=1;k<s.Levels;k++){
-                for(int guard=0;guard<64;guard++){
-                    if(!SplitLargest(masks[k],rng))break;
-                    for(int j=k+1;j<s.Levels;j++)for(int m=0;m<N*N;m++)masks[j][m]&=masks[k][m];
-                }
-                for(int j=k;j<s.Levels;j++)Shape(masks[j],j>1?masks[j-1]:null);
-            }
             for(int m=0;m<N*N;m++){int level=0;for(int k=1;k<s.Levels;k++)if(masks[k][m])level=k;Level[m]=level;}
         }
         // Apertura 2×2 (anchura mínima de 8 m), relleno de huecos de una celda y anidado de niveles.
-        void Shape(bool[] mask,bool[] below)
+        // En el nivel 1 también se abre el suelo: los canales de nivel 0 de una sola macrocelda (4 m,
+        // donde no cabe el jefe) se rellenan, así el suelo entre mesetas mide al menos 8 m.
+        void Shape(bool[] mask,bool[] below,bool openGround=false)
         {
             for(int pass=0;pass<2;pass++){
                 var keep=new bool[N*N];
@@ -137,6 +137,20 @@ namespace Mamporro.Core
                     int m=mz*N+mx;if(mask[m]||!Eligible[m])continue;
                     int around=(mask[m-1]?1:0)+(mask[m+1]?1:0)+(mask[m-N]?1:0)+(mask[m+N]?1:0);
                     if(around>=3)mask[m]=true;
+                }
+                if(openGround){
+                    var low=new bool[N*N];
+                    for(int mz=0;mz+1<N;mz++)for(int mx=0;mx+1<N;mx++){
+                        int m=mz*N+mx;if(!mask[m]&&!mask[m+1]&&!mask[m+N]&&!mask[m+N+1]){low[m]=low[m+1]=low[m+N]=low[m+N+1]=true;}
+                    }
+                    for(int m=0;m<N*N;m++)if(!mask[m]&&!low[m]&&Eligible[m])mask[m]=true;
+                    // Esquinas en diagonal (dos mesetas que se tocan por un vértice): el paso entre las
+                    // dos celdas bajas mide cero. Se rellenan.
+                    for(int mz=0;mz+1<N;mz++)for(int mx=0;mx+1<N;mx++){
+                        int a=mz*N+mx,b=a+1,c=a+N,d=a+N+1;
+                        if(mask[a]&&mask[d]&&!mask[b]&&!mask[c]){if(Eligible[b])mask[b]=true;if(Eligible[c])mask[c]=true;}
+                        else if(mask[b]&&mask[c]&&!mask[a]&&!mask[d]){if(Eligible[a])mask[a]=true;if(Eligible[d])mask[d]=true;}
+                    }
                 }
                 if(below!=null)for(int m=0;m<N*N;m++)mask[m]&=below[m];
             }
@@ -152,9 +166,9 @@ namespace Mamporro.Core
                 int w=x1-x0+1,h=z1-z0+1,max=Settings.MaxPlateauCells;
                 if(w<=max&&h<=max)continue;
                 // Corte perpendicular al lado más largo, en una posición que deja piezas ≥ mínimo.
-                bool alongX=w>=h;int length=alongX?w:h,lo=Settings.MinPlateauCells,hi=length-Settings.MinPlateauCells-1;
-                int cut=(alongX?x0:z0)+(hi>lo?lo+rng.Int(0,hi-lo):length/2);
-                foreach(int m in cells)if((alongX?m%N:m/N)==cut)mask[m]=false;
+                bool alongX=w>=h;int length=alongX?w:h,lo=Settings.MinPlateauCells,hi=length-Settings.MinPlateauCells-2;
+                int cut=(alongX?x0:z0)+(hi>lo?lo+rng.Int(0,hi-lo):length/2-1);
+                foreach(int m in cells){int c=alongX?m%N:m/N;if(c==cut||c==cut+1)mask[m]=false;}
                 return true;
             }
             return false;
@@ -262,7 +276,9 @@ namespace Mamporro.Core
                 int m=MacroAt(x+.5,z+.5);if(m<0)m=MacroAt(Math.Min(x,half-.5),Math.Min(z,half-.5));
                 if(!NearRamp(m)){
                     double ox=Quantize(jitter.Noise(x/12,z/12)),oz=Quantize(jitterZ.Noise(x/12+40,z/12+40));
-                    int jm=MacroAt(x+.5+ox,z+.5+oz);if(jm>=0&&!NearRamp(jm))m=jm;
+                    // Solo erosiona: el borde puede retroceder hacia la meseta, nunca invadir el nivel
+                    // inferior (los pasos de 8 m conservan ≥ 7 m llanos y el jefe sigue cabiendo).
+                    int jm=MacroAt(x+.5+ox,z+.5+oz);if(jm>=0&&!NearRamp(jm)&&Level[jm]<Level[m])m=jm;
                 }
                 double h=LevelY(Level[m]);
                 int r=RampOf[m];if(r>=0)h=RampHeight(Ramps[r],x,z);

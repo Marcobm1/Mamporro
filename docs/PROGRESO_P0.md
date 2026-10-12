@@ -4,6 +4,8 @@ Estado: **P0-A1–A5 base técnica validada manualmente; P0-A6 corregido y verif
 
 ## Cómo retomar
 
+- **Punto vigente (P0-C en curso, 12/10/2026, Claude Code):** plan aprobado con diez decisiones ([DECISIONES](DECISIONES.md)); C0–C4 hechos (checkpoints en «P0-C — implementación» al final). Siguiente: C5, circuito C en la build QA (F10 A/B/C, F11 semillas, `-p0-seed`, mediciones). No sustituir U3, no tocar U6, no empezar P0-D.
+
 - **Punto vigente (cierre de P0-B, 12/10/2026):** P0-B aprobado manualmente por el autor; código `a9cac92`, cierre técnico `5688e90` y este cierre documental. Siguiente: plan de P0-C entregado en [PLAN_P0C](PLAN_P0C.md), con diez decisiones abiertas en su sección 14; **no programar P0-C hasta su aprobación**; D no autorizado. Los puntos siguientes son historial.
 
 - **Punto vigente (P0-B, 11/10/2026):** navegación vertical y escalada de todos los enemigos implementadas y verificadas técnicamente en el circuito QA B (F10); cierre técnico `a9cac92`. Edit 635/635, Play 52/52, referencias coincidentes, benchmark/evidencias válidos. Detalle, desviaciones (p95 0,61 ms y pico 1,49 ms frente a 0,5/1 ms) y guía en «P0-B — … cierre técnico» al final. **Siguiente paso: prueba manual del autor; detenerse. No iniciar P0-C/D.**
@@ -750,3 +752,30 @@ Limitaciones aceptadas por el autor (no son objetivos cumplidos): navegación co
 Integridad al cerrar: U6 `96b492cb271111251fe42b8646e65370a1b7b566773a1e35b34c3f2d1ae70873` y las siete huellas protegidas iguales a la tabla A6.
 
 **P0-B cerrado. Continuación: plan de P0-C ([PLAN_P0C](PLAN_P0C.md)); no programar hasta su aprobación. P0-D no autorizado.**
+
+## P0-C — implementación (12/10/2026, Claude Code)
+
+Plan [PLAN_P0C](PLAN_P0C.md) aprobado con las diez decisiones del autor. Circuito C solo en la build QA, mapa de 128 m, giros de 90°. Semillas de prueba: P0QA, MAMPORRO, COLINAS7, Z9K2, MESETA, ACANTILADO, RAMPA42 y HORDA750.
+
+### Checkpoint C0 — línea base (`32c4a18`)
+Recortes de 128 m del terreno U3: ~1 s los tres mapas, casi ninguna arista de escalada (el terreno U3 no tiene paredes útiles). Coste lineal con el número de sólidos: 17 → 153 ms, 117 → 502 ms, 317 → 1369 ms (clase S).
+
+### Checkpoint C1 — rejilla espacial de sólidos (`936719d`)
+`VerticalQueries` consulta solo los sólidos cercanos (celdas de 4 m, candidatos en orden de índice). 6000 consultas aleatorias y los mapas, idénticos al recorrido lineal; con 317 sólidos, 688 → 119 ms.
+
+### Checkpoint C2 — trazado de niveles (`a4403b8`)
+Macroceldas de 4 m, niveles 0/4,5/9/13,5 m calibrados a ~35 % elevado, mesetas de 8–40 m, rampas ≤ 30° de 8 m (4 m solo si no cabe otra), intentos deterministas. Mapas: descarte previo de escaladas, paso de 0,3 m y tres clases en paralelo (idéntico al serie): 5,8 s → 1,1 s.
+
+### Checkpoint C3 — estructuras (`fea5149`)
+Casas, templos, granjas, pozos, torres, muros, bloques escalonados y árboles, alineados a la rejilla. Reglas contra refugios por construcción (tapas ≤ 0,7 m o ≥ 1 m, tejados enrasados, nada flotante).
+
+### Checkpoint C4 — validación y reparación con la navegación P0-B
+`ProceduralMap` construye trazado, estructuras y los grafos S/M/L, comprueba y repara de forma determinista; los grafos aceptados quedan listos para reutilizarse en juego.
+
+- **Criterio (decisión 8 y sección 6.9):** S alcanza todo desde el inicio y vuelve (cero inaccesibles y cero bolsas); toda tapa escalable donde cabe el jugador tiene nodos S con salida; los marcadores tienen un nodo S con salida al lado; M y L sin bolsas y sin grupos inaccesibles de más de 32 m² (el suelo principal y las mesetas amplias son mucho mayores, así que quedan cubiertos). Grupos de hasta 1 m² se toleran solo si un enemigo de esa clase toca al jugador desde un nodo válido (regla de contacto de `EnemiesNav`: radios sumados y diferencia de altura < 1,6 m).
+- **Reparación:** comprobación previa barata del paso del jefe (rejilla de 1 m, 6–30 ms) que quita obstáculos o recoloca marcadores que cierran pasos; después, con `NavGraph`, se quitan los obstáculos culpables (a alcance del cuerpo de la clase tanto del grupo fallido como de la zona válida) y se recolocan los marcadores. Si el fallo es del terreno, se rechaza el intento y se genera el siguiente de la serie.
+- **Cambios de generación para que el jefe circule:** pasillos entre mesetas de 8 m, relleno de canales de suelo de 4 m y de esquinas en diagonal, ruido de borde que solo erosiona las mesetas, franja exterior de 12 m a nivel 0, 6 m entre obstáculos (3 m hasta acantilados y rampas; 6 m para los árboles), puertas de 2,5 m (entra M). Marcadores QA con las cantidades del catálogo (14 cofres, 3 santuarios, 2 tótems, 1 portal), distancia al inicio limitada a 40 m.
+- **Corrección en `NavGraph` (P0-B):** las caídas desde tapas cuya altura no es exacta en float (0,9 m, 9,9 m) no se generaban: `NodeY` (float) queda ~2e-8 m bajo la tapa y el barrido chocaba con ella. Ahora la caída sale 1 mm por encima (la holgura de contacto que ya usa la escalada). Regresión añadida; los circuitos A y B siguen pasando sus pruebas.
+- **Tabla de celdas abruptas del terreno:** `Query` y la huella transitable responden en O(1) donde no hay caras abruptas cerca. Mismo resultado en 12 000 consultas aleatorias y en los mapas; mapa L 1254 → 908 ms.
+- **Resultados (8 semillas, EditMode 681/681):** todas aceptadas; 14/3/2/1 marcadores en todas; 1–2 templos y 1–2 granjas. Tiempo total de generación, validación y mapas: 0,97 s sin reparación (P0QA, MESETA, HORDA750), 1,91–1,95 s con una reparación (COLINAS7, Z9K2, ACANTILADO, RAMPA42) y 2,09 s con un rechazo (MAMPORRO). Objetivo de 2 s cumplido en 7 de 8, con poco margen; la causa del resto es la reconstrucción completa de los mapas tras reparar.
+- **Coste del criterio del jefe:** la separación de 6 m deja 18–28 árboles antes de validar (la plantilla pedía 40–60) y la comprobación previa quita además 8–25 obstáculos por mapa.
