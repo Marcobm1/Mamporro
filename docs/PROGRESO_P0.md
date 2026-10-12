@@ -4,7 +4,7 @@ Estado: **P0-A1–A5 base técnica validada manualmente; P0-A6 corregido y verif
 
 ## Cómo retomar
 
-- **Punto vigente (P0-C en curso, 12/10/2026, Claude Code):** plan aprobado con diez decisiones ([DECISIONES](DECISIONES.md)); C0–C4 hechos (checkpoints en «P0-C — implementación» al final). Siguiente: C5, circuito C en la build QA (F10 A/B/C, F11 semillas, `-p0-seed`, mediciones). No sustituir U3, no tocar U6, no empezar P0-D.
+- **Punto vigente (P0-C cerrado técnicamente, 12/10/2026, Claude Code):** C0–C6 hechos; circuito C en la build QA (F10 A → B → C, F11 semillas, `-p0-seed`). **Pendiente: prueba manual del autor del circuito C y su decisión sobre el presupuesto de navegación (publicación de ruta 0,5/0,9/1,3 s frente al objetivo de 0,3 s).** Detalle en «P0-C — implementación» al final. No sustituir U3, no tocar U6, **no empezar P0-D**.
 
 - **Punto vigente (cierre de P0-B, 12/10/2026):** P0-B aprobado manualmente por el autor; código `a9cac92`, cierre técnico `5688e90` y este cierre documental. Siguiente: plan de P0-C entregado en [PLAN_P0C](PLAN_P0C.md), con diez decisiones abiertas en su sección 14; **no programar P0-C hasta su aprobación**; D no autorizado. Los puntos siguientes son historial.
 
@@ -779,3 +779,52 @@ Casas, templos, granjas, pozos, torres, muros, bloques escalonados y árboles, a
 - **Tabla de celdas abruptas del terreno:** `Query` y la huella transitable responden en O(1) donde no hay caras abruptas cerca. Mismo resultado en 12 000 consultas aleatorias y en los mapas; mapa L 1254 → 908 ms.
 - **Resultados (8 semillas, EditMode 681/681):** todas aceptadas; 14/3/2/1 marcadores en todas; 1–2 templos y 1–2 granjas. Tiempo total de generación, validación y mapas: 0,97 s sin reparación (P0QA, MESETA, HORDA750), 1,91–1,95 s con una reparación (COLINAS7, Z9K2, ACANTILADO, RAMPA42) y 2,09 s con un rechazo (MAMPORRO). Objetivo de 2 s cumplido en 7 de 8, con poco margen; la causa del resto es la reconstrucción completa de los mapas tras reparar.
 - **Coste del criterio del jefe:** la separación de 6 m deja 18–28 árboles antes de validar (la plantilla pedía 40–60) y la comprobación previa quita además 8–25 obstáculos por mapa.
+
+### Checkpoint C5 — circuito C en la build QA (`e2e4d36`, `9a24b6f`)
+- `VerticalLayout.Procedural`: el circuito se crea desde el mapa validado (límite de 60 m) y la navegación reutiliza sus grafos S/M/L, sin reconstruirlos. Árboles verdes y marcadores QA de color propio (cofre dorado, santuario cian, tótem rojo, portal violeta).
+- **Controles QA:** F10 recorre A → B → C; F11 pasa a la siguiente semilla QA (P0QA, MAMPORRO, COLINAS7, Z9K2, MESETA, ACANTILADO, RAMPA42, HORDA750) y, desde A o B, entra en C. Argumentos `-p0-circuit C` y `-p0-seed TEXTO` (mismo formato de semilla que el juego: A–Z y 0–9, hasta 12). F11 no lo usaba nada. El HUD muestra circuito, semilla, intento, reparaciones, rechazos y tiempo del mapa.
+- **Horda QA:** mixta como en B, repartida por los 128 m (también sobre mesetas); el jefe aparece en el nodo L de suelo más cercano a (−14, 0).
+- **Arnés:** `scripts\p0.cmd benchmarkc|devdiagc|evidencec` en P0QA, COLINAS7 y HORDA750 dentro de una ejecución; posiciones del jugador tomadas de los puntos clave de cada mapa (inicio, meseta mayor de cada nivel, un tejado, suelo lejano).
+
+### Checkpoint C6 — verificación y cierre técnico
+- **Pruebas:** EditMode **693/693**, PlayMode **53/53** (incluye `CircuitCRunsTheValidatedMapAndF11CyclesSeeds` y el recorrido A → B → C → A).
+- **Estrés en lógica (EditMode), 3 semillas × 300/750:** cero penetraciones, cero cuerpos bajo el terreno, pico de atascados ≤ 1/765.
+- **Builds QA** Normal y Development de `9a24b6f` (`Builds/P0`, `Builds/P0Dev`, `P0-source.txt`).
+- **evidencec** válida (`unity/TestResults/P0/ProceduralEvidence/20261012T040154`, 12 capturas): en las tres semillas la horda sube a la meseta de nivel 3 y el jefe llega a la meseta amplia; vista cenital y santuario. La vista cenital queda lavada por la niebla de distancia del render (no se tocó).
+- **benchmarkc** válido (`unity/TestResults/P0/ProceduralNormal/20261012T040404`, 12 informes). Medidas de lógica del arnés, no FPS:
+
+| Semilla | Carga | Navegación p95 / máx (ms) | Tick lógico p95 (ms) | Publicación S/M/L (s) | Penetraciones / bajo terreno | Atascados / aglomerados (pico) |
+| --- | --- | --- | --- | --- | --- | --- |
+| P0QA | 300 | 0,568 / 1,499 | 0,78 | 0,48 / 0,90 / 1,13 | 0 / 0 | 0 % / 85,7 % |
+| P0QA | 750 | 0,714 / 1,673 | 1,31 | 0,48 / 0,90 / 1,13 | 0 / 0 | 0 % / 86,5 % |
+| COLINAS7 | 300 | 0,473 / 1,472 | 0,74 | 0,50 / 0,92 / 1,15 | 0 / 0 | 0 % / 92,7 % |
+| COLINAS7 | 750 | 0,615 / 1,648 | 1,35 | 0,50 / 0,92 / 1,15 | 0 / 0 | 0,1 % / 89,3 % |
+| HORDA750 | 300 | 0,593 / 1,303 | 0,77 | 0,48 / 0,90 / 1,13 | 0 / 0 | 0 % / 81,3 % |
+| HORDA750 | 750 | 0,825 / 1,506 | 1,40 | 0,48 / 0,90 / 1,13 | 0 / 0 | 0 % / 77,7 % |
+
+  Con ruta válida: 99,9–100 % en todas las cargas. Cargas de 500 en el informe.
+- **devdiagc** válido (`unity/TestResults/P0/ProceduralDevelopment/20261012T041244`): 11,0–12,3 KB de GC por frame (B: 10,6 KB con 750; con 0 enemigos C ya da 11 KB, sobre todo HUD y arnés); memoria gestionada ~80 MB (B: 35 MB, la diferencia son los grafos del mapa de 128 m); total asignado 165 MB.
+- **Integridad:** U6 `96b492cb271111251fe42b8646e65370a1b7b566773a1e35b34c3f2d1ae70873` y los siete ajustes protegidos con las huellas de la tabla A6; `src/` y `unity/Docs/Reference` sin cambios desde `6019a1a`. Circuitos A y B: sus pruebas siguen pasando (incluido el estrés de B).
+
+### Objetivos de presupuesto (decisión 10)
+| Objetivo | Resultado | Estado |
+| --- | --- | --- |
+| Trazado ≤ 300 ms | 3–9 ms (con estructuras, 6–12 ms) | Cumplido |
+| Mapas ≤ 2 s (QA) | Generación + validación + mapas: ~1,0 s sin reparación; 1,9 s con una; 2,1 s con un rechazo (7 de 8 semillas ≤ 2 s) | Cumplido con poco margen, salvo MAMPORRO |
+| Navegación ≤ +10 % sobre P0-B (0,61 ms p95 con 750) | 0,615 / 0,714 / 0,825 ms | Solo COLINAS7; P0QA +17 %, HORDA750 +35 % |
+| Ruta tras cambio de posición/altura ≤ 0,3 s | S 0,48–0,50 s, M 0,90–0,92 s, L 1,13–1,15 s | **No cumplido** |
+
+**Causa de la publicación lenta:** los tres mapas de C suman ~100 000 nodos (B: ~10 000) y comparten el presupuesto heredado de 3000 nodos por tick; se calculan uno tras otro (primero la clase con más enemigos) y cada campo termina su cálculo en curso antes de empezar la nueva meta. Curva medida en EditMode (orientativa, 750 enemigos): presupuesto 4500 → 0,33/0,60/0,77 s y navegación p95 ~0,8 ms; 6000 → 0,25/0,45/0,57 s y ~0,9 ms; 9000 → 0,17/0,30/0,38 s y ~1,3 ms. Ningún presupuesto cumple a la vez los 0,3 s y el +10 %. Se deja 3000 (comportamiento de P0-B intacto) y **la decisión es del autor**; alternativas posibles: subir el presupuesto solo en C, aceptar la latencia, o una ventana de navegación local (frontera con P0-D, no iniciada).
+
+### Hallazgos para la prueba manual
+- **Aglomeración:** pico de 78–93 % de enemigos esperando (B: 32 %). Es la limitación aceptada de P0-B (colas al pie de las paredes) amplificada: cada posición es una meseta o tejado con una o dos rampas o paredes de acceso y hasta 750 enemigos repartidos por 128 m. Casi nadie queda atascado (≤ 0,2 %).
+- **Jefe lento en HORDA750:** llega a la meseta amplia en 69,6 s con 20 inicios de escalada para una ruta de unos 70 m (P0QA 18,7 s, COLINAS7 15,3 s). No es refugio, pero la ruta es ineficiente.
+- **Menos árboles** (18–28 antes de validar) por la separación de 6 m que necesita el jefe.
+- La recogida de gemas y monedas sigue ignorando la altura (pendiente aceptado en P0-B).
+
+### Cómo probar el circuito C
+1. `scripts\p0.cmd jugar` (build QA Normal; progreso solo QA).
+2. F10 hasta «C · procedural» (o lanzar con `-p0-circuit C`); F11 cambia de semilla; F4 0/300/500/750 enemigos (jefe desde 300); F7 rescate (invalida); F8 reinicio.
+3. Comprobar: mesetas de varios niveles con bordes rectos e irregularidad moderada, rampas (≤ 30°), escalada de acantilados y estructuras, tejados transitables, pozos sin tejado, árboles como obstáculo no escalable, marcadores sobre superficies alcanzables, que ninguna zona sirva de refugio y que el jefe llegue a las zonas amplias.
+
+**P0-C cerrado técnicamente. Pendiente: prueba manual del autor del circuito C y su decisión sobre el presupuesto de navegación. No empezar P0-D.**

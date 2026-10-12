@@ -805,3 +805,7 @@ El autor aprueba el plan de P0-C (`f99f97f`) y autoriza C0–C6 con estas decisi
 10. **Presupuestos iniciales:** trazado ≤ 300 ms; mapas de navegación ≤ 2 s (límite provisional de la build QA); navegación en juego ≤ +10 % sobre P0-B; actualización de ruta ≤ 0,3 s. Medir con varias semillas y 0/300/500/750 enemigos; si no se cumplen, presentar resultados y causa sin sacrificar estabilidad ni adelantar P0-D.
 
 Orden de trabajo: C0 y C1 primero (medir y optimizar las consultas de colisión). Al terminar, build QA, pruebas, documentación y push; detenerse para la prueba manual del circuito C.
+
+## P0-C: decisión pendiente del autor (12/10/2026)
+
+No es una decisión tomada: la ruta tras un cambio de posición o altura del jugador tarda 0,5 s (S), 0,9 s (M) y 1,3 s (L) en el circuito C con el presupuesto de navegación heredado de P0-B (3000 nodos por tick), frente al objetivo de 0,3 s. Subir el presupuesto la acorta pero encarece la navegación por encima del +10 % acordado (curva en [PROGRESO_P0](PROGRESO_P0.md), «Objetivos de presupuesto»). Se mantiene 3000 hasta que el autor decida.
