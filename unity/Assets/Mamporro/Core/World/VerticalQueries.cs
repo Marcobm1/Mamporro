@@ -54,10 +54,59 @@ namespace Mamporro.Core
             WallMinSlopeDegrees=wallMinSlopeDegrees;terrain=heightfield==null?null:new TerrainWallGeometry(heightfield);
             if(input==null)throw new ArgumentNullException(nameof(input));
             solids=(VerticalSolid[])input.Clone();
+            var ids=new System.Collections.Generic.HashSet<int>();
             for(int i=0;i<solids.Length;i++){
                 if(solids[i]==null)throw new ArgumentException("Superficie ausente");
-                for(int j=0;j<i;j++)if(solids[j].Id==solids[i].Id)throw new ArgumentException("ID de superficie duplicado");
+                if(!ids.Add(solids[i].Id))throw new ArgumentException("ID de superficie duplicado");
             }
+            BuildGrid();
+        }
+
+        // ------------------------------------------------------------ rejilla espacial (P0-C1)
+        // Celdas de 4 m con los índices de los sólidos que tocan. Cada consulta reúne solo los
+        // candidatos de su zona y los recorre en orden de índice, como la versión lineal: mismos
+        // resultados y desempates. UseSpatialGrid=false vuelve al recorrido lineal (pruebas).
+        public bool UseSpatialGrid=true;
+        const double GridCell=4;
+        double gridMinX,gridMinZ;int gridW,gridH;int[] gridStart,gridItems,stamp,candidates;int stampValue;
+        void BuildGrid()
+        {
+            stamp=new int[solids.Length];candidates=new int[solids.Length];
+            if(solids.Length==0){gridW=gridH=0;gridStart=new int[1];gridItems=new int[0];return;}
+            double minX=double.MaxValue,minZ=double.MaxValue,maxX=double.MinValue,maxZ=double.MinValue;
+            foreach(var s in solids){minX=Math.Min(minX,s.Min.X);minZ=Math.Min(minZ,s.Min.Z);maxX=Math.Max(maxX,s.Max.X);maxZ=Math.Max(maxZ,s.Max.Z);}
+            gridMinX=minX;gridMinZ=minZ;gridW=Math.Max(1,(int)Math.Ceiling((maxX-minX)/GridCell)+1);gridH=Math.Max(1,(int)Math.Ceiling((maxZ-minZ)/GridCell)+1);
+            var counts=new int[gridW*gridH+1];
+            for(int i=0;i<solids.Length;i++){
+                var s=solids[i];CellRange(s.Min.X,s.Min.Z,s.Max.X,s.Max.Z,out int x0,out int z0,out int x1,out int z1);
+                for(int z=z0;z<=z1;z++)for(int x=x0;x<=x1;x++)counts[z*gridW+x+1]++;
+            }
+            for(int c=0;c<gridW*gridH;c++)counts[c+1]+=counts[c];
+            gridStart=(int[])counts.Clone();gridItems=new int[counts[gridW*gridH]];var fill=(int[])counts.Clone();
+            for(int i=0;i<solids.Length;i++){
+                var s=solids[i];CellRange(s.Min.X,s.Min.Z,s.Max.X,s.Max.Z,out int x0,out int z0,out int x1,out int z1);
+                for(int z=z0;z<=z1;z++)for(int x=x0;x<=x1;x++)gridItems[fill[z*gridW+x]++]=i;
+            }
+        }
+        void CellRange(double ax,double az,double bx,double bz,out int x0,out int z0,out int x1,out int z1)
+        {
+            x0=Math.Max(0,Math.Min(gridW-1,(int)Math.Floor((ax-gridMinX)/GridCell)));x1=Math.Max(0,Math.Min(gridW-1,(int)Math.Floor((bx-gridMinX)/GridCell)));
+            z0=Math.Max(0,Math.Min(gridH-1,(int)Math.Floor((az-gridMinZ)/GridCell)));z1=Math.Max(0,Math.Min(gridH-1,(int)Math.Floor((bz-gridMinZ)/GridCell)));
+        }
+        // Índices de los sólidos que pueden tocar el rectángulo XZ, sin duplicados y ordenados.
+        int Gather(double ax,double az,double bx,double bz)
+        {
+            if(!UseSpatialGrid||gridW==0){for(int i=0;i<solids.Length;i++)candidates[i]=i;return solids.Length;}
+            const double pad=1e-6;
+            CellRange(ax-pad,az-pad,bx+pad,bz+pad,out int x0,out int z0,out int x1,out int z1);
+            if(++stampValue==int.MaxValue){Array.Clear(stamp,0,stamp.Length);stampValue=1;}
+            int n=0;
+            for(int z=z0;z<=z1;z++)for(int x=x0;x<=x1;x++){
+                int c=z*gridW+x;
+                for(int k=gridStart[c];k<gridStart[c+1];k++){int i=gridItems[k];if(stamp[i]==stampValue)continue;stamp[i]=stampValue;candidates[n++]=i;}
+            }
+            if(n>1)Array.Sort(candidates,0,n);
+            return n;
         }
         public static bool Finite(Vec3 p)=>Valid(p.X)&&Valid(p.Y)&&Valid(p.Z);
         static bool Valid(double v)=>!double.IsNaN(v)&&!double.IsInfinity(v);
@@ -71,9 +120,10 @@ namespace Mamporro.Core
         public bool Clear(Vec3 feet,double radius,double height)
         {
             Validate(feet,radius,height);
-            foreach(var s in solids)if(feet.X>s.Min.X-radius+Epsilon&&feet.X<s.Max.X+radius-Epsilon
+            int n=Gather(feet.X-radius,feet.Z-radius,feet.X+radius,feet.Z+radius);
+            for(int k=0;k<n;k++){var s=solids[candidates[k]];if(feet.X>s.Min.X-radius+Epsilon&&feet.X<s.Max.X+radius-Epsilon
                 &&feet.Y>s.Min.Y-height+Epsilon&&feet.Y<s.Max.Y-Epsilon
-                &&feet.Z>s.Min.Z-radius+Epsilon&&feet.Z<s.Max.Z+radius-Epsilon)return false;
+                &&feet.Z>s.Min.Z-radius+Epsilon&&feet.Z<s.Max.Z+radius-Epsilon)return false;}
             return terrain==null||!terrain.Query(feet,feet,radius,height,WallCos,true,out _);
         }
         // P0-B: como Clear, pero los sólidos cuya tapa queda a un escalón o menos de los pies no
@@ -81,9 +131,10 @@ namespace Mamporro.Core
         public bool ClearAboveStep(Vec3 feet,double radius,double height,double step)
         {
             Validate(feet,radius,height);
-            foreach(var s in solids)if(s.Max.Y>feet.Y+step&&feet.X>s.Min.X-radius+Epsilon&&feet.X<s.Max.X+radius-Epsilon
+            int n=Gather(feet.X-radius,feet.Z-radius,feet.X+radius,feet.Z+radius);
+            for(int k=0;k<n;k++){var s=solids[candidates[k]];if(s.Max.Y>feet.Y+step&&feet.X>s.Min.X-radius+Epsilon&&feet.X<s.Max.X+radius-Epsilon
                 &&feet.Y>s.Min.Y-height+Epsilon&&feet.Y<s.Max.Y-Epsilon
-                &&feet.Z>s.Min.Z-radius+Epsilon&&feet.Z<s.Max.Z+radius-Epsilon)return false;
+                &&feet.Z>s.Min.Z-radius+Epsilon&&feet.Z<s.Max.Z+radius-Epsilon)return false;}
             return terrain==null||!terrain.Query(feet,feet,radius,height,WallCos,true,out _);
         }
         // P0-B: ninguna cara abrupta del terreno bajo la huella (sin voladizo sobre un acantilado).
@@ -100,7 +151,8 @@ namespace Mamporro.Core
         {
             Validate(from,radius,height);Validate(to,radius,height);
             hit=new VerticalHit{Fraction=1,Id=-1};bool found=false;
-            foreach(var s in solids){
+            int n=Gather(Math.Min(from.X,to.X)-radius,Math.Min(from.Z,to.Z)-radius,Math.Max(from.X,to.X)+radius,Math.Max(from.Z,to.Z)+radius);
+            for(int k=0;k<n;k++){var s=solids[candidates[k]];
                 double enter=double.NegativeInfinity,exit=double.PositiveInfinity;Vec3 normal=default;
                 if(!Slab(from.X,to.X-from.X,s.Min.X-radius,s.Max.X+radius,new Vec3(-1,0,0),new Vec3(1,0,0),ref enter,ref exit,ref normal)
                     ||!Slab(from.Y,to.Y-from.Y,s.Min.Y-height,s.Max.Y,new Vec3(0,-1,0),new Vec3(0,1,0),ref enter,ref exit,ref normal)
@@ -126,22 +178,23 @@ namespace Mamporro.Core
         {
             Validate(feet,radius,0);if(!Valid(tolerance)||tolerance<0)throw new ArgumentException("Tolerancia inválida");
             id=-1;
-            foreach(var s in solids)if(Math.Abs(feet.Y-s.Max.Y)<=tolerance&&feet.X-radius>=s.Min.X-Epsilon
-                &&feet.X+radius<=s.Max.X+Epsilon&&feet.Z-radius>=s.Min.Z-Epsilon&&feet.Z+radius<=s.Max.Z+Epsilon){id=s.Id;return true;}
+            int n=Gather(feet.X-radius,feet.Z-radius,feet.X+radius,feet.Z+radius);
+            for(int k=0;k<n;k++){var s=solids[candidates[k]];if(Math.Abs(feet.Y-s.Max.Y)<=tolerance&&feet.X-radius>=s.Min.X-Epsilon
+                &&feet.X+radius<=s.Max.X+Epsilon&&feet.Z-radius>=s.Min.Z-Epsilon&&feet.Z+radius<=s.Max.Z+Epsilon){id=s.Id;return true;}}
             if(terrain!=null&&terrain.Support(feet,radius,tolerance,WallCos))return true;
-            // Cobertura por unión de tapas coplanares, incluso al cruzar colliders.
-            if(radius>0&&Covered(feet.X-radius,feet.X+radius,feet.Z-radius,feet.Z+radius,feet.Y,tolerance,0))return true;
+            // Cobertura por unión de tapas coplanares, incluso al cruzar colliders (mismos candidatos).
+            if(radius>0&&Covered(feet.X-radius,feet.X+radius,feet.Z-radius,feet.Z+radius,feet.Y,tolerance,0,n))return true;
             return false;
         }
-        bool Covered(double x0,double x1,double z0,double z1,double y,double tolerance,int start)
+        bool Covered(double x0,double x1,double z0,double z1,double y,double tolerance,int start,int count)
         {
             if(x1-x0<=Epsilon||z1-z0<=Epsilon)return true;
-            for(int i=start;i<solids.Length;i++){
-                var s=solids[i];if(Math.Abs(y-s.Max.Y)>tolerance)continue;
+            for(int i=start;i<count;i++){
+                var s=solids[candidates[i]];if(Math.Abs(y-s.Max.Y)>tolerance)continue;
                 double a=Math.Max(x0,s.Min.X),b=Math.Min(x1,s.Max.X),c=Math.Max(z0,s.Min.Z),d=Math.Min(z1,s.Max.Z);
                 if(b-a<=Epsilon||d-c<=Epsilon)continue;
-                return Covered(x0,a,z0,z1,y,tolerance,i+1)&&Covered(b,x1,z0,z1,y,tolerance,i+1)
-                    &&Covered(a,b,z0,c,y,tolerance,i+1)&&Covered(a,b,d,z1,y,tolerance,i+1);
+                return Covered(x0,a,z0,z1,y,tolerance,i+1,count)&&Covered(b,x1,z0,z1,y,tolerance,i+1,count)
+                    &&Covered(a,b,z0,c,y,tolerance,i+1,count)&&Covered(a,b,d,z1,y,tolerance,i+1,count);
             }
             return false;
         }
