@@ -20,7 +20,7 @@ El repositorio es la memoria compartida. Una decisión, prueba, limitación o si
 2. `docs/INSTRUCCIONES_PROYECTO.md`.
 3. `docs/ESTADO_ACTUAL.md`.
 4. Este archivo, `docs/CONTINUIDAD_AGENTES.md`.
-5. `docs/PROGRESO_P0.md`, P0-A1–A5 autorizados; cierre técnico aceptado en `docs/BLENDER_B0.md`; `docs/PROGRESO_U6.md` conserva el cierre aprobado de la migración (05/10/2026).
+5. `docs/PROGRESO_P0.md`, P0-A/B/C aprobados; P0-D solo en planificación; cierre técnico aceptado en `docs/BLENDER_B0.md`; `docs/PROGRESO_U6.md` conserva el cierre aprobado de la migración (05/10/2026).
 6. `docs/DECISIONES.md` y el resto de documentación indicada por el checkpoint.
 
 Después comprobar desde CMD:
@@ -128,12 +128,12 @@ Ningún agente debe:
 
 ## Estado actual del relevo
 
-A fecha 05/10/2026:
+A fecha 12/10/2026:
 
 - U1 está cerrado y aprobado.
 - U2 está aprobado y cerrado.
 - U3 aprobada manualmente el 04/10/2026; último cierre técnico previo: `83246ebfd873b0c5d23611a1d557f83096180217`.
-- U4 aprobada manualmente el 04/10/2026 (último cierre técnico `3754e31`). U5 aprobado manualmente el 04/10/2026; U6 aprobado manualmente el 05/10/2026; migración cerrada. B0.1–B0.6 cerrados y aceptados por el autor como pipeline validado técnicamente y validado para proponer adopción. No hubo revisión manual de la build ni aprobación de arte final. P0-A autorizado, B/C/D no autorizados.
+- U4 aprobada manualmente el 04/10/2026 (último cierre técnico `3754e31`). U5 aprobado manualmente el 04/10/2026; U6 aprobado manualmente el 05/10/2026; migración cerrada. B0.1–B0.6 cerrados y aceptados por el autor como pipeline validado técnicamente y validado para proponer adopción. No hubo revisión manual de la build ni aprobación de arte final. P0-A/B/C aprobados; P0-D solo en planificación autorizada, sin implementación.
 - Codex CLI y Claude Code trabajan por turnos. Leer `docs/BLENDER_B0.md`, `docs/PROGRESO_U6.md` y los cierres de U3–U5, auditar el árbol y continuar desde el checkpoint; conservar los siete ajustes locales Unity excluidos.
 
-Punto de continuación vigente: [PROGRESO_P0](PROGRESO_P0.md) — circuito QA aislado de movilidad/verticalidad. **P0-A cerrado:** A1–A5 validados y A6 aprobado manualmente por el autor el 11/10/2026 (código `373620d`, cierre `dc8ab26`). **P0-B cerrado:** aprobado manualmente por el autor el 12/10/2026 (navegación vertical y escalada de todos los enemigos, circuito QA B con F10; código `a9cac92`, cierre técnico `5688e90`). **P0-C cerrado técnicamente el 12/10/2026** (circuito QA C procedural con F10/F11, plan [PLAN_P0C](PLAN_P0C.md); código hasta `9a24b6f`): pendiente de la prueba manual del autor y de su decisión sobre el presupuesto de navegación. **No iniciar P0-D.** B0 cerrado y publicado en `0b0b68c31dda803cf9cf566b3c96f369ed893ce3`.
+Punto de continuación vigente: [PROGRESO_P0](PROGRESO_P0.md) — circuito QA aislado de movilidad/verticalidad. **P0-A cerrado:** A1–A5 validados y A6 aprobado manualmente por el autor el 11/10/2026 (código `373620d`, cierre `dc8ab26`). **P0-B cerrado:** aprobado manualmente por el autor el 12/10/2026 (navegación vertical y escalada de todos los enemigos, circuito QA B con F10; código `a9cac92`, cierre técnico `5688e90`). **P0-C aprobado manualmente el 12/10/2026** (circuito QA C procedural con F10/F11, plan [PLAN_P0C](PLAN_P0C.md); código/builds `9a24b6f`, cierre técnico `369fdff`): limitaciones aceptadas provisionalmente y 3000 nodos/tick conservados. **P0-D solo en planificación autorizada; no programar.** B0 cerrado y publicado en `0b0b68c31dda803cf9cf566b3c96f369ed893ce3`.

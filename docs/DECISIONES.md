@@ -809,3 +809,11 @@ Orden de trabajo: C0 y C1 primero (medir y optimizar las consultas de colisión)
 ## P0-C: decisión pendiente del autor (12/10/2026)
 
 No es una decisión tomada: la ruta tras un cambio de posición o altura del jugador tarda 0,5 s (S), 0,9 s (M) y 1,3 s (L) en el circuito C con el presupuesto de navegación heredado de P0-B (3000 nodos por tick), frente al objetivo de 0,3 s. Subir el presupuesto la acorta pero encarece la navegación por encima del +10 % acordado (curva en [PROGRESO_P0](PROGRESO_P0.md), «Objetivos de presupuesto»). Se mantiene 3000 hasta que el autor decida.
+
+## P0-C aprobado manualmente; P0-D solo planificación (12/10/2026)
+
+Decisión expresa del autor después de probar C: **«Sí, todo bien, autorizamos y seguimos»**. P0-C cerrado y aprobado; cierre técnico `369fdff`, código/builds `9a24b6f`. Acepta provisionalmente las limitaciones del cierre formal de [PROGRESO_P0](PROGRESO_P0.md): generación MAMPORRO ~2,09 s, navegación hasta 0,825 ms p95 con 750, campos lentos, picos de falta de progreso, jefe lento en HORDA750, niebla cenital y recogida sin altura. No declara cumplidos todos los objetivos.
+
+Se mantienen **3000 nodos/tick**, sin autorización para subirlos por defecto. El XML heredado a 9000 en HORDA750 da **0,167/1,083/1,217 s S/M/L**: mejora no uniforme. El indicador de aglomeración no representa exclusivamente colas físicas; la prueba lenta del jefe no empieza con 750 enemigos. Resultados heredados, no pruebas nuevas de Codex.
+
+Autorizado: cierre documental y planificación P0-D, comparando escala, geometría y navegación regional. **No autorizado todavía:** implementación D, sustitución U3, ampliación jugable, cambios de navegación/presupuesto, builds D, balance, P1/P2. El autor revisará el plan antes de autorizar código.

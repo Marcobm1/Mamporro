@@ -26,11 +26,12 @@ estética retro. Megabonk sirve de referencia expresada por el autor para escala
 verticalidad y agilidad; no se han analizado sus sistemas en esta fase ni se
 presupone reproducirlos. MAMPORRO mantiene nombres, arte y diseño propios.
 
-## P0-A y P0-B cerrados; P0-C cerrado técnicamente, pendiente de prueba manual
+## P0-A, P0-B y P0-C cerrados y aprobados; P0-D solo en planificación
 
-[Checkpoint P0](../../docs/PROGRESO_P0.md): A1–A5 validados técnicamente; A6 aprobado manualmente por el autor el 11/10/2026 (escalada automática, A/D según cámara, velocidad efectiva de carrera). P0-B (navegación vertical y escalada de todos los enemigos, circuito QA B con F10) aprobado manualmente por el autor el 12/10/2026. Siguiente: plan de P0-C (generación procedural conectada, [PLAN_P0C](../../docs/PLAN_P0C.md)), pendiente de aprobación antes de programar. Lanzador probado: `scripts\p0.cmd jugar` desde la raíz. C solo en planificación; D (ampliación) NO está autorizado. Con P0-B la horda escala; solo una zona inaccesible incluso escalando queda segura frente al cuerpo a cuerpo (registrada para P0-C). Balance se mantiene separado, aunque figure como P0 histórico en la tabla. No mezclar P1/P2 ni adoptar VAT/modelos B0 por defecto.
+[Checkpoint P0](../../docs/PROGRESO_P0.md): A6 aprobado el 11/10/2026; B y C aprobados manualmente el 12/10/2026. C conserva mapas QA de 128 m, navegación por tres tamaños, F10/F11 y 3000 nodos/tick; código/builds `9a24b6f`, cierre técnico `369fdff`. Limitaciones aceptadas provisionalmente; no se declaran cumplidos todos los objetivos de rendimiento. No sustituye U3 ni U6.
 
-P0-C (12/10/2026): circuito QA C con mapas procedurales de 128 m validados con la navegación de las tres clases (sin refugios, jefe en zonas amplias), F10/F11 y semillas QA; no sustituye a U3. Pendiente: prueba manual del autor y decisión sobre el presupuesto de navegación. P0-D no iniciado.
+El autor autoriza planificar P0-D (ampliación del mundo y navegación regional), no implementarlo. Primero validar arquitectura y costes; tamaño e integración jugable pendientes. No mezclar balance, P1/P2 ni adopción artística B0. El [plan P0-C](../../docs/PLAN_P0C.md) conserva la propuesta histórica aprobada.
+
 
 ## Peticiones del autor y orden propuesto
 

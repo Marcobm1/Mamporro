@@ -1,8 +1,18 @@
 # P0 — movilidad y verticalidad antes de ampliar el mundo
 
+Estado vigente: **P0-A/B/C cerrados y aprobados manualmente. P0-C aprobado el 12/10/2026. P0-D autorizado solo para planificación; no programar.** Presupuesto conservado: 3000 nodos/tick.
+
+<details>
+<summary>Estado histórico de A6, sustituido por los cierres posteriores</summary>
+
 Estado: **P0-A1–A5 base técnica validada manualmente; P0-A6 corregido y verificado, pendiente de prueba manual** (11/10/2026, Codex; refinado por Claude Code el mismo día en `dc4739c`). **Actualización 11/10 noche:** el autor probó A6 y aprueba todo salvo la velocidad; escalada a velocidad efectiva de carrera en `373620d`. **Cierre 11/10: P0-A6 aprobado manualmente por el autor («Todo bien»), velocidad incluida. P0-A cerrado. Siguiente bloque: P0-B, solo plan hasta su aprobación.** La movilidad no se declara aceptada hasta la nueva prueba del autor. P0-B/C/D NO autorizados. No mezcla P1 artístico ni P2 contenido. La clasificación histórica de balance en P0 no lo incluye en este prototipo.
 
+</details>
+
 ## Cómo retomar
+
+- **Punto vigente, 12/10/2026 (Codex):** el autor probó C y confirma «Sí, todo bien, autorizamos y seguimos». C aprobado; cierre técnico publicado `369fdff`, código/builds `9a24b6f`. Limitaciones aceptadas provisionalmente y presupuesto 3000 conservado. Siguiente paso autorizado: preparar el plan P0-D; detenerse antes de implementar. Cierre formal y auditoría al final.
+- Los siguientes puntos fechados son **historial**, no autorizaciones ni tareas vigentes.
 
 - **Punto vigente (P0-C cerrado técnicamente, 12/10/2026, Claude Code):** C0–C6 hechos; circuito C en la build QA (F10 A → B → C, F11 semillas, `-p0-seed`). **Pendiente: prueba manual del autor del circuito C y su decisión sobre el presupuesto de navegación (publicación de ruta 0,5/0,9/1,3 s frente al objetivo de 0,3 s).** Detalle en «P0-C — implementación» al final. No sustituir U3, no tocar U6, **no empezar P0-D**.
 
@@ -828,3 +838,25 @@ Casas, templos, granjas, pozos, torres, muros, bloques escalonados y árboles, a
 3. Comprobar: mesetas de varios niveles con bordes rectos e irregularidad moderada, rampas (≤ 30°), escalada de acantilados y estructuras, tejados transitables, pozos sin tejado, árboles como obstáculo no escalable, marcadores sobre superficies alcanzables, que ninguna zona sirva de refugio y que el jefe llegue a las zonas amplias.
 
 **P0-C cerrado técnicamente. Pendiente: prueba manual del autor del circuito C y su decisión sobre el presupuesto de navegación. No empezar P0-D.**
+
+## Cierre formal de P0-C — aprobación manual (12/10/2026, Codex)
+
+El autor ha probado C y confirma **«Sí, todo bien, autorizamos y seguimos»**. P0-C aprobado manualmente y cerrado; no volver a pedir su aprobación. Autoriza solo la planificación de P0-D. Mantener **3000 nodos/tick**, sin subirlos por defecto. Aceptar provisionalmente limitaciones no convierte objetivos incumplidos en cumplidos.
+
+Procedencia: cierre técnico publicado `369fdffbc56dcd2687bef9815bf043b00fb051d6`; código/builds QA Normal/Development `9a24b6f67e39fc4ffdbc8d711fe9fc6d13c1e2cc`. Resultados **heredados de Claude**, no repetidos por Codex: EditMode 693/693, PlayMode 53/53, ocho semillas válidas, estrés sin penetraciones ni cuerpos bajo terreno, 99,9–100 % con ruta, circuitos A/B conservados. XML locales `unity/TestResults/U3/edit.xml` y `play.xml`; informes `P0/ProceduralNormal/20261012T040404` y evidencia `P0/ProceduralEvidence/20261012T040154`.
+
+### Limitaciones aceptadas y correcciones de interpretación
+
+- MAMPORRO: ~2,09 s de generación, validación y mapas, sobre el objetivo de 2 s.
+- Navegación con 750: hasta 0,825 ms p95 en HORDA750; no cumple el +10 % sobre B en todas las semillas. Lógica del arnés, no FPS reales.
+- Campos lentos: S/M/L ~0,48–0,50/0,90–0,92/1,13–1,15 s en Normal; L ~1,27–1,28 s en EditMode. Objetivo 0,3 s incumplido.
+- **Corrección Codex del XML heredado:** a 9000 nodos, HORDA750 registra **0,167/1,083/1,217 s S/M/L**. La mejora ~0,17/0,30/0,38 s resumida antes no es uniforme. No fundamentar una subida en ese resumen; no es un ensayo nuevo.
+- Picos de aglomeración 78–93 %: indicador de enemigos en Walk, con ruta, a más de 3 m de coste de su meta y sin reducir la distancia del campo durante 2 s; **no mide exclusivamente colas físicas** ni atribuye porcentajes a una causa. Conectividad no equivale a caudal o presión jugable.
+- HORDA750: jefe 69,6 s frente a 18,7/15,3 s. El ensayo empieza con el jefe, **no con 750 enemigos**; puede incorporar sus esbirros. Las 20 escaladas son globales, no exclusivas del jefe. El criterio automático usa altura y estabilidad; no demuestra por sí solo llegada al polígono concreto o ataque al jugador. Causa exacta sin aislar; no atribuirla al presupuesto o colas masivas sin diagnóstico.
+- Capturas cenitales lavadas por niebla; recogida de gemas/monedas sin comprobación vertical, pendiente aparte.
+
+### Auditoría y continuidad
+
+Inicio HEAD/remoto `369fdff`, índice vacío, solo siete ajustes Unity protegidos (cinco modificados y dos sin seguimiento). Fetch, revisión de Git/código/documentos, lectura de evidencias existentes y SHA-256; **sin suites, builds ni benchmarks nuevos**. U6 conserva `96b492cb271111251fe42b8646e65370a1b7b566773a1e35b34c3f2d1ae70873`; 7/7 ajustes coinciden con la tabla A6; `u3-world.json` conserva `8ab0185cd3f29ea4bbd5e6e5d21fe09b6d32179f5061391ee765780904959787`. Sin cambios en runtime, referencias, src, balance o guardados. Procesos Claude abiertos no prueban escritura concurrente; no apareció WIP ajeno nuevo en Git.
+
+Actualizados documentos de entrada, estado, continuidad, ambos README, plan histórico C, decisiones y hoja de ruta; historial fechado conservado. Publicación prevista en «Aprueba P0-C y actualiza el estado de continuidad»; el siguiente checkpoint registrará SHA y push real. **Siguiente paso exacto: preparar PLAN_P0D, comparar tamaños y navegación regional; esperar decisiones del autor antes de programar.**

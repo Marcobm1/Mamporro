@@ -1,6 +1,8 @@
-# P0-C — geometría procedural conectada: plan propuesto
+# P0-C — geometría procedural conectada: plan histórico aprobado
 
-Estado: **PROPUESTA PENDIENTE DE APROBACIÓN DEL AUTOR** (12/10/2026, Claude Code). No programar nada de P0-C, ni tocar el generador, ni generar builds de P0-C hasta que el autor apruebe este plan y responda a la sección 14. P0-D no autorizado.
+Estado vigente: **P0-C aprobado manualmente el 12/10/2026** («Sí, todo bien, autorizamos y seguimos»). C0–C6 implementados; código/builds `9a24b6f`, cierre técnico `369fdff`. Limitaciones aceptadas provisionalmente y 3000 nodos/tick conservados. P0-D solo en planificación autorizada.
+
+El resto conserva la propuesta y diagnóstico anteriores a C; no son pendientes actuales. Las diez decisiones están resueltas en [DECISIONES](DECISIONES.md); resultados y cierre formal en [PROGRESO_P0](PROGRESO_P0.md).
 
 Base: P0-A y P0-B cerrados y aprobados (escalada del jugador y de todos los enemigos, navegación compartida por tamaños, combate vertical). Límites aceptados de P0-B que condicionan este plan: navegación 0,61 ms p95 / 1,49 ms de pico con 750 enemigos, 648 ms para construir los mapas del circuito B (80 m), ~2 KB/frame más en Development, aglomeración al pie de paredes y necesidad futura de navegación por regiones.
 
