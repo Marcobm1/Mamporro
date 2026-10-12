@@ -51,7 +51,7 @@ namespace Mamporro.Core
         public VerticalQueries(Heightfield heightfield,double wallMinSlopeDegrees,params VerticalSolid[] input)
         {
             if(!Valid(wallMinSlopeDegrees)||wallMinSlopeDegrees<=0||wallMinSlopeDegrees>=90)throw new ArgumentException("Umbral de pared inválido");
-            WallMinSlopeDegrees=wallMinSlopeDegrees;terrain=heightfield==null?null:new TerrainWallGeometry(heightfield);
+            WallMinSlopeDegrees=wallMinSlopeDegrees;this.heightfield=heightfield;terrain=heightfield==null?null:new TerrainWallGeometry(heightfield);
             if(input==null)throw new ArgumentNullException(nameof(input));
             solids=(VerticalSolid[])input.Clone();
             var ids=new System.Collections.Generic.HashSet<int>();
@@ -108,6 +108,10 @@ namespace Mamporro.Core
             if(n>1)Array.Sort(candidates,0,n);
             return n;
         }
+        readonly Heightfield heightfield;
+        // Copia independiente (mismos sólidos y terreno) para construir mapas en paralelo: los
+        // búferes de consulta no se comparten entre hilos.
+        public VerticalQueries Copy()=>new VerticalQueries(heightfield,WallMinSlopeDegrees,solids);
         public static bool Finite(Vec3 p)=>Valid(p.X)&&Valid(p.Y)&&Valid(p.Z);
         static bool Valid(double v)=>!double.IsNaN(v)&&!double.IsInfinity(v);
         static void Validate(Vec3 p,double radius,double height)

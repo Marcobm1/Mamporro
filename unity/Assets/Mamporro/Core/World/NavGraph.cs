@@ -30,7 +30,8 @@ namespace Mamporro.Core
         // Escalón que ya suben los enemigos (Enemies.Step: PushOut y Height con +0,6).
         public const double Step=.6;
         public const int TransitionCost=50,Scale=100;
-        const double ClimbStep=.15,EdgeWindow=.35,Reach=.18,ContactGap=.001;
+        // Paso de simulación de la escalada (la trayectoria se valida después cada 0,1 m).
+        const double ClimbStep=.3,EdgeWindow=.35,Reach=.18,ContactGap=.001;
 
         public readonly NavClass Class;
         public readonly VerticalQueries Queries;
@@ -42,17 +43,17 @@ namespace Mamporro.Core
         public float[] NodeY,PathX,PathY,PathZ,PathNX,PathNZ,PathD;
         public bool[] NodeTerrain;
         public byte[] EdgeKind;
-        public double BuildMs;
+        public double BuildMs,NodesMs,ClimbMs,DropMs;
         public int ClimbEdges,DropEdges,WalkEdges;
         // Diagnóstico de construcción: intentos de escalada descartados y por qué.
-        public int ClimbFailNoContact,ClimbFailNoLedge,ClimbFailNoTarget,ClimbFailPenetration,DropFailPenetration;
+        public int ClimbFailNoContact,ClimbFailNoLedge,ClimbFailNoTarget,ClimbFailPenetration,DropFailPenetration,ClimbSkipped;
 
         public NavGraph(VerticalQueries queries,Heightfield terrain,Func<double,double,double,bool> inside,NavClass navClass)
         {
             var watch=System.Diagnostics.Stopwatch.StartNew();
             Queries=queries;Terrain=terrain;Class=navClass;
             MinX=MinZ=-terrain.Half;W=H=(int)Math.Round(terrain.Size/Cell);
-            BuildNodes(inside);BuildEdges();
+            BuildNodes(inside);NodesMs=watch.Elapsed.TotalMilliseconds;BuildEdges();
             BuildMs=watch.Elapsed.TotalMilliseconds;
         }
         public double CellX(int cell)=>MinX+(cell%W+.5)*Cell;
@@ -169,7 +170,8 @@ namespace Mamporro.Core
                 }
                 // Nodo interior (conectado en las 8 direcciones): ninguna pared ni borde a su alcance.
                 if(connected>=8)continue;
-                AddClimbs(a,normals);AddDrops(a);
+                long t0=System.Diagnostics.Stopwatch.GetTimestamp();AddClimbs(a,normals);long t1=System.Diagnostics.Stopwatch.GetTimestamp();AddDrops(a);
+                ClimbMs+=(t1-t0)*1000.0/System.Diagnostics.Stopwatch.Frequency;DropMs+=(System.Diagnostics.Stopwatch.GetTimestamp()-t1)*1000.0/System.Diagnostics.Stopwatch.Frequency;
             }
             // CSR hacia delante (por origen) e inversa (por destino) para el campo.
             edges.Sort((p,q)=>p.From!=q.From?p.From.CompareTo(q.From):p.To.CompareTo(q.To));
@@ -203,8 +205,21 @@ namespace Mamporro.Core
                 if(!Queries.Wall(feet,new Vec3(dx/l,0,dz/l),r,h,Margin+Cell,out var hit))continue;
                 double hl=JsMath.Hypot(hit.Normal.X,hit.Normal.Z);var n=new Vec3(hit.Normal.X/hl,0,hit.Normal.Z/hl);
                 bool seen=false;foreach(var m in normals)if(m.X*n.X+m.Z*n.Z>.99)seen=true;
-                if(seen)continue;normals.Add(n);TryClimb(a,feet,n);
+                if(seen)continue;normals.Add(n);
+                // Descarte previo: sin ninguna superficie de esta clase por encima, pasada la pared, la
+                // escalada fallaría arriba igualmente (sin nodo de destino).
+                if(!SurfaceBeyond(feet,n,hit.TopY)){ClimbSkipped++;continue;}
+                TryClimb(a,feet,n);
             }
+        }
+        bool SurfaceBeyond(Vec3 feet,Vec3 n,double topY)
+        {
+            double r=Class.Radius;
+            for(double d=Margin+Cell;d<=Margin+Cell+2*r+2.5;d+=Cell)for(double side=-Cell;side<=Cell;side+=Cell){
+                double x=feet.X-n.X*d-n.Z*side,z=feet.Z-n.Z*d+n.X*side;int c=CellOf(x,z);if(c<0)continue;
+                for(int b=CellStart[c];b<CellStart[c+1];b++)if(NodeY[b]>=topY-.5&&NodeY[b]>feet.Y+Step)return true;
+            }
+            return false;
         }
         void TryClimb(int a,Vec3 feet,Vec3 n)
         {

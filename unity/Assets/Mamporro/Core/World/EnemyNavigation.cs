@@ -30,10 +30,16 @@ namespace Mamporro.Core
         public int ClimbStarts,LedgesDone,DropsStarted,Landings,Detaches,Recoveries,RecoverFailures,Stuck,QueueWaits;
         public long Ticks;
         public EnemyNavigation(VerticalCircuit circuit,int capacity):this(circuit,capacity,BuildGraphs(circuit)){}
-        public static NavGraph[] BuildGraphs(VerticalCircuit circuit)
+        // Las tres clases son independientes: se construyen en paralelo, cada una con su copia de
+        // las consultas. Mismo resultado que en serie (determinista); tiempo = el de la más lenta.
+        public static NavGraph[] BuildGraphs(VerticalCircuit circuit)=>BuildGraphs(circuit.Queries,circuit.Terrain,circuit.Collision.IsInside);
+        public static NavGraph[] BuildGraphs(VerticalQueries queries,Heightfield terrain,Func<double,double,double,bool> inside,bool parallel=true)
         {
             var graphs=new NavGraph[NavClass.All.Length];
-            for(int k=0;k<graphs.Length;k++)graphs[k]=new NavGraph(circuit.Queries,circuit.Terrain,circuit.Collision.IsInside,NavClass.All[k]);
+            if(!parallel){for(int k=0;k<graphs.Length;k++)graphs[k]=new NavGraph(queries,terrain,inside,NavClass.All[k]);return graphs;}
+            var tasks=new System.Threading.Tasks.Task[graphs.Length];
+            for(int k=0;k<graphs.Length;k++){int c=k;var copy=queries.Copy();tasks[k]=System.Threading.Tasks.Task.Run(()=>graphs[c]=new NavGraph(copy,terrain,inside,NavClass.All[c]));}
+            System.Threading.Tasks.Task.WaitAll(tasks);
             return graphs;
         }
         // Grafos ya construidos del mismo circuito (geometría estática): solo campos y estados nuevos.
