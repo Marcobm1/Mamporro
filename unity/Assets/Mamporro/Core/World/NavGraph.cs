@@ -312,7 +312,9 @@ namespace Mamporro.Core
                     if(Layer(ck,ya,Step)>=0)break; // misma altura: es un paso o un hueco, no un borde
                     int b=-1;for(int n=CellStart[ck];n<CellStart[ck+1];n++)if(NodeY[n]<ya-Step)b=n;
                     if(b<0)continue;
-                    var from=new Vec3(NodeX(a),ya,NodeZ(a));var over=new Vec3(NodeX(b),ya,NodeZ(b));var land=new Vec3(NodeX(b),NodeY[b],NodeZ(b));
+                    // Salida 1 mm por encima: NodeY es float y en tapas como 0,9 m queda unos 2e-8 m por
+                    // debajo de la superficie real; sin holgura el barrido choca con la propia tapa.
+                    var from=new Vec3(NodeX(a),ya+ContactGap,NodeZ(a));var over=new Vec3(NodeX(b),ya+ContactGap,NodeZ(b));var land=new Vec3(NodeX(b),NodeY[b],NodeZ(b));
                     if(Queries.Sweep(from,over,r,h,out _)||Queries.Sweep(over,new Vec3(land.X,land.Y+.01,land.Z),r,h,out _))break;
                     int path=BeginPath(0,0,0);Point(from);Point(over);Point(land);
                     if(!PathIsFree(path)){DropFailPenetration++;CancelPath(path);break;}
