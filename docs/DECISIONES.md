@@ -788,3 +788,20 @@ Aplicación de las decisiones aprobadas, sin nuevas decisiones de diseño: tres 
 ## P0-B aprobado manualmente (12/10/2026)
 
 Decisión expresa del autor tras probar `a9cac92`: P0-B aprobado definitivamente, con las limitaciones de rendimiento aceptadas tal como se midieron (750 enemigos: navegación 0,61 ms p95 y 1,49 ms de pico; mapas 648 ms; ~2 KB/frame más en Development), la aglomeración al pie de paredes, la necesidad futura de navegación por regiones para mundos mayores y la recogida de gemas y monedas sin altura como pendiente. No reabrir ni optimizar P0-B sin razón concreta y aprobación. P0-B cerrado; siguiente bloque P0-C, solo plan hasta su aprobación; P0-D no autorizado.
+
+## P0-C aprobado: decisiones del autor (12/10/2026)
+
+El autor aprueba el plan de P0-C (`f99f97f`) y autoriza C0–C6 con estas decisiones:
+
+1. **Alcance:** solo circuito C de la build QA. Sin sustituir el generador U3, sin tocar U6 y sin empezar P0-D.
+2. **Tamaño:** mapa inicial de 128 × 128 m, como validación técnica (no es el tamaño definitivo del mundo). Si exige navegación regional o costes inaceptables, consultar antes de cambiar el alcance.
+3. **Estructuras con giros de 90°**, con variedad de tamaños, formas, posiciones y combinaciones. Sin colisiones con rotación libre.
+4. **Relieve inicial de prueba:** niveles 0, 4,5, 9 y 13,5 m; ~35 % del mapa elevado; mesetas de 8–40 m de lado; macroceldas de 4 m; bordes principalmente rectos con irregularidad moderada; sin aspecto de tablero uniforme.
+5. **Rampas:** al menos una por región elevada de ≥ 200 m², ≤ 30°, anchura mínima 4 m; si debe servir al jefe, anchura y espacio libre suficientes para su cuerpo. Zonas elevadas grandes con alternativas físicas de acceso (también escalando). Las mesetas pequeñas no necesitan rampa.
+6. **Estructuras:** geometría genérica y prototipos sencillos de casas, templos, granjas y pozos con bloques provisionales; tejados transitables y diferencias de altura cuando tenga sentido; pozos con geometría y colisión coherentes, sin tejado artificial. Sin Blender ni renovación artística.
+7. **Vegetación e interactuables:** árboles como obstáculos físicos no escalables y marcadores QA de cofres, santuarios, tótems y portal sobre superficies válidas y alcanzables. Sin cambiar reglas de interactuables ni la recogida de gemas y monedas.
+8. **Sin refugios:** todas las regiones transitables alcanzables al menos por los enemigos pequeños; las zonas de combate principales y mesetas amplias, también por el jefe cuando quepa físicamente (sin atravesar ni encogerse). Sin bolsas cerradas, sin superficies aparentemente escalables sin salida, sin zonas donde el jugador quede atrapado.
+9. **Semillas:** formato de texto del juego; F11 recorre una lista fija de semillas QA (sin conflicto con controles existentes); semilla y circuito visibles en el HUD; reproducibles desde pruebas y con el argumento QA.
+10. **Presupuestos iniciales:** trazado ≤ 300 ms; mapas de navegación ≤ 2 s (límite provisional de la build QA); navegación en juego ≤ +10 % sobre P0-B; actualización de ruta ≤ 0,3 s. Medir con varias semillas y 0/300/500/750 enemigos; si no se cumplen, presentar resultados y causa sin sacrificar estabilidad ni adelantar P0-D.
+
+Orden de trabajo: C0 y C1 primero (medir y optimizar las consultas de colisión). Al terminar, build QA, pruebas, documentación y push; detenerse para la prueba manual del circuito C.
