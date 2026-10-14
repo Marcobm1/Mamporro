@@ -1,6 +1,6 @@
 # P0 — movilidad y verticalidad antes de ampliar el mundo
 
-Estado vigente: **P0-A/B/C cerrados y aprobados manualmente. P0-C aprobado el 12/10/2026. P0-D autorizado solo para planificación; no programar.** Presupuesto conservado: 3000 nodos/tick.
+Estado vigente: **P0-A/B/C cerrados y aprobados manualmente. P0-C aprobado el 12/10/2026. P0-D0–D4 autorizados el 12/10/2026; detenerse antes de D5.** Presupuesto conservado: 3000 nodos/tick.
 
 <details>
 <summary>Estado histórico de A6, sustituido por los cierres posteriores</summary>
@@ -10,6 +10,14 @@ Estado: **P0-A1–A5 base técnica validada manualmente; P0-A6 corregido y verif
 </details>
 
 ## Cómo retomar
+
+- **Cierre diagnóstico D0, 14/10/2026 (Codex):** Edit **721/721** y Play **53/53** ejecutados en esta sesión; referencias U0/U2/U3/U4 coincidentes. [Informe reproducible](DIAGNOSTICO_P0D0.md), evidencias nuevas `unity/TestResults/P0/D0/Verified-20261014` y trazas `D0/Diagnosis/20261014T*`. Autorización preservada en `32ef0cb`, arneses en `427ca82`. Defecto heredado confirmado de redondeo en `TryStep`; propuesta concreta no aplicada. **Siguiente paso exacto: decisión del autor sobre convertir X/Z a float antes de validar celda/vecino/superficie; después, corregir con pruebas de frontera y repetir controles D0 antes de D1.** D1–D4 siguen autorizados pero no iniciados por esta decisión funcional; D5–D7 excluidos. Solo siete ajustes Unity protegidos deben quedar fuera del índice al cerrar. Publicación y límites en el cierre inferior. Las notas de reanudación siguientes son historial.
+
+- **Revalidación D0, 14/10/2026 (Codex, en curso):** HEAD/origin comprobados `1503780404bc3c73920f058bcd8a0909f68a820c`. Además del relevo descrito por el autor, se encontraron conservados `RegionalDiagnosisTests`, `RegionalGeometryDiagnosisTests`, dos scripts e informe `DIAGNOSTICO_P0D0.md` con resultados del 12/10 (715, 719 y 2 pruebas). Son heredados respecto a esta sesión, igual que 707/707; no atribuirlos a la ejecución del 14/10. XML/logs anteriores e integridad de entrada preservados en `unity/TestResults/P0/D0/Resume-20261014`. Suite Edit completa nueva en marcha. Posible defecto de redondeo double→float en `TryStep`, con propuesta acotada ya documentada, pendiente de reproducción nueva y decisión antes de cambiar C. Los procesos Claude 20700/20264 son ajenos a MAMPORRO por confirmación expresa del autor: no tocarlos ni bloquear por su existencia.
+
+- **Reanudación D0, 12/10/2026 (Codex, en curso):** el autor confirma que Claude Code PID 20700/20264 pertenece a otro proyecto; no tocar esos procesos ni bloquear por su existencia. HEAD local/origin `1503780404bc3c73920f058bcd8a0909f68a820c`. Recibidos y conservados cambios documentales de autorización, `RegionalBaselineTests.cs`/meta y catorce trazas D0; XML 707/707 heredado, no ejecutado por esta sesión. Copia de evidencias/XML/logs previos en `unity/TestResults/P0/D0/Inherited-20261012`. Nuevo observador QA `RegionalDiagnosisTests` en verificación: llegada horizontal/vertical estable, tiempos por causa/ID, campos, tres repeticiones y control sin observador. Sin cambios de runtime. Detalle y resultados nuevos al final al cerrar; no interpretar esta nota como D0 terminado.
+
+- **Punto vigente D0–D4, 12/10/2026 (Codex):** autor aprobó las ocho decisiones del plan. Inicio HEAD/remoto `1503780`, solo siete ajustes protegidos, huellas 7/7 y U6/u3-world correctas. D0 en curso: diagnóstico externo del jefe y referencias; sin cambios de runtime. D1–D4 autorizados después de verificar cada pieza. D5–D7 y ampliación no autorizados. Resultados reales se registran al cerrar la subfase.
 
 - **Punto vigente, 12/10/2026 (Codex):** el autor probó C y confirma «Sí, todo bien, autorizamos y seguimos». C aprobado; cierre técnico publicado `369fdff`, código/builds `9a24b6f`. Limitaciones aceptadas provisionalmente y presupuesto 3000 conservado. Cierre formal publicado `b755987`. Plan [PLAN_P0D](PLAN_P0D.md) listo para revisión; siguiente paso exacto: el autor resuelve sus ocho decisiones y autoriza subfases, sin implementar hasta entonces. Cierre formal y auditoría al final.
 - Los siguientes puntos fechados son **historial**, no autorizaciones ni tareas vigentes.
@@ -872,3 +880,40 @@ Comprobaciones reales en esta sesión: `git status --short --branch`, `git log -
 Solo documentos editados. Quedan fuera del índice los mismos siete ajustes protegidos; no se alteran src, referencias, runtime, balance ni guardados. El plan y estos enlaces se publican en el commit documental «Propone P0-D por regiones y compara la escala del mundo» (localizable con `git log -1 --format=%H -- docs/PLAN_P0D.md`; comprobar HEAD/remoto tras push). No interpretar estimaciones como resultados ni propuestas como decisiones aceptadas.
 
 **Siguiente paso exacto para autor/Claude/Codex:** leer sección 15 de PLAN_P0D, recibir decisiones y autorización de las subfases elegidas. No implementar D ni integrar en U3 hasta entonces; C ya aprobado, no volver a solicitar su aprobación. P1/P2 excluidos.
+
+## Cierre del diagnóstico P0-D0 — 14/10/2026
+
+El autor confirma que Claude 20700/20264 pertenece a otro proyecto. No se cerró, suspendió ni modificó ninguno de esos procesos. HEAD/origin inicial `1503780404bc3c73920f058bcd8a0909f68a820c`, fetch normal verificado; trabajo local íntegro conservado. Además de 707/707 y catorce trazas, se encontraron dos arneses nuevos, scripts e informe con 715/715, 719/719 y 2/2 del 12/10: **todo heredado respecto a esta sesión**. Copia de XML/log previos en `D0/Resume-20261014`; los ensayos escriben carpetas nuevas, sin reemplazar trazas anteriores.
+
+### Hallazgos y decisión pendiente
+
+Detalle y condiciones en [DIAGNOSTICO_P0D0](DIAGNOSTICO_P0D0.md), especialmente su revalidación del 14/10. HORDA750/P0QA, dt 1/60, 128 m, 3000 nodos/tick, tres repeticiones por control más una sin observador. Cero incidentes geométricos observados no implica persecución correcta.
+
+- Jefe fijo: altura 69,566667 s aún a 6,750814 m horizontales; llegada real 70,866667 s y recorrido 131,441313 m. Apoyo estable, error de superficie ≤0,01 m, diferencia vertical ≤0,2 m, distancia XZ dentro de suma de radios y segmento libre. Cuerpo L aislado: 27,116667 s y 92,732440 m. Todos los jefes suben por rampa, cero escaladas; las veinte heredadas eran de otros cuerpos.
+- Jefe fijo: 51,183333 s con desplazamiento y 19,683333 s detenido. Fases, eje distinto: 34,366667 s espera/persecución y 36,5 s combate (15,933333 aviso, 6,166667 carga, 14,4 recuperación). Ruta L estática 94,347159 m frente a 73,475592 m S; jefe recorre además cargas/rodeos y revisita 25 nodos. No atribuir toda la diferencia a combate.
+- Defecto mínimo reproducido: X double 21,499999735 pasa la validación de celda 21930 y se almacena float 21,5 en celda 21931, sin arista válida y con nodo anterior. El jefe sin esbirros queda inmóvil desde 21,183 s hasta 180 s; no falta campo ni hay horda. Jefe completo también presenta discrepancia y detención geométrica continua de 13,75 s.
+- Propuesta **pendiente, no aplicada**: en `EnemyNavigation.TryStep`, convertir X/Z a float antes de `CellOf`, `WalkNeighbor` y `SurfaceY`, usando las mismas coordenadas para validar y almacenar. Rechazar el paso inválido con el deslizamiento existente; sin teleports, cambios de desvío ni balance. Tras decisión: pruebas de fronteras positivas/negativas/esquinas, coherencia nodo/posición y repetición D0/A/B/C. La prueba diagnóstica que espera el defecto deberá convertirse en una regresión que exija coherencia.
+- Horda móvil: S/M/L 372/3/0 publicaciones en 180 s; latencias p95 0,633333/57,6/N/D s; edad p95 0,933333/111,966667/N/D s. La prioridad por población deja sin servicio suficiente a M/L. D3 contempla reparto y campos locales, sin parche a C ni aumento de presupuesto ahora.
+- CPU Begin/Move con horda móvil p95 0,6433–0,6908 ms; máximo aislado 7,5127 ms. Arrays 27,38 MiB; heap Editor 426,55–443,86 MiB; residencia Windows del proceso 1352,04–1352,24 MiB. Contadores parciales y proceso completo claramente separados; no son FPS ni prueba de presupuesto residente de navegación. `QueueWaits` solo mide espera entre escaladores: no convertir cero en ausencia general de contactos al caminar.
+
+**D0 cerrado como diagnóstico con límites explícitos; puerta de avance a D1 detenida por la corrección funcional heredada.** No se declara cumplido el rendimiento regional ni se anticipa D1. La autorización D1–D4 permanece; D5 y ampliación no iniciados. No se cambió runtime, balance ni navegación de producción.
+
+### Pruebas realmente ejecutadas el 14/10
+
+| Comando | Resultado nuevo | Evidencia |
+| --- | --- | --- |
+| `scripts\u3.cmd edit` | **721/721**, incluye diagnóstico mínimo y 12 controles × (3 observados + 1 sin observador) | `unity/TestResults/P0/D0/Verified-20261014/edit.xml`, `edit.log` |
+| `scripts\u3.cmd play` | Primer intento: licencia Unity 198, sin pruebas; reintento fuera de sandbox **53/53** | mismo directorio: `play-first-attempt.log`, `play.xml`, `play.log` |
+| `powershell -NoProfile -ExecutionPolicy Bypass -File scripts\verify-historical-reference.ps1` | U0/U2/U3/U4 coinciden; 8 guardados y 6 secuencias meta | `qa-results/reference-c8c403b5bc544ca9a788dd7923e9fea7` |
+| `python scripts\p0-d0-report.py <carpeta D0/Diagnosis/20261014T…>` | 36 CSV de las 12 carpetas analizados; originales intactos | JSON de análisis junto a los CSV; `Verified-20261014/traces-sha256.json` |
+| SHA-256 antes/después y `git diff --name-only -- src unity/Docs/Reference unity/Assets/Mamporro/Core` | 9/9 huellas iguales; diff vacío | `Resume-20261014/integrity-before.json`, `Verified-20261014/integrity-after.json` |
+
+Sin build nueva: U6 intacto, no se ejecuta `u3.cmd build`. Sin benchmark de render nuevo. Memoria residente exclusiva de navegación, transitorios/caché y render standalone quedan pendientes; tampoco se demuestra una descomposición completa de contactos/separación al caminar. El pico CPU aislado queda registrado sin causa atribuida. No se usan métricas incompletas para aprobar la puerta regional.
+
+### Commits, protección y continuación
+
+`32ef0cb`: autorización D0–D4 y protecciones documentales recibidas. `427ca82`: arneses diagnósticos y scripts verificados. Este cierre documental se publica como «Documenta D0 reproducido y la corrección heredada pendiente». Push normal a `claude/zen-pasteur-674ik0`, sin PR ni force-push; comprobar HEAD remoto al terminar y registrar el resultado en la entrega.
+
+Fuera del índice: exactamente los siete ajustes Unity protegidos (cinco modificados, dos no seguidos), con huellas idénticas a entrada y checkpoint. U6 SHA `96b492cb271111251fe42b8646e65370a1b7b566773a1e35b34c3f2d1ae70873`; u3-world SHA `8ab0185cd3f29ea4bbd5e6e5d21fe09b6d32179f5061391ee765780904959787`. Src, generador U3, A/B/C, IDs y persistencia sin cambios.
+
+**Siguiente paso exacto:** recibir decisión sobre la corrección concreta de `TryStep`, exigida por el autor antes de cambiar comportamiento aprobado C. No volver a pedir autorización general D0–D4. Tras aprobarla, aplicar solo esa corrección y validar antes de iniciar D1. No avanzar ante el defecto ni detenerse por los procesos Claude del otro proyecto.
