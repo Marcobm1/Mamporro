@@ -30,7 +30,7 @@ Al iniciar una sesión, leer en este orden:
 
 1. `docs/ESTADO_ACTUAL.md`.
 2. `docs/CONTINUIDAD_AGENTES.md`.
-3. El checkpoint vigente `docs/PROGRESO_P0.md` (P0-A/B/C aprobados; P0-D solo en planificación); cierre B0 en `docs/BLENDER_B0.md` y el cierre aprobado de la migración en `docs/PROGRESO_U6.md`.
+3. El checkpoint vigente `docs/PROGRESO_P0.md` (P0-A/B/C aprobados; P0-D0–D4 autorizados el 12/10/2026; D5–D7 no autorizados); cierre B0 en `docs/BLENDER_B0.md` y el cierre aprobado de la migración en `docs/PROGRESO_U6.md`.
 4. `docs/DECISIONES.md` y cualquier continuación posterior indicada por el estado actual.
 5. `docs/ESPECIFICACION.md` como especificación histórica de partida.
 6. `docs/MIGRACION_UNITY.md`.
@@ -131,4 +131,4 @@ No hay cantidades finales cerradas. Primero validar la migración; después apli
 
 Cámara contra estructuras y métricas están implementadas solo en el circuito QA P0-A; su adopción general sigue pendiente. Mando/remapeo y servicios Steam siguen fuera del bloque autorizado. No añadir telemetría externa por defecto, no comprar/publicar nada y no copiar arte de otros juegos.
 
-Punto de continuación vigente: [PROGRESO_P0](PROGRESO_P0.md) — circuito QA aislado de movilidad/verticalidad. **P0-A cerrado:** A1–A5 validados y A6 aprobado manualmente por el autor el 11/10/2026 (código `373620d`, cierre `dc8ab26`). **P0-B cerrado:** aprobado manualmente por el autor el 12/10/2026 (navegación vertical y escalada de todos los enemigos, circuito QA B con F10; código `a9cac92`, cierre técnico `5688e90`). **P0-C aprobado manualmente el 12/10/2026** (circuito QA C procedural con F10/F11, plan [PLAN_P0C](PLAN_P0C.md); código/builds `9a24b6f`, cierre técnico `369fdff`): limitaciones aceptadas provisionalmente y 3000 nodos/tick conservados. **P0-D solo en planificación autorizada; no programar.** B0 cerrado y publicado en `0b0b68c31dda803cf9cf566b3c96f369ed893ce3`.
+Punto de continuación vigente: [PROGRESO_P0](PROGRESO_P0.md) — circuito QA aislado de movilidad/verticalidad. **P0-A cerrado:** A1–A5 validados y A6 aprobado manualmente por el autor el 11/10/2026 (código `373620d`, cierre `dc8ab26`). **P0-B cerrado:** aprobado manualmente por el autor el 12/10/2026 (navegación vertical y escalada de todos los enemigos, circuito QA B con F10; código `a9cac92`, cierre técnico `5688e90`). **P0-C aprobado manualmente el 12/10/2026** (circuito QA C procedural con F10/F11, plan [PLAN_P0C](PLAN_P0C.md); código/builds `9a24b6f`, cierre técnico `369fdff`): limitaciones aceptadas provisionalmente y 3000 nodos/tick conservados. **P0-D0–D4 autorizados el 12/10/2026; D5–D7 no autorizados.** B0 cerrado y publicado en `0b0b68c31dda803cf9cf566b3c96f369ed893ce3`.

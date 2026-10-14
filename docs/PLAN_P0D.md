@@ -1,6 +1,6 @@
 # P0-D — ampliación del mundo y navegación regional
 
-**Propuesta de Codex, 12/10/2026. Solo planificación autorizada. No implementar hasta que el autor resuelva la sección 15 y autorice el alcance.** P0-C aprobado manualmente; cierre formal `b755987`, cierre técnico `369fdff`, código/builds QA `9a24b6f`. Mantener 3000 nodos/tick. No reemplazar U3 ni generar una build D con esta autorización.
+**Plan aprobado por el autor el 12/10/2026: ocho decisiones resueltas; implementación autorizada exclusivamente D0–D4. Detenerse antes de D5.** P0-C aprobado manualmente; cierre formal `b755987`, cierre técnico `369fdff`, código/builds QA `9a24b6f`. Mantener 3000 nodos/tick. No reemplazar U3, ampliar mapas ni generar una build final D5–D6 con esta autorización.
 
 Las cifras de C son mediciones heredadas de Claude, contrastadas con documentos, XML e informes locales; no se han repetido pruebas. Las cifras para D son estimaciones u objetivos propuestos, no resultados ni compromisos aprobados. Investigación limitada al repositorio y evidencias existentes; sin Deep Research.
 
@@ -137,7 +137,7 @@ No añadir automáticamente costes dinámicos por multitud: pueden producir osci
 
 ## 9. Rendimiento y presupuestos propuestos
 
-Objetivos iniciales pendientes de aprobación, sobre Ryzen 7 7700X / RTX 4070 Ti SUPER del autor. No son requisitos mínimos comerciales. Medir Normal y Development por separado, warmup y tres repeticiones; p50/p95/p99/máximo, no solo media.
+Objetivos iniciales aprobados el 12/10/2026, sobre Ryzen 7 7700X / RTX 4070 Ti SUPER del autor. No son resultados garantizados ni requisitos mínimos comerciales. Medir Normal y Development por separado, warmup y tres repeticiones; p50/p95/p99/máximo, no solo media. Carga de mundo grande y FPS corresponden a D5–D6, todavía no autorizados.
 
 | Métrica | Propuesta para aceptar el candidato D |
 | --- | --- |
@@ -152,7 +152,7 @@ Objetivos iniciales pendientes de aprobación, sobre Ryzen 7 7700X / RTX 4070 Ti
 | Asignaciones | 0 B/tick en navegación estable; cambios de región con buffers reutilizados, sin GC atribuible a navegación durante recorrido de 10 min |
 | Build real | 1080p, interna 360, Normal; objetivo 60 FPS sostenidos con 750: frame p95 ≤16,7 ms, p99 ≤25 ms, ningún parón repetible >50 ms atribuible al recorrido regional |
 
-Estas propuestas **relajan** el objetivo CPU relativo de C a cambio de exigir reacción mejor; no constituyen aprobación de 6000/9000 nodos. Confirmarlas con el autor. Si no se cumplen con 3000, presentar perfiles y alternativas, no aumentar silenciosamente el límite. Presupuesto de región no es un coste adicional permitido sin revisar frame total.
+Estos objetivos aprobados **relajan** el objetivo CPU relativo de C a cambio de exigir reacción mejor; no constituyen aprobación de 6000/9000 nodos. Si no se cumplen con 3000, presentar perfiles y alternativas, no aumentar silenciosamente el límite. Presupuesto de región no es un coste adicional permitido sin revisar frame total.
 
 El objetivo de memoria requiere contar por separado geometría, nodos, aristas, trayectorias, tablas de portales, campos, heaps, cachés y copias temporales. Calcular a partir de longitudes de arrays y verificar con Development; no extrapolar los 80 MB como memoria puramente navegacional. Registrar techo y expulsiones de caché; probar horda dispersa y jefe distante.
 
@@ -184,7 +184,7 @@ No existe aún ninguno de los nuevos componentes. No modificar catálogo, direct
 
 ## 12. Subfases de implementación propuestas
 
-Todas pendientes de autorización. Un resultado verificable por commit y checkpoint; una subfase puede requerir varios commits pequeños. No avanzar al tamaño mayor si la arquitectura no pasa el ensayo reducido.
+D0–D4 autorizadas; D5–D7 no autorizadas. Un resultado verificable por commit y checkpoint; una subfase puede requerir varios commits pequeños. No avanzar al tamaño mayor si la arquitectura no pasa el ensayo reducido.
 
 | Fase | Pieza | Condición de salida |
 | --- | --- | --- |
@@ -228,9 +228,9 @@ Recomendación: autorización inicial D0–D4, revisar los resultados y habilita
 - Mantener `src/`, generador U3, RNG/IDs/formatos de progreso, A/B/C, `unity/Docs/Reference/` y especialmente `u3-world.json` sin regenerar. U6 SHA `96b492cb271111251fe42b8646e65370a1b7b566773a1e35b34c3f2d1ae70873`; u3-world SHA `8ab0185cd3f29ea4bbd5e6e5d21fe09b6d32179f5061391ee765780904959787`.
 - Siete ajustes Unity fuera del índice, huellas de PROGRESO_P0; sin reset/clean/force-push/PR. Build/progreso QA aislados. Sin P1/P2, servicios o compras.
 
-## 15. Decisiones pendientes del autor
+## 15. Decisiones originales y resolución del autor (12/10/2026)
 
-No se vuelve a pedir aprobación C ni cambiar sus 3000 nodos. Estas decisiones se refieren únicamente al futuro D:
+**Resueltas:** el autor aprueba las ocho decisiones: D0–D4 y parada antes de D5; candidato futuro 384 m pasando por 256, revisable a 320 si las medidas lo aconsejan; regiones 16/32/64 y arquitectura propuesta con 3000; geometría futura indicada y relieve inicial 13,5; densidad 6–12 s sin vacíos >15 s, reducir primero detalles secundarios y después tamaño antes de perder lugares interesantes; presupuestos sección 9 como objetivos; validación sección 13, 100 semillas/FPS reservados a D5–D6 en su equipo a 1080p/interna 360; QA primero sin integración U3. No preguntar otra vez. La lista siguiente conserva las preguntas históricas:
 
 1. **Alcance y puerta de autorización:** ¿D0–D4 primero y revisión antes de escalar (recomendado), o D0–D6 con parada obligatoria si falla una puerta? D7/adopción jugable separado en ambos casos.
 2. **Tamaño candidato:** ¿384 m / límite 180, pasando por 256 m (recomendado para ampliación marcada), 320/148 más conservador, o solo 256/116 en este bloque? Ninguna opción reemplaza U3.
@@ -241,4 +241,4 @@ No se vuelve a pedir aprobación C ni cambiar sus 3000 nodos. Estas decisiones s
 7. **Presión y muestreo:** ¿aceptar umbrales de llegada/colas de sección 13, barrido de 100 semillas y objetivo de 60 FPS con 750 en el equipo de referencia? ¿Debe otro equipo/resolución formar parte de aceptación ahora?
 8. **Integración posterior:** ¿confirmar que D termina en QA, con marcadores y sin cambiar spawns/director/reciclado de U3? Recomendado. Si se quiere partida jugable dentro del mismo bloque, primero ampliar el plan y resolver interacción real, reciclado de 85 m y persistencia; no asumir esa autorización.
 
-**Siguiente paso: el autor responde estas decisiones y autoriza las subfases elegidas. Hasta entonces, solo este plan y el cierre documental; no programar P0-D.**
+**Siguiente paso vigente: ejecutar D0–D4 con pruebas/checkpoint/commit/push por pieza. Consultar ante defecto heredado que requiera corregir C, incumplimiento importante, regresión o nueva decisión arquitectónica. No implementar D5–D7.**

@@ -26,11 +26,11 @@ estética retro. Megabonk sirve de referencia expresada por el autor para escala
 verticalidad y agilidad; no se han analizado sus sistemas en esta fase ni se
 presupone reproducirlos. MAMPORRO mantiene nombres, arte y diseño propios.
 
-## P0-A, P0-B y P0-C cerrados y aprobados; P0-D solo en planificación
+## P0-A, P0-B y P0-C cerrados y aprobados; P0-D0–D4 autorizados el 12/10/2026; D5–D7 no autorizados
 
 [Checkpoint P0](../../docs/PROGRESO_P0.md): A6 aprobado el 11/10/2026; B y C aprobados manualmente el 12/10/2026. C conserva mapas QA de 128 m, navegación por tres tamaños, F10/F11 y 3000 nodos/tick; código/builds `9a24b6f`, cierre técnico `369fdff`. Limitaciones aceptadas provisionalmente; no se declaran cumplidos todos los objetivos de rendimiento. No sustituye U3 ni U6.
 
-El autor autoriza planificar P0-D (ampliación del mundo y navegación regional), no implementarlo. Primero validar arquitectura y costes; tamaño e integración jugable pendientes. No mezclar balance, P1/P2 ni adopción artística B0. El [plan P0-C](../../docs/PLAN_P0C.md) conserva la propuesta histórica aprobada.
+El autor aprueba el plan y autoriza implementar solo D0–D4 (diagnóstico y navegación regional en mapas pequeños). Objetivo futuro 384 m pasando por 256 m; no ampliar ahora. Detenerse antes de D5; integración jugable separada. No mezclar balance, P1/P2 ni adopción artística B0. El [plan P0-C](../../docs/PLAN_P0C.md) conserva la propuesta histórica aprobada.
 
 
 ## Peticiones del autor y orden propuesto
@@ -126,4 +126,4 @@ Megabonk sirve como referencia de escala, verticalidad y lectura espacial, mante
 
 El autor confirma la dirección completa para después de terminar la migración (U6): mundo y estructuras notablemente mayores; terreno más rectangular/geométrico, grandes mesetas, rampas y más verticalidad; escalada libre; menos enemigos al inicio pero más resistentes, con aumento progresivo; más oro de partida; visual retro bastante más profesional; animaciones; arte e iconos originales; más enemigos, armas, tomos y personajes. Megabonk es referencia de escala, verticalidad, geometría/lectura espacial y agilidad, sin copiar arte, mapas, modelos, assets, contenido ni diseño exacto. Las cifras de balance se decidirán con pruebas en su bloque. U5 no las incluye.
 
-Plan de continuación: [P0-D — escala y navegación regional](../../docs/PLAN_P0D.md), **propuesta pendiente de decisiones y autorización de implementación**. Cierre formal P0-C publicado en `b755987`; mantener 3000 nodos/tick.
+Plan de continuación: [P0-D — escala y navegación regional](../../docs/PLAN_P0D.md), **ocho decisiones aprobadas; implementación autorizada únicamente D0–D4**. Cierre formal P0-C publicado en `b755987`; mantener 3000 nodos/tick.

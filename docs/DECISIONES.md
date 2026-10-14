@@ -817,3 +817,13 @@ Decisión expresa del autor después de probar C: **«Sí, todo bien, autorizamo
 Se mantienen **3000 nodos/tick**, sin autorización para subirlos por defecto. El XML heredado a 9000 en HORDA750 da **0,167/1,083/1,217 s S/M/L**: mejora no uniforme. El indicador de aglomeración no representa exclusivamente colas físicas; la prueba lenta del jefe no empieza con 750 enemigos. Resultados heredados, no pruebas nuevas de Codex.
 
 Autorizado: cierre documental y planificación P0-D, comparando escala, geometría y navegación regional. **No autorizado todavía:** implementación D, sustitución U3, ampliación jugable, cambios de navegación/presupuesto, builds D, balance, P1/P2. El autor revisará el plan antes de autorizar código.
+
+## P0-D0–D4 autorizados (12/10/2026)
+
+El autor aprueba las ocho decisiones de PLAN_P0D y autoriza implementar **solo D0, D1, D2, D3 y D4**, con pruebas, checkpoints, commits pequeños y push por subfase. Parada obligatoria al terminar D4; D5/D6/D7 e integración principal no autorizados.
+
+Regiones 16/32/64 m, portales físicos dirigidos, conectividad global, campos locales por clase, caché/precarga y reparto determinista; techo compartido **3000 nodos/tick**, sin subida automática. Diagnosticar primero HORDA750 comparando cuerpo L, jefe, horda y jugador fijo/móvil, sin cambiar balance. Si aparece un defecto C, presentar corrección/efectos antes de aplicarla; detenerse ante incumplimiento importante/regresión/nueva decisión arquitectónica.
+
+Objetivo futuro 384×384 m pasando por 256, revisable a 320; no ampliar ahora. Para D5: mesetas 24–64 m, estructuras 12–24 m, conjuntos 32–40 m, rampas 8–12 m, dos accesos grandes y relieve máximo 13,5 m; 18/22,5 m aplazados. Densidad 6–12 s entre hitos, sin vacíos obligatorios >15 s: reducir detalles secundarios primero, tamaño antes que perder lugares interesantes. No aumentar economía/recompensas.
+
+Presupuestos sección 9 y criterios sección 13 aceptados como objetivos, no resultados. Medir lo aplicable a D0–D4; 100 semillas y 60 FPS reales con 750 en equipo del autor a 1080p/interna 360 corresponden a D5–D6. QA primero; U3, U6, corpus, siete ajustes, progreso, RNG y balance protegidos.
