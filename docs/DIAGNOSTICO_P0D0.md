@@ -4,7 +4,34 @@ Fecha: 12/10/2026. Sesión Codex. Base de runtime: `1503780404bc3c73920f058bcd8a
 
 **Procedencia al retomar el 14/10/2026:** este informe, sus arneses y los resultados del 12/10 ya estaban en el árbol local sin publicar. Se conservan como evidencia heredada; no son ejecuciones realizadas en la sesión del 14/10. La revalidación nueva se registra por separado al final y en PROGRESO_P0.
 
+**Corrección autorizada y verificada el 14/10/2026:** el autor aprueba expresamente la corrección propuesta de `TryStep`. Aplicada solo la conversión X/Z a float antes de validar; Edit 729/729 y Play 53/53 nuevos. Las menciones inferiores a «pendiente de aprobación» conservan el estado histórico del diagnóstico previo, no revocan esa autorización. La inanición de M/L sigue prioritaria para D3 con 3000 nodos/tick.
+
 ## Procedencia y reproducción
+
+### Corrección verificada: comparación del 14/10/2026
+
+Cambio de runtime: únicamente `x=(float)x; z=(float)z;` al comienzo de `TryStep`. Una celda sin conexión sigue rechazándose y se mantiene el intento de deslizamiento por ejes. Sin snap, aristas nuevas ni cambios de combate/desvío. La reproducción mínima ahora exige rechazo sin alterar posición y deslizamiento por el eje libre; ocho casos adicionales verifican fronteras X/Z positivas/negativas y las cuatro esquinas, usando solo conexiones Walk existentes.
+
+| Control | Llegada real antes (s) | Después (s) | Recorrido antes → después (m) |
+| --- | --- | --- | --- |
+| Cuerpo L fijo | 27,117 | 27,117 | 92,732 → 92,732 |
+| Jefe fijo | 70,867 | 69,550 | 131,441 → 156,467 |
+| Jefe sin esbirros fijo | No en 180 | 67,350 | 56,374 sin llegada → 156,727 |
+| Jefe ID 750 fijo | 69,383 | 67,350 | 168,881 → 172,240 |
+| Jefe con 750 iniciales fijo | 71,983 | 71,983 | 178,098 → 177,088 |
+| Jefe móvil | No en 180 | 70,067 | Ensayo completo de 180 s |
+| Jefe sin esbirros móvil | No en 180 | 70,250 | Ensayo completo de 180 s |
+| Jefe con 750 iniciales móvil | No en 180 | No en 180 | Ensayo completo de 180 s |
+
+Tres repeticiones por control más control sin observador, deterministas en las métricas lógicas. Los 36 CSV nuevos registran **cero discrepancias nodo/celda** y cero incidentes de penetración/bajo terreno del cuerpo observado. La detención geométrica continua del jefe fijo pasa de 13,75 a 0,967 s; la del jefe sin esbirros fijo, de ~158,817 a 0,967 s. Desaparece el bloqueo persistente reproducido. El jefe fijo se mueve 60,383 s y permanece detenido 9,167 s. La corrección no garantiza la ruta más corta: sus cargas y rodeos aumentan el recorrido, aunque llega antes. No se han modificado esos comportamientos para mejorar las cifras.
+
+**D3 prioritario, sin resolver:** con 750 iniciales y jugador móvil, S/M/L mantienen 372/3/0 publicaciones; latencia p95 0,633333/57,600000/N/D s, edad p95 0,933333/111,966667/N/D s. L no publica en 180 s y el jefe de ese control sigue sin llegar. Presupuesto 3000 intacto.
+
+CPU Begin/Move p95 móvil 0,7416–0,7492 ms, máximos 1,5467/0,8811/0,8789 ms; Begin/Direction/Move observado p95 0,8564–0,8632 ms. No comparar como coste idéntico: ahora el jefe se desplaza 149,183 s frente a 107,4 s antes, con trayectoria diferente. Arrays 28 712 520 B; heap Editor muestreado 447 582 208–465 903 616 B; residencia del proceso 1 455 104 000–1 455 218 688 B; privados 1 660 006 400–1 663 373 312 B. Cero asignaciones en Begin/Move medidos; mismas limitaciones de alcance, muestreo y Editor descritas abajo.
+
+Pruebas **nuevas tras corregir**: `scripts\u3.cmd edit` **729/729**, `scripts\u3.cmd play` **53/53**, incluidos A/B/C y controles D0. XML/log en `unity/TestResults/P0/D0/Correction-20261014`. Verificador histórico ejecutado: U0/U2/U3/U4 coinciden, instantánea `qa-results/reference-9e1155c37a574ba1a8d5d60719343f7e`. Integridad final 9/9 huellas iguales (U6, u3-world, siete ajustes); sin build U6 nueva. Los resultados anteriores quedan conservados en `Verified-20261014`.
+
+Trazas posteriores a la corrección bajo `D0/Diagnosis`, prefijo `20261014T`: `153644114`, `153645481`, `153651913`, `153653550`, `153705087`, `153706611`, `153713753`, `153715093`, `153721753`, `153723422`, `153734982`, `153802244`. Ejecutado `python scripts/p0-d0-report.py <carpeta>` para las doce carpetas (36 CSV). Corrección validada sin regresiones funcionales en las suites; continuar D1 según autorización, sin declarar resueltos inanición, óptimo de recorrido ni presupuesto residente exclusivo.
 
 Se recibió trabajo local sin publicar: autorización D0–D4 en once documentos, `RegionalBaselineTests.cs`/meta, catorce CSV/informes y XML EditMode 707/707. Son evidencias heredadas, conservadas en `unity/TestResults/P0/D0` y copiadas junto con los XML/logs a `Inherited-20261012`. Las siguientes ejecuciones del arnés original escriben en `D0/LegacyRuns/<fechaUTC>` para no sobrescribirlas.
 

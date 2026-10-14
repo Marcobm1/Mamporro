@@ -213,6 +213,9 @@ namespace Mamporro.Core
         }
         bool TryStep(int i,double x,double z)
         {
+            // Validar la misma posición representable que se almacena en la horda.
+            // El redondeo a float puede cruzar una frontera de celda.
+            x=(float)x;z=(float)z;
             var g=Graphs[cls[i]];int n=node[i],c=g.CellOf(x,z);if(c<0)return false;
             if(c!=g.NodeCell[n]){n=WalkNeighbor(g,n,c);if(n<0)return false;}
             var e=enemies;node[i]=n;e.X[i]=(float)x;e.Z[i]=(float)z;e.Y[i]=(float)g.SurfaceY(n,x,z);return true;

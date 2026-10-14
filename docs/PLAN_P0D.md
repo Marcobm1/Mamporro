@@ -184,7 +184,7 @@ No existe aún ninguno de los nuevos componentes. No modificar catálogo, direct
 
 ## 12. Subfases de implementación propuestas
 
-**Checkpoint 14/10/2026:** D0 tiene diagnóstico reproducido y propuesta de corrección C pendiente de decisión: [DIAGNOSTICO_P0D0](DIAGNOSTICO_P0D0.md). La puerta a D1 queda detenida por el defecto funcional de coherencia nodo/posición, no por concurrencia. No aplicar todavía la propuesta ni iniciar D1; D1–D4 conservan su autorización para continuar tras resolver la decisión. CPU/residencia de Editor medidas; residencia exclusiva de navegación y render standalone pendientes, sin declaración de cumplimiento.
+**Checkpoint 14/10/2026:** D0 diagnosticado y corrección acotada C autorizada expresamente: [DIAGNOSTICO_P0D0](DIAGNOSTICO_P0D0.md). Convertir X/Z a float antes de validar en `TryStep`; continuar D1 tras verificar sin regresiones, luego D2–D4 secuencialmente. Inanición M/L prioritaria para D3, manteniendo 3000 nodos/tick. CPU/residencia de Editor medidas; residencia exclusiva de navegación y render standalone pendientes, sin declaración de cumplimiento.
 
 D0–D4 autorizadas; D5–D7 no autorizadas. Un resultado verificable por commit y checkpoint; una subfase puede requerir varios commits pequeños. No avanzar al tamaño mayor si la arquitectura no pasa el ensayo reducido.
 

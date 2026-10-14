@@ -827,3 +827,9 @@ Regiones 16/32/64 m, portales físicos dirigidos, conectividad global, campos lo
 Objetivo futuro 384×384 m pasando por 256, revisable a 320; no ampliar ahora. Para D5: mesetas 24–64 m, estructuras 12–24 m, conjuntos 32–40 m, rampas 8–12 m, dos accesos grandes y relieve máximo 13,5 m; 18/22,5 m aplazados. Densidad 6–12 s entre hitos, sin vacíos obligatorios >15 s: reducir detalles secundarios primero, tamaño antes que perder lugares interesantes. No aumentar economía/recompensas.
 
 Presupuestos sección 9 y criterios sección 13 aceptados como objetivos, no resultados. Medir lo aplicable a D0–D4; 100 semillas y 60 FPS reales con 750 en equipo del autor a 1080p/interna 360 corresponden a D5–D6. QA primero; U3, U6, corpus, siete ajustes, progreso, RNG y balance protegidos.
+
+## Corrección acotada del redondeo P0-C autorizada (14/10/2026)
+
+El autor autoriza expresamente convertir X/Z a float al entrar en `EnemyNavigation.TryStep`, antes de validar celda, vecino y superficie; validar y almacenar las mismas coordenadas. Rechazar celdas sin arista física y conservar el deslizamiento existente. Sin teleports, snap, aristas nuevas, cambios de combate, tamaños, velocidades ni desvío. Sustituir la reproducción del defecto por regresiones de coherencia nodo/posición, incluyendo fronteras positivas/negativas y esquinas; repetir controles D0 y suites A/B/C, Edit/Play, documentar antes/después y publicar.
+
+Si pasa sin regresiones, continuar D1 y secuencialmente hasta D4 con la autorización vigente. No presupone resolver todos los rodeos o retrasos. La inanición M/L con 750 permanece como problema prioritario D3, sin elevar 3000 nodos/tick. D5 no autorizado; protecciones intactas.
