@@ -38,6 +38,12 @@ namespace Mamporro.Core
         public readonly Heightfield Terrain;
         public readonly double MinX,MinZ;
         public readonly int W,H;
+        readonly bool regional;
+        readonly double ownerMinX,ownerMinZ,ownerMaxX,ownerMaxZ;
+        // Solo construcción regional: una consulta de destino fuera del halo exige reconstruir
+        // con más contexto antes de publicar. Las consultas físicas siguen siendo mundiales.
+        public bool NeedsMoreContext {get;private set;}
+        public bool Owns(int node)=>!regional||(NodeX(node)>=ownerMinX&&NodeX(node)<ownerMaxX&&NodeZ(node)>=ownerMinZ&&NodeZ(node)<ownerMaxZ);
         public int NodeCount,EdgeCount,PathCount;
         public int[] CellStart,NodeCell,EdgeStart,EdgeFrom,EdgeTo,EdgeCost,EdgePath,RevStart,RevEdge,PathStart,PathLedge;
         public float[] NodeY,PathX,PathY,PathZ,PathNX,PathNZ,PathD;
@@ -56,6 +62,22 @@ namespace Mamporro.Core
             BuildNodes(inside);NodesMs=watch.Elapsed.TotalMilliseconds;BuildEdges();
             BuildMs=watch.Elapsed.TotalMilliseconds;
         }
+        internal NavGraph(VerticalQueries queries,Heightfield terrain,Func<double,double,double,bool> inside,NavClass navClass,
+            int x0,int z0,int x1,int z1,int ox0,int oz0,int ox1,int oz1)
+        {
+            var watch=System.Diagnostics.Stopwatch.StartNew();
+            Queries=queries;Terrain=terrain;Class=navClass;regional=true;
+            MinX=-terrain.Half+x0*Cell;MinZ=-terrain.Half+z0*Cell;W=x1-x0;H=z1-z0;
+            ownerMinX=-terrain.Half+ox0*Cell;ownerMinZ=-terrain.Half+oz0*Cell;
+            ownerMaxX=-terrain.Half+ox1*Cell;ownerMaxZ=-terrain.Half+oz1*Cell;
+            BuildNodes(inside);NodesMs=watch.Elapsed.TotalMilliseconds;BuildEdges();BuildMs=watch.Elapsed.TotalMilliseconds;
+        }
+        int ConstructionCellOf(double x,double z)
+        {
+            int cell=CellOf(x,z);
+            if(regional&&cell<0&&x>=-Terrain.Half&&z>=-Terrain.Half&&x<Terrain.Half&&z<Terrain.Half)NeedsMoreContext=true;
+            return cell;
+        }
         public double CellX(int cell)=>MinX+(cell%W+.5)*Cell;
         public double CellZ(int cell)=>MinZ+(cell/W+.5)*Cell;
         public double NodeX(int n)=>CellX(NodeCell[n]);
@@ -73,12 +95,15 @@ namespace Mamporro.Core
             double r=Class.Radius+Margin,h=Class.Height,wallCos=Math.Cos(Queries.WallMinSlopeDegrees*WorldMath.Deg2Rad);
             var cellStart=new int[W*H+1];var ys=new List<float>();var terrainFlags=new List<bool>();var cells=new List<int>();
             var candidates=new List<double>();var fromTerrain=new List<bool>();
+            var solidCandidates=regional?new int[Queries.Count]:null;
             for(int c=0;c<W*H;c++){
                 cellStart[c]=ys.Count;double x=CellX(c),z=CellZ(c);
                 if(!inside(x,z,r))continue;
                 candidates.Clear();fromTerrain.Clear();
                 // Primero las tapas: a igual altura prevalece la tapa sobre el terreno oculto bajo ella.
-                for(int i=0;i<Queries.Count;i++){
+                int solidCount=regional?Queries.CopySolidCandidates(x,z,solidCandidates):Queries.Count;
+                for(int candidate=0;candidate<solidCount;candidate++){
+                    int i=regional?solidCandidates[candidate]:candidate;
                     var s=Queries.Solid(i);
                     // Tapas de sólidos del mundo; follaje, interactuables y límites no son suelo de la horda.
                     if(!s.Climbable||x<s.Min.X||x>s.Max.X||z<s.Min.Z||z>s.Max.Z)continue;
@@ -157,6 +182,7 @@ namespace Mamporro.Core
         {
             var normals=new List<Vec3>();
             for(int a=0;a<NodeCount;a++){
+                if(!Owns(a))continue;
                 int c=NodeCell[a],cx=c%W,cz=c/W;double ya=NodeY[a];int connected=0;
                 for(int dz=-1;dz<=1;dz++)for(int dx=-1;dx<=1;dx++){
                     if(dx==0&&dz==0)continue;int ix=cx+dx,iz=cz+dz;if(ix<0||iz<0||ix>=W||iz>=H)continue;int c2=iz*W+ix;
@@ -216,7 +242,7 @@ namespace Mamporro.Core
         {
             double r=Class.Radius;
             for(double d=Margin+Cell;d<=Margin+Cell+2*r+2.5;d+=Cell)for(double side=-Cell;side<=Cell;side+=Cell){
-                double x=feet.X-n.X*d-n.Z*side,z=feet.Z-n.Z*d+n.X*side;int c=CellOf(x,z);if(c<0)continue;
+                double x=feet.X-n.X*d-n.Z*side,z=feet.Z-n.Z*d+n.X*side;int c=ConstructionCellOf(x,z);if(c<0)continue;
                 for(int b=CellStart[c];b<CellStart[c+1];b++)if(NodeY[b]>=topY-.5&&NodeY[b]>feet.Y+Step)return true;
             }
             return false;
@@ -248,7 +274,7 @@ namespace Mamporro.Core
             int b=-1;Vec3 finalMid=default;if(!ok)ClimbFailNoLedge++;
             if(ok)LastClimbFailure="sin nodo de destino junto al borde";
             if(ok)for(int k=0;k<=8&&b<0;k++){
-                double x=top.X+dir.X*k*Cell*.5,z=top.Z+dir.Z*k*Cell*.5;int cell=CellOf(x,z);if(cell<0)continue;
+                double x=top.X+dir.X*k*Cell*.5,z=top.Z+dir.Z*k*Cell*.5;int cell=ConstructionCellOf(x,z);if(cell<0)continue;
                 int candidate=Layer(cell,top.Y,.1);if(candidate<0||candidate==a)continue;
                 var center=new Vec3(NodeX(candidate),NodeY[candidate],NodeZ(candidate));
                 var mid=center.Y<top.Y?new Vec3(center.X,top.Y,center.Z):new Vec3(top.X,center.Y,top.Z);

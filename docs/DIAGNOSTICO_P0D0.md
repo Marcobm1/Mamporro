@@ -6,6 +6,10 @@ Fecha: 12/10/2026. Sesión Codex. Base de runtime: `1503780404bc3c73920f058bcd8a
 
 **Corrección autorizada y verificada el 14/10/2026:** el autor aprueba expresamente la corrección propuesta de `TryStep`. Aplicada solo la conversión X/Z a float antes de validar; Edit 729/729 y Play 53/53 nuevos. Las menciones inferiores a «pendiente de aprobación» conservan el estado histórico del diagnóstico previo, no revocan esa autorización. La inanición de M/L sigue prioritaria para D3 con 3000 nodos/tick.
 
+
+### Repetición durante D1, 15/10/2026
+
+Nueva ejecución del arnés D0 dentro de `scripts\u3.cmd edit`, con el constructor regional local optativo y backend de movimiento histórico. Doce controles, tres repeticiones observadas y control sin observador. Trazas en `unity/TestResults/P0/D0/Diagnosis/20261015T*`; 36 CSV analizados con `python scripts/p0-d0-report.py <carpeta>`: cero discrepancias nodo/celda. Se repiten llegada de jefe fijo 69,550 s, sin esbirros fijo 67,350 s, sin esbirros móvil 70,250 s y horda fija 71,983 s. Horda móvil no llega en 180 s; 372/3/0 publicaciones S/M/L, M p95 57,600 s y L sin publicación. El bloqueo reproducido sigue corregido; la inanición sigue abierta y prioritaria para D3, sin cambiar 3000 nodos/tick. El resultado completo Edit/Play de D1 se registra en PROGRESO_P0; esta sección no anticipa su cierre.
 ## Procedencia y reproducción
 
 ### Corrección verificada: comparación del 14/10/2026

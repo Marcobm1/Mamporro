@@ -109,6 +109,11 @@ namespace Mamporro.Core
             return n;
         }
         readonly Heightfield heightfield;
+        // Copia ordenada de candidatos: las consultas posteriores reutilizan el búfer interno.
+        internal int CopySolidCandidates(double x,double z,int[] destination)
+        {
+            int count=Gather(x,z,x,z);Array.Copy(candidates,destination,count);return count;
+        }
         // Copia independiente (mismos sólidos y terreno) para construir mapas en paralelo: los
         // búferes de consulta no se comparten entre hilos.
         public VerticalQueries Copy()=>new VerticalQueries(heightfield,WallMinSlopeDegrees,solids);
