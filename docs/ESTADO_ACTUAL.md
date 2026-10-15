@@ -1,5 +1,7 @@
 # MAMPORRO — estado actual y punto de continuación
 
+**Actualización D2, 15/10/2026:** portales dirigidos y conectividad global por clase verificados; código `7c50d9f`, 44/44 específicos, Edit 801/801 y Play 53/53 nuevos. Referencias e integridad 9/9 correctas. [Medidas y límites](REGIONES_P0D.md). Siguiente D3 autorizado: transferencias/caché/campos y reparto justo, con inanición M/L aún prioritaria y 3000 conservados; D4 después, D5–D7 excluidos. Asignaciones N/D: contador Mono no detecta testigo; no certificar cero GC.
+
 **Actualización 15/10/2026:** D1 verificado: constructor regional físico optativo en 80/128 m; 28/28 regionales, Edit 757/757 y Play 53/53 nuevos, referencias e integridad correctas. [Resultados y límites](REGIONES_P0D.md). Siguiente D2, después D3/D4 por orden; D5 excluido. Corrección D0 publicada en `5e41406` y repetida sin discrepancias nodo/posición. Inanición M p95 57,6 s / L sin publicación en 180 s sigue prioritaria para D3, 3000 intactos.
 
 **Actualización histórica 14/10/2026:** diagnóstico D0 reproducido; [informe](DIAGNOSTICO_P0D0.md) y cierre en [PROGRESO_P0](PROGRESO_P0.md). El autor autoriza corregir el redondeo double→float en `EnemyNavigation.TryStep`: convertir X/Z antes de validar y almacenar. Cambio acotado en verificación; continuar D1 si pasa sin regresiones. D1–D4 siguen autorizados, D5–D7 excluidos. Inanición M/L prioritaria para D3 con 3000 nodos/tick. Los procesos Claude 20700/20264 pertenecen a otro proyecto por confirmación expresa del autor y no bloquean MAMPORRO.
