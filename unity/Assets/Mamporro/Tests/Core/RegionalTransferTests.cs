@@ -11,14 +11,20 @@ namespace Mamporro.Tests
     {
         static IEnumerable<TestCaseData> Corpus()
         {foreach(string seed in new[]{"A","B","P0QA","MAMPORRO","COLINAS7","Z9K2","MESETA","ACANTILADO","RAMPA42","HORDA750"})foreach(int size in new[]{16,32,64})yield return new TestCaseData(seed,size);}
-        static int[] Oracle(NavPortalWorld w,int source,int region)
+        static int[] Oracle(NavPortalWorld w,int source,int region,bool reverse=false)
         {
             // Relajación por cola independiente: no usa el heap/caché del sistema.
             var d=new int[w.NodeCount];var queued=new bool[d.Length];for(int n=0;n<d.Length;n++)d[n]=int.MaxValue;
+            var incoming=new List<int>[w.NodeCount];
+            if(reverse)for(int e=0;e<w.EdgeCount;e++){
+                int b=w.EdgeTo[e];if(incoming[b]==null)incoming[b]=new List<int>();incoming[b].Add(e);
+            }
             var q=new Queue<int>();q.Enqueue(source);d[source]=0;queued[source]=true;
             while(q.Count>0){int a=q.Dequeue();queued[a]=false;
-                for(int e=w.EdgeStart[a];e<w.EdgeStart[a+1];e++){
-                    int b=w.EdgeTo[e];if(region>=0&&w.NodeRegion[b]!=region)continue;
+                int count=reverse?(incoming[a]?.Count??0):w.EdgeStart[a+1]-w.EdgeStart[a];
+                for(int i=0;i<count;i++){
+                    int e=reverse?incoming[a][i]:w.EdgeStart[a]+i;
+                    int b=reverse?w.EdgeFrom[e]:w.EdgeTo[e];if(region>=0&&w.NodeRegion[b]!=region)continue;
                     int candidate=d[a]+w.EdgeCost[e];if(candidate>=d[b])continue;d[b]=candidate;
                     if(!queued[b]){queued[b]=true;q.Enqueue(b);}
                 }
@@ -33,12 +39,13 @@ namespace Mamporro.Tests
         }
         static void Check(NavPortalWorld w,RegionalTransferCache cache,int source,int region)
         {
-            var expected=Oracle(w,source,region);
+            var expected=Oracle(w,source,region,cache.Reverse);
             for(int target=0;target<w.NodeCount;target++){
                 Assert.That(cache.TryDistance(source,target,region,out int d),Is.True);Assert.That(d,Is.EqualTo(expected[target]));
                 Assert.That(cache.TryParent(source,target,region,out int e),Is.True);
                 if(target==source||d==int.MaxValue){Assert.That(e,Is.EqualTo(-1));continue;}
-                Assert.That(w.EdgeTo[e],Is.EqualTo(target));int parent=w.EdgeFrom[e];
+                Assert.That(cache.Reverse?w.EdgeFrom[e]:w.EdgeTo[e],Is.EqualTo(target));
+                int parent=cache.Reverse?w.EdgeTo[e]:w.EdgeFrom[e];
                 Assert.That(cache.TryDistance(source,parent,region,out int pd),Is.True);
                 Assert.That(pd+w.EdgeCost[e],Is.EqualTo(d));Assert.That(pd,Is.LessThan(d));
             }
@@ -83,6 +90,46 @@ namespace Mamporro.Tests
         {
             var t=new Heightfield(32,32,new float[33*33]);var q=new VerticalQueries(t,Tuning.PlayerMaxSlopeDeg);
             return new NavPortalWorld(q,t,(x,z,r)=>Math.Abs(x)+r<14&&Math.Abs(z)+r<14,NavClass.All[kind],16);
+        }
+        [TestCaseSource(nameof(Corpus))]
+        public void ReverseTransfersKeepPhysicalDirectionAndExactCosts(string seed,int size)
+        {
+            var circuit=seed=="A"?new VerticalCircuit(VerticalLayout.Escalada):seed=="B"?new VerticalCircuit(VerticalLayout.Persecucion):new VerticalCircuit(new ProceduralMap(seed));
+            foreach(var body in NavClass.All){
+                var w=new NavPortalWorld(circuit.Queries,circuit.Terrain,circuit.Collision.IsInside,body,size);
+                int goal=w.Portals.Length>0?w.Portals[w.Portals.Length/2].From:w.NodeCount/2;
+                foreach(int region in new[]{w.NodeRegion[goal],-1}){
+                    var scheduler=new RegionalNavScheduler(1);
+                    var cache=new RegionalTransferCache(w,scheduler,1,worldControl:region<0,reverse:true);
+                    cache.Request(goal,region);Assert.That(cache.TryParent(goal,goal,region,out _),Is.False);
+                    Finish(scheduler,cache,goal,region);Check(w,cache,goal,region);
+                    long started=cache.Started;cache.Request(goal,region);Assert.That(cache.Started,Is.EqualTo(started));
+                    Assert.That(scheduler.Tick(),Is.Zero);
+                    TestContext.Out.WriteLine($"D3-inverse {seed} size={size} class={body.Index} region={region} ticks={cache.PublishedTick(goal,region)} work={cache.Initializations+cache.Extractions+cache.Relaxations+cache.Publications} payload={cache.PayloadBytes}");
+                }
+            }
+        }
+        [TestCase(0)] [TestCase(1)] [TestCase(2)]
+        public void ReverseTransferDoesNotTurnADropIntoAClimb(int kind)
+        {
+            var terrain=new Heightfield(80,80,new float[81*81]);
+            var q=new VerticalQueries(terrain,Tuning.PlayerMaxSlopeDeg,
+                new VerticalSolid(1,new Vec3(8,0,8),new Vec3(24,6,24)),
+                new VerticalSolid(2,new Vec3(7.75,6,7.75),new Vec3(24.25,7,24.25)));
+            var w=new NavPortalWorld(q,terrain,(x,z,r)=>Math.Abs(x)+r<36&&Math.Abs(z)+r<36,NavClass.All[kind],16);
+            var query=new NavPortalQuery(w);bool found=false;
+            foreach(var portal in w.Portals)if(portal.Kind==NavEdgeKind.Drop&&!query.Reachable(portal.To,portal.From)){
+                var scheduler=new RegionalNavScheduler(2);
+                var cache=new RegionalTransferCache(w,scheduler,2,worldControl:true,reverse:true);
+                cache.Request(portal.To);cache.Request(portal.From);
+                Finish(scheduler,cache,portal.To,-1);Finish(scheduler,cache,portal.From,-1);
+                Assert.That(cache.TryDistance(portal.To,portal.From,-1,out int down),Is.True);
+                Assert.That(down,Is.LessThan(int.MaxValue));
+                Assert.That(cache.TryDistance(portal.From,portal.To,-1,out int up),Is.True);
+                Assert.That(up,Is.EqualTo(int.MaxValue));
+                Check(w,cache,portal.To,-1);Check(w,cache,portal.From,-1);found=true;break;
+            }
+            Assert.That(found,Is.True);
         }
         [Test]
         public void CacheCoalescesWithoutRestartAndEvictsOnlyCompletedLeastRecent()

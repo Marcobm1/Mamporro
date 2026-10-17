@@ -16,18 +16,31 @@ namespace Mamporro.Core
         readonly RegionalNavScheduler scheduler;
         readonly Entry[] entries;
         readonly int[] regionStart;
+        readonly int[] incomingStart,incomingEdges;
+        public readonly bool Reverse;
         readonly bool worldControl;
         readonly int bufferLength;
         long access;
         public long Requests,Hits,Coalesced,Rejected,Started,Completed,Evictions;
         public long Initializations,Extractions,Relaxations,Publications;
         public int Capacity=>entries.Length;
-        public long PayloadBytes=>(long)entries.Length*bufferLength*4*4+regionStart.Length*4L;
-        public RegionalTransferCache(NavPortalWorld world,RegionalNavScheduler scheduler,int capacity=4,int geometryVersion=1,int connectivityVersion=1,bool worldControl=false)
+        public long PayloadBytes=>(long)entries.Length*bufferLength*4*4+regionStart.Length*4L+(incomingStart==null?0:(incomingStart.Length+(long)incomingEdges.Length)*4);
+        public RegionalTransferCache(NavPortalWorld world,RegionalNavScheduler scheduler,int capacity=4,int geometryVersion=1,int connectivityVersion=1,bool worldControl=false,bool reverse=false)
         {
             if(world==null||scheduler==null)throw new ArgumentNullException();
             if(capacity<1||capacity>16)throw new ArgumentOutOfRangeException(nameof(capacity));
             World=world;this.scheduler=scheduler;GeometryVersion=geometryVersion;ConnectivityVersion=connectivityVersion;
+            Reverse=reverse;
+            // Índice construido en carga: conserva IDs y dirección física de aristas.
+            // En modo inverso Source es la salida/meta; Parent indica el siguiente
+            // paso físico HACIA ella, nunca una arista inventada en sentido contrario.
+            if(reverse){
+                incomingStart=new int[world.NodeCount+1];incomingEdges=new int[world.EdgeCount];
+                for(int e=0;e<world.EdgeCount;e++)incomingStart[world.EdgeTo[e]+1]++;
+                for(int n=1;n<incomingStart.Length;n++)incomingStart[n]+=incomingStart[n-1];
+                var next=(int[])incomingStart.Clone();
+                for(int e=0;e<world.EdgeCount;e++)incomingEdges[next[world.EdgeTo[e]]++]=e;
+            }
             this.worldControl=worldControl;regionStart=new int[world.Regions.Length+1];
             // D2 ordena los propietarios por región. Índice de carga, sin barridos
             // mundiales dentro de Request/Tick ni memoria proporcional a parejas.
@@ -112,7 +125,8 @@ namespace Mamporro.Core
                         continue;
                     }
                     if(edgeCursor>=0){
-                        int e=edgeCursor++,b=w.EdgeTo[e];owner.Relaxations++;
+                        int e=owner.Reverse?owner.incomingEdges[edgeCursor++]:edgeCursor++;
+                        int b=owner.Reverse?w.EdgeFrom[e]:w.EdgeTo[e];owner.Relaxations++;
                         if(Region<0||w.NodeRegion[b]==Region){
                             b-=offset;
                             int candidate=checked(Dist[current]+w.EdgeCost[e]);
@@ -121,7 +135,8 @@ namespace Mamporro.Core
                         if(edgeCursor==edgeEnd)edgeCursor=-1;
                     }else if(heapCount>0){
                         current=Pop();owner.Extractions++;
-                        edgeCursor=w.EdgeStart[current+offset];edgeEnd=w.EdgeStart[current+offset+1];
+                        var starts=owner.Reverse?owner.incomingStart:w.EdgeStart;
+                        edgeCursor=starts[current+offset];edgeEnd=starts[current+offset+1];
                         if(edgeCursor==edgeEnd)edgeCursor=-1;
                     }else{phase=0;CompletedTick=owner.scheduler.TickIndex;owner.Completed++;owner.Publications++;}
                 }
