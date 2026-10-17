@@ -128,6 +128,8 @@ Ningún agente debe:
 
 ## Estado actual del relevo
 
+**Relevo D3, 16/10/2026:** primera pieza de transferencias/caché/planificador publicada en `9575246`; D3 sigue abierto y D4 no iniciado. Consultar el primer punto de [PROGRESO_P0](PROGRESO_P0.md) para pruebas nuevas, resultados y siguiente paso exacto. Las cuotas sintéticas no acreditan todavía persecución útil. Mantener autorización D3/D4, techo 3000 y parada antes de D5.
+
 A fecha 12/10/2026:
 
 - U1 está cerrado y aprobado.
