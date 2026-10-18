@@ -2,6 +2,47 @@
 
 Implementación optativa autorizada D1–D4; D5 excluido. Mapas de prueba 80/128 m; sin integración en partidas normales ni cambios de generador, balance o presupuesto de 3000 nodos/tick.
 
+## D3 — evaluación incremental del 18/10/2026
+
+Se recuperaron el comparador y su suite locales del 17/10, sin reiniciar D3. `IncrementalNavField` mantiene distancias g/rhs y un heap indexado sobre la unión física dirigida D2. Al cambiar meta repara inconsistencias hasta vaciar el heap; publica intercambiando buffers y sincroniza únicamente nodos modificados, cobrando también esas copias al planificador. La instancia pertenece a un mundo/clase inmutable; no implementa sustitución de geometría, campos locales, padres de movimiento, fallback ni integración jugable. Es el comparador autorizado, no la arquitectura adoptada.
+
+El coste frío del prototipo regional se debe a calcular una transferencia regional por cada salida extraída: miles de salidas y repetición de exploraciones internas. La caché de cuatro entradas no reutiliza fuentes distintas durante esa pasada (cero hits). Ampliarla no reduce por sí sola ese primer cálculo y aumenta memoria; precomputar todas las parejas trasladaría el coste a carga sin demostrar que cabe. Reducir CPU por operación tampoco reduce los ticks necesarios bajo 3000 unidades. El comparador elimina esa multiplicidad de transferencias, pero cambiar la meta altera distancias a escala mundial: un desplazamiento vecino puede invalidar gran parte del campo y exigir múltiples reparaciones. Su baja CPU por tick tampoco acredita reacción rápida.
+
+Primera suite nueva: 16/16, 63,011 s, `unity/TestResults/P0/Regional-20261018T094334/edit.xml`. Contrasta costes completos con relajación por cola independiente: A/B, ocho semillas C, S/M/L, cambios vecinos, superficies desconectadas y caídas dirigidas. Tres diagnósticos 16/32/64, dos modos de 10 800 ticks cada uno a 60 Hz. Fijo desde frío; móvil desde campo fijo completo, alternando dos vecinos Walk con retorno cada 12 ticks. Sin enemigos, movimiento, render ni comparación nueva de persecución monolítica. La igualdad del problema físico explica resultados iguales entre tamaños: el comparador mantiene un campo global.
+
+Primera publicación S/M/L: **6,217 / 5,950 / 3,633 s**. Móvil: **7/8/14 publicaciones**, p95 **28,067 / 24,067 / 16,300 s**, trabajo global **32 400 000** por tamaño en 180 s simulados, techo 3000/tick respetado. Incumple ampliamente 0,3 s p95 / 0,5 s máximo. Exactitud y servicio de las clases no prueban persecución útil ni resuelven inanición física. Payload de buffers S/M/L: **2 708 052 / 2 330 924 / 1 293 280 B**, excluye grafos, geometría, cabeceras y transitorios; no es memoria residente total.
+
+La primera instrumentación mezclaba la edad del campo fijo mantenido 180 s con la entrada al ensayo móvil, y los percentiles CPU fríos incluían inactividad. XML conservado. La versión de verificación separa edad móvil tras primera reparación publicada (espera inicial en latencia), CPU activa y CPU de todos los ticks, y asignaciones con testigo 4096 B. No interpretar edad cronológica de una meta que no cambia como retraso de reacción. Informe reproducible final: `python scripts/p0-d3-incremental-report.py <edit.xml> <informe.json>`; campos N/D se serializan como null.
+
+**Verificación final nueva de EditMode:** `scripts\u3.cmd edit`, **894/894**, 1081,686 s, XML/log archivados en `unity/TestResults/P0/D3-20261018`. Incluye 16 del comparador, 71 transferencias, seis invariantes/diagnósticos de jerarquía y todas las regresiones. `incremental.json` y `hierarchy.json` se extraen de ese XML con los scripts versionados. Se repiten exactamente las latencias y 7/8/14 publicaciones del comparador y las cero publicaciones regionales en 180 s. Que las pruebas pasen valida exactitud/invariantes y captura del fallo, **no los objetivos de rendimiento**.
+
+| Comparador, tres tamaños | S | M | L |
+| --- | --- | --- | --- |
+| Edad móvil p95, tras primera reparación (s) | 47,850 | 41,100 | 23,333 |
+| Edad móvil máxima, tras primera reparación (s) | 49,267 | 42,400 | 24,067 |
+
+CPU de ticks activos fríos p95 para 16/32/64: **0,0904 / 0,0877 / 0,0844 ms** (393 ticks activos de 10 800). El p95 de todos los ticks fríos es 0,0001 ms porque incluye inactividad; no usarlo como coste de cálculo. Móvil, todos activos: p95 **0,0477 / 0,0486 / 0,0507 ms**, máximos **0,0823 / 0,0883 / 0,1157 ms**. Solo `scheduler.Tick`, excluye peticiones, preparación, aserciones, movimiento y render. La igualdad del trabajo acumulado y devuelto por el planificador se exige en cada escenario. Testigo de asignaciones no detectado en los seis casos: **N/D**, no cero certificado. Memoria residente exclusiva y picos siguen pendientes.
+
+Jerarquía regional repetida en esa misma suite: CPU tick p95 **0,0425 / 0,0469 / 0,0576 ms**, máximos **0,0914 / 0,1038 / 0,1105 ms**, cero publicaciones S/M/L y mismo trabajo/transferencias que el 17/10. Confirma el cuello de botella previo con ejecución nueva. Una pasada por tamaño y modo; no son tres repeticiones Normal/Development ni FPS.
+
+### Alternativas que requieren decisión antes de integrar
+
+1. **Revisar la jerarquía regional (recomendación para el siguiente experimento):** agrupar portales con garantías físicas y medir propagación regional multiobjetivo por lotes, conservando extremos/capas/direcciones, cuotas, 3000 y versiones compatibles. Contrastar alcance, coste y caminos contra el oráculo antes de integrar. No basta elegir un portal por frontera: puede perder rutas, aumentar rodeos o cerrar el paso a L. La eficiencia aún no está demostrada; una aproximación exigiría acordar explícitamente su margen.
+2. **Seguir investigando reparación global:** acotar las reparaciones y medir saltos de meta/altura. El comparador actual no es candidato de integración; mantiene residencia mundial y falla incluso entre vecinos. Cambiar a publicaciones parciales o demanda por consumidores cambia los contratos de consistencia/servicio y requiere revisión.
+3. **Revisar objetivos o presupuesto:** no aplicado ni recomendado como solución automática. Se conserva 3000 y los umbrales aprobados; más trabajo por tick no corrige por sí solo la explosión de transferencias.
+
+**D3 permanece bloqueado por rendimiento; D4 no iniciado.** No se implementan campos locales encima de un coste global que aún no llega a tiempo. Pendientes tras resolver la arquitectura: invalidación/versiones completas, integración QA, persecución física 300/500/750 fijo/móvil, jefe aislado/acompañado, llegada y comparación monolítica, memoria/asignaciones verificables; después D4. No se presenta este diagnóstico como cumplimiento de esos ensayos.
+
+### Control monolítico repetido el 18/10
+
+La suite completa vuelve a ejecutar el arnés antiguo de 300/500/750 fijo/móvil y el diagnóstico corregido D0 (12 escenarios × tres repeticiones observadas más control sin observador). Trazas nuevas en `D0/LegacyRuns/20261018T*` y `D0/Diagnosis/20261018T*`; resumen de las 36 trazas corregidas en `D3-20261018/monolithic-diagnosis.json`. `python scripts/p0-d0-report.py <carpeta Diagnosis de esta pasada>` confirma **cero discrepancias nodo/celda**. No sustituir la llegada estable por la primera altura alcanzada del arnés antiguo.
+
+Se reproducen llegada estable de jefe fijo sin esbirros **67,350 s**, acompañado **69,550 s** y con 750 **71,983 s**. Con 750 móvil, **ninguna llegada estable en 180 s** y publicaciones S/M/L **372/3/0**; M conserva p95 **57,600 s**. Tercera repetición: CPU de navegación de producción p95 **0,6232 ms**, p99 **0,7877 ms**, máximo **0,9054 ms** (Editor lógico, sin render). Esa CPU favorable no elimina la inanición. El comparador incremental usa otras metas, no mueve cuerpos y contabiliza trabajo más estrictamente; no calcular un porcentaje de mejora de persecución entre estos arneses. Los resultados corrigen/completan la verificación pendiente, no el comportamiento del backend activo.
+
+### Cierre verificable de esta evaluación
+
+Código `7344587`, push normal realizado. Play nuevo: `scripts\u3.cmd play`, **53/53**, 112,144 s; XML/log en `D3-20261018`, primer intento por licencia 198 conservado aparte. Edit nuevo 894/894 indicado arriba. Referencias U0/U2/U3/U4 correctas con `powershell -NoProfile -ExecutionPolicy Bypass -File scripts\verify-historical-reference.ps1`, instantánea `qa-results/reference-2d186a4e6b1d4e198089d06b993b0b31`. Huellas finales **9/9** idénticas, incluidos U6, u3-world y siete ajustes Unity. El Edit 878/878 y Play 53/53 del 17/10 son evidencias heredadas revisadas; el Play que figuraba en curso sí había terminado. No se ejecutó build nueva ni benchmark de FPS. Documentación publicada separadamente; solo siete ajustes protegidos quedan locales. Las alternativas anteriores son propuestas para consulta, no decisiones adoptadas.
+
 ## D1: constructor físico acotado (verificado el 15/10/2026)
 
 `NavRegionGraph` construye una baldosa de 16/32/64 m y contexto de nodos. Coordenadas absolutas, alineadas a la rejilla mundial de 0,5 m. Todas las capas de una celda pertenecen a la misma baldosa. El nodo de origen posee cada arista y toda su trayectoria; los nodos de halo no generan aristas. La unión por celda mundial/capa/clase permite reconstruir la misma topología física sin duplicar propietarios.
@@ -125,3 +166,39 @@ Reparto comprobado: ensayo **sintético**, 10 800 ticks de demanda continua en l
 - SHA-256 **9/9** iguales: U6, u3-world y siete ajustes locales. Sin diferencias respecto a `d4906e6` en src, corpus, D1/D2, EnemyNavigation ni VerticalCircuit. Sin build nueva ni cambios al backend activo; no se afirma prueba regional de combate/movimiento por pasar las regresiones históricas.
 
 Código `9575246` publicado mediante push normal y comprobado en origin. Cierre documental separado con los cuatro documentos de seguimiento; únicamente los siete ajustes protegidos deben quedar fuera del índice. No se han completado D3 ni D4, ni se ha iniciado D5. La continuación autorizada figura en el párrafo anterior y en Cómo retomar de PROGRESO_P0; no necesita nueva autorización general.
+
+## D3 — transferencias inversas y bloqueo de la jerarquía fría (17/10/2026)
+
+La reanudación comprobó HEAD/origin `9575246`, fetch, los cuatro documentos preparados y los XML del 16/10. El cierre documental heredado se publicó en `3c1fb90`. Huellas de entrada 9/9 coincidentes en `unity/TestResults/P0/D3-20261017/integrity-before.json`. Ningún código local posterior quedó descartado.
+
+`RegionalTransferCache(reverse:true)` calcula costes hacia una salida/meta conservando la dirección física: sus padres son aristas hacia delante que acercan a esa meta. El índice de entradas se construye durante carga y referencia las aristas D2; no copia ni invierte las trayectorias. La caché queda ligada al sentido de consulta, mundo/clase y versiones geométrica/de conectividad; los buffers regionales, cuotas y contrapresión existentes se conservan. El payload informado incluye ahora el índice inverso. No cambia el backend activo.
+
+Código de transferencias `2ca9c29`: comando `powershell -NoProfile -ExecutionPolicy Bypass -File scripts\p0-regional-tests.ps1 -Filter Mamporro.Tests.RegionalTransferTests`, **71/71 nuevas**, 280,584 s; `unity/TestResults/P0/Regional-20261017T104657/edit.xml` y `edit.log`. Incluye las 38 existentes, 30 combinaciones inversas A/B/ocho C × 16/32/64 con S/M/L y tres pruebas de caída dirigida sin retorno. Oráculo por cola independiente, costes y siguiente arista de todos los destinos desde una meta por caso; no todas las parejas.
+
+### Prototipo de costes de salida
+
+`RegionalPortalField`, código `9e11d37`, aplica la jerarquía perezosa exacta sin matriz de parejas: vértices únicos de salida, Dijkstra inverso implícito, una transferencia interna hacia el vértice extraído y relajación de portales que entran en esa región. El coste de salida exige que la primera arista cruce región; **no es la distancia libre desde ese nodo**. Los futuros campos locales deben combinar esas semillas y, en la región objetivo, la meta real. No se conectó este prototipo al movimiento.
+
+El trabajo de inicialización, siembra, extracción/solicitud, examen de portales y publicación se cuenta junto con las transferencias en el mismo `RegionalNavScheduler`. Mientras espera una transferencia no compite contra ella. Caché de cuatro entradas por clase, sin cancelación por meta nueva; rechazo explícito mientras está calculando, doble buffer y conservación de la versión publicada. El consumidor deberá reintentar la meta más reciente. No existe aún coordinador de dependencias con campos locales, ni se afirma invalidación completa del backend final.
+
+`powershell -NoProfile -ExecutionPolicy Bypass -File scripts\p0-regional-tests.ps1 -Filter Mamporro.Tests.RegionalPortalFieldTests`: **6/6 nuevas**, 13,728 s reales para la suite, XML/log `Regional-20261017T114240`. Tres fixtures pequeñas contrastan costes de salida contra oráculo mundial independiente, publicación atómica, contrapresión y conservación del objetivo anterior para S/M/L. Tres diagnósticos miden HORDA750 frío a 16/32/64. El intento previo `Regional-20261017T105239` terminó por licencia 198 sin ejecutar pruebas; se repitió fuera del sandbox. Que la suite pase acredita sus invariantes y la captura de medidas, **no el cumplimiento del objetivo de latencia**.
+
+### Resultado que bloquea el avance
+
+Una meta fija por clase, HORDA750, tres clases activas, 10 800 ticks a 60 Hz (180 s **simulados**), una pasada por tamaño, Editor sin render. Cada clase recibió exactamente **10 800 000 unidades**; total **32 400 000 por tamaño**, nunca más de 3000/tick. Se comprobó igualdad entre trabajo del planificador y todos los contadores. No hay enemigos ni movimiento en esta prueba: no es una sesión jugable de tres minutos ni mide FPS.
+
+| Región | Salidas únicas S/M/L | Transferencias terminadas S/M/L | Publicaciones S/M/L a 180 s | CPU tick p50 / p95 / p99 / máximo (ms) |
+| --- | --- | --- | --- | --- |
+| 16 m | 5396 / 4605 / 2715 | 1356 / 1622 / 2676 | 0 / 0 / 0 | 0,0353 / 0,0547 / 0,0707 / 1,3418 |
+| 32 m | 2477 / 2157 / 1310 | 356 / 445 / 866 | 0 / 0 / 0 | 0,0376 / 0,0474 / 0,0691 / 0,1020 |
+| 64 m | 839 / 757 / 506 | 102 / 119 / 356 | 0 / 0 / 0 | 0,0484 / 0,0656 / 0,0752 / 0,1059 |
+
+**Ninguna primera publicación en los nueve casos: latencia censurada a 180 s, no cero.** No se pueden calcular p50/p95/p99/máximo de latencia de publicaciones ni edad de campos inexistentes. Supera ampliamente el objetivo de meta fija (p95 ≤0,3 s / máximo ≤0,5 s). Hay progreso de cálculo en las tres clases, pero aún ningún resultado utilizable. No es inanición del planificador; este candidato requiere demasiadas transferencias por salida para la primera versión mundial.
+
+Caché fría: cero hits, expulsiones S/M/L 1353/1619/2673 (16), 353/442/863 (32), 99/116/353 (64). Todas son entradas terminadas; ninguna cancelación perpetua. Arrays del campo y su caché S/M/L: 1 903 408 / 1 638 480 / 926 864 B (16), 1 956 652 / 1 690 312 / 979 008 B (32), 2 417 956 / 2 098 816 / 1 220 364 B (64). Excluyen grafos D1/D2, geometría, cabeceras y transitorios: **no son memoria residente total**. Asignaciones **N/D** en los tres tamaños: el contador no detectó el testigo de 4096 B. No certificar cero GC.
+
+Informe reproducible: `python scripts/p0-d3-hierarchy-report.py unity\TestResults\P0\Regional-20261017T114240\edit.xml unity\TestResults\P0\D3-20261017\hierarchy.json`. Conserva todas las filas y representa la publicación ausente como null. Manifiesto en `D3-20261017/manifest.json`: meta por clase `NodeAt(0,0,0)`, o `NodeCount/2` si no existe, cuatro entradas de caché, código y rutas de evidencias. CPU corresponde únicamente al planificador/jerarquía/transferencias; faltan movimiento, combate, preparación y render, y no hay tres repeticiones Normal/Development.
+
+D0 sigue siendo la referencia **no comparable directamente**: 372/3/0 campos en persecución móvil con 750 y M p95 57,6 s. Aquí no hay horda ni campos de movimiento. No se afirma mejorar D0 ni el monolítico. Los ensayos físicos 300/500/750, distribución concentrada/dispersa, jefe, metas móviles/alturas/inaccesibles y llegada real siguen pendientes. Tampoco se implementaron los campos locales compartidos: integrar este resultado como solución ocultaría el fallo previo de latencia.
+
+**Parada por incumplimiento importante**, según PLAN_P0D y la instrucción del autor. D3 abierto; D4 no iniciado, D5–D7 excluidos. Se solicita evaluar un comparador de reparación incremental exacta del campo global (alternativa futura en sección 4), conservando 3000, física y prototipo; otra opción requiere revisar la compresión de portales y sus garantías. **Propuesta pendiente, no decisión adoptada ni autorización general nueva de D3/D4.** Este diagnóstico descarta el candidato perezoso por salida tal como está, no demuestra imposibilidad de toda arquitectura regional.

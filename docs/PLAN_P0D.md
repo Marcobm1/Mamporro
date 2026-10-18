@@ -184,6 +184,8 @@ No existe aún ninguno de los nuevos componentes. No modificar catálogo, direct
 
 ## 12. Subfases de implementación propuestas
 
+**Checkpoint 18/10/2026:** D0–D2 cerrados; D3 parcialmente implementado y detenido por latencia medida. Jerarquía exacta por salida sin publicación en 180 s; comparador incremental autorizado evaluado, exactitud correcta pero primera publicación 3,633–6,217 s y reparación móvil p95 16,300–28,067 s. No se adopta ni se cambian 3000/objetivos. [Evidencias nuevas y alternativas para consulta](REGIONES_P0D.md), [checkpoint operativo](PROGRESO_P0.md). D4 no iniciado; su autorización se conserva, condicionada a resolver y verificar D3.
+
 **Checkpoint 14/10/2026:** D0 diagnosticado y corrección acotada C autorizada expresamente: [DIAGNOSTICO_P0D0](DIAGNOSTICO_P0D0.md). Convertir X/Z a float antes de validar en `TryStep`; continuar D1 tras verificar sin regresiones, luego D2–D4 secuencialmente. Inanición M/L prioritaria para D3, manteniendo 3000 nodos/tick. CPU/residencia de Editor medidas; residencia exclusiva de navegación y render standalone pendientes, sin declaración de cumplimiento.
 
 D0–D4 autorizadas; D5–D7 no autorizadas. Un resultado verificable por commit y checkpoint; una subfase puede requerir varios commits pequeños. No avanzar al tamaño mayor si la arquitectura no pasa el ensayo reducido.

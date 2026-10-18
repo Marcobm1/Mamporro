@@ -128,6 +128,12 @@ Ningún agente debe:
 
 ## Estado actual del relevo
 
+**18/10/2026:** comparador incremental recuperado y evaluado; exactitud correcta pero reacción insuficiente. Edit nuevo 894/894; el diagnóstico monolítico también reproduce inanición M/L. No adoptar comparador ni avanzar D4: consultar alternativas de [REGIONES_P0D](REGIONES_P0D.md). Estado de Play, commits, huellas y siguiente paso exacto en el primer checkpoint de [PROGRESO_P0](PROGRESO_P0.md). La autorización anterior de evaluar el comparador se ha ejecutado; no equivale a aprobar otra arquitectura.
+
+**Continuación tras consulta, 17/10/2026:** el autor responde «sigue»; evaluar el comparador incremental exacto, conservando el prototipo regional y sin adopción automática. Sustituye la espera de respuesta del párrafo siguiente. Checkpoint y verificaciones en PROGRESO_P0; D3 abierto y D4 sin iniciar.
+
+**Parada D3, 17/10/2026:** la jerarquía perezosa exacta por salida no publica en 180 s simulados en ninguno de los nueve casos HORDA750 × 16/32/64 × S/M/L, aunque cada clase recibe su cuota. Transferencias inversas y prototipo conservados; [informe](REGIONES_P0D.md). Consultada alternativa incremental exacta; no implementarla sin respuesta. D3/D4 ya autorizados en general, pero hay un incumplimiento importante concreto. Ver primer checkpoint de [PROGRESO_P0](PROGRESO_P0.md) para pruebas, publicación y siguiente paso. D3 no cerrado y D4 no iniciado.
+
 **Relevo D3, 16/10/2026:** primera pieza de transferencias/caché/planificador publicada en `9575246`; D3 sigue abierto y D4 no iniciado. Consultar el primer punto de [PROGRESO_P0](PROGRESO_P0.md) para pruebas nuevas, resultados y siguiente paso exacto. Las cuotas sintéticas no acreditan todavía persecución útil. Mantener autorización D3/D4, techo 3000 y parada antes de D5.
 
 A fecha 12/10/2026:
