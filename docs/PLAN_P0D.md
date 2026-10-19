@@ -184,6 +184,8 @@ No existe aún ninguno de los nuevos componentes. No modificar catálogo, direct
 
 ## 12. Subfases de implementación propuestas
 
+**Checkpoint posterior del 18/10/2026:** autorizado y evaluado el experimento de agrupación exacta + propagación multiobjetivo por lotes. Exactitud correcta, rendimiento **negativo**: vecino agregado mínimo 1101086 unidades; móvil p95 mejor 7,833/6,750/3,700 s. [Informe](EXPERIMENTO_LOTES_P0D3.md). No integrar, no continuar construyendo sobre este candidato y no iniciar D4. No elevar 3000 ni relajar objetivos. Cierre de verificaciones/publicación en PROGRESO_P0; detenerse para revisión del autor.
+
 **Checkpoint 18/10/2026:** D0–D2 cerrados; D3 parcialmente implementado y detenido por latencia medida. Jerarquía exacta por salida sin publicación en 180 s; comparador incremental autorizado evaluado, exactitud correcta pero primera publicación 3,633–6,217 s y reparación móvil p95 16,300–28,067 s. No se adopta ni se cambian 3000/objetivos. [Evidencias nuevas y alternativas para consulta](REGIONES_P0D.md), [checkpoint operativo](PROGRESO_P0.md). D4 no iniciado; su autorización se conserva, condicionada a resolver y verificar D3.
 
 **Checkpoint 14/10/2026:** D0 diagnosticado y corrección acotada C autorizada expresamente: [DIAGNOSTICO_P0D0](DIAGNOSTICO_P0D0.md). Convertir X/Z a float antes de validar en `TryStep`; continuar D1 tras verificar sin regresiones, luego D2–D4 secuencialmente. Inanición M/L prioritaria para D3, manteniendo 3000 nodos/tick. CPU/residencia de Editor medidas; residencia exclusiva de navegación y render standalone pendientes, sin declaración de cumplimiento.

@@ -128,6 +128,8 @@ Ningún agente debe:
 
 ## Estado actual del relevo
 
+**18/10/2026, posterior al incremental:** el autor autorizó agrupación exacta y propagación regional por lotes; experimento ejecutado, exactitud verificada y **resultado negativo de rendimiento**. [Informe](EXPERIMENTO_LOTES_P0D3.md). No repetir la consulta de autorización del experimento ni integrarlo por su exactitud: 64 m aún requiere 1101086 unidades para el cambio vecino. D3 bloqueado y D4 sin iniciar; conservar 3000. Cierre real de regresiones, commits, huellas y siguiente paso en el primer checkpoint de [PROGRESO_P0](PROGRESO_P0.md). No iniciar una nueva arquitectura sin revisión del autor.
+
 **18/10/2026:** comparador incremental recuperado y evaluado; exactitud correcta pero reacción insuficiente. Edit nuevo 894/894; el diagnóstico monolítico también reproduce inanición M/L. No adoptar comparador ni avanzar D4: consultar alternativas de [REGIONES_P0D](REGIONES_P0D.md). Estado de Play, commits, huellas y siguiente paso exacto en el primer checkpoint de [PROGRESO_P0](PROGRESO_P0.md). La autorización anterior de evaluar el comparador se ha ejecutado; no equivale a aprobar otra arquitectura.
 
 **Continuación tras consulta, 17/10/2026:** el autor responde «sigue»; evaluar el comparador incremental exacto, conservando el prototipo regional y sin adopción automática. Sustituye la espera de respuesta del párrafo siguiente. Checkpoint y verificaciones en PROGRESO_P0; D3 abierto y D4 sin iniciar.

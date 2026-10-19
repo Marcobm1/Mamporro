@@ -2,6 +2,10 @@
 
 Implementación optativa autorizada D1–D4; D5 excluido. Mapas de prueba 80/128 m; sin integración en partidas normales ni cambios de generador, balance o presupuesto de 3000 nodos/tick.
 
+## D3 — experimento de lotes exactos del 18/10/2026
+
+El autor autorizó la alternativa 1 propuesta más abajo. Se han verificado agrupación reversible, propagación regional multiobjetivo y scheduler aislado: **resultado negativo para reacción**. [Reglas, equivalencia, tablas 16/32/64 × S/M/L, CPU, memoria y comparación](EXPERIMENTO_LOTES_P0D3.md). A 64 m, vecino: 1101086 unidades globales y hasta 6,133 s; móvil p95 7,833/6,750/3,700 s. La exploración de campos completos sigue dominando aunque ya no se calcule una transferencia por salida. No seguir construyendo campos sobre este candidato, no integrar ni iniciar D4. Los informes anteriores se conservan como controles; el cierre de pruebas/publicación está en [PROGRESO_P0](PROGRESO_P0.md).
+
 ## D3 — evaluación incremental del 18/10/2026
 
 Se recuperaron el comparador y su suite locales del 17/10, sin reiniciar D3. `IncrementalNavField` mantiene distancias g/rhs y un heap indexado sobre la unión física dirigida D2. Al cambiar meta repara inconsistencias hasta vaciar el heap; publica intercambiando buffers y sincroniza únicamente nodos modificados, cobrando también esas copias al planificador. La instancia pertenece a un mundo/clase inmutable; no implementa sustitución de geometría, campos locales, padres de movimiento, fallback ni integración jugable. Es el comparador autorizado, no la arquitectura adoptada.
