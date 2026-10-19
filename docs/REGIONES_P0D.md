@@ -2,6 +2,10 @@
 
 Implementación optativa autorizada D1–D4; D5 excluido. Mapas de prueba 80/128 m; sin integración en partidas normales ni cambios de generador, balance o presupuesto de 3000 nodos/tick.
 
+## D3 — demanda exacta del 19/10/2026
+
+Autorización ejecutada: búsquedas inversas por consumidor activo compartidas por clase/meta, caché acotada, FIFO y estados explícitos. **Exactitud correcta, resultado negativo de rendimiento.** [Informe reproducible completo](EXPERIMENTO_DEMANDA_P0D3.md): vecino caliente 750 concentrados 57764 unidades, dispersos 1992760; recorrido móvil disperso p95 S/M/L 85,017/102,883/0,633 s, cobertura 0,429/0,222/2,722 %, 750 consultas vigentes pendientes al cierre. 3000 intactos. Mejora localizada por reutilización/cercanía, no solución general ni persecución física. Código `3aaac6f`, medidas `2940d9b`; pruebas/protecciones en PROGRESO_P0. No integrar, no D4/D5; esperar revisión del autor antes de otra arquitectura. Las recomendaciones inferiores corresponden a experimentos anteriores ya ejecutados.
+
 ## D3 — experimento de lotes exactos del 18/10/2026
 
 El autor autorizó la alternativa 1 propuesta más abajo. Se han verificado agrupación reversible, propagación regional multiobjetivo y scheduler aislado: **resultado negativo para reacción**. [Reglas, equivalencia, tablas 16/32/64 × S/M/L, CPU, memoria y comparación](EXPERIMENTO_LOTES_P0D3.md). A 64 m, vecino: 1101086 unidades globales y hasta 6,133 s; móvil p95 7,833/6,750/3,700 s. La exploración de campos completos sigue dominando aunque ya no se calcule una transferencia por salida. No seguir construyendo campos sobre este candidato, no integrar ni iniciar D4. Los informes anteriores se conservan como controles; el cierre de pruebas/publicación está en [PROGRESO_P0](PROGRESO_P0.md).

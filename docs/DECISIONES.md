@@ -1,5 +1,11 @@
 # Decisiones acordadas
 
+## D3: experimento aislado de consultas exactas bajo demanda (19/10/2026)
+
+El autor autoriza calcular solo rutas solicitadas por consumidores activos, compartir búsquedas por clase/meta y reutilizar mediante caché acotada. Conservar exactitud física dirigida S/M/L, Walk/Climb/Drop, alturas y costes; distinguir pendiente/alcanzable/inalcanzable, reparto justo, determinismo, invalidación y ausencia de cancelación por meta móvil que cause inanición. Presupuesto global 3000 incluyendo inicialización, búsqueda y mantenimiento, objetivos 0,3/0,5 s intactos. Contrastar A/B/ocho C y 16/32/64, simular demandas 300/500/750 concentradas/dispersas con meta fija/móvil durante 180 s y medir respuesta, edad, cobertura, pendientes, trabajo, CPU y memoria. Sin investigación avanzada ni integración automática. No modificar EnemyNavigation/backend, generador, economía/web; D4/D5 y ampliaciones excluidos. Si falla, documentar alternativas y detenerse para revisión tras pruebas, protecciones y push normal.
+
+Cierre del mismo día conforme a esa condición: servicio `3aaac6f`, medidas `2940d9b`, exactitud correcta pero resultado negativo en frío, dispersión y recorrido móvil. Se detiene el candidato sin integración ni cambios de presupuesto/objetivos. [Alternativas](EXPERIMENTO_DEMANDA_P0D3.md) de preprocesado exacto reutilizable o heurística admisible/cohortes quedan como propuestas para revisión, no decisiones aprobadas ni implementación adicional.
+
 ## P0-A autorizado (05/10/2026)
 
 El autor aprueba las cuatro propuestas del [plan P0](PROGRESO_P0.md) y autoriza exclusivamente A1–A5 consecutivos: agarre explícito con botón derecho; escalada libre sin stamina ni duración máxima; salida a tejado con volumen/soporte/barrido válidos; velocidades QA 4,5/3 m/s; cámara contra sólidos solo QA; horda existente y refugios inaccesibles documentados sin ocultarlos mediante balance. Conservar U3, entrega U6 y ajustes protegidos. No iniciar P0-B/C/D al cierre; esperar prueba manual.
