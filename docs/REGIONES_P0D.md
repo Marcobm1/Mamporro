@@ -2,6 +2,10 @@
 
 Implementación optativa autorizada D1–D4; D5 excluido. Mapas de prueba 80/128 m; sin integración en partidas normales ni cambios de generador, balance o presupuesto de 3000 nodos/tick.
 
+## Puerta de preprocesado exacto — 20/10/2026
+
+Experimento autorizado desde `f355409`, detenido en evaluación inicial: construcción más transferencias regionales completas S/M/L requiere 4,413–4,967 s en HORDA750 × 16/32/64 × tres repeticiones, antes de almacenar tablas y validar. Excede objetivo de 4 s; no excede máximo de 6 s. Matriz mundial de distancias 13,80 GiB, descartada sin reservar. Las tablas regionales son menores pero no superan la puerta temporal. **Sin prototipo de servicio ni integración; D3 bloqueado y parada para revisión.** [Medidas nuevas, límites y alternativas](EXPERIMENTO_PREPROCESADO_P0D3.md); pruebas/protecciones/publicación en PROGRESO_P0. No iniciar D4/D5 ni otra arquitectura.
+
 ## D3 — demanda exacta del 19/10/2026
 
 Autorización ejecutada: búsquedas inversas por consumidor activo compartidas por clase/meta, caché acotada, FIFO y estados explícitos. **Exactitud correcta, resultado negativo de rendimiento.** [Informe reproducible completo](EXPERIMENTO_DEMANDA_P0D3.md): vecino caliente 750 concentrados 57764 unidades, dispersos 1992760; recorrido móvil disperso p95 S/M/L 85,017/102,883/0,633 s, cobertura 0,429/0,222/2,722 %, 750 consultas vigentes pendientes al cierre. 3000 intactos. Mejora localizada por reutilización/cercanía, no solución general ni persecución física. Código `3aaac6f`, medidas `2940d9b`; pruebas/protecciones en PROGRESO_P0. No integrar, no D4/D5; esperar revisión del autor antes de otra arquitectura. Las recomendaciones inferiores corresponden a experimentos anteriores ya ejecutados.

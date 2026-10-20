@@ -1,5 +1,7 @@
 # P0-D3 — consultas exactas bajo demanda
 
+**Continuación del 20/10/2026:** el autor autorizó evaluar preprocesado regional exacto. [Puerta inicial negativa y parada antes del prototipo](EXPERIMENTO_PREPROCESADO_P0D3.md). Este documento conserva las medidas del 19/10; no se ha optimizado ni integrado el candidato de demanda.
+
 ## Alcance y estado
 
 Experimento aislado autorizado el 19/10/2026, desde `599beec`. **Resultado negativo para desbloquear D3.** Exactitud verificada; mejora localizada con consumidores próximos y metas repetidas, pero mala escala con consumidores dispersos y metas que recorren el mapa. Con 750 dispersos, el recorrido móvil da p95 S/M/L **85,017/102,883/0,633 s**, cobertura de la meta vigente **0,429/0,222/2,722 %** y 750 pendientes al terminar. No se integra ni se optimiza este candidato después de la evaluación; parada para revisión del autor.

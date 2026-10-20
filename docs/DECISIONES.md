@@ -1,5 +1,11 @@
 # Decisiones acordadas
 
+## D3: puerta inicial de preprocesado exacto (20/10/2026)
+
+El autor autoriza un experimento aislado desde el estado real de `f355409`, sin investigación avanzada: evaluar primero tiempo, memoria, portales y coste por cambio de meta; solo implementar prototipo acotado si cabe, después equivalencia y cargas. Orden expresa de detenerse y presentar alternativas si falla la evaluación inicial, y revisión antes de integrar o cambiar arquitectura. Mantener 3000 globales/tick, reacción 0,3/0,5 s, siete ajustes y nueve protecciones; no navegación activa, generador, balance, web, D4/D5 ni mundo mayor.
+
+Evaluación ejecutada: nueve muestras de HORDA750 × 16/32/64, S/M/L, preparación parcial 4,413–4,967 s con motor existente, por encima del objetivo 4 s. Matriz mundial 13,80 GiB descartada sin reservar. **Se cumple la parada inicial; no se implementa servicio nuevo.** Resultado limitado a la representación/kernel medidos, no imposibilidad general de navegación exacta. [Informe y alternativas no adoptadas](EXPERIMENTO_PREPROCESADO_P0D3.md). La siguiente arquitectura requiere revisión del autor; no se flexibilizan los presupuestos.
+
 ## D3: experimento aislado de consultas exactas bajo demanda (19/10/2026)
 
 El autor autoriza calcular solo rutas solicitadas por consumidores activos, compartir búsquedas por clase/meta y reutilizar mediante caché acotada. Conservar exactitud física dirigida S/M/L, Walk/Climb/Drop, alturas y costes; distinguir pendiente/alcanzable/inalcanzable, reparto justo, determinismo, invalidación y ausencia de cancelación por meta móvil que cause inanición. Presupuesto global 3000 incluyendo inicialización, búsqueda y mantenimiento, objetivos 0,3/0,5 s intactos. Contrastar A/B/ocho C y 16/32/64, simular demandas 300/500/750 concentradas/dispersas con meta fija/móvil durante 180 s y medir respuesta, edad, cobertura, pendientes, trabajo, CPU y memoria. Sin investigación avanzada ni integración automática. No modificar EnemyNavigation/backend, generador, economía/web; D4/D5 y ampliaciones excluidos. Si falla, documentar alternativas y detenerse para revisión tras pruebas, protecciones y push normal.
