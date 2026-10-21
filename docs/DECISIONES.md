@@ -1,5 +1,11 @@
 # Decisiones acordadas
 
+## D3: A* exacto con landmarks, dos puertas (20/10/2026)
+
+El autor autoriza desde `27414c5` un experimento aislado sin investigación avanzada: Puerta 1, viabilidad de 2/4/8 referencias por S/M/L, cotas dirigidas admisibles, preparación completa/memoria/trabajo y comparación equivalente con demanda anterior; Puerta 2, solo si favorable, servicio acotado y compartido con corpus completo y cargas. No pedir otra autorización si la primera resulta favorable. Si falla preparación, reducción o mejora suficiente, detenerse y consultar. Mantener física, 3000 globales/tick, reacción 0,3/0,5 s y protecciones; sin integración, D4/D5 ni ampliación.
+
+Resultado: preparación favorable observada a 64 m, mejora de búsquedas individuales, pero trabajo agregado insuficiente y peor que demanda compartida en la cohorte equivalente. **Puerta 1 negativa; no se abre Puerta 2.** No se declara imposibilidad de toda compartición futura ni se implementa otro experimento. [Medidas y alternativas pendientes de revisión](EXPERIMENTO_LANDMARKS_P0D3.md).
+
 ## D3: puerta inicial de preprocesado exacto (20/10/2026)
 
 El autor autoriza un experimento aislado desde el estado real de `f355409`, sin investigación avanzada: evaluar primero tiempo, memoria, portales y coste por cambio de meta; solo implementar prototipo acotado si cabe, después equivalencia y cargas. Orden expresa de detenerse y presentar alternativas si falla la evaluación inicial, y revisión antes de integrar o cambiar arquitectura. Mantener 3000 globales/tick, reacción 0,3/0,5 s, siete ajustes y nueve protecciones; no navegación activa, generador, balance, web, D4/D5 ni mundo mayor.

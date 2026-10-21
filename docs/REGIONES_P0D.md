@@ -2,6 +2,10 @@
 
 Implementación optativa autorizada D1–D4; D5 excluido. Mapas de prueba 80/128 m; sin integración en partidas normales ni cambios de generador, balance o presupuesto de 3000 nodos/tick.
 
+## Landmarks dirigidos — 20/10/2026, posterior al preprocesado
+
+Puerta 1 autorizada y evaluada: 2/4/8 referencias, A* exacto offline. Preparación completa a 64 m 3,598–3,905 s; mejora individual real, pero mejor cohorte dispersa 9889018 unidades frente a 1992760 de demanda compartida heredada. **No justifica Puerta 2: parada para revisión, D3 bloqueado.** [Informe, pruebas y límites](EXPERIMENTO_LANDMARKS_P0D3.md). Ningún servicio nuevo ni integración; D4/D5 sin iniciar, presupuesto y objetivos intactos.
+
 ## Puerta de preprocesado exacto — 20/10/2026
 
 Experimento autorizado desde `f355409`, detenido en evaluación inicial: construcción más transferencias regionales completas S/M/L requiere 4,413–4,967 s en HORDA750 × 16/32/64 × tres repeticiones, antes de almacenar tablas y validar. Excede objetivo de 4 s; no excede máximo de 6 s. Matriz mundial de distancias 13,80 GiB, descartada sin reservar. Las tablas regionales son menores pero no superan la puerta temporal. **Sin prototipo de servicio ni integración; D3 bloqueado y parada para revisión.** [Medidas nuevas, límites y alternativas](EXPERIMENTO_PREPROCESADO_P0D3.md); pruebas/protecciones/publicación en PROGRESO_P0. No iniciar D4/D5 ni otra arquitectura.

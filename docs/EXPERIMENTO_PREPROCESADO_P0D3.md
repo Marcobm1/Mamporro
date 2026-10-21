@@ -1,5 +1,7 @@
 # P0-D3 — viabilidad del preprocesado regional exacto
 
+**Continuación posterior del 20/10/2026:** el autor autorizó dos puertas para A* con landmarks dirigidos. [Primera puerta evaluada y negativa por trabajo agregado](EXPERIMENTO_LANDMARKS_P0D3.md). Las mediciones inferiores conservan su fecha y candidato; no se han repetido ni optimizado.
+
 ## Resultado y alcance — 20/10/2026
 
 **Puerta inicial negativa para el candidato medido; no implementar el prototipo de servicio.** Desde `f355409`, el autor autorizó evaluar primero preparación, memoria y cambios de meta, y detenerse si no cabían en los presupuestos. Se ha ejecutado únicamente un diagnóstico offline en tests, reutilizando `RegionalTransferCache` sin modificarlo. Sin investigación avanzada, cambios de producción, integración, D4/D5 ni ampliación del mundo.
