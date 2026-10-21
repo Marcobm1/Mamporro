@@ -2,6 +2,8 @@
 
 ## Autorización H0–H1 híbrido — 21/10/2026
 
+**Resultado posterior:** contrato `8bc8203`, evaluación `dc720a1`. H1 conserva alcance y reconstrucción física en el corpus probado (36/36 finales), pero los rodeos exceden los límites con uno y dos testigos. Se ejecuta la condición de parada: sin H2, cambio de selección/algoritmo ni relajación de calidad. El autor debe revisar antes de un nuevo paso; no se revoca el contrato experimental aprobado ni se modifica producción. [Evidencias](EXPERIMENTO_H1_P0D3.md).
+
 El autor aprueba arquitectura A, alcance/física exactos, rodeo p95 ≤1,5× y máximo ≤2×; bandas 24/32 y 48/60 m con histéresis, jefe siempre crítico, reacción experimental 0,3/0,5; 0,6/1; 1,5/2 s conservando comparación con los objetivos originales. Acepta estudiar cuotas y criterios de persecución/llegada/colas, sin validarlos ni cambiar producción. Autoriza **solo H0–H1** desde `563f05e`, prototipo aislado sobre D1/D2, uno y si hace falta hasta dos testigos por conexión; A/B/ocho C × 16/32/64 × S/M/L. [Contrato previo a medir](EXPERIMENTO_H1_P0D3.md). Si falla conectividad, física, presupuesto o rodeo: documentar y detenerse, sin relajar condiciones. Sin investigación avanzada, EnemyNavigation, H2–H4, D4/D5 ni ampliación; 3000 y protecciones intactos. Revisión antes de H2.
 
 ## Autorización de planificación híbrida D3 — 21/10/2026

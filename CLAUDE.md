@@ -21,7 +21,7 @@ Las decisiones posteriores concretan o sustituyen la especificación original. L
 
 ## Estado vigente — 12/10/2026
 
-**Actualización 21/10/2026: exclusivamente plan de rediseño híbrido P0-D3 autorizado; propuesta en [PLAN_HIBRIDO_P0D3](docs/PLAN_HIBRIDO_P0D3.md). No programar ni iniciar D4/D5 por la autorización histórica inferior. Esperar aprobación de decisiones y fases.** Checkpoint vigente en PROGRESO_P0.
+**Actualización 21/10/2026, posterior a `563f05e`: solo H0–H1 del rediseño híbrido P0-D3 autorizados.** Contrato y puerta en [EXPERIMENTO_H1_P0D3](docs/EXPERIMENTO_H1_P0D3.md); estado real en PROGRESO_P0. Arquitectura A y umbrales experimentales aprobados, cuotas/criterios no validados. Detenerse ante fallo y siempre para revisión antes de H2; sin integración, H2–H4, D4/D5 ni ampliación.
 
 - Repositorio: `https://github.com/Marcobm1/Mamporro`.
 - Rama por defecto y de trabajo: `claude/zen-pasteur-674ik0`. Push directo permitido; sin PR salvo petición. Nunca force-push.

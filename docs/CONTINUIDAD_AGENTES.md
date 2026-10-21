@@ -128,6 +128,8 @@ Ningún agente debe:
 
 ## Estado actual del relevo
 
+**21/10/2026, cierre H0–H1:** contrato `8bc8203`, prototipo offline/informe `dc720a1` publicados. Suite final 36/36, pero puerta negativa por rodeos con uno/dos testigos. [EXPERIMENTO_H1_P0D3](EXPERIMENTO_H1_P0D3.md) y PROGRESO_P0 distinguen primer fallo del comparador, corrección y resultados. **Detenerse para revisión; no H2 ni nuevo rediseño automático.** Siete ajustes locales y nueve protecciones conservados, producción intacta; H2–H4/D4/D5 y ampliación excluidos.
+
 **21/10/2026, posterior al cierre de landmarks `9306e38`: únicamente planificación híbrida autorizada y entregada.** [PLAN_HIBRIDO_P0D3](PLAN_HIBRIDO_P0D3.md) contiene alternativas, pruebas y decisiones pendientes. No interpretar la recomendación A, sus bandas/cuotas ni las fases H0–H4 como aprobadas. No programar, integrar, iniciar D4/D5 ni ampliar. Siguiente paso: revisión y autorización expresa del autor; publicación/checks documentales en PROGRESO_P0.
 
 **21/10/2026:** revalidado y preparado para publicación el trabajo local de landmarks recibido desde `27414c5`, sin cambios funcionales. Nuevas **12/12**, contadores idénticos; puerta negativa confirmada, no Puerta 2. Checkpoint, evidencias y publicación en [PROGRESO_P0](PROGRESO_P0.md). Conservar los siete ajustes locales y detenerse para revisión; no iniciar D4/D5 ni integrar.

@@ -2,6 +2,8 @@
 
 ## Estado y alcance — 21/10/2026
 
+**Cierre H0–H1:** contrato `8bc8203`, prototipo/informe `dc720a1`; pruebas finales 36/36, **puerta H1 negativa por rodeos**, no aceptada. Uno/dos testigos conservan alcance en las muestras pero exceden 1,5×/2×. [Resultados](EXPERIMENTO_H1_P0D3.md). Detenerse para revisión, sin H2 ni nuevo rediseño automático. Las fases posteriores siguen excluidas.
+
 **Actualización posterior a `563f05e`: autoriza implementar solo H0–H1.** Aprobadas arquitectura A, física/alcance exactos con rodeos p95 ≤1,5× / máximo ≤2×, bandas 24/32 y 48/60, jefe crítico y reacción experimental 0,3/0,5; 0,6/1; 1,5/2 s, conservando comparación original. Cuotas/criterios se aceptan para estudio, no como validados. Contrato y resultados en [EXPERIMENTO_H1_P0D3](EXPERIMENTO_H1_P0D3.md). H2–H4, D4/D5 e integración excluidos; parada ante incumplimiento y revisión antes de H2. Las notas de propuesta inferiores conservan su estado histórico y quedan subordinadas a esta autorización acotada.
 
 **Solo planificación autorizada. Ninguna arquitectura, cifra nueva ni fase de implementación de este documento está aprobada.** Base comprobada: `9306e38`, rama `claude/zen-pasteur-674ik0`, origin coincidente tras fetch. Este plan responde a la autorización de diseñar navegación para 300–750 enemigos sin exigir optimalidad mundial a cada actualización. No reabre automáticamente los experimentos descartados.
