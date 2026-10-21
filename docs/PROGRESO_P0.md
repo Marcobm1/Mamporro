@@ -11,6 +11,8 @@ Estado: **P0-A1–A5 base técnica validada manualmente; P0-A6 corregido y verif
 
 ## Cómo retomar
 
+- **H0–H1 autorizado, 21/10/2026, en curso:** base HEAD/origin `563f05e`, solo siete ajustes Unity, 9/9 protecciones y 11/11 referencias intactas; evidencias en `unity/TestResults/P0/H1-Hybrid-20261021`. [Contrato H0](EXPERIMENTO_H1_P0D3.md) fijado antes de medir. Aprobadas decisiones experimentales descritas en DECISIONES; alcance comprobado solo H0–H1. Siguiente: implementar y evaluar topología/rutas offline; detenerse ante fallo y siempre antes de H2. Sin resultados nuevos todavía, ni integración/H2–H4/D4/D5.
+
 - **Plan híbrido, 21/10/2026, posterior a `9306e38`: solo documentación autorizada y preparada.** Git real HEAD/origin `9306e38` coincidentes tras fetch; recibidos únicamente los siete ajustes Unity protegidos, conservados. Leídos AGENTS/CLAUDE, plan, decisiones, checkpoints e informes D3. Sin investigación avanzada ni código nuevo.
   - [PLAN_HIBRIDO_P0D3](PLAN_HIBRIDO_P0D3.md): tres alternativas; recomendación pendiente de componentes dirigidas/corredores compartidos con refinamiento cercano. Contiene contratos físicos, bandas con histéresis, jefe, cuotas con techo 3000, versiones, atasco, memoria/preparación, fases H0–H4 y pruebas propuestas 300/500/750 con persecución física y FPS reales en build pequeña separada.
   - **No aprobados:** arquitectura nueva, optimalidad aproximada/tolerancia de rodeos, bandas/plazos, cuotas y fases. Objetivos 0,3/0,5 s anteriores siguen vigentes. Recomendación para siguiente autorización: H0–H1 primero; no ejecutarlos todavía. Sin EnemyNavigation, D4/D5, ampliación, balance, web o referencias.

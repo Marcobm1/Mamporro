@@ -1,5 +1,9 @@
 # Decisiones acordadas
 
+## Autorización H0–H1 híbrido — 21/10/2026
+
+El autor aprueba arquitectura A, alcance/física exactos, rodeo p95 ≤1,5× y máximo ≤2×; bandas 24/32 y 48/60 m con histéresis, jefe siempre crítico, reacción experimental 0,3/0,5; 0,6/1; 1,5/2 s conservando comparación con los objetivos originales. Acepta estudiar cuotas y criterios de persecución/llegada/colas, sin validarlos ni cambiar producción. Autoriza **solo H0–H1** desde `563f05e`, prototipo aislado sobre D1/D2, uno y si hace falta hasta dos testigos por conexión; A/B/ocho C × 16/32/64 × S/M/L. [Contrato previo a medir](EXPERIMENTO_H1_P0D3.md). Si falla conectividad, física, presupuesto o rodeo: documentar y detenerse, sin relajar condiciones. Sin investigación avanzada, EnemyNavigation, H2–H4, D4/D5 ni ampliación; 3000 y protecciones intactos. Revisión antes de H2.
+
 ## Autorización de planificación híbrida D3 — 21/10/2026
 
 El autor autoriza exclusivamente redactar un plan, sin investigación avanzada ni programación, desde `9306e38`: navegación precisa y frecuente para cercanos/amenazas/jefe, rutas compartidas menos frecuentes lejos, movimiento local físico y transiciones sin inanición. Mantener inicialmente 3000; proponer otros presupuestos de reacción sin sustituir 0,3/0,5 s hasta aprobación. Comparar alternativas, diseñar pruebas de persecución física y FPS reales en build; conservar protecciones, no integrar en EnemyNavigation ni iniciar D4/D5 o ampliar mundo. Publicación solo documental autorizada.

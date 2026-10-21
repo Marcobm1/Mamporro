@@ -2,6 +2,8 @@
 
 ## Estado y alcance — 21/10/2026
 
+**Actualización posterior a `563f05e`: autoriza implementar solo H0–H1.** Aprobadas arquitectura A, física/alcance exactos con rodeos p95 ≤1,5× / máximo ≤2×, bandas 24/32 y 48/60, jefe crítico y reacción experimental 0,3/0,5; 0,6/1; 1,5/2 s, conservando comparación original. Cuotas/criterios se aceptan para estudio, no como validados. Contrato y resultados en [EXPERIMENTO_H1_P0D3](EXPERIMENTO_H1_P0D3.md). H2–H4, D4/D5 e integración excluidos; parada ante incumplimiento y revisión antes de H2. Las notas de propuesta inferiores conservan su estado histórico y quedan subordinadas a esta autorización acotada.
+
 **Solo planificación autorizada. Ninguna arquitectura, cifra nueva ni fase de implementación de este documento está aprobada.** Base comprobada: `9306e38`, rama `claude/zen-pasteur-674ik0`, origin coincidente tras fetch. Este plan responde a la autorización de diseñar navegación para 300–750 enemigos sin exigir optimalidad mundial a cada actualización. No reabre automáticamente los experimentos descartados.
 
 La autorización actual termina en documentos, revisión y push normal. No programar, integrar en `EnemyNavigation`, iniciar D4/D5, ampliar el mundo ni modificar web, referencias, generador, física, balance o persistencia. Conservar siete ajustes locales Unity y entrega U6. Sin investigación avanzada: razonamiento basado en código/documentación y medidas locales heredadas; ninguna medida nueva de rendimiento.
