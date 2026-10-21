@@ -18,6 +18,8 @@ Codex y Claude Code trabajan por turnos sobre la misma rama. **No trabajan a la 
 
 ## Estado que manda
 
+**21/10/2026: exclusivamente plan de rediseño híbrido P0-D3 autorizado; propuesta en [PLAN_HIBRIDO_P0D3](docs/PLAN_HIBRIDO_P0D3.md). No programar ni iniciar D4/D5 por la autorización histórica inferior. Esperar aprobación de decisiones y fases.** Checkpoint vigente en PROGRESO_P0.
+
 - Rama de trabajo y por defecto: `claude/zen-pasteur-674ik0`.
 - Base web aprobada e inmovilizada para comparar el port: `0505b1690656d15188860157612455639820fe1f`.
 - U0 preparado y conservado como referencia.

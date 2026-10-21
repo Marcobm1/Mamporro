@@ -1,5 +1,7 @@
 # P0-D — ampliación del mundo y navegación regional
 
+**Propuesta posterior, 21/10/2026:** tras los experimentos D3 negativos, el autor autoriza exclusivamente el [plan híbrido P0-D3](PLAN_HIBRIDO_P0D3.md). Compara tres alternativas y propone precisión/frecuencia por distancia y amenaza. **Sin implementación autorizada de ese rediseño, sin D4/D5 ni ampliación.** Los nuevos plazos y tolerancias no sustituyen los objetivos aprobados de este documento hasta decisión expresa. El resto conserva el plan e historial anteriores.
+
 **Plan aprobado por el autor el 12/10/2026: ocho decisiones resueltas; implementación autorizada exclusivamente D0–D4. Detenerse antes de D5.** P0-C aprobado manualmente; cierre formal `b755987`, cierre técnico `369fdff`, código/builds QA `9a24b6f`. Mantener 3000 nodos/tick. No reemplazar U3, ampliar mapas ni generar una build final D5–D6 con esta autorización.
 
 Las cifras de C son mediciones heredadas de Claude, contrastadas con documentos, XML e informes locales; no se han repetido pruebas. Las cifras para D son estimaciones u objetivos propuestos, no resultados ni compromisos aprobados. Investigación limitada al repositorio y evidencias existentes; sin Deep Research.

@@ -1,5 +1,7 @@
 # P0-D — construcción y navegación regional
 
+**21/10/2026, propuesta posterior a landmarks:** [plan híbrido P0-D3](PLAN_HIBRIDO_P0D3.md), solo documentación autorizada. Arquitectura, bandas y tolerancias pendientes de aprobación; no implementación ni D4/D5. Los resultados inferiores permanecen como evidencia histórica de candidatos detenidos.
+
 Implementación optativa autorizada D1–D4; D5 excluido. Mapas de prueba 80/128 m; sin integración en partidas normales ni cambios de generador, balance o presupuesto de 3000 nodos/tick.
 
 ## Landmarks dirigidos — 20/10/2026, posterior al preprocesado

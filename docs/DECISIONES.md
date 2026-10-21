@@ -1,5 +1,11 @@
 # Decisiones acordadas
 
+## Autorización de planificación híbrida D3 — 21/10/2026
+
+El autor autoriza exclusivamente redactar un plan, sin investigación avanzada ni programación, desde `9306e38`: navegación precisa y frecuente para cercanos/amenazas/jefe, rutas compartidas menos frecuentes lejos, movimiento local físico y transiciones sin inanición. Mantener inicialmente 3000; proponer otros presupuestos de reacción sin sustituir 0,3/0,5 s hasta aprobación. Comparar alternativas, diseñar pruebas de persecución física y FPS reales en build; conservar protecciones, no integrar en EnemyNavigation ni iniciar D4/D5 o ampliar mundo. Publicación solo documental autorizada.
+
+[PLAN_HIBRIDO_P0D3](PLAN_HIBRIDO_P0D3.md) recomienda componentes dirigidas con corredores compartidos y refinamiento cercano. **Recomendación pendiente, no decisión adoptada:** bandas, tolerancia a rodeos, cuotas, criterios de llegada y fases H0–H4. La propuesta de autorizar primero H0–H1 no constituye autorización. Siguiente paso: aprobación/corrección del autor antes de cualquier código; los cierres negativos anteriores siguen vigentes.
+
 ## D3: A* exacto con landmarks, dos puertas (20/10/2026)
 
 El autor autoriza desde `27414c5` un experimento aislado sin investigación avanzada: Puerta 1, viabilidad de 2/4/8 referencias por S/M/L, cotas dirigidas admisibles, preparación completa/memoria/trabajo y comparación equivalente con demanda anterior; Puerta 2, solo si favorable, servicio acotado y compartido con corpus completo y cargas. No pedir otra autorización si la primera resulta favorable. Si falla preparación, reducción o mejora suficiente, detenerse y consultar. Mantener física, 3000 globales/tick, reacción 0,3/0,5 s y protecciones; sin integración, D4/D5 ni ampliación.

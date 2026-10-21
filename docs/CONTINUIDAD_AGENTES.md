@@ -128,6 +128,8 @@ Ningún agente debe:
 
 ## Estado actual del relevo
 
+**21/10/2026, posterior al cierre de landmarks `9306e38`: únicamente planificación híbrida autorizada y entregada.** [PLAN_HIBRIDO_P0D3](PLAN_HIBRIDO_P0D3.md) contiene alternativas, pruebas y decisiones pendientes. No interpretar la recomendación A, sus bandas/cuotas ni las fases H0–H4 como aprobadas. No programar, integrar, iniciar D4/D5 ni ampliar. Siguiente paso: revisión y autorización expresa del autor; publicación/checks documentales en PROGRESO_P0.
+
 **21/10/2026:** revalidado y preparado para publicación el trabajo local de landmarks recibido desde `27414c5`, sin cambios funcionales. Nuevas **12/12**, contadores idénticos; puerta negativa confirmada, no Puerta 2. Checkpoint, evidencias y publicación en [PROGRESO_P0](PROGRESO_P0.md). Conservar los siete ajustes locales y detenerse para revisión; no iniciar D4/D5 ni integrar.
 
 **20/10/2026, landmarks dirigidos, posterior al preprocesado:** dos puertas autorizadas, primera evaluada y negativa por trabajo agregado. Solo instrumento offline de tests, sin servicio/caché nueva. **No iniciar Puerta 2: revisión del autor por la condición de parada**, no falta de autorización general. [Informe](EXPERIMENTO_LANDMARKS_P0D3.md); pruebas, huellas y commits en PROGRESO_P0. No confundir reducción frente a Dijkstra individual con mejora sobre búsqueda compartida. D3 bloqueado, 3000 intactos; D4/D5 y cualquier integración excluidos.
