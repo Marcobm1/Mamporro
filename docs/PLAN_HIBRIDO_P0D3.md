@@ -1,5 +1,7 @@
 # P0-D3 — propuesta de navegación híbrida
 
+**22/10/2026: H1b autorizado como experimento aislado.** Cruces adaptativos, conexiones físicas locales y corredores ponderados; A pequeña antes de B completa. [Contrato y resultados](EXPERIMENTO_H1B_P0D3.md). H1 rechazado se conserva. Sin H2–H4/D4/D5 ni integración; detenerse ante fallo y siempre para revisión antes de H2.
+
 ## Estado y alcance — 21/10/2026
 
 **Cierre H0–H1:** contrato `8bc8203`, prototipo/informe `dc720a1`; pruebas finales 36/36, **puerta H1 negativa por rodeos**, no aceptada. Uno/dos testigos conservan alcance en las muestras pero exceden 1,5×/2×. [Resultados](EXPERIMENTO_H1_P0D3.md). Detenerse para revisión, sin H2 ni nuevo rediseño automático. Las fases posteriores siguen excluidas.

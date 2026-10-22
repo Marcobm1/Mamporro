@@ -11,6 +11,8 @@ Estado: **P0-A1–A5 base técnica validada manualmente; P0-A6 corregido y verif
 
 ## Cómo retomar
 
+- **H1b autorizado y en evaluación — 22/10/2026 (Codex):** base HEAD/origin `9154ec8`, siete ajustes locales conservados, nueve huellas y once referencias iguales. Contrato previo publicado `1545ec6`, [EXPERIMENTO_H1B_P0D3](EXPERIMENTO_H1B_P0D3.md): portales adaptativos, conexiones físicas locales y corredores ponderados, tres variantes acumulativas offline y control H1 contemporáneo. Solo tests; H1 rechazado se conserva, sin Core/EnemyNavigation/H2–H4/D4/D5 ni ampliación. Puerta A en marcha con Z9K2 64 m y seis fixtures; B condicionada a A favorable. No interpretar el éxito NUnit como puerta positiva. Sin investigación avanzada, 3000 intactos.
+
 - **Reanudación verificada — 22/10/2026 (Codex):** la petición parte de `563f05e`, pero Git ya contiene H0–H1 cerrados en `743e0e4`, coincidente con origin tras fetch. Se conserva la parada por rodeos; no repetir implementación ni optimizar el candidato fallido, no H2. Sin investigación avanzada.
   - Comprobaciones nuevas: status/log/remoto/fetch, diff vacío frente a `563f05e` en src, referencias, Core y U3; SHA-256 actuales **9/9** protecciones, **11/11** referencias y **6/6** fuentes/evidencias iguales a los manifiestos del cierre. Los siete ajustes Unity permanecen intactos y fuera del índice.
   - Ejecutado `python scripts/p0-h1-report.py unity/TestResults/P0/Regional-20261021T225439/edit.xml unity/TestResults/P0/H1-Hybrid-20261021/report-recheck-20261022.json`; JSON idéntico al original, 108 casos finales fallidos, puerta FAIL. Reextracción del XML heredado: **sin nuevas pruebas Unity, build, benchmark ni medidas**. Las 36/36 y cifras siguientes pertenecen al 21/10.

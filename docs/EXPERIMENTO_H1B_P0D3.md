@@ -22,4 +22,16 @@ Registrar preparación original, D1/D2 e índice por separado; arrays propios, f
 
 ## Resultados
 
-Pendientes de ejecución. Evidencias en `unity/TestResults/P0/H1b-20261022`.
+Evidencias en `unity/TestResults/P0/H1b-20261022`.
+
+### Puerta A favorable; B en ejecución
+
+Comando real: `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/p0-regional-tests.ps1 -Filter Mamporro.Tests.AdaptiveCorridorTests -Category AdaptiveGateA`. **7/7**, 80,131 s, `Regional-20261022T182040/edit.xml`. Intento `180156` sin pruebas por licencia 198; repetición fuera del sandbox. Extractor: `python scripts/p0-h1b-report.py unity/TestResults/P0/Regional-20261022T182040/edit.xml unity/TestResults/P0/H1b-20261022/gate-a.json A`.
+
+21 evaluaciones por variante (Z9K2 S/M/L y seis fixtures S/M/L). Control H1: 21/21 fallan, peor p95 2,42×, máximo 173,82×. Adaptativa: 1/21 falla, peor p95 1,46308×, máximo 2,60597×. Con local: 0/21 fallan, peor p95 1,28717×, máximo 1,93920×. Completa ponderada/local: **0/21 fallan, peor p95 1×, máximo 1,49005×**. Peor par anterior reproducido: H1 8691 frente a óptimo 50; las tres variantes obtienen 50. Las variantes parciales son controles de contribución, no candidatos adoptados por separado.
+
+Cero discrepancias de alcance/identidad de arista/continuidad. Cada padre alcanzable también certifica coste descendente por arista original, no solo las rutas reconstruidas. Máximo cociente de trabajo completo/H1 por evaluación: **1,003584×**, bajo el filtro 2×. Contabilidad comparable de visitas/extracciones/relajaciones; operaciones de heap de H1 no instrumentadas, H1b sí las informa aparte: no interpretar ese cociente como coste total de instrucciones o aceleración CPU.
+
+Preparación registrada Z9K2: **4686,645 ms** (original + D1/D2 + índice S/M/L), arrays del instrumento **8272793 B**, arrays físicos/topología/instrumento **44369052 B**, scratch explícito máximo por construcción de índice **173216 B**. Managed observado máximo 130605056 B, Unity 356156867 B; incluyen arnés/control/oráculos. Sin exceso de los filtros duros observados de A, pero **no certifica p95 ≤4 s, residencia, picos ni GC**. Fixtures excluyen el constructor monolítico usado solo como oráculo; no son carga jugable comparable a C.
+
+Se abre B con el algoritmo y muestras prefijados; no se alteran pesos/radio ni umbrales. Los costes mundiales offline siguen siendo elevados: Z9K2 S, variante completa, hasta **749390** visitas/extracciones/relajaciones por meta, además de heap y salida de rutas. Compartir todos los orígenes evita repetir búsquedas por enemigo, pero no demuestra reacción a 3000 ni servicio móvil viable.

@@ -1,5 +1,9 @@
 # Decisiones acordadas
 
+## Autorización exclusiva H1b — 22/10/2026
+
+El autor autoriza evaluar cruces adaptativos por origen/meta/coste, conexiones físicas locales directas y corredores ponderados, conservando H1 rechazado. Puerta A pequeña: reproducir Z9K2 64 m S 62→10514 (8691 frente a 50) y fronteras/alturas/caídas/escalada. Solo si favorable, B con A/B/ocho C ×16/32/64×S/M/L, alcance exacto, continuidad física y rodeos p95 ≤1,5× / máximo ≤2×. Medir trabajo, preparación, memoria y compartición; no búsquedas mundiales por enemigo ni matrices enormes. Contrato técnico previo en [EXPERIMENTO_H1B_P0D3](EXPERIMENTO_H1B_P0D3.md). Ante fallo documentar y detener; siempre revisión antes de H2. Sin investigación avanzada, producción, generador, economía, guardados, web, H2–H4, D4/D5 ni ampliación. 3000 globales/tick y todas las protecciones/límites conservados.
+
 ## Autorización H0–H1 híbrido — 21/10/2026
 
 **Resultado posterior:** contrato `8bc8203`, evaluación `dc720a1`. H1 conserva alcance y reconstrucción física en el corpus probado (36/36 finales), pero los rodeos exceden los límites con uno y dos testigos. Se ejecuta la condición de parada: sin H2, cambio de selección/algoritmo ni relajación de calidad. El autor debe revisar antes de un nuevo paso; no se revoca el contrato experimental aprobado ni se modifica producción. [Evidencias](EXPERIMENTO_H1_P0D3.md).
