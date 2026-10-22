@@ -1,5 +1,6 @@
 """Extrae H1b sin convertir el éxito NUnit en aceptación de calidad/presupuesto."""
 import json
+import math
 import sys
 import xml.etree.ElementTree as ET
 from pathlib import Path
@@ -77,13 +78,61 @@ def extract(path, gate):
             'note': 'Offline; sin FPS ni latencia. Arrays/muestras no certifican residencia, picos ni p95 temporal.'}
 
 
+def extract_load(path):
+    root = ET.parse(path).getroot()
+    if root.get('result') != 'Passed':
+        raise ValueError('Medición incompleta o fallida')
+    rows = []
+    for case in root.iter('test-case'):
+        for output in case.findall('output'):
+            for line in (output.text or '').splitlines():
+                fields = line.split()
+                if not fields or fields[0] != 'H1B-LOAD':
+                    continue
+                row = {}
+                for field in fields[1:]:
+                    key, value = field.split('=', 1)
+                    row[key] = value if key == 'case' else float(value)
+                rows.append(row)
+    expected = {(size, trial) for size in (16, 32, 64) for trial in range(10)}
+    assert len(rows) == 30 and {(r['size'], r['trial']) for r in rows} == expected
+    assert all(r['case'] == 'MAMPORRO' for r in rows)
+    summaries = []
+    for size in (16, 32, 64):
+        values = sorted(r['completeMs'] for r in rows if r['size'] == size)
+        p95 = values[math.ceil(.95*len(values))-1]
+        summaries.append({'size': size, 'samples': len(values), 'p95Ms': p95, 'maxMs': max(values),
+                          'pass': p95 <= 4000 and max(values) <= 6000})
+    return {'source': str(path), 'gate': 'Preparation', 'tests': root.get('passed'),
+            'duration': root.get('duration'), 'rows': rows, 'summaries': summaries,
+            'gateResult': 'NOT_CERTIFIED' if all(s['pass'] for s in summaries) else 'FAIL',
+            'note': 'Diez arranques por tamaño del caso limitante; no certifica todas las semillas ni picos de memoria.'}
+
+
 if __name__ == '__main__':
+    if sys.argv[1] == '--summary':
+        inputs = [Path(p) for p in sys.argv[2:5]]
+        a, b, preparation = [json.loads(p.read_text(encoding='utf-8')) for p in inputs]
+        assert a['gate'] == 'A' and b['gate'] == 'B' and preparation['gate'] == 'Preparation'
+        failed = any(r['gateResult'] == 'FAIL' for r in (a, b, preparation))
+        summary = {'sources': [str(p) for p in inputs],
+                   'overallGate': 'FAIL' if failed else 'NOT_CERTIFIED',
+                   'qualityGate': 'FAIL' if a['qualityFailures'] or b['qualityFailures'] else 'PASS',
+                   'preparationGate': preparation['gateResult'], 'memoryGate': 'NOT_CERTIFIED',
+                   'nextStep': 'STOP_REVIEW_BEFORE_H2',
+                   'note': 'Calidad offline favorable no acepta presupuesto, servicio ni movimiento.'}
+        Path(sys.argv[5]).write_text(json.dumps(summary, indent=2) + '\n', encoding='utf-8')
+        print(json.dumps(summary))
+        sys.exit(0)
     gate = sys.argv[3]
-    if gate not in ('A', 'B'):
-        raise ValueError('Puerta A o B requerida')
-    result = extract(Path(sys.argv[1]), gate)
+    if gate not in ('A', 'B', 'L'):
+        raise ValueError('Puerta A, B o L (preparación) requerida')
+    result = extract_load(Path(sys.argv[1])) if gate == 'L' else extract(Path(sys.argv[1]), gate)
     Path(sys.argv[2]).write_text(json.dumps(result, indent=2) + '\n', encoding='utf-8')
     print(json.dumps({k: result[k] for k in ('tests', 'gate', 'gateResult')}))
+    if gate == 'L':
+        print(json.dumps(result['summaries']))
+        sys.exit(0)
     print('Fallos de calidad finales:', len(result['qualityFailures']))
     for variant in range(4):
         group = [r for r in result['GATE'] if r['k'] == variant]

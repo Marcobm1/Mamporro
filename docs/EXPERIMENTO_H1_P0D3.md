@@ -1,5 +1,7 @@
 # H0–H1 híbrido P0-D3
 
+**Continuación posterior autorizada, 22/10/2026:** [H1b](EXPERIMENTO_H1B_P0D3.md) conserva este experimento y corrige sus rodeos en el corpus, pero falla preparación p95; detenido antes de H2. Los resultados H1 inferiores no se sustituyen ni reinterpretan como aceptados.
+
 ## H0: contrato fijado antes de medir — 21/10/2026
 
 Base `563f05e`, HEAD/origin coincidentes tras fetch; nueve protecciones y once referencias comprobadas. Autoriza exclusivamente H0–H1. Arquitectura A, alcance/física exactos y coste aproximado con rodeo p95 ≤1,5× y máximo ≤2×. Bandas 24/32 y 48/60 m, jefe crítico, reacción experimental 0,3/0,5; 0,6/1; 1,5/2 s aprobadas como contrato experimental; comparar también 0,3/0,5 originales. Cuotas y criterios de persecución/colas solo aceptados para estudiar, no validados. H1 no implementa bandas, scheduler, movimiento ni refinamiento cercano (H2+).

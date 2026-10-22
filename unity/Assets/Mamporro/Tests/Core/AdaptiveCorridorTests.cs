@@ -142,6 +142,31 @@ namespace Mamporro.Tests
         }
         [Test, Category("AdaptiveGateA")]
         public void KnownWorstCaseAndVerticalMap(){CorpusMeasuresDirectedCorridors("Z9K2",64);}
+
+        // Confirmación temporal del caso más lento observado en B para los tres tamaños.
+        // No modifica el solver ni el corpus de calidad; diez arranques independientes por tamaño.
+        [TestCase(16)] [TestCase(32)] [TestCase(64)]
+        [Category("AdaptivePreparation")]
+        public void PreparationBudgetRepeated(int size)
+        {
+            for(int trial=0;trial<10;trial++){
+                var timer=Stopwatch.StartNew();
+                var c=new VerticalCircuit(new ProceduralMap("MAMPORRO"));
+                double baseMs=timer.Elapsed.TotalMilliseconds,worldMs=0,setupMs=0;
+                long payload=0,arrays=0,scratch=0;
+                foreach(var body in NavClass.All){
+                    var w=new NavPortalWorld(c.Queries,c.Terrain,c.Collision.IsInside,body,size);
+                    worldMs+=w.BuildMs;timer.Restart();var probe=new AdaptiveCorridorProbe(w);setupMs+=timer.Elapsed.TotalMilliseconds;
+                    payload+=probe.Payload;scratch=Math.Max(scratch,probe.SetupScratchPayload);
+                    arrays+=probe.Payload+w.Regions.Sum(r=>RegionalBaselineTests.ArrayBytes(r.Graph))+
+                        RegionalBaselineTests.ArrayBytes(w)+44L*w.Portals.Length;
+                }
+                Log("H1B-LOAD","case","MAMPORRO","size",size,"trial",trial,"baseMs",baseMs,
+                    "worldMs",worldMs,"setupMs",setupMs,"completeMs",baseMs+worldMs+setupMs,
+                    "payload",payload,"arrays",arrays,"scratch",scratch,"managedObserved",GC.GetTotalMemory(false),
+                    "unityObserved",UnityEngine.Profiling.Profiler.GetTotalAllocatedMemoryLong());
+            }
+        }
         static bool Inside(double x,double z,double r)=>Math.Abs(x)+r<36 && Math.Abs(z)+r<36;
         [TestCase("barrier")] [TestCase("roofs")] [TestCase("drop")] [TestCase("climb")] [TestCase("ramp")] [TestCase("pass")]
         [Category("AdaptiveGateA")]

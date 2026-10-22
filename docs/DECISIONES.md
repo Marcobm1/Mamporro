@@ -2,6 +2,8 @@
 
 ## Autorización exclusiva H1b — 22/10/2026
 
+**Resultado:** calidad/alcance favorables, preparación negativa. A 7/7, B 30/30; p95 de rodeo máximo 1,113474× y máximo individual 1,894511×. Diez arranques MAMPORRO por tamaño confirman p95 5,772/5,043/4,695 s, sobre 4 s. Ejecutada la condición de parada; sin modificar umbrales ni producción, no H2. No declarar H1b aceptado. [Cierre y límites](EXPERIMENTO_H1B_P0D3.md).
+
 El autor autoriza evaluar cruces adaptativos por origen/meta/coste, conexiones físicas locales directas y corredores ponderados, conservando H1 rechazado. Puerta A pequeña: reproducir Z9K2 64 m S 62→10514 (8691 frente a 50) y fronteras/alturas/caídas/escalada. Solo si favorable, B con A/B/ocho C ×16/32/64×S/M/L, alcance exacto, continuidad física y rodeos p95 ≤1,5× / máximo ≤2×. Medir trabajo, preparación, memoria y compartición; no búsquedas mundiales por enemigo ni matrices enormes. Contrato técnico previo en [EXPERIMENTO_H1B_P0D3](EXPERIMENTO_H1B_P0D3.md). Ante fallo documentar y detener; siempre revisión antes de H2. Sin investigación avanzada, producción, generador, economía, guardados, web, H2–H4, D4/D5 ni ampliación. 3000 globales/tick y todas las protecciones/límites conservados.
 
 ## Autorización H0–H1 híbrido — 21/10/2026

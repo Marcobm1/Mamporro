@@ -18,6 +18,8 @@ Codex y Claude Code trabajan por turnos sobre la misma rama. **No trabajan a la 
 
 ## Estado que manda
 
+**Cierre H1b, 22/10/2026: calidad favorable, preparación p95 negativa; detenido para revisión antes de H2.** [Informe](docs/EXPERIMENTO_H1B_P0D3.md) y PROGRESO_P0. No optimizar ni continuar automáticamente; producción, 3000 y protecciones intactos.
+
 **22/10/2026: exclusivamente H1b autorizado**, con puerta A pequeña y B solo si A favorable. [Contrato y resultados](docs/EXPERIMENTO_H1B_P0D3.md), checkpoint en PROGRESO_P0. H1 rechazado se conserva; sin investigación avanzada, producción, H2–H4, D4/D5 ni ampliación. Parada ante fallo y siempre antes de H2.
 
 **21/10/2026, posterior a `563f05e`: solo H0–H1 del rediseño híbrido P0-D3 autorizados.** Contrato y puerta en [EXPERIMENTO_H1_P0D3](docs/EXPERIMENTO_H1_P0D3.md); estado real en PROGRESO_P0. Arquitectura A y umbrales experimentales aprobados, cuotas/criterios no validados. Detenerse ante fallo y siempre para revisión antes de H2; sin integración, H2–H4, D4/D5 ni ampliación.
