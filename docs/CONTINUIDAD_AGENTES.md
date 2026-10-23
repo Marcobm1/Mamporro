@@ -128,6 +128,8 @@ Ningún agente debe:
 
 ## Estado actual del relevo
 
+**23/10/2026, cierre H1c:** diagnóstico completado; macro invariante dentro de SCC, preparación todavía >4 s y unión local falla rodeos a 64 m. [Informe](DIAGNOSTICO_H1C_P0D3.md) y primer checkpoint de PROGRESO_P0 separan preparación heredada, pruebas nuevas, contadores, protecciones y publicación. **Detenerse para revisión; sin H2, producción ni optimización automática.** Preservar siete ajustes Unity e H1b.
+
 **22/10/2026, cierre H1b:** topología/rutas favorables, preparación p95 negativa. A 7/7, B 30/30 y 30 arranques en 3/3 tests; [informe](EXPERIMENTO_H1B_P0D3.md) y PROGRESO_P0. Contrato `1545ec6`, prototipo/A `58307fc`, publicados. **Detenerse para revisión: no optimizar el constructor ni iniciar H2 automáticamente.** Siete ajustes/nueve protecciones/once referencias conservados; producción, 3000 y exclusión H2–H4/D4/D5 intactos.
 
 **21/10/2026, cierre H0–H1:** contrato `8bc8203`, prototipo offline/informe `dc720a1` publicados. Suite final 36/36, pero puerta negativa por rodeos con uno/dos testigos. [EXPERIMENTO_H1_P0D3](EXPERIMENTO_H1_P0D3.md) y PROGRESO_P0 distinguen primer fallo del comparador, corrección y resultados. **Detenerse para revisión; no H2 ni nuevo rediseño automático.** Siete ajustes locales y nueve protecciones conservados, producción intacta; H2–H4/D4/D5 y ampliación excluidos.

@@ -1,5 +1,11 @@
 # Decisiones acordadas
 
+## Autorización H1c — 22/10/2026
+
+**Resultado 23/10:** potencial/árbol macro invariantes dentro de SCC, ahorro macro <0,15 % del trabajo; preparación sigue incumpliendo 4 s y la unión local falla a 64 m (máximo 3,204259×). Se conserva H1b y se cumple la parada para revisión, sin adoptar proyección, caché ni servicio. [Informe](DIAGNOSTICO_H1C_P0D3.md).
+
+El autor autoriza exclusivamente diagnóstico técnico de preparación y reutilización: separar generación/validación/grafos originales/D1-D2/H1b, detectar duplicación sin quitar validaciones ni alterar geometría, comparar tamaños/semillas y estudiar persistencia macro dentro de SCC y refinamiento físico local compartido. Instrumentación/pruebas/scripts permitidos; no servicio nuevo ni producción. Mantener preparación p95 ≤4 s / máximo ≤6 s, alcance/física y rodeos 1,5×/2×, 3000 y protecciones. Distinguir ahorro medido de estimado, operaciones offline de scheduler/FPS. Sin investigación avanzada, EnemyNavigation, U3, generador, economía, guardados, web, H2–H4/D4/D5. [Contrato](DIAGNOSTICO_H1C_P0D3.md); revisión al terminar incluso con resultados positivos.
+
 ## Autorización exclusiva H1b — 22/10/2026
 
 **Resultado:** calidad/alcance favorables, preparación negativa. A 7/7, B 30/30; p95 de rodeo máximo 1,113474× y máximo individual 1,894511×. Diez arranques MAMPORRO por tamaño confirman p95 5,772/5,043/4,695 s, sobre 4 s. Ejecutada la condición de parada; sin modificar umbrales ni producción, no H2. No declarar H1b aceptado. [Cierre y límites](EXPERIMENTO_H1B_P0D3.md).

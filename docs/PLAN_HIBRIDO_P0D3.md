@@ -1,5 +1,9 @@
 # P0-D3 — propuesta de navegación híbrida
 
+**23/10/2026: H1c completado; parada para revisión.** Macro reutilizable dentro de SCC; preparación sin optimizar y unión local fallida a 64 m. [Informe](DIAGNOSTICO_H1C_P0D3.md). No se acepta H1b ni se abre H2; sin cambios de producción o validaciones.
+
+**22/10/2026, posterior a H1b: H1c autorizado exclusivamente para diagnóstico de preparación/reutilización.** [Contrato y resultados](DIAGNOSTICO_H1C_P0D3.md). No servicio nuevo ni cambios de producción; H1b se conserva, H2–H4/D4/D5 excluidos. Revisión al terminar incluso con resultados positivos.
+
 **Cierre H1b, 22/10/2026:** alcance y rodeos favorables en el corpus (peor p95 1,113474×, máximo 1,894511×), pero p95 de preparación MAMPORRO 5,772/5,043/4,695 s supera 4 s. **Puerta completa negativa; detenerse para revisión antes de H2.** [Informe](EXPERIMENTO_H1B_P0D3.md). No cambiar producción ni relajar límites.
 
 **22/10/2026: H1b autorizado como experimento aislado.** Cruces adaptativos, conexiones físicas locales y corredores ponderados; A pequeña antes de B completa. [Contrato y resultados](EXPERIMENTO_H1B_P0D3.md). H1 rechazado se conserva. Sin H2–H4/D4/D5 ni integración; detenerse ante fallo y siempre para revisión antes de H2.

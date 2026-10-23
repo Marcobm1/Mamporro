@@ -21,6 +21,8 @@ Las decisiones posteriores concretan o sustituyen la especificación original. L
 
 ## Estado vigente — 12/10/2026
 
+**23/10/2026: H1c terminado; detenerse para revisión.** [Contrato y resultados](docs/DIAGNOSTICO_H1C_P0D3.md), checkpoint en PROGRESO_P0. Macro reutilizable dentro de SCC; preparación sigue fallando y unión local excede rodeos a 64 m. Conservar H1b; sin servicio nuevo, producción, H2–H4/D4/D5, optimización automática ni investigación avanzada.
+
 **Cierre H1b, 22/10/2026: calidad favorable, preparación p95 negativa; detenido para revisión antes de H2.** [Informe](docs/EXPERIMENTO_H1B_P0D3.md) y PROGRESO_P0. No optimizar ni continuar automáticamente; producción, 3000 y protecciones intactos.
 
 **22/10/2026: exclusivamente H1b autorizado**, con puerta A pequeña y B solo si A favorable. [Contrato y resultados](docs/EXPERIMENTO_H1B_P0D3.md), checkpoint en PROGRESO_P0. H1 rechazado se conserva; sin investigación avanzada, producción, H2–H4, D4/D5 ni ampliación. Parada ante fallo y siempre antes de H2.
