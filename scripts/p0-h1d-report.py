@@ -54,6 +54,12 @@ def extract(path):
                     for size in (16, 32, 64) for trial in range(10) for mode in ('original', 'reused')}
         complete = len(rows['LOAD']) == len(expected) and {(r['case'], r['size'], r['trial'], r['mode']) for r in rows['LOAD']} == expected
         result['loadsComplete'] = complete
+        for row in rows['LOAD']:
+            assert row['totalMs'] >= row['baseMs'] and row['diagnosticMs'] >= row['totalMs']
+            assert abs(row['totalMs'] - row['baseMs'] - row['worldMs'] - row['indexMs'] - row['residualMs']) < .01
+            assert row['memorySamples'] > 0
+            assert row['allocated'] == -1 or row['allocationProbeBytes'] >= 4096
+        result['allocationCounterAvailable'] = all(r['allocated'] >= 0 for r in rows['LOAD'])
         result['loadSummary'] = []
         for seed in ('MAMPORRO', 'Z9K2', 'RAMPA42'):
             for size in (16, 32, 64):
@@ -69,11 +75,44 @@ def extract(path):
                                    'managedPeak', 'managedRetained', 'unityObserved', 'transientObserved')}})
         result['preparationGate'] = 'PASS_SAMPLED' if complete and root.get('result') == 'Passed' and all(
             r['p95Ms'] <= 4000 and r['maxMs'] <= 6000 for r in result['loadSummary'] if r['mode'] == 'reused') else 'FAIL'
-        result['memoryGate'] = 'NOT_CERTIFIED_SAMPLED_PEAKS'
+        limits = {'payload': 160*1024**2, 'instrumentPayload': 20*1024**2,
+                  'transientObserved': 96*1024**2, 'managedPeak': 256*1024**2, 'unityObserved': 512*1024**2}
+        result['memoryObservedFailures'] = [{**{k: r[k] for k in ('case', 'size', 'trial')},
+            'metric': metric, 'value': r[metric], 'limit': limit} for r in rows['LOAD'] if r['mode'] == 'reused'
+            for metric, limit in limits.items() if r[metric] > limit]
+        result['memoryGate'] = 'FAIL_OBSERVED' if result['memoryObservedFailures'] else 'NOT_CERTIFIED_SAMPLED_PEAKS'
+        result['memoryObservationScope'] = ('transientObserved es pico managed muestreado menos retenido final del arnes; '
+                                           'no atribuye el exceso exclusivamente a navegacion ni certifica picos nativos.')
+        result['pairedSavings'] = []
+        if complete:
+            for seed in ('MAMPORRO', 'Z9K2', 'RAMPA42'):
+                for size in (16, 32, 64):
+                    control = sorted([r for r in rows['LOAD'] if (r['case'], r['size'], r['mode']) == (seed, size, 'original')], key=lambda r: r['trial'])
+                    reused = sorted([r for r in rows['LOAD'] if (r['case'], r['size'], r['mode']) == (seed, size, 'reused')], key=lambda r: r['trial'])
+                    assert all(all(a[k] == b[k] for k in ('builds', 'repairs', 'rejections')) for a, b in zip(control, reused))
+                    result['pairedSavings'].append({'case': seed, 'size': size,
+                        'meanSavedMs': sum(a['totalMs']-b['totalMs'] for a, b in zip(control, reused))/10,
+                        'meanFraction': 1-sum(r['totalMs'] for r in reused)/sum(r['totalMs'] for r in control),
+                        'minPairedSavedMs': min(a['totalMs']-b['totalMs'] for a, b in zip(control, reused))})
     return result
 
 
 if __name__ == '__main__':
+    if sys.argv[1] == '--summary':
+        folder = Path(sys.argv[2])
+        exact = json.loads((folder / 'gate-a-bijection.json').read_text())
+        quality = json.loads((folder / 'quality.json').read_text())
+        loads = json.loads((folder / 'preparation.json').read_text())
+        assert exact['exactGate'] == 'PASS_SAMPLED'
+        summary = {'exactGate': exact['exactGate'], 'qualityGate': quality['qualityGate'],
+                   'preparationGate': loads['preparationGate'], 'memoryGate': loads['memoryGate'],
+                   'independentStarts': len(loads['LOAD']), 'allocationCounterAvailable': loads['allocationCounterAvailable'],
+                   'measuredSavings': loads['pairedSavings'], 'overallGate': 'NOT_ACCEPTED',
+                   'nextStep': 'STOP_REVIEW_NO_PRODUCTION',
+                   'note': loads['memoryObservationScope'] + ' Payload no certifica residencia; no servicio ni FPS.'}
+        (folder / 'summary.json').write_text(json.dumps(summary, indent=2) + '\n', encoding='utf-8')
+        print(json.dumps({k: v for k, v in summary.items() if k != 'measuredSavings'}))
+        sys.exit(0)
     if sys.argv[1] == '--verify-solver':
         folder = Path(__file__).resolve().parent.parent / 'unity/Assets/Mamporro/Tests/Core'
         original = (folder / 'AdaptiveCorridorProbe.cs').read_text(encoding='utf-8')

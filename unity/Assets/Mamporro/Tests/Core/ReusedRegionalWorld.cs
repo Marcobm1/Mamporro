@@ -5,7 +5,7 @@ using Mamporro.Core;
 namespace Mamporro.Tests
 {
     // H1d: vista inmutable de tests. Conserva el grafo validado y sus trayectorias;
-    // nunca consulta geometr?a ni construye nodos, escaladas o ca?das de nuevo.
+    // nunca consulta geometría ni construye nodos, escaladas o caídas de nuevo.
     internal sealed class ReusedRegionalWorld
     {
         internal readonly NavGraph Source;

@@ -1,5 +1,7 @@
 # P0-D3 — propuesta de navegación híbrida
 
+**23/10/2026: H1d cerrado, no aceptado por memoria.** [Contrato y resultados](EXPERIMENTO_H1D_P0D3.md). Exactitud/rutas favorables y preparación medida 1,967–2,223 s p95, ahorro real 54–64 %; exceso managed observado >96 MiB y asignación no verificable. No cambia H1b ni producción, no abre H2–H4/D4/D5. Detenerse para revisión.
+
 **23/10/2026: H1c completado; parada para revisión.** Macro reutilizable dentro de SCC; preparación sin optimizar y unión local fallida a 64 m. [Informe](DIAGNOSTICO_H1C_P0D3.md). No se acepta H1b ni se abre H2; sin cambios de producción o validaciones.
 
 **22/10/2026, posterior a H1b: H1c autorizado exclusivamente para diagnóstico de preparación/reutilización.** [Contrato y resultados](DIAGNOSTICO_H1C_P0D3.md). No servicio nuevo ni cambios de producción; H1b se conserva, H2–H4/D4/D5 excluidos. Revisión al terminar incluso con resultados positivos.

@@ -128,6 +128,8 @@ Ningún agente debe:
 
 ## Estado actual del relevo
 
+**23/10/2026, H1d cerrado:** A y compatibilidad H1b 48/48 cada una; preparación 9/9, 180 cargas, ahorro real 54–64 % y p95 <4 s. Memoria no aceptada: exceso managed observado >96 MiB y asignación no verificable; límites de atribución en [informe](EXPERIMENTO_H1D_P0D3.md) y PROGRESO_P0. Solo tests, producción/H1b/3000 intactos. Mantener siete ajustes y detenerse para revisión, sin adopción, optimización automática ni H2–H4/D4/D5.
+
 **23/10/2026, cierre H1c:** diagnóstico completado; macro invariante dentro de SCC, preparación todavía >4 s y unión local falla rodeos a 64 m. [Informe](DIAGNOSTICO_H1C_P0D3.md) y primer checkpoint de PROGRESO_P0 separan preparación heredada, pruebas nuevas, contadores, protecciones y publicación. **Detenerse para revisión; sin H2, producción ni optimización automática.** Preservar siete ajustes Unity e H1b.
 
 **22/10/2026, cierre H1b:** topología/rutas favorables, preparación p95 negativa. A 7/7, B 30/30 y 30 arranques en 3/3 tests; [informe](EXPERIMENTO_H1B_P0D3.md) y PROGRESO_P0. Contrato `1545ec6`, prototipo/A `58307fc`, publicados. **Detenerse para revisión: no optimizar el constructor ni iniciar H2 automáticamente.** Siete ajustes/nueve protecciones/once referencias conservados; producción, 3000 y exclusión H2–H4/D4/D5 intactos.

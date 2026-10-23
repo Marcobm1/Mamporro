@@ -18,6 +18,8 @@ Codex y Claude Code trabajan por turnos sobre la misma rama. **No trabajan a la 
 
 ## Estado que manda
 
+**23/10/2026: H1d cerrado; detenerse para revisión.** [Contrato y resultados](docs/EXPERIMENTO_H1D_P0D3.md), checkpoint en PROGRESO_P0. Exactitud/calidad/preparación favorables; memoria no aceptada (indicador de exceso managed >96 MiB y asignaciones N/D). No integrar ni optimizar automáticamente; producción/H1b/validaciones y 3000 intactos, sin H2–H4/D4/D5 ni investigación avanzada.
+
 **23/10/2026: H1c terminado; detenerse para revisión.** [Contrato y resultados](docs/DIAGNOSTICO_H1C_P0D3.md), checkpoint en PROGRESO_P0. Macro reutilizable dentro de SCC; preparación sigue fallando y unión local excede rodeos a 64 m. Conservar H1b; sin servicio nuevo, producción, H2–H4/D4/D5, optimización automática ni investigación avanzada.
 
 **Cierre H1b, 22/10/2026: calidad favorable, preparación p95 negativa; detenido para revisión antes de H2.** [Informe](docs/EXPERIMENTO_H1B_P0D3.md) y PROGRESO_P0. No optimizar ni continuar automáticamente; producción, 3000 y protecciones intactos.

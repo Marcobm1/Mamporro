@@ -1,5 +1,11 @@
 # Decisiones acordadas
 
+## Autorización exclusiva H1d — 23/10/2026
+
+**Resultado:** A/calidad/preparación favorables; memoria no aceptada. Preparación p95 1,967–2,223 s y ahorro real 54–64 %, sin quitar validaciones. Indicador conservador de exceso managed hasta 112,105 MiB, no atribuible exclusivamente a navegación con esta instrumentación; asignaciones acumuladas no verificables. Se conserva el prototipo solo en tests y se detiene para revisión; no integración ni nueva optimización autorizadas por este resultado.
+
+El autor autoriza únicamente prototipo de tests que derive regiones/SCC/portales/índices de los grafos originales validados, evitando reconstruir nodos/escaladas/caídas. A exige equivalencia física dirigida completa frente a D1/D2 (A/B/ocho C y casos difíciles, 16/32/64, S/M/L); si falla, detenerse. B solo después de A: preparación completa comparable, diez arranques por tamaño/semilla crítica, objetivos 4 s p95/6 s máximo, presupuestos de memoria conservados y compatibilidad H1b 1,5×/2×. Sin eliminar validaciones, investigación avanzada, producción, servicios nuevos ni H2–H4/D4/D5. Mantener 3000 y protecciones, publicar commits/push normal y detenerse para revisión incluso si favorable. [Contrato y resultados](EXPERIMENTO_H1D_P0D3.md).
+
 ## Autorización H1c — 22/10/2026
 
 **Resultado 23/10:** potencial/árbol macro invariantes dentro de SCC, ahorro macro <0,15 % del trabajo; preparación sigue incumpliendo 4 s y la unión local falla a 64 m (máximo 3,204259×). Se conserva H1b y se cumple la parada para revisión, sin adoptar proyección, caché ni servicio. [Informe](DIAGNOSTICO_H1C_P0D3.md).
