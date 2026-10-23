@@ -16,4 +16,20 @@ Percentil de rango más próximo, por semilla/tamaño/alternativa; con n=10 p95 
 
 ## Resultados
 
-Pendientes. Evidencias locales: `unity/TestResults/P0/H1d-20261023`. Próximo paso: implementar y evaluar A; B bloqueada hasta equivalencia favorable.
+Evidencias locales: `unity/TestResults/P0/H1d-20261023`.
+
+### Puerta A favorable
+
+Contrato publicado `a6dd6aa`. Primera ejecución `Regional-20261023T190923`: **24/48**, 74,549 s. El comparador inicial exigía igualdad de coste por ordinal de arista y falló en las ocho semillas C. `NavGraph.BuildEdges` ordena por origen/destino, sin desempate de paralelas; el orden entre aristas físicas paralelas puede variar al ordenar el grafo mundial o regional. Se conserva ese XML y `gate-a.json`. No se alteran prototipo, generador, geometría ni oráculo para corregirlo.
+
+Comparador corregido: biyección consumible una sola vez entre aristas con mismo origen/destino, coste, tipo y trayectoria física completa (puntos, normal, plano y salida), con igual cardinalidad y sin descartar duplicados. Los portales se emparejan usando esa misma biyección. No equivale a ignorar diferencias de coste: cada coste debe existir exactamente con su multiplicidad y trayectoria. El ordinal de arista deja de confundirse con identidad física; los padres del solver se comprueban por aristas físicas válidas y descenso de coste, no por igualdad de ordinal entre representaciones.
+
+Repetición `Regional-20261023T191239`: **48/48**, 127,782 s, **144 evaluaciones** A/B/ocho C/seis fixtures ×16/32/64×S/M/L. **3621138 nodos, 27772185 aristas, 705479 portales** comprobados; 440 correspondencias de arista con distinto ordinal. Propiedad única, claves/capas/alturas, consultas de nodo, universos completos con multiplicidad, SCC locales/globales, componentes débiles y arcos iguales. Biyección completa del grafo dirigido: alcance idéntico para cualquier pareja; además controles de reentrada, caída sin retorno, tejados superpuestos, escalada y paso S/M frente a L. No es una simulación de cuerpos.
+
+El prototipo `ReusedRegionalWorld` no construye `NavGraph`; crea propiedad/índices/portales sobre el grafo validado y conserva referencias a sus trayectorias. El kernel de topología se copia sin cambios de D2 a tests. `ReusedCorridorProbe` es una copia mecánica de H1b sustituyendo únicamente dos nombres de tipos. Verificación reproducible: `python scripts/p0-h1d-report.py --verify-solver`; fuente H1b original normalizada SHA256 `c63d5aecaf797f9b973cbb1b01c795ce9201a4f9452dea36668d758a2b51aa88`. Ninguna clase nueva se usa en producción.
+
+Comando A: `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/p0-regional-tests.ps1 -Filter Mamporro.Tests.GraphReuseTests -Category GraphReuseA`. Intento `190918` sin tests por licencia 198 en sandbox, repetido fuera. Extractor: `python scripts/p0-h1d-report.py unity/TestResults/P0/Regional-20261023T191239/edit.xml unity/TestResults/P0/H1d-20261023/gate-a-bijection.json`. A favorable abre B; no acredita todavía tiempos, memoria ni rodeos de la vista.
+
+### Puerta B
+
+En curso. Compatibilidad de rutas primero, cargas independientes después. No adopción ni H2.
